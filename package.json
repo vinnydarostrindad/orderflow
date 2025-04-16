@@ -1,0 +1,23 @@
+{
+  "name": "orderflow",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "OrderFlow é um sistema digital voltado para pontos de alimentação como bares, restaurantes e lanchonetes. O objetivo é facilitar o processo de de pedidos e a organização.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node server.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "eslint": "^9.24.0",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-jest": "^28.11.0",
+    "globals": "^16.0.0",
+    "jest": "^29.7.0",
+    "prettier": "3.5.3"
+  }
+}
