@@ -5,9 +5,9 @@
   "description": "OrderFlow é um sistema digital voltado para pontos de alimentação como bares, restaurantes e lanchonetes. O objetivo é facilitar o processo de de pedidos e a organização.",
   "main": "index.js",
   "scripts": {
-    "dev": "node server.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
+    "dev": "node --watch server.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --runInBand"
   },
   "author": "",
   "license": "MIT",
