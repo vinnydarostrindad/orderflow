@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import { readFile as readFileAsync } from "node:fs/promises";
 import { join, extname } from "node:path";
+import registerBusiness from "./use-case/businessRegister.js";
 
 const PORT = 3000;
 
@@ -36,6 +37,33 @@ const serverHandler = async function (req, res) {
       res.writeHead(404);
       return res.end("Página não encontrada");
     }
+
+    if (method === "POST") {
+      if (url === "/api/v1/business") {
+        let body = "";
+
+        req.on("data", (chunk) => {
+          body += chunk.toString();
+        });
+
+        req.on("end", async () => {
+          try {
+            let response = await registerBusiness(JSON.parse(body));
+            res.writeHead(201, { "content-type": "application/json" });
+            return res.end(
+              JSON.stringify({
+                message: "Empresa registrada com sucesso",
+                data: response,
+              }),
+            );
+          } catch (err) {
+            console.log(err);
+            res.writeHead(400);
+            return res.end("Preencha todos os campos corretamente");
+          }
+        });
+      }
+    }
   } catch (error) {
     console.error("Erro ao processar requisição:", error);
     res.writeHead(500);
@@ -45,6 +73,6 @@ const serverHandler = async function (req, res) {
 
 const server = createServer(serverHandler);
 
-server.listen(3000, () => {
+server.listen(PORT, () => {
   console.log(`Servidor funcionando em http://localhost:${PORT}`);
 });
