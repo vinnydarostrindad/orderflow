@@ -7,19 +7,18 @@ beforeAll((done) => {
   serverProcess = spawn("node", ["server.js"]);
 
   const timeout = setTimeout(() => {
-    done.fail("Servidor não iniciado");
+    done(new Error("Servidor não iniciado"));
   }, 5000);
 
   serverProcess.stdout.on("data", (buf) => {
     if (buf.toString().includes("Servidor funcionando")) {
       done();
-      clearInterval(timeout);
+      clearTimeout(timeout);
     }
   });
 });
 
-afterAll((done) => {
-  serverProcess.on("exit", () => done());
+afterAll(() => {
   serverProcess.kill();
 });
 
