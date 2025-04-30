@@ -1,29 +1,20 @@
-import { spawn } from "node:child_process";
 import { get } from "node:http";
+import { startServer, endServer } from "./controllServer.js";
+
+const SERVER_URL = "http://localhost:3000";
 
 let serverProcess;
 
-beforeAll((done) => {
-  serverProcess = spawn("node", ["server.js"]);
-
-  const timeout = setTimeout(() => {
-    done(new Error("Servidor não iniciado"));
-  }, 5000);
-
-  serverProcess.stdout.on("data", (buf) => {
-    if (buf.toString().includes("Servidor funcionando")) {
-      done();
-      clearTimeout(timeout);
-    }
-  });
+beforeAll(async () => {
+  serverProcess = await startServer();
 });
 
 afterAll(() => {
-  serverProcess.kill();
+  endServer(serverProcess);
 });
 
 test("GET / deve retornar 200 e o HTML", (done) => {
-  get("http://127.0.0.1:3000", (res) => {
+  get(SERVER_URL, (res) => {
     expect(res.statusCode).toBe(200);
     expect(res.headers["content-type"]).toMatch(/text\/html/);
 
