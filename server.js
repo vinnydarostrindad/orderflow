@@ -1,7 +1,8 @@
 import { createServer } from "node:http";
 import { readFile as readFileAsync } from "node:fs/promises";
 import { join, extname } from "node:path";
-import registerBusiness from "./use-case/businessRegister.js";
+import registerBusiness from "./use-case/registerBusiness.js";
+import registerEmployee from "./use-case/registerEmployee.js";
 
 const PORT = 3000;
 
@@ -53,6 +54,31 @@ const serverHandler = async function (req, res) {
             return res.end(
               JSON.stringify({
                 message: "Empresa registrada com sucesso",
+                data: response,
+              }),
+            );
+          } catch (err) {
+            console.log(err);
+            res.writeHead(400);
+            return res.end("Preencha todos os campos corretamente");
+          }
+        });
+      }
+
+      if (url === "/api/v1/business/employee") {
+        let body = "";
+
+        req.on("data", (chunk) => {
+          body += chunk.toString();
+        });
+
+        req.on("end", async () => {
+          try {
+            let response = await registerEmployee(JSON.parse(body));
+            res.writeHead(201, { "content-type": "application/json" });
+            return res.end(
+              JSON.stringify({
+                message: "Funcionário registrado com sucesso",
                 data: response,
               }),
             );

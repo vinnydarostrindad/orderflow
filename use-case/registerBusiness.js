@@ -1,7 +1,5 @@
-import { randomUUID, scrypt } from "node:crypto";
-import { promisify } from "node:util";
-
-const scryptAsync = promisify(scrypt);
+import hashPassword from "../utils/hashPassword.js";
+import generateID from "../utils/generateID.js";
 
 async function registerBusiness({ name, email, password }) {
   if (!name || !email || !password) {
@@ -10,6 +8,7 @@ async function registerBusiness({ name, email, password }) {
 
   const id = generateID();
   const hashedPassword = await hashPassword(password);
+
   const response = {
     id,
     name,
@@ -20,16 +19,6 @@ async function registerBusiness({ name, email, password }) {
   };
 
   return response;
-}
-
-function generateID() {
-  return randomUUID();
-}
-
-async function hashPassword(password) {
-  const hashedPassword = await scryptAsync(password, "salt", 64);
-
-  return hashedPassword.toString("hex");
 }
 
 export default registerBusiness;
