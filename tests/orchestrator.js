@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { query } from "../infra/database.js";
 
 function startServer() {
   let serverProcess = spawn("node", ["server.js"]);
@@ -25,4 +26,8 @@ function endServer(serverProcess) {
   serverProcess.kill();
 }
 
-export { startServer, endServer };
+async function cleanDatabase() {
+  await query("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
+}
+
+export { startServer, endServer, cleanDatabase };
