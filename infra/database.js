@@ -8,7 +8,7 @@ async function query(queryObject) {
   try {
     client = await getNewClient();
     const res = await client.query(queryObject);
-    return res.rows[0].message;
+    return res;
   } catch (err) {
     console.error(err);
   } finally {
