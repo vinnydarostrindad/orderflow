@@ -1,8 +1,15 @@
 import { createServer } from "node:http";
 import { readFile as readFileAsync } from "node:fs/promises";
-import { join, extname } from "node:path";
+import { join, extname, resolve } from "node:path";
+import migrationRunner from "node-pg-migrate";
 import registerBusiness from "./use-case/registerBusiness.js";
 import registerEmployee from "./use-case/registerEmployee.js";
+import { getNewClient } from "./infra/database.js";
+
+import dotenv from "dotenv";
+import dotenvExpand from "dotenv-expand";
+
+dotenvExpand.expand(dotenv.config({ path: ".env.development" }));
 
 const PORT = 3000;
 
@@ -19,6 +26,26 @@ const serverHandler = async function (req, res) {
         const content = await readFileAsync(htmlPath);
         res.writeHead(200, { "content-type": "text/html" });
         return res.end(content);
+      }
+
+      if (url === "/api/v1/migrations") {
+        let dbClient;
+
+        try {
+          dbClient = await getNewClient();
+          const response = await migrationRunner({
+            dbClient: dbClient,
+            dir: resolve("infra", "migrations"),
+            direction: "up",
+            dryRun: true,
+            verbose: true,
+            migrationsTable: "pgmigrations",
+          });
+          res.writeHead(200, { "content-type": "application/json" });
+          return res.end(JSON.stringify(response));
+        } finally {
+          await dbClient.end();
+        }
       }
 
       const ext = extname(url);
@@ -88,6 +115,29 @@ const serverHandler = async function (req, res) {
             return res.end("Preencha todos os campos corretamente");
           }
         });
+      }
+
+      if (url === "/api/v1/migrations") {
+        let dbClient;
+
+        try {
+          dbClient = await getNewClient();
+          const response = await migrationRunner({
+            dbClient: dbClient,
+            dir: resolve("infra", "migrations"),
+            direction: "up",
+            verbose: true,
+            migrationsTable: "pgmigrations",
+          });
+
+          if (response.length > 0) {
+            res.writeHead(201, { "content-type": "application/json" });
+          }
+
+          return res.end(JSON.stringify(response));
+        } finally {
+          await dbClient.end();
+        }
       }
     }
   } catch (error) {

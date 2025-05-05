@@ -1,5 +1,5 @@
 import { get } from "node:http";
-import { startServer, endServer } from "./controllServer.js";
+import { startServer, endServer } from "./orchestrator.js";
 
 const SERVER_URL = "http://localhost:3000";
 
