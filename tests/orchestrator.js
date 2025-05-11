@@ -30,4 +30,10 @@ async function cleanDatabase() {
   await query("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
 }
 
-export { startServer, endServer, cleanDatabase };
+async function runMigrations() {
+  await fetch("http://localhost:3000/api/v1/migrations", {
+    method: "POST",
+  });
+}
+
+export { startServer, endServer, cleanDatabase, runMigrations };
