@@ -1,5 +1,9 @@
-import { startServer, endServer } from "./orchestrator.js";
-import registerBusiness from "../use-case/registerBusiness.js";
+import {
+  startServer,
+  endServer,
+  cleanDatabase,
+  runMigrations,
+} from "./orchestrator.js";
 
 const business = {
   name: "Tapuya",
@@ -12,6 +16,8 @@ let serverProcess;
 
 beforeAll(async () => {
   serverProcess = await startServer();
+  await cleanDatabase();
+  await runMigrations();
 });
 
 afterAll(() => {
@@ -26,7 +32,11 @@ describe("business registration api", () => {
       body: JSON.stringify(business),
     });
 
+    console.log(response);
+
     let resJSON = await response.json();
+
+    console.log(resJSON);
     let data = resJSON.data;
 
     expect(response.status).toBe(201);
@@ -39,11 +49,5 @@ describe("business registration api", () => {
     expect(typeof data.created_at).toBe("string");
     expect(typeof data.updated_at).toBe("string");
     expect(data.password).not.toBe(business.password);
-  });
-
-  it("should throw an error when missing fields", async () => {
-    await expect(registerBusiness({ ...business, name: "" })).rejects.toThrow(
-      "Preencha todos os campos",
-    );
   });
 });

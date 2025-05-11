@@ -20,9 +20,8 @@ export const up = function up(pgm) {
       notNull: true,
     },
 
-    // Why 60 in length? https://www.npmjs.com/package/bcrypt#hash-info
     password: {
-      type: "varchar(60)",
+      type: "text",
       notNull: true,
     },
 
