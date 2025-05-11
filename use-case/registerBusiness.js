@@ -1,5 +1,6 @@
 import hashPassword from "../utils/hashPassword.js";
 import generateID from "../utils/generateID.js";
+import { query } from "../infra/database.js";
 
 async function registerBusiness({ name, email, password }) {
   if (!name || !email || !password) {
@@ -9,16 +10,19 @@ async function registerBusiness({ name, email, password }) {
   const id = generateID();
   const hashedPassword = await hashPassword(password);
 
-  const response = {
-    id,
-    name,
-    email,
-    password: hashedPassword,
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
+  const results = await query({
+    text: `
+      INSERT INTO
+        businesses (id, name, email, password)
+      VALUES
+        ($1, $2, $3, $4)
+      RETURNING
+        *
+    ;`,
+    values: [id, name, email, hashedPassword],
+  });
 
-  return response;
+  return results.rows[0];
 }
 
 export default registerBusiness;
