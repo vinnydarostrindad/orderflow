@@ -32,11 +32,7 @@ describe("business registration api", () => {
       body: JSON.stringify(business),
     });
 
-    console.log(response);
-
     let resJSON = await response.json();
-
-    console.log(resJSON);
     let data = resJSON.data;
 
     expect(response.status).toBe(201);
