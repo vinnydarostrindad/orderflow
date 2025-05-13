@@ -136,7 +136,7 @@ const serverHandler = async function (req, res) {
 
           return res.end(JSON.stringify(response));
         } finally {
-          await dbClient.end();
+          await dbClient?.end();
         }
       }
     }

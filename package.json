@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node --watch server.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
+    "test": "npm run services:up && concurrently -n node,jest --hide node -k -s command-jest \"node server.js\" \"node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --verbose\"",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --runInBand",
     "services:up": "docker compose -f infra/compose.yaml up -d",
     "services:down": "docker compose -f infra/compose.yaml down",
@@ -17,6 +17,7 @@
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.24.0",
+    "concurrently": "^9.1.2",
     "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-jest": "^28.11.0",
