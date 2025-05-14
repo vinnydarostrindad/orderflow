@@ -1,8 +1,8 @@
 import { readFile as readFileAsync } from "node:fs/promises";
 import { join, extname } from "node:path";
-import registerBusiness from "./use-case/registerBusiness.js";
-import registerEmployee from "./use-case/registerEmployee.js";
 import migrationsController from "./controller/migrationsController.js";
+import registerBusinessController from "./controller/registerBusinessController.js";
+import registerEmployeeController from "./controller/registerEmployeeController.js";
 
 const router = async function (req, res) {
   const method = req.method;
@@ -13,6 +13,12 @@ const router = async function (req, res) {
   try {
     if (url === "/api/v1/migrations") {
       return await migrationsController(req, res, method);
+    }
+    if (url === "/api/v1/business") {
+      return await registerBusinessController(req, res, method);
+    }
+    if (url === "/api/v1/business/employee") {
+      return await registerEmployeeController(req, res, method);
     }
 
     if (method === "GET") {
@@ -39,58 +45,6 @@ const router = async function (req, res) {
 
       res.writeHead(404);
       return res.end("Página não encontrada");
-    }
-
-    if (method === "POST") {
-      if (url === "/api/v1/business") {
-        let body = "";
-
-        req.on("data", (chunk) => {
-          body += chunk.toString();
-        });
-
-        req.on("end", async () => {
-          try {
-            let response = await registerBusiness(JSON.parse(body));
-            res.writeHead(201, { "content-type": "application/json" });
-            return res.end(
-              JSON.stringify({
-                message: "Empresa registrada com sucesso",
-                data: response,
-              }),
-            );
-          } catch (err) {
-            console.log(err);
-            res.writeHead(400);
-            return res.end("Preencha todos os campos corretamente");
-          }
-        });
-      }
-
-      if (url === "/api/v1/business/employee") {
-        let body = "";
-
-        req.on("data", (chunk) => {
-          body += chunk.toString();
-        });
-
-        req.on("end", async () => {
-          try {
-            let response = await registerEmployee(JSON.parse(body));
-            res.writeHead(201, { "content-type": "application/json" });
-            return res.end(
-              JSON.stringify({
-                message: "Funcionário registrado com sucesso",
-                data: response,
-              }),
-            );
-          } catch (err) {
-            console.log(err);
-            res.writeHead(400);
-            return res.end("Preencha todos os campos corretamente");
-          }
-        });
-      }
     }
   } catch (error) {
     console.error("Erro ao processar requisição:", error);
