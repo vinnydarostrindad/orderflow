@@ -1,4 +1,4 @@
-import registerBusiness from "../use-case/registerBusiness.js";
+import registerBusinessUseCase from "../use-case/registerBusinessUseCase.js";
 
 async function registerBusinessController(req, res, method) {
   if (method === "POST") {
@@ -9,8 +9,13 @@ async function registerBusinessController(req, res, method) {
     });
 
     req.on("end", async () => {
+      const { name, email, password } = JSON.parse(body);
+      if (!name || !email || !password) {
+        throw new Error("Preencha todos os campos");
+      }
+
       try {
-        let response = await registerBusiness(JSON.parse(body));
+        let response = await registerBusinessUseCase(name, email, password);
         res.writeHead(201, { "content-type": "application/json" });
         return res.end(
           JSON.stringify({
