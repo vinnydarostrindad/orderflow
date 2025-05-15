@@ -31,12 +31,7 @@ async function registerEmployeeController(req, res, method) {
           role,
         );
         res.writeHead(201, { "content-type": "application/json" });
-        return res.end(
-          JSON.stringify({
-            message: "Funcionário registrado com sucesso",
-            data: response,
-          }),
-        );
+        return res.end(JSON.stringify(response));
       } catch (err) {
         console.log(err);
         res.writeHead(400);

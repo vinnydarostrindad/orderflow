@@ -1,4 +1,5 @@
 import { cleanDatabase, runMigrations } from "./orchestrator.js";
+import { version as uuidVersion } from "uuid";
 
 beforeAll(async () => {
   await cleanDatabase();
@@ -13,9 +14,9 @@ describe("register employee api", () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: "Tapuya",
-        email: "tapuya@gmail.com",
-        password: "1234",
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
       }),
     });
 
@@ -28,25 +29,24 @@ describe("register employee api", () => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           role: "waiter",
-          name: "Vinny",
-          password: "vinny1234",
+          name: "valid_name",
+          password: "valid_password",
         }),
       },
     );
 
-    const resJson = await response2.json();
-    const data = resJson.data;
+    const responseBody = await response2.json();
 
     expect(response2.status).toBe(201);
-    expect(data).toMatchObject({
+    expect(responseBody).toMatchObject({
       role: "waiter",
-      name: "Vinny",
+      name: "valid_name",
     });
-    expect(typeof data.id).toBe("string");
-    expect(typeof data.business_id).toBe("string");
-    expect(typeof data.password).toBe("string");
-    expect(typeof data.created_at).toBe("string");
-    expect(typeof data.updated_at).toBe("string");
-    expect(data.password).not.toBe("vinny1234");
+    expect(uuidVersion(responseBody.id)).toBe(4);
+    expect(typeof responseBody.business_id).toBe("string");
+    expect(typeof responseBody.password).toBe("string");
+    expect(typeof responseBody.created_at).toBe("string");
+    expect(typeof responseBody.updated_at).toBe("string");
+    expect(responseBody.password).not.toBe("valid_password");
   });
 });

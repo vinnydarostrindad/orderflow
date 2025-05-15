@@ -9,8 +9,8 @@ describe("GET /api/v1/status", () => {
     const response = await fetch("http://localhost:3000/api/v1/migrations");
     expect(response.status).toBe(200);
 
-    const resJson = await response.json();
-    expect(Array.isArray(resJson)).toBe(true);
-    expect(resJson.length).toBeGreaterThan(0);
+    const responseBody = await response.json();
+    expect(Array.isArray(responseBody)).toBe(true);
+    expect(responseBody.length).toBeGreaterThan(0);
   });
 });
