@@ -17,12 +17,7 @@ async function registerBusinessController(req, res, method) {
       try {
         let response = await registerBusinessUseCase(name, email, password);
         res.writeHead(201, { "content-type": "application/json" });
-        return res.end(
-          JSON.stringify({
-            message: "Empresa registrada com sucesso",
-            data: response,
-          }),
-        );
+        return res.end(JSON.stringify(response));
       } catch (err) {
         console.log(err);
         res.writeHead(400);
