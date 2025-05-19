@@ -1,14 +1,15 @@
 import { readFile as readFileAsync } from "node:fs/promises";
 import { join, extname } from "node:path";
-import migrationsRouter from "./presentation/migrations-router.js";
-import registerBusinessRouter from "./presentation/register-business-router.js";
-import registerEmployeeRouter from "./presentation/register-employee-router.js";
+import migrationsRouter from "../presentation/migrations-router.js";
+import registerBusinessRouter from "../presentation/register-business-router.js";
+import registerEmployeeRouter from "../presentation/register-employee-router.js";
 
 const router = async function (req, res) {
   const method = req.method;
   const url = req.url;
 
-  const basePath = join(process.cwd(), "pages");
+  const basePath = join(process.cwd(), "src/main/pages");
+  console.log(basePath);
 
   try {
     if (url === "/api/v1/migrations") {
