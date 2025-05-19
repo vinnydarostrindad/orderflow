@@ -9,7 +9,6 @@ const router = async function (req, res) {
   const url = req.url;
 
   const basePath = join(process.cwd(), "src/main/pages");
-  console.log(basePath);
 
   try {
     if (url === "/api/v1/migrations") {

@@ -1,3 +1,5 @@
 export default {
-  transform: {},
+  coverageDirectory: "coverage",
+  testEnvironment: "node",
+  collectCoverageFrom: ["**/unitary/**/*.js"],
 };
