@@ -1,8 +1,8 @@
 import { readFile as readFileAsync } from "node:fs/promises";
 import { join, extname } from "node:path";
-import migrationsController from "./controller/migrationsController.js";
-import registerBusinessController from "./controller/registerBusinessController.js";
-import registerEmployeeController from "./controller/registerEmployeeController.js";
+import migrationsRouter from "./presentation/migrations-router.js";
+import registerBusinessRouter from "./presentation/register-business-router.js";
+import registerEmployeeRouter from "./presentation/register-employee-router.js";
 
 const router = async function (req, res) {
   const method = req.method;
@@ -12,13 +12,13 @@ const router = async function (req, res) {
 
   try {
     if (url === "/api/v1/migrations") {
-      return await migrationsController(req, res, method);
+      return await migrationsRouter(req, res, method);
     }
     if (url === "/api/v1/business") {
-      return await registerBusinessController(req, res, method);
+      return await registerBusinessRouter(req, res, method);
     }
     if (url === "/api/v1/business/employee") {
-      return await registerEmployeeController(req, res, method);
+      return await registerEmployeeRouter(req, res, method);
     }
 
     if (method === "GET") {
