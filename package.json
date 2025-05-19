@@ -13,7 +13,7 @@
     "services:down": "docker compose -f src/infra/compose.yaml down",
     "migrations:create": "node-pg-migrate -m src/infra/migrations create",
     "migrations:up": "node-pg-migrate -m src/infra/migrations --envPath .env.development up",
-    "wait:database": "node src/utils/waitForPostgres.js"
+    "wait:database": "node src/utils/wait-for-postgres.js"
   },
   "author": "",
   "license": "MIT",
