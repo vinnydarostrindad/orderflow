@@ -1,5 +1,5 @@
 import Employee from "../entities/employee.js";
-import employeeRepository from "../infra/repositories/employeeRepository.js";
+import employeeRepository from "../../infra/repositories/employeeRepository.js";
 
 async function registerEmployeeUseCase(businessId, name, password, role) {
   const employee = await Employee.create(businessId, name, password, role);

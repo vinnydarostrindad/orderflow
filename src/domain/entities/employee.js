@@ -1,5 +1,5 @@
-import generateID from "../utils/generateID.js";
-import hashPassword from "../utils/hashPassword.js";
+import generateID from "../../utils/generateID.js";
+import hashPassword from "../../utils/hashPassword.js";
 
 export default class Employee {
   constructor(id, business_id, name, password, role) {
