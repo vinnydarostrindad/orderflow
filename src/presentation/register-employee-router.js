@@ -1,4 +1,4 @@
-import registerEmployeeUseCase from "../use-case/registerEmployeeUseCase.js";
+import registerEmployeeUseCase from "../domain/usecase/register-employee-usecase.js";
 import { query } from "../infra/database.js";
 
 async function registerEmployeeController(req, res, method) {

@@ -1,4 +1,4 @@
-import registerBusinessUseCase from "../use-case/registerBusinessUseCase.js";
+import registerBusinessUseCase from "../domain/usecase/register-business-usecase.js";
 
 async function registerBusinessController(req, res, method) {
   if (method === "POST") {

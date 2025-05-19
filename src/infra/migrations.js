@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import migrationRunner from "node-pg-migrate";
 
 const defaultMigrationsOptions = {
-  dir: resolve("infra", "migrations"),
+  dir: resolve("src", "infra", "migrations"),
   direction: "up",
   dryRun: true,
   log: () => {},
