@@ -1,4 +1,4 @@
-import { query } from "../infra/database.js";
+import { query } from "../../infra/database.js";
 
 async function cleanDatabase() {
   await query("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
