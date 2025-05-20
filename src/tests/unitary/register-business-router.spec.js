@@ -1,16 +1,20 @@
 import RegisterBusinessRouter from "../../presentation/routers/register-business-router";
 import MissingParamError from "../../utils/errors/missing-param-error";
 import ServerError from "../../utils/errors/server-error.js";
+import InvalidParamError from "../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const registerBusinessUseCaseSpy = makeRegisterBusinessUseCase();
+  const emailValidatorSpy = makeEmailValidator();
   const sut = new RegisterBusinessRouter({
     registerBusinessUseCase: registerBusinessUseCaseSpy,
+    emailValidator: emailValidatorSpy,
   });
 
   return {
     sut,
     registerBusinessUseCaseSpy,
+    emailValidatorSpy,
   };
 };
 
@@ -43,6 +47,29 @@ const makeRegisterBusinessUseCaseWithError = () => {
   return new registerBusinessUseCaseSpy();
 };
 
+const makeEmailValidator = () => {
+  class EmailValidatorSpy {
+    execute({ email }) {
+      this.email = email;
+      return this.isValid;
+    }
+  }
+
+  const emailValidatorSpy = new EmailValidatorSpy();
+  emailValidatorSpy.isValid = true;
+  return emailValidatorSpy;
+};
+
+const makeEmailValidatorWithError = () => {
+  class EmailValidatorSpy {
+    execute() {
+      throw new Error();
+    }
+  }
+
+  return new EmailValidatorSpy();
+};
+
 describe("Register Business Router", () => {
   test("Should return 400 if no name is provided", () => {
     const { sut } = makeSut();
@@ -52,6 +79,7 @@ describe("Register Business Router", () => {
         password: "any_password",
       },
     };
+
     const httpResponse = sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("name"));
@@ -65,6 +93,7 @@ describe("Register Business Router", () => {
         password: "any_password",
       },
     };
+
     const httpResponse = sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("email"));
@@ -78,6 +107,7 @@ describe("Register Business Router", () => {
         email: "any_email@mail.com",
       },
     };
+
     const httpResponse = sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("password"));
@@ -85,7 +115,6 @@ describe("Register Business Router", () => {
 
   test("Should return 400 if no business is registered", () => {
     const { sut, registerBusinessUseCaseSpy } = makeSut();
-    registerBusinessUseCaseSpy.user = null;
     const httpRequest = {
       body: {
         name: "any_name",
@@ -93,14 +122,33 @@ describe("Register Business Router", () => {
         password: "any_password",
       },
     };
+    registerBusinessUseCaseSpy.user = null;
+
     const httpResponse = sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toBeUndefined();
   });
 
+  test("Should return 400 if invalid email is provided", () => {
+    const { sut, emailValidatorSpy } = makeSut();
+    const httpRequest = {
+      body: {
+        name: "any_name",
+        email: "invalid_email@mail.com",
+        password: "any_password",
+      },
+    };
+    emailValidatorSpy.isValid = false;
+
+    const httpResponse = sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("email"));
+  });
+
   test("Should return 500 if no httpRequest is provided", () => {
     const { sut } = makeSut();
     const httpRequest = {};
+
     const httpResponse = sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
@@ -108,6 +156,7 @@ describe("Register Business Router", () => {
 
   test("Should return 500 if httpRequest has no body", () => {
     const { sut } = makeSut();
+
     const httpResponse = sut.route();
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
@@ -122,17 +171,26 @@ describe("Register Business Router", () => {
         password: "valid_password",
       },
     };
+
     const httpResponse = sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(201);
     expect(httpResponse.body).toEqual(registerBusinessUseCaseSpy.user);
   });
 
   test("Should throw if any dependency throws", () => {
+    const registerBusinessUseCase = makeRegisterBusinessUseCase();
     const suts = [
       new RegisterBusinessRouter(),
       new RegisterBusinessRouter({}),
       new RegisterBusinessRouter({
         registerBusinessUseCase: {},
+      }),
+      new RegisterBusinessRouter({
+        registerBusinessUseCase,
+      }),
+      new RegisterBusinessRouter({
+        registerBusinessUseCase,
+        emailValidator: {},
       }),
     ];
 
@@ -152,9 +210,14 @@ describe("Register Business Router", () => {
   });
 
   test("Should throw if invalid dependency is provided", () => {
+    const registerBusinessUseCase = makeRegisterBusinessUseCase();
     const suts = [
       new RegisterBusinessRouter({
         registerBusinessUseCase: makeRegisterBusinessUseCaseWithError(),
+      }),
+      new RegisterBusinessRouter({
+        registerBusinessUseCase,
+        emailValidator: makeEmailValidatorWithError(),
       }),
     ];
 

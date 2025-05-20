@@ -1,9 +1,11 @@
+import InvalidParamError from "../../utils/errors/invalid-param-error.js";
 import MissingParamError from "../../utils/errors/missing-param-error.js";
 import httpResponse from "../httpResponse.js";
 
 export default class RegisterBusinessRouter {
-  constructor({ registerBusinessUseCase } = {}) {
+  constructor({ registerBusinessUseCase, emailValidator } = {}) {
     this.registerBusinessUseCase = registerBusinessUseCase;
+    this.emailValidator = emailValidator;
   }
 
   route(httpRequest) {
@@ -15,6 +17,9 @@ export default class RegisterBusinessRouter {
       }
       if (!email) {
         return httpResponse.badRequest(new MissingParamError("email"));
+      }
+      if (!this.emailValidator.execute(email)) {
+        return httpResponse.badRequest(new InvalidParamError("email"));
       }
       if (!password) {
         return httpResponse.badRequest(new MissingParamError("password"));
