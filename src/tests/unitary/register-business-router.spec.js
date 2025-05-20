@@ -97,4 +97,28 @@ describe("Register Business Router", () => {
       password: "valid_password",
     });
   });
+
+  test("Should throw if invalid dependency is provided", () => {
+    const suts = [
+      new RegisterBusinessRouter(),
+      new RegisterBusinessRouter({}),
+      new RegisterBusinessRouter({
+        registerBusinessUseCase: {},
+      }),
+    ];
+
+    for (const sut of suts) {
+      const httpRequest = {
+        body: {
+          name: "any_name",
+          email: "any_email@mail.com",
+          password: "any_password",
+        },
+      };
+      const httpResponse = sut.route(httpRequest);
+
+      expect(httpResponse.statusCode).toBe(500);
+      expect(httpResponse.body).toEqual(new ServerError());
+    }
+  });
 });

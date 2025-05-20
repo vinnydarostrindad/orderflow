@@ -2,7 +2,7 @@ import MissingParamError from "../../utils/errors/missing-param-error.js";
 import httpResponse from "../httpResponse.js";
 
 export default class RegisterBusinessRouter {
-  constructor({ registerBusinessUseCase }) {
+  constructor({ registerBusinessUseCase } = {}) {
     this.registerBusinessUseCase = registerBusinessUseCase;
   }
 
