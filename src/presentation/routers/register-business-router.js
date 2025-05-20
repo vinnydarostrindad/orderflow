@@ -1,8 +1,11 @@
-// import registerBusinessUseCase from "../domain/usecase/register-business-usecase.js";
 import MissingParamError from "../../utils/errors/missing-param-error.js";
 import httpResponse from "../httpResponse.js";
 
 export default class RegisterBusinessRouter {
+  constructor({ registerBusinessUseCase }) {
+    this.registerBusinessUseCase = registerBusinessUseCase;
+  }
+
   route(httpRequest) {
     try {
       const { name, email, password } = httpRequest.body;
@@ -16,12 +19,20 @@ export default class RegisterBusinessRouter {
       if (!password) {
         return httpResponse.badRequest(new MissingParamError("password"));
       }
+      const entity = this.registerBusinessUseCase.execute({
+        name,
+        email,
+        password,
+      });
+      return httpResponse.created(entity);
     } catch {
       return httpResponse.serverError();
     }
   }
 }
 
+// import registerBusinessUseCase from "../domain/usecase/register-business-usecase.js";
+//
 // async function registerBusinessRouter(req, res, method) {
 //   const { name, email, password } = JSON.parse(body);
 //   if (!name || !email || !password) {

@@ -2,9 +2,32 @@ import RegisterBusinessRouter from "../../presentation/routers/register-business
 import MissingParamError from "../../utils/errors/missing-param-error";
 import ServerError from "../../utils/errors/server-error.js";
 
+const makeSut = () => {
+  const registerBusinessUseCaseSpy = makeRegisterBusinessUseCaseSpy();
+  const sut = new RegisterBusinessRouter({
+    registerBusinessUseCase: registerBusinessUseCaseSpy,
+  });
+
+  return {
+    sut,
+    registerBusinessUseCaseSpy,
+  };
+};
+
+const makeRegisterBusinessUseCaseSpy = () => {
+  class RegisterBusinessUseCaseSpy {
+    execute({ name, email, password }) {
+      return { name, email, password };
+    }
+  }
+
+  const registerBusinessUseCaseSpy = new RegisterBusinessUseCaseSpy();
+  return registerBusinessUseCaseSpy;
+};
+
 describe("Register Business Router", () => {
   test("Should return 400 if no name is provided", () => {
-    const sut = new RegisterBusinessRouter();
+    const { sut } = makeSut();
     const httpRequest = {
       body: {
         email: "any_email@mail.com",
@@ -17,7 +40,7 @@ describe("Register Business Router", () => {
   });
 
   test("Should return 400 if no email is provided", () => {
-    const sut = new RegisterBusinessRouter();
+    const { sut } = makeSut();
     const httpRequest = {
       body: {
         name: "any_name",
@@ -30,7 +53,7 @@ describe("Register Business Router", () => {
   });
 
   test("Should return 400 if no password is provided", () => {
-    const sut = new RegisterBusinessRouter();
+    const { sut } = makeSut();
     const httpRequest = {
       body: {
         name: "any_name",
@@ -43,7 +66,7 @@ describe("Register Business Router", () => {
   });
 
   test("Should return 500 if no httpRequest is provided", () => {
-    const sut = new RegisterBusinessRouter();
+    const { sut } = makeSut();
     const httpRequest = {};
     const httpResponse = sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
@@ -51,9 +74,27 @@ describe("Register Business Router", () => {
   });
 
   test("Should return 500 if httpRequest has no body", () => {
-    const sut = new RegisterBusinessRouter();
+    const { sut } = makeSut();
     const httpResponse = sut.route();
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  test("Should return 201 with created business when input is valid", () => {
+    const { sut } = makeSut();
+    const httpRequest = {
+      body: {
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        password: "valid_password",
+      },
+    };
+    const httpResponse = sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(201);
+    expect(httpResponse.body).toEqual({
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      password: "valid_password",
+    });
   });
 });

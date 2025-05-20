@@ -14,6 +14,13 @@ const httpResponse = {
       body: new ServerError(),
     };
   },
+
+  created(entity) {
+    return {
+      statusCode: 201,
+      body: entity,
+    };
+  },
 };
 
 export default httpResponse;
