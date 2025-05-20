@@ -35,6 +35,7 @@
   "dependencies": {
     "dotenv": "^16.5.0",
     "dotenv-expand": "^12.0.2",
-    "pg": "^8.15.6"
+    "pg": "^8.15.6",
+    "validator": "^13.15.0"
   }
 }
