@@ -1,4 +1,5 @@
 import EmailValidator from "../../utils/email-validator";
+import MissingParamError from "../../utils/errors/missing-param-error";
 
 const makeSut = () => {
   return new EmailValidator();
@@ -15,5 +16,11 @@ describe("Email Validation", () => {
     const sut = makeSut();
     const isValid = sut.execute("invalid_email.com");
     expect(isValid).toBe(false);
+  });
+
+  test("Should throw if no email is provided", () => {
+    const sut = makeSut();
+
+    expect(sut.execute).toThrow(new MissingParamError("email"));
   });
 });
