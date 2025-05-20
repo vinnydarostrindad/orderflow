@@ -1,27 +1,19 @@
 // import registerBusinessUseCase from "../domain/usecase/register-business-usecase.js";
-import MissingParamError from "../utils/errors/missing-param-error.js";
+import MissingParamError from "../../utils/errors/missing-param-error.js";
+import httpResponse from "../httpResponse.js";
 
 export default class RegisterBusinessRouter {
   route(httpRequest) {
     const { name, email, password } = httpRequest.body;
 
     if (!name) {
-      return {
-        statusCode: 400,
-        body: new MissingParamError("name"),
-      };
+      return httpResponse.badRequest(new MissingParamError("name"));
     }
     if (!email) {
-      return {
-        statusCode: 400,
-        body: new MissingParamError("email"),
-      };
+      return httpResponse.badRequest(new MissingParamError("email"));
     }
     if (!password) {
-      return {
-        statusCode: 400,
-        body: new MissingParamError("password"),
-      };
+      return httpResponse.badRequest(new MissingParamError("password"));
     }
   }
 }

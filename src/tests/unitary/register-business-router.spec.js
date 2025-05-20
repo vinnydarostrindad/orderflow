@@ -1,4 +1,4 @@
-import RegisterBusinessRouter from "../../presentation/register-business-router";
+import RegisterBusinessRouter from "../../presentation/routers/register-business-router";
 import MissingParamError from "../../utils/errors/missing-param-error";
 
 describe("Register Business Router", () => {

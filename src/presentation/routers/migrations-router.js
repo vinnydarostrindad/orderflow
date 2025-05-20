@@ -1,4 +1,4 @@
-import { getMigrations, postMigrations } from "../infra/migrations.js";
+import { getMigrations, postMigrations } from "../../infra/migrations.js";
 
 async function migrationsController(req, res, method) {
   if (method === "GET") {
