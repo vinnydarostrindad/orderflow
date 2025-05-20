@@ -4,16 +4,20 @@ import httpResponse from "../httpResponse.js";
 
 export default class RegisterBusinessRouter {
   route(httpRequest) {
-    const { name, email, password } = httpRequest.body;
+    try {
+      const { name, email, password } = httpRequest.body;
 
-    if (!name) {
-      return httpResponse.badRequest(new MissingParamError("name"));
-    }
-    if (!email) {
-      return httpResponse.badRequest(new MissingParamError("email"));
-    }
-    if (!password) {
-      return httpResponse.badRequest(new MissingParamError("password"));
+      if (!name) {
+        return httpResponse.badRequest(new MissingParamError("name"));
+      }
+      if (!email) {
+        return httpResponse.badRequest(new MissingParamError("email"));
+      }
+      if (!password) {
+        return httpResponse.badRequest(new MissingParamError("password"));
+      }
+    } catch {
+      return httpResponse.serverError();
     }
   }
 }
