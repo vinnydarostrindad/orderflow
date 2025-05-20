@@ -3,7 +3,7 @@ import MissingParamError from "../../utils/errors/missing-param-error";
 import ServerError from "../../utils/errors/server-error.js";
 
 const makeSut = () => {
-  const registerBusinessUseCaseSpy = makeRegisterBusinessUseCaseSpy();
+  const registerBusinessUseCaseSpy = makeRegisterBusinessUseCase();
   const sut = new RegisterBusinessRouter({
     registerBusinessUseCase: registerBusinessUseCaseSpy,
   });
@@ -14,7 +14,7 @@ const makeSut = () => {
   };
 };
 
-const makeRegisterBusinessUseCaseSpy = () => {
+const makeRegisterBusinessUseCase = () => {
   class RegisterBusinessUseCaseSpy {
     execute({ name, email, password }) {
       return { name, email, password };
@@ -23,6 +23,16 @@ const makeRegisterBusinessUseCaseSpy = () => {
 
   const registerBusinessUseCaseSpy = new RegisterBusinessUseCaseSpy();
   return registerBusinessUseCaseSpy;
+};
+
+const makeRegisterBusinessUseCaseWithError = () => {
+  class registerBusinessUseCaseSpy {
+    execute() {
+      throw new Error();
+    }
+  }
+
+  return new registerBusinessUseCaseSpy();
 };
 
 describe("Register Business Router", () => {
@@ -98,12 +108,34 @@ describe("Register Business Router", () => {
     });
   });
 
-  test("Should throw if invalid dependency is provided", () => {
+  test("Should throw if any dependency throws", () => {
     const suts = [
       new RegisterBusinessRouter(),
       new RegisterBusinessRouter({}),
       new RegisterBusinessRouter({
         registerBusinessUseCase: {},
+      }),
+    ];
+
+    for (const sut of suts) {
+      const httpRequest = {
+        body: {
+          name: "any_name",
+          email: "any_email@mail.com",
+          password: "any_password",
+        },
+      };
+      const httpResponse = sut.route(httpRequest);
+
+      expect(httpResponse.statusCode).toBe(500);
+      expect(httpResponse.body).toEqual(new ServerError());
+    }
+  });
+
+  test("Should throw if invalid dependency is provided", () => {
+    const suts = [
+      new RegisterBusinessRouter({
+        registerBusinessUseCase: makeRegisterBusinessUseCaseWithError(),
       }),
     ];
 
