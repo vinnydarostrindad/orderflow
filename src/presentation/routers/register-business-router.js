@@ -24,6 +24,10 @@ export default class RegisterBusinessRouter {
         email,
         password,
       });
+      if (!entity) {
+        // O Error que irá retornar ainda será definido
+        return { statusCode: 400 };
+      }
       return httpResponse.created(entity);
     } catch {
       return httpResponse.serverError();

@@ -17,11 +17,19 @@ const makeSut = () => {
 const makeRegisterBusinessUseCase = () => {
   class RegisterBusinessUseCaseSpy {
     execute({ name, email, password }) {
-      return { name, email, password };
+      this.name = name;
+      this.email = email;
+      this.password = password;
+      return this.user;
     }
   }
 
   const registerBusinessUseCaseSpy = new RegisterBusinessUseCaseSpy();
+  registerBusinessUseCaseSpy.user = {
+    name: "valid_name",
+    email: "valid_email@mail.com",
+    password: "valid_password",
+  };
   return registerBusinessUseCaseSpy;
 };
 
@@ -75,6 +83,21 @@ describe("Register Business Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("password"));
   });
 
+  test("Should return 400 if no business is registered", () => {
+    const { sut, registerBusinessUseCaseSpy } = makeSut();
+    registerBusinessUseCaseSpy.user = null;
+    const httpRequest = {
+      body: {
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
+      },
+    };
+    const httpResponse = sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toBeUndefined();
+  });
+
   test("Should return 500 if no httpRequest is provided", () => {
     const { sut } = makeSut();
     const httpRequest = {};
@@ -91,7 +114,7 @@ describe("Register Business Router", () => {
   });
 
   test("Should return 201 with created business when input is valid", () => {
-    const { sut } = makeSut();
+    const { sut, registerBusinessUseCaseSpy } = makeSut();
     const httpRequest = {
       body: {
         name: "valid_name",
@@ -101,11 +124,7 @@ describe("Register Business Router", () => {
     };
     const httpResponse = sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(201);
-    expect(httpResponse.body).toEqual({
-      name: "valid_name",
-      email: "valid_email@mail.com",
-      password: "valid_password",
-    });
+    expect(httpResponse.body).toEqual(registerBusinessUseCaseSpy.user);
   });
 
   test("Should throw if any dependency throws", () => {
