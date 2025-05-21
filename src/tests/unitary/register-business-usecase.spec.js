@@ -2,24 +2,40 @@ import RegisterBusinessUseCase from "../../domain/usecase/register-business-usec
 import MissingParamError from "../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
-  const crypto = makeEncrypter();
-  const sut = new RegisterBusinessUseCase({ crypto });
+  const cryptoSpy = makeCrypto();
+  const idGeneratorSpy = makeIdGenerator();
+  const sut = new RegisterBusinessUseCase({
+    crypto: cryptoSpy,
+    idGenerator: idGeneratorSpy,
+  });
   return {
     sut,
-    crypto,
+    cryptoSpy,
+    idGeneratorSpy,
   };
 };
 
-const makeEncrypter = () => {
-  const crypto = {
+const makeCrypto = () => {
+  const cryptoSpy = {
     hash(password) {
       this.password = password;
       return this.hashedPassword;
     },
   };
 
-  crypto.hashedPassword = "any_hash";
-  return crypto;
+  cryptoSpy.hashedPassword = "any_hash";
+  return cryptoSpy;
+};
+
+const makeIdGenerator = () => {
+  const idGeneratorSpy = {
+    execute() {
+      return this.id;
+    },
+  };
+
+  idGeneratorSpy.id = "any_id";
+  return idGeneratorSpy;
 };
 
 describe("Register Business UseCase", () => {
@@ -54,24 +70,36 @@ describe("Register Business UseCase", () => {
   });
 
   test("Should call crypto with correct password", async () => {
-    const { sut, crypto } = makeSut();
+    const { sut, cryptoSpy } = makeSut();
     const props = {
       name: "any_name",
       email: "any_email@mail.com",
       password: "any_password",
     };
     await sut.execute(props);
-    expect(crypto.password).toBe(props.password);
+    expect(cryptoSpy.password).toBe(props.password);
   });
 
   test("Should return null if crypto returns invalid hash", async () => {
-    const { sut, crypto } = makeSut();
+    const { sut, cryptoSpy } = makeSut();
     const props = {
       name: "any_name",
       email: "any_email@mail.com",
       password: "any_password",
     };
-    crypto.hashedPassword = null;
+    cryptoSpy.hashedPassword = null;
+    const user = await sut.execute(props);
+    expect(user).toBeNull();
+  });
+
+  test("Should return null if idGenerator returns invalid id", async () => {
+    const { sut, idGeneratorSpy } = makeSut();
+    const props = {
+      name: "any_name",
+      email: "any_email@mail.com",
+      password: "any_password",
+    };
+    idGeneratorSpy.id = null;
     const user = await sut.execute(props);
     expect(user).toBeNull();
   });
