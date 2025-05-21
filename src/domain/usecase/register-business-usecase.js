@@ -19,11 +19,22 @@ export default class RegisterBusinessUseCase {
     }
     const hashedPassword = await this.crypto.hash(password);
     if (!hashedPassword) {
-      // Retornar um erro mais específico depois
+      // Fazer um erro mais expecífico depois
       return null;
     }
     const id = this.idGenerator.execute();
     if (!id) {
+      // Fazer um erro mais expecífico depois
+      return null;
+    }
+    const user = await this.businessRepository.create({
+      id,
+      name,
+      email,
+      password,
+    });
+    if (!user) {
+      // Fazer um erro mais expecífico depois
       return null;
     }
   }

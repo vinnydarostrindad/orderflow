@@ -140,4 +140,16 @@ describe("Register Business UseCase", () => {
     expect(businessRepositorySpy.user.email).toBe("any_email@mail.com");
     expect(businessRepositorySpy.user.password).toBe(cryptoSpy.hashedPassword);
   });
+
+  test("Should return null if businessRepository returns invalid user", async () => {
+    const { sut, businessRepositorySpy } = makeSut();
+    const props = {
+      name: "any_name",
+      email: "any_email@mail.com",
+      password: "any_password",
+    };
+    businessRepositorySpy.user = null;
+    const user = await sut.execute(props);
+    expect(user).toBeNull();
+  });
 });
