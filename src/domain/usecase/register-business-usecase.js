@@ -1,7 +1,7 @@
 import MissingParamError from "../../utils/errors/missing-param-error";
 
 export default class RegisterBusinessUseCase {
-  constructor({ crypto, idGenerator, businessRepository }) {
+  constructor({ crypto, idGenerator, businessRepository } = {}) {
     this.crypto = crypto;
     this.idGenerator = idGenerator;
     this.businessRepository = businessRepository;
@@ -37,6 +37,7 @@ export default class RegisterBusinessUseCase {
       // Fazer um erro mais expecífico depois
       return null;
     }
+    return user;
   }
 }
 

@@ -152,4 +152,58 @@ describe("Register Business UseCase", () => {
     const user = await sut.execute(props);
     expect(user).toBeNull();
   });
+
+  test("Should return user if everything is right", async () => {
+    const { sut } = makeSut();
+    const props = {
+      name: "any_name",
+      email: "any_email@mail.com",
+      password: "any_password",
+    };
+    const user = await sut.execute(props);
+    expect(user).toEqual({
+      id: "any_id",
+      name: "any_name",
+      email: "any_email@mail.com",
+      password: "any_hash",
+    });
+  });
+
+  test("Should throw if invalid denpencies are provided", async () => {
+    const crypto = makeCrypto();
+    const idGenerator = makeIdGenerator();
+    const suts = [
+      new RegisterBusinessUseCase(),
+      new RegisterBusinessUseCase({}),
+      new RegisterBusinessUseCase({
+        crypto: {},
+      }),
+      new RegisterBusinessUseCase({
+        crypto,
+      }),
+      new RegisterBusinessUseCase({
+        crypto,
+        idGenerator: {},
+      }),
+      new RegisterBusinessUseCase({
+        crypto,
+        idGenerator,
+      }),
+      new RegisterBusinessUseCase({
+        crypto,
+        idGenerator,
+        businessRepository: {},
+      }),
+    ];
+    const props = {
+      name: "any_name",
+      email: "any_email@mail.com",
+      password: "any_password",
+    };
+
+    for (const sut of suts) {
+      const promise = sut.execute(props);
+      expect(promise).rejects.toThrow(TypeError);
+    }
+  });
 });
