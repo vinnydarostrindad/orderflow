@@ -11,11 +11,15 @@ const makeSut = () => {
 };
 
 const makeEncrypter = () => {
-  return {
+  const crypto = {
     hash(password) {
       this.password = password;
+      return this.hashedPassword;
     },
   };
+
+  crypto.hashedPassword = "any_hash";
+  return crypto;
 };
 
 describe("Register Business UseCase", () => {
@@ -58,5 +62,17 @@ describe("Register Business UseCase", () => {
     };
     await sut.execute(props);
     expect(crypto.password).toBe(props.password);
+  });
+
+  test("Should return null if crypto returns invalid hash", async () => {
+    const { sut, crypto } = makeSut();
+    const props = {
+      name: "any_name",
+      email: "any_email@mail.com",
+      password: "any_password",
+    };
+    crypto.hashedPassword = null;
+    const user = await sut.execute(props);
+    expect(user).toBeNull();
   });
 });

@@ -15,7 +15,10 @@ export default class RegisterBusinessUseCase {
     if (!password) {
       throw new MissingParamError("password");
     }
-    await this.crypto.hash(password);
+    const hashedPassword = await this.crypto.hash(password);
+    if (!hashedPassword) {
+      return null;
+    }
   }
 }
 
