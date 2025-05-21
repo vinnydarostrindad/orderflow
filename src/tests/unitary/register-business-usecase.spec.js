@@ -30,6 +30,14 @@ const makeCrypto = () => {
   return cryptoSpy;
 };
 
+const makeCryptoWithError = () => {
+  return {
+    hash() {
+      throw new Error();
+    },
+  };
+};
+
 const makeIdGenerator = () => {
   const idGeneratorSpy = {
     execute() {
@@ -39,6 +47,14 @@ const makeIdGenerator = () => {
 
   idGeneratorSpy.id = "any_id";
   return idGeneratorSpy;
+};
+
+const makeIdGeneratorWithError = () => {
+  return {
+    execute() {
+      throw new Error();
+    },
+  };
 };
 
 const makeBusinessRepository = () => {
@@ -61,6 +77,14 @@ const makeBusinessRepository = () => {
   return businessRepositorySpy;
 };
 
+const makeBusinessRepositoryWithError = () => {
+  return {
+    create() {
+      throw new Error();
+    },
+  };
+};
+
 describe("Register Business UseCase", () => {
   test("Should throw if no name is provided ", () => {
     const { sut } = makeSut();
@@ -68,6 +92,7 @@ describe("Register Business UseCase", () => {
       email: "any_email@mail.com",
       password: "any_password",
     };
+
     const promise = sut.execute(props);
     expect(promise).rejects.toThrow(new MissingParamError("name"));
   });
@@ -78,6 +103,7 @@ describe("Register Business UseCase", () => {
       name: "any_name",
       password: "any_password",
     };
+
     const promise = sut.execute(props);
     expect(promise).rejects.toThrow(new MissingParamError("email"));
   });
@@ -88,6 +114,7 @@ describe("Register Business UseCase", () => {
       name: "any_name",
       email: "any_email@mail.com",
     };
+
     const promise = sut.execute(props);
     expect(promise).rejects.toThrow(new MissingParamError("password"));
   });
@@ -100,6 +127,7 @@ describe("Register Business UseCase", () => {
       password: "any_password",
     };
     await sut.execute(props);
+
     expect(cryptoSpy.password).toBe(props.password);
   });
 
@@ -111,6 +139,7 @@ describe("Register Business UseCase", () => {
       password: "any_password",
     };
     cryptoSpy.hashedPassword = null;
+
     const user = await sut.execute(props);
     expect(user).toBeNull();
   });
@@ -123,6 +152,7 @@ describe("Register Business UseCase", () => {
       password: "any_password",
     };
     idGeneratorSpy.id = null;
+
     const user = await sut.execute(props);
     expect(user).toBeNull();
   });
@@ -134,6 +164,7 @@ describe("Register Business UseCase", () => {
       email: "any_email@mail.com",
       password: "any_password",
     };
+
     await sut.execute(props);
     expect(businessRepositorySpy.user.id).toBe(idGeneratorSpy.id);
     expect(businessRepositorySpy.user.name).toBe("any_name");
@@ -149,6 +180,7 @@ describe("Register Business UseCase", () => {
       password: "any_password",
     };
     businessRepositorySpy.user = null;
+
     const user = await sut.execute(props);
     expect(user).toBeNull();
   });
@@ -160,6 +192,7 @@ describe("Register Business UseCase", () => {
       email: "any_email@mail.com",
       password: "any_password",
     };
+
     const user = await sut.execute(props);
     expect(user).toEqual({
       id: "any_id",
@@ -204,6 +237,35 @@ describe("Register Business UseCase", () => {
     for (const sut of suts) {
       const promise = sut.execute(props);
       expect(promise).rejects.toThrow(TypeError);
+    }
+  });
+
+  test("Should throw if any dependency throws", async () => {
+    const crypto = makeCrypto();
+    const idGenerator = makeIdGenerator();
+    const suts = [
+      new RegisterBusinessUseCase({
+        crypto: makeCryptoWithError(),
+      }),
+      new RegisterBusinessUseCase({
+        crypto,
+        idGenerator: makeIdGeneratorWithError(),
+      }),
+      new RegisterBusinessUseCase({
+        crypto,
+        idGenerator,
+        businessRepository: makeBusinessRepositoryWithError(),
+      }),
+    ];
+    const props = {
+      name: "any_name",
+      email: "any_email@mail.com",
+      password: "any_password",
+    };
+
+    for (const sut of suts) {
+      const promise = sut.execute(props);
+      expect(promise).rejects.toThrow();
     }
   });
 });
