@@ -2,9 +2,19 @@ import RegisterBusinessUseCase from "../../domain/usecase/register-business-usec
 import MissingParamError from "../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
-  const sut = new RegisterBusinessUseCase();
+  const crypto = makeEncrypter();
+  const sut = new RegisterBusinessUseCase({ crypto });
   return {
     sut,
+    crypto,
+  };
+};
+
+const makeEncrypter = () => {
+  return {
+    hash(password) {
+      this.password = password;
+    },
   };
 };
 
@@ -19,7 +29,7 @@ describe("Register Business UseCase", () => {
     expect(promise).rejects.toThrow(new MissingParamError("name"));
   });
 
-  test("Should throw if no email is provided ", async () => {
+  test("Should throw if no email is provided ", () => {
     const { sut } = makeSut();
     const props = {
       name: "any_name",
@@ -29,7 +39,7 @@ describe("Register Business UseCase", () => {
     expect(promise).rejects.toThrow(new MissingParamError("email"));
   });
 
-  test("Should throw if no password is provided ", async () => {
+  test("Should throw if no password is provided ", () => {
     const { sut } = makeSut();
     const props = {
       name: "any_name",
@@ -37,5 +47,16 @@ describe("Register Business UseCase", () => {
     };
     const promise = sut.execute(props);
     expect(promise).rejects.toThrow(new MissingParamError("password"));
+  });
+
+  test("Should call crypto with correct password", async () => {
+    const { sut, crypto } = makeSut();
+    const props = {
+      name: "any_name",
+      email: "any_email@mail.com",
+      password: "any_password",
+    };
+    await sut.execute(props);
+    expect(crypto.password).toBe(props.password);
   });
 });

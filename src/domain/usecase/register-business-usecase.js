@@ -1,6 +1,10 @@
 import MissingParamError from "../../utils/errors/missing-param-error";
 
 export default class RegisterBusinessUseCase {
+  constructor({ crypto }) {
+    this.crypto = crypto;
+  }
+
   async execute({ name, email, password } = {}) {
     if (!name) {
       throw new MissingParamError("name");
@@ -11,6 +15,7 @@ export default class RegisterBusinessUseCase {
     if (!password) {
       throw new MissingParamError("password");
     }
+    await this.crypto.hash(password);
   }
 }
 
