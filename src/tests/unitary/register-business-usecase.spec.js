@@ -59,7 +59,7 @@ const makeIdGeneratorWithError = () => {
 
 const makeBusinessRepository = () => {
   const businessRepositorySpy = {
-    create(id, name, email, hashedPassword) {
+    create({ id, name, email, hashedPassword }) {
       this.id = id;
       this.name = name;
       this.email = email;
@@ -166,10 +166,10 @@ describe("Register Business UseCase", () => {
     };
 
     await sut.execute(props);
-    expect(businessRepositorySpy.user.id).toBe(idGeneratorSpy.id);
-    expect(businessRepositorySpy.user.name).toBe("any_name");
-    expect(businessRepositorySpy.user.email).toBe("any_email@mail.com");
-    expect(businessRepositorySpy.user.password).toBe(cryptoSpy.hashedPassword);
+    expect(businessRepositorySpy.id).toBe(idGeneratorSpy.id);
+    expect(businessRepositorySpy.name).toBe("any_name");
+    expect(businessRepositorySpy.email).toBe("any_email@mail.com");
+    expect(businessRepositorySpy.password).toBe(cryptoSpy.hashedPassword);
   });
 
   test("Should return null if businessRepository returns invalid user", async () => {
