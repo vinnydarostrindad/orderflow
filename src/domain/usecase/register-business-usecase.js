@@ -1,9 +1,10 @@
 import MissingParamError from "../../utils/errors/missing-param-error";
 
 export default class RegisterBusinessUseCase {
-  constructor({ crypto, idGenerator }) {
+  constructor({ crypto, idGenerator, businessRepository }) {
     this.crypto = crypto;
     this.idGenerator = idGenerator;
+    this.businessRepository = businessRepository;
   }
 
   async execute({ name, email, password } = {}) {
