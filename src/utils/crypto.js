@@ -1,3 +1,4 @@
+import { scrypt } from "node:crypto";
 import MissingParamError from "./errors/missing-param-error";
 
 const crypto = {
@@ -5,6 +6,13 @@ const crypto = {
     if (!password) {
       throw new MissingParamError("password");
     }
+    return new Promise((resolve, reject) => {
+      scrypt(password, "salt", 64, (err, derivedKey) => {
+        if (err) reject(() => console.log(err));
+
+        resolve(derivedKey.toString("hex"));
+      });
+    });
   },
 };
 
