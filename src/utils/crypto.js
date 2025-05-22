@@ -1,18 +1,16 @@
 import { scrypt } from "node:crypto";
+import { promisify } from "node:util";
 import MissingParamError from "./errors/missing-param-error";
 
+const scryptPromise = promisify(scrypt);
+
 const crypto = {
-  hash(password) {
+  async hash(password) {
     if (!password) {
       throw new MissingParamError("password");
     }
-    return new Promise((resolve, reject) => {
-      scrypt(password, "salt", 64, (err, derivedKey) => {
-        if (err) reject(() => console.log(err));
-
-        resolve(derivedKey.toString("hex"));
-      });
-    });
+    const derivedKey = await scryptPromise(password, "salt", 64);
+    return derivedKey.toString("hex");
   },
 };
 
