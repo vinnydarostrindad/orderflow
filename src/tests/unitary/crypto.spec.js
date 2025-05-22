@@ -4,7 +4,7 @@ const mockCrypto = {
   hashedPassword: "any_hash",
 
   scrypt(password) {
-    mockCrypto.password = password;
+    scrypt.password = password;
     return mockCrypto.hashedPassword;
   },
 };
@@ -13,6 +13,7 @@ jest.unstable_mockModule("node:crypto", () => mockCrypto);
 
 import MissingParamError from "../../utils/errors/missing-param-error";
 const sut = (await import("../../utils/crypto.js")).default;
+const { scrypt } = await import("node:crypto");
 
 describe("Crypto", () => {
   test("Should throw if no password is provided", () => {
@@ -22,5 +23,10 @@ describe("Crypto", () => {
   test("Should return a hashed password", async () => {
     const hashedPassword = sut.hash("any_password");
     expect(hashedPassword).resolves.toBe("hashed_password");
+  });
+
+  test("Should call scrypt with correct password", async () => {
+    sut.hash("any_password");
+    expect(scrypt.password).toBe("any_password");
   });
 });
