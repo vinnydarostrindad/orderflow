@@ -1,7 +1,17 @@
 import { randomUUID } from "node:crypto";
 
-function generateID() {
-  return randomUUID();
-}
+const idGenerator = {
+  execute() {
+    return randomUUID();
+  },
+};
 
-export default generateID;
+export default idGenerator;
+
+// import { randomUUID } from "node:crypto";
+
+// function generateID() {
+//   return randomUUID();
+// }
+
+// export default generateID;
