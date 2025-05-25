@@ -95,4 +95,17 @@ describe("Business Repository", () => {
       values: ["any_id", "any_name", "any_email", "any_hash"],
     });
   });
+
+  test("Should return null if postgresAdapter return invalid user", async () => {
+    const { sut, postgresAdapterSpy } = makeSut();
+    const props = {
+      id: "any_id",
+      name: "any_name",
+      email: "any_email",
+      password: "any_hash",
+    };
+    postgresAdapterSpy.user = null;
+    const user = await sut.create(props);
+    expect(user).toBeNull();
+  });
 });
