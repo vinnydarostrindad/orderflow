@@ -2,10 +2,31 @@ import BusinessRepository from "../../infra/repositories/business-repository.js"
 import MissingParamError from "../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
-  const sut = new BusinessRepository();
+  const postgresAdapterSpy = makePostgresAdapter();
+  const sut = new BusinessRepository({
+    postgresAdapter: postgresAdapterSpy,
+  });
   return {
     sut,
+    postgresAdapterSpy,
   };
+};
+
+const makePostgresAdapter = () => {
+  const postgresAdapterSpy = {
+    query(queryObject) {
+      this.queryObject = queryObject;
+      return this.user;
+    },
+  };
+
+  postgresAdapterSpy.user = {
+    id: "any_id",
+    name: "any_name",
+    email: "any_email",
+    password: "any_hash",
+  };
+  return postgresAdapterSpy;
 };
 
 describe("Business Repository", () => {
@@ -51,5 +72,27 @@ describe("Business Repository", () => {
     };
     const promise = sut.create(props);
     expect(promise).rejects.toThrow(new MissingParamError("password"));
+  });
+
+  test("Should call postgresAdapter with correct object ", async () => {
+    const { sut, postgresAdapterSpy } = makeSut();
+    const props = {
+      id: "any_id",
+      name: "any_name",
+      email: "any_email",
+      password: "any_hash",
+    };
+    await sut.create(props);
+    expect(postgresAdapterSpy.queryObject).toEqual({
+      text: `
+        INSERT INTO
+          businesses (id, name, email, password)
+        VALUES
+          ($1, $2, $3, $4)
+        RETURNING
+          *
+      ;`,
+      values: ["any_id", "any_name", "any_email", "any_hash"],
+    });
   });
 });
