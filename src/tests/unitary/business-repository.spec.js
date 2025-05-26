@@ -29,8 +29,16 @@ const makePostgresAdapter = () => {
   return postgresAdapterSpy;
 };
 
+const makePostgresAdapterWithError = () => {
+  return {
+    query() {
+      throw new Error();
+    },
+  };
+};
+
 describe("Business Repository", () => {
-  test("Should throw if no id is provided", () => {
+  test("Should throw if no id is provided", async () => {
     const { sut } = makeSut();
     const props = {
       name: "any_name",
@@ -41,7 +49,7 @@ describe("Business Repository", () => {
     expect(promise).rejects.toThrow(new MissingParamError("id"));
   });
 
-  test("Should throw if no name is provided", () => {
+  test("Should throw if no name is provided", async () => {
     const { sut } = makeSut();
     const props = {
       id: "any_id",
@@ -52,7 +60,7 @@ describe("Business Repository", () => {
     expect(promise).rejects.toThrow(new MissingParamError("name"));
   });
 
-  test("Should throw if no email is provided", () => {
+  test("Should throw if no email is provided", async () => {
     const { sut } = makeSut();
     const props = {
       id: "any_id",
@@ -63,7 +71,7 @@ describe("Business Repository", () => {
     expect(promise).rejects.toThrow(new MissingParamError("email"));
   });
 
-  test("Should throw if no password is provided", () => {
+  test("Should throw if no password is provided", async () => {
     const { sut } = makeSut();
     const props = {
       id: "any_id",
@@ -125,5 +133,45 @@ describe("Business Repository", () => {
       email: "any_email",
       password: "any_hash",
     });
+  });
+
+  test("Should throw if invalid dependencies are provided", async () => {
+    const suts = [
+      new BusinessRepository(),
+      new BusinessRepository({}),
+      new BusinessRepository({
+        postgresAdapter: {},
+      }),
+    ];
+    const props = {
+      id: "any_id",
+      name: "any_name",
+      email: "any_email",
+      password: "any_hash",
+    };
+
+    for (const sut of suts) {
+      const promise = sut.create(props);
+      expect(promise).rejects.toThrow(TypeError);
+    }
+  });
+
+  test("Should throw if any dependency throws", async () => {
+    const suts = [
+      new BusinessRepository({
+        postgresAdapter: makePostgresAdapterWithError(),
+      }),
+    ];
+    const props = {
+      id: "any_id",
+      name: "any_name",
+      email: "any_email",
+      password: "any_hash",
+    };
+
+    for (const sut of suts) {
+      const promise = sut.create(props);
+      expect(promise).rejects.toThrow();
+    }
   });
 });
