@@ -1,7 +1,7 @@
-import RegisterBusinessRouter from "../../presentation/routers/register-business-router";
-import MissingParamError from "../../utils/errors/missing-param-error";
-import ServerError from "../../utils/errors/server-error.js";
-import InvalidParamError from "../../utils/errors/invalid-param-error.js";
+import RegisterBusinessRouter from "../../../presentation/routers/register-business-router.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
+import ServerError from "../../../utils/errors/server-error.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const registerBusinessUseCaseSpy = makeRegisterBusinessUseCase();

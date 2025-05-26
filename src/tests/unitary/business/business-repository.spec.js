@@ -1,5 +1,5 @@
-import BusinessRepository from "../../infra/repositories/business-repository.js";
-import MissingParamError from "../../utils/errors/missing-param-error.js";
+import BusinessRepository from "../../../infra/repositories/business-repository.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
   const postgresAdapterSpy = makePostgresAdapter();

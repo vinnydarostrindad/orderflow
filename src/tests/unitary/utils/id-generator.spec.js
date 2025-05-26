@@ -6,10 +6,9 @@ jest.unstable_mockModule("node:crypto", () => ({
   },
 }));
 
-const sut = (await import("../../utils/id-generator.js")).default;
+const sut = (await import("../../../utils/id-generator.js")).default;
 describe("Id Generator", () => {
   test("Should return id", () => {
-    console.log(sut);
     const id = sut.execute();
     expect(id).toBe("any_id");
   });

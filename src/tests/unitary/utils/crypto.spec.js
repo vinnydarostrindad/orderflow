@@ -7,8 +7,8 @@ jest.unstable_mockModule("node:crypto", () => ({
   },
 }));
 
-import MissingParamError from "../../utils/errors/missing-param-error";
-const sut = (await import("../../utils/crypto.js")).default;
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
+const sut = (await import("../../../utils/crypto.js")).default;
 const { scrypt } = await import("node:crypto");
 
 describe("Crypto", () => {

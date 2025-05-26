@@ -1,5 +1,5 @@
-import RegisterBusinessUseCase from "../../domain/usecase/register-business-usecase.js";
-import MissingParamError from "../../utils/errors/missing-param-error.js";
+import RegisterBusinessUseCase from "../../../domain/usecase/register-business-usecase.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
   const cryptoSpy = makeCrypto();
