@@ -17,7 +17,7 @@ jest.unstable_mockModule("pg", () => ({
 
     static async query(queryObject) {
       Client.query.queryObject = queryObject;
-      return "any_object";
+      return "any_result";
     }
 
     static async end() {
@@ -54,15 +54,20 @@ describe("Postgres Adapter", () => {
       await sut.query(queryObject);
       expect(Client.end.connectionEnded).toBe(true);
     });
-  });
 
-  describe("getNewClient Method", () => {
-    test("Should call Client with correct data", async () => {
+    test("Should return queryResults correctly", async () => {
       const queryObject = {
         text: "any_query",
         values: ["any_value"],
       };
-      await sut.query(queryObject);
+      const queryResults = await sut.query(queryObject);
+      expect(queryResults).toBe("any_result");
+    });
+  });
+
+  describe("getNewClient Method", () => {
+    test("Should call Client with correct data", async () => {
+      await sut.getNewClient();
       expect(Client.connectionData).toEqual({
         user: process.env.POSTGRES_USER,
         password: process.env.POSTGRES_PASSWORD,
@@ -73,11 +78,7 @@ describe("Postgres Adapter", () => {
     });
 
     test("Should call client.connect correctly", async () => {
-      const queryObject = {
-        text: "any_query",
-        values: ["any_value"],
-      };
-      await sut.query(queryObject);
+      await sut.getNewClient();
       expect(Client.connect.isConnected).toBe(true);
     });
 

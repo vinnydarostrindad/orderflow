@@ -14,9 +14,11 @@ export default {
 
     try {
       client = await this.getNewClient();
-      await client.query(queryObject);
+      const queryResults = await client.query(queryObject);
+      return queryResults;
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      throw err;
     } finally {
       await client?.end();
     }
