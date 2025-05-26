@@ -34,6 +34,7 @@ export default class BusinessRepository {
       // Fazer um erro mais específico depois
       return null;
     }
+    return user;
   }
 }
 

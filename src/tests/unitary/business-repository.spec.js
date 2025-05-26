@@ -108,4 +108,22 @@ describe("Business Repository", () => {
     const user = await sut.create(props);
     expect(user).toBeNull();
   });
+
+  test("Should return user if everything is right", async () => {
+    const { sut } = makeSut();
+    const props = {
+      id: "any_id",
+      name: "any_name",
+      email: "any_email",
+      password: "any_hash",
+    };
+
+    const user = await sut.create(props);
+    expect(user).toEqual({
+      id: "any_id",
+      name: "any_name",
+      email: "any_email",
+      password: "any_hash",
+    });
+  });
 });
