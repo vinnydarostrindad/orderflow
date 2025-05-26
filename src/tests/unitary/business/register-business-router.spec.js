@@ -162,6 +162,22 @@ describe("Register Business Router", () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
+  test("Should call registerBusinessUseCase eith correct params", () => {
+    const { sut, registerBusinessUseCaseSpy } = makeSut();
+    const httpRequest = {
+      body: {
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        password: "valid_password",
+      },
+    };
+
+    sut.route(httpRequest);
+    expect(registerBusinessUseCaseSpy.name).toBe("valid_name");
+    expect(registerBusinessUseCaseSpy.email).toBe("valid_email@mail.com");
+    expect(registerBusinessUseCaseSpy.password).toBe("valid_password");
+  });
+
   test("Should return 201 with created business when input is valid", () => {
     const { sut, registerBusinessUseCaseSpy } = makeSut();
     const httpRequest = {
