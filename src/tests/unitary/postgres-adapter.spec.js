@@ -12,7 +12,7 @@ jest.unstable_mockModule("pg", () => ({
     }
 
     static async connect() {
-      Client.connect.connected = true;
+      Client.connect.isConnected = true;
     }
 
     static async query(queryObject) {
@@ -56,7 +56,7 @@ describe("Postgres Adapter", () => {
       values: ["any_value"],
     };
     await sut.query(queryObject);
-    expect(Client.connect.connected).toBe(true);
+    expect(Client.connect.isConnected).toBe(true);
   });
 
   test("Should call client.query with correct object ", async () => {
@@ -75,5 +75,10 @@ describe("Postgres Adapter", () => {
     };
     await sut.query(queryObject);
     expect(Client.end.connectionEnded).toBe(true);
+  });
+
+  test("Should call getNewClient and return the client already connected", async () => {
+    await sut.getNewClient();
+    expect(Client.connect.isConnected).toBe(true);
   });
 });
