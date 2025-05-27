@@ -21,6 +21,12 @@ const httpResponse = {
       body: entity,
     };
   },
+  ok(data) {
+    return {
+      statusCode: 200,
+      body: data,
+    };
+  },
 };
 
 export default httpResponse;
