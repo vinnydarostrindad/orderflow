@@ -1,0 +1,298 @@
+import RegisterEmployeeUseCase from "../../../domain/usecase/register-employee-usecase.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
+
+const makeSut = () => {
+  const cryptoSpy = makeCrypto();
+  const idGeneratorSpy = makeIdGenerator();
+  const employeeRepositorySpy = makeEmployeeRepository();
+  const sut = new RegisterEmployeeUseCase({
+    crypto: cryptoSpy,
+    idGenerator: idGeneratorSpy,
+    employeeRepository: employeeRepositorySpy,
+  });
+  return {
+    sut,
+    cryptoSpy,
+    idGeneratorSpy,
+    employeeRepositorySpy,
+  };
+};
+
+const makeCrypto = () => {
+  const cryptoSpy = {
+    hash(password) {
+      this.password = password;
+      return this.hashedPassword;
+    },
+  };
+
+  cryptoSpy.hashedPassword = "any_hash";
+  return cryptoSpy;
+};
+
+const makeCryptoWithError = () => {
+  return {
+    hash() {
+      throw new Error();
+    },
+  };
+};
+
+const makeIdGenerator = () => {
+  const idGeneratorSpy = {
+    execute() {
+      return this.id;
+    },
+  };
+
+  idGeneratorSpy.id = "any_id";
+  return idGeneratorSpy;
+};
+
+const makeIdGeneratorWithError = () => {
+  return {
+    execute() {
+      throw new Error();
+    },
+  };
+};
+
+const makeEmployeeRepository = () => {
+  const employeeRepositorySpy = {
+    create({ id, business_id, name, role, hashedPassword }) {
+      this.id = id;
+      this.business_id = business_id;
+      this.name = name;
+      this.role = role;
+      this.password = hashedPassword;
+      return this.employee;
+    },
+  };
+
+  employeeRepositorySpy.employee = {
+    id: "any_id",
+    business_id: "business_id",
+    name: "any_name",
+    role: "any_role",
+    password: "any_hash",
+  };
+  return employeeRepositorySpy;
+};
+
+const makeEmployeeRepositoryWithError = () => {
+  return {
+    create() {
+      throw new Error();
+    },
+  };
+};
+
+describe("Register Employee UseCase", () => {
+  test("Should throw if no name is provided ", async () => {
+    const { sut } = makeSut();
+    const props = {
+      business_id: "business_id",
+      role: "any_role",
+      password: "any_password",
+    };
+
+    const promise = sut.execute(props);
+    expect(promise).rejects.toThrow(new MissingParamError("name"));
+  });
+
+  test("Should throw if no role is provided ", async () => {
+    const { sut } = makeSut();
+    const props = {
+      business_id: "business_id",
+      name: "any_name",
+      password: "any_password",
+    };
+
+    const promise = sut.execute(props);
+    expect(promise).rejects.toThrow(new MissingParamError("role"));
+  });
+
+  test("Should throw if no password is provided ", async () => {
+    const { sut } = makeSut();
+    const props = {
+      business_id: "business_id",
+      name: "any_name",
+      role: "any_role",
+    };
+
+    const promise = sut.execute(props);
+    expect(promise).rejects.toThrow(new MissingParamError("password"));
+  });
+
+  test("Should throw if no business_id is provided ", async () => {
+    const { sut } = makeSut();
+    const props = {
+      name: "any_name",
+      role: "any_role",
+      password: "any_password",
+    };
+
+    const promise = sut.execute(props);
+    expect(promise).rejects.toThrow(new MissingParamError("business_id"));
+  });
+
+  test("Should call crypto with correct password", async () => {
+    const { sut, cryptoSpy } = makeSut();
+    const props = {
+      business_id: "business_id",
+      name: "any_name",
+      role: "any_role",
+      password: "any_password",
+    };
+    await sut.execute(props);
+
+    expect(cryptoSpy.password).toBe(props.password);
+  });
+
+  test("Should return null if crypto returns invalid hash", async () => {
+    const { sut, cryptoSpy } = makeSut();
+    const props = {
+      business_id: "business_id",
+      name: "any_name",
+      role: "any_role",
+      password: "any_password",
+    };
+    cryptoSpy.hashedPassword = null;
+
+    const employee = await sut.execute(props);
+    expect(employee).toBeNull();
+  });
+
+  test("Should return null if idGenerator returns invalid id", async () => {
+    const { sut, idGeneratorSpy } = makeSut();
+    const props = {
+      business_id: "business_id",
+      name: "any_name",
+      role: "any_role",
+      password: "any_password",
+    };
+    idGeneratorSpy.id = null;
+
+    const employee = await sut.execute(props);
+    expect(employee).toBeNull();
+  });
+
+  test("Should call employeeRepository with correct values", async () => {
+    const { sut, employeeRepositorySpy, cryptoSpy, idGeneratorSpy } = makeSut();
+    const props = {
+      business_id: "business_id",
+      name: "any_name",
+      role: "any_role",
+      password: "any_password",
+    };
+
+    await sut.execute(props);
+    expect(employeeRepositorySpy.id).toBe(idGeneratorSpy.id);
+    expect(employeeRepositorySpy.business_id).toBe("business_id");
+    expect(employeeRepositorySpy.name).toBe("any_name");
+    expect(employeeRepositorySpy.role).toBe("any_role");
+    expect(employeeRepositorySpy.password).toBe(cryptoSpy.hashedPassword);
+  });
+
+  test("Should return null if employeeRepository returns invalid employee", async () => {
+    const { sut, employeeRepositorySpy } = makeSut();
+    const props = {
+      business_id: "business_id",
+      name: "any_name",
+      role: "any_role",
+      password: "any_password",
+    };
+    employeeRepositorySpy.employee = null;
+
+    const employee = await sut.execute(props);
+    expect(employee).toBeNull();
+  });
+
+  test("Should return employee if everything is right", async () => {
+    const { sut } = makeSut();
+    const props = {
+      business_id: "business_id",
+      name: "any_name",
+      role: "any_role",
+      password: "any_password",
+    };
+
+    const employee = await sut.execute(props);
+    expect(employee).toEqual({
+      id: "any_id",
+      business_id: "business_id",
+      name: "any_name",
+      role: "any_role",
+      password: "any_hash",
+    });
+  });
+
+  test("Should throw if invalid denpencies are provided", async () => {
+    const crypto = makeCrypto();
+    const idGenerator = makeIdGenerator();
+    const suts = [
+      new RegisterEmployeeUseCase(),
+      new RegisterEmployeeUseCase({}),
+      new RegisterEmployeeUseCase({
+        crypto: {},
+      }),
+      new RegisterEmployeeUseCase({
+        crypto,
+      }),
+      new RegisterEmployeeUseCase({
+        crypto,
+        idGenerator: {},
+      }),
+      new RegisterEmployeeUseCase({
+        crypto,
+        idGenerator,
+      }),
+      new RegisterEmployeeUseCase({
+        crypto,
+        idGenerator,
+        employeeRepository: {},
+      }),
+    ];
+    const props = {
+      business_id: "business_id",
+      name: "any_name",
+      role: "any_role",
+      password: "any_password",
+    };
+
+    for (const sut of suts) {
+      const promise = sut.execute(props);
+      expect(promise).rejects.toThrow(TypeError);
+    }
+  });
+
+  test("Should throw if any dependency throws", async () => {
+    const crypto = makeCrypto();
+    const idGenerator = makeIdGenerator();
+    const suts = [
+      new RegisterEmployeeUseCase({
+        crypto: makeCryptoWithError(),
+      }),
+      new RegisterEmployeeUseCase({
+        crypto,
+        idGenerator: makeIdGeneratorWithError(),
+      }),
+      new RegisterEmployeeUseCase({
+        crypto,
+        idGenerator,
+        employeeRepository: makeEmployeeRepositoryWithError(),
+      }),
+    ];
+    const props = {
+      business_id: "business_id",
+      name: "any_name",
+      role: "any_role",
+      password: "any_password",
+    };
+
+    for (const sut of suts) {
+      const promise = sut.execute(props);
+      expect(promise).rejects.toThrow();
+    }
+  });
+});
