@@ -1,10 +1,18 @@
 import ServerError from "../utils/errors/server-error.js";
+import MethodNotAllowedError from "../utils/errors/method-not-allowed-error.js";
 
 const httpResponse = {
   badRequest(error) {
     return {
       statusCode: 400,
       body: error,
+    };
+  },
+
+  methodNotAllowed() {
+    return {
+      statusCode: 405,
+      body: new MethodNotAllowedError(),
     };
   },
 
