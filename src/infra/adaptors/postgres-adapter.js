@@ -17,6 +17,7 @@ export default {
       const queryResults = await client.query(queryObject);
       return queryResults;
     } catch (err) {
+      // fazer um erro melhor
       console.error(err);
       throw err;
     } finally {
