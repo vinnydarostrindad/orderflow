@@ -129,4 +129,10 @@ describe("Pg Migrate", () => {
       expect(promise).rejects.toThrow();
     }
   });
+
+  test("Should cover default log function", () => {
+    const pgMigrate = new PgMigrate();
+    // Executa a função log só para cobrir
+    pgMigrate.defaultMigrationOptions.log("test");
+  });
 });
