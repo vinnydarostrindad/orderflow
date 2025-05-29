@@ -88,6 +88,14 @@ const makeEmployeeRepositoryWithError = () => {
 };
 
 describe("Register Employee UseCase", () => {
+  test("Should throw if no props are provided ", async () => {
+    const { sut } = makeSut();
+
+    const promise = sut.execute();
+    // Fazer uma validação de errors melhor
+    expect(promise).rejects.toThrow(new MissingParamError("business_id"));
+  });
+
   test("Should throw if no name is provided ", async () => {
     const { sut } = makeSut();
     const props = {

@@ -86,6 +86,13 @@ const makeBusinessRepositoryWithError = () => {
 };
 
 describe("Register Business UseCase", () => {
+  test("Should throw if no props are provided ", () => {
+    const { sut } = makeSut();
+
+    const promise = sut.execute();
+    expect(promise).rejects.toThrow(new MissingParamError("name"));
+  });
+
   test("Should throw if no name is provided ", () => {
     const { sut } = makeSut();
     const props = {
