@@ -38,6 +38,14 @@ const makePostgresAdapterWithError = () => {
 };
 
 describe("Business Repository", () => {
+  test("Should throw if no props are provided", async () => {
+    const { sut } = makeSut();
+
+    const promise = sut.create();
+    // Fazer uma validação de erros melhor
+    expect(promise).rejects.toThrow(new MissingParamError("id"));
+  });
+
   test("Should throw if no id is provided", async () => {
     const { sut } = makeSut();
     const props = {
