@@ -1,4 +1,5 @@
-import MissingParamError from "../../utils/errors/missing-param-error";
+import Employee from "../entities/employee.js";
+import MissingParamError from "../../utils/errors/missing-param-error.js";
 
 export default class RegisterEmployeeUseCase {
   constructor({ crypto, idGenerator, employeeRepository } = {}) {
@@ -30,18 +31,21 @@ export default class RegisterEmployeeUseCase {
       // Fazer um erro mais específico depois
       return null;
     }
-    const employee = await this.employeeRepository.create({
+
+    const employee = new Employee({
       id,
       business_id,
       name,
-      role,
       hashedPassword,
+      role,
     });
-    if (!employee) {
+
+    const results = await this.employeeRepository.create(employee);
+    if (!results) {
       // Fazer um erro mais específico depois
       return null;
     }
-    return employee;
+    return results;
   }
 }
 
