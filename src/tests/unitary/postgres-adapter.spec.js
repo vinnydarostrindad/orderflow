@@ -37,6 +37,26 @@ describe("Postgres Adapter", () => {
       expect(promise).rejects.toThrow(new MissingParamError("queryObject"));
     });
 
+    test("Should throw if getNewClient throws", async () => {
+      const originalConnect = Client.connect;
+
+      try {
+        Client.connect = () => {
+          throw new Error("Erro de conexão");
+        };
+
+        const queryObject = {
+          text: "any_query",
+          values: ["any_value"],
+        };
+
+        const promise = sut.query(queryObject);
+        await expect(promise).rejects.toThrow("Erro de conexão");
+      } finally {
+        Client.connect = originalConnect; // restaura para os outros testes
+      }
+    });
+
     test("Should call client.query with correct object", async () => {
       const queryObject = {
         text: "any_query",
