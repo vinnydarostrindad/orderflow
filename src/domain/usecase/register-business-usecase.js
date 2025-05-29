@@ -1,4 +1,5 @@
-import MissingParamError from "../../utils/errors/missing-param-error";
+import Business from "../entities/business.js";
+import MissingParamError from "../../utils/errors/missing-param-error.js";
 
 export default class RegisterBusinessUseCase {
   constructor({ crypto, idGenerator, businessRepository } = {}) {
@@ -27,17 +28,19 @@ export default class RegisterBusinessUseCase {
       // Fazer um erro mais específico depois
       return null;
     }
-    const user = await this.businessRepository.create({
+
+    const business = new Business({
       id,
       name,
       email,
       hashedPassword,
     });
-    if (!user) {
+    const result = await this.businessRepository.create(business);
+    if (!result) {
       // Fazer um erro mais específico depois
       return null;
     }
-    return user;
+    return result;
   }
 }
 
