@@ -34,7 +34,8 @@ export default class RegisterBusinessRouter {
         return { statusCode: 400 };
       }
       return httpResponse.created(business);
-    } catch {
+    } catch (err) {
+      console.log(err);
       return httpResponse.serverError();
     }
   }

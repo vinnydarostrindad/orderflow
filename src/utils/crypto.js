@@ -1,6 +1,6 @@
 import { scrypt } from "node:crypto";
 import { promisify } from "node:util";
-import MissingParamError from "./errors/missing-param-error";
+import MissingParamError from "./errors/missing-param-error.js";
 
 const scryptPromise = promisify(scrypt);
 

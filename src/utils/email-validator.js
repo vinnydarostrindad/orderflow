@@ -1,5 +1,5 @@
 import validator from "validator";
-import MissingParamError from "./errors/missing-param-error";
+import MissingParamError from "./errors/missing-param-error.js";
 
 const emailValidator = {
   execute(email) {

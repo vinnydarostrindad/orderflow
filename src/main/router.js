@@ -1,7 +1,7 @@
 // import { readFile as readFileAsync } from "node:fs/promises";
 // import { join, extname } from "node:path";
 import migrationRouterComposer from "./composer/migration-router-composer.js";
-// import registerBusinessRouter from "../presentation/register-business-router.js";
+import registerBusinessRouterComposer from "./composer/register-business-router-composer.js";
 // import registerEmployeeRouter from "../presentation/register-employee-router.js";
 
 const router = async function (req, res) {
@@ -23,38 +23,36 @@ const router = async function (req, res) {
       });
       return res.end(JSON.stringify(httpResponse.body));
     }
-    // if (url === "/api/v1/business") {
-    //   return await registerBusinessRouter(req, res, method);
-    // }
-    // if (url === "/api/v1/business/employee") {
-    //   return await registerEmployeeRouter(req, res, method);
-    // }
 
-    // if (method === "GET") {
-    //   if (url === "/") {
-    //     const htmlPath = join(basePath, "index.html");
-    //     const content = await readFileAsync(htmlPath);
-    //     res.writeHead(200, { "content-type": "text/html" });
-    //     return res.end(content);
-    //   }
+    if (method === "POST") {
+      if (url === "/api/v1/business") {
+        let body = "";
 
-    //   const ext = extname(url);
-    //   const filePath = join(basePath, url);
+        req.on("data", (chunk) => {
+          body += chunk.toString();
+        });
 
-    //   const mimeTypes = {
-    //     ".html": "text/html",
-    //     ".css": "text/css",
-    //   };
+        req.on("end", async () => {
+          const httpRequest = {
+            body: JSON.parse(body),
+          };
+          const registerBusinessRouter =
+            registerBusinessRouterComposer.execute();
 
-    //   if (mimeTypes[ext]) {
-    //     const content = await readFileAsync(filePath);
-    //     res.writeHead(200, { "content-type": mimeTypes[ext] });
-    //     return res.end(content);
-    //   }
+          const httpResponse = await registerBusinessRouter.route(httpRequest);
+          res.writeHead(httpResponse.statusCode, {
+            "content-type": "application/json",
+          });
+          res.end(JSON.stringify(httpResponse.body));
+        });
 
-    //   res.writeHead(404);
-    //   return res.end("Página não encontrada");
-    // }
+        return;
+      }
+      // if (url === "/api/v1/business/employee") {
+      //   return await registerEmployeeRouter(req, res, method);
+      // }
+    }
+
     res.writeHead(400);
     return res.end();
   } catch (error) {

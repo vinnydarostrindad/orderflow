@@ -1,11 +1,11 @@
-import MissingParamError from "../../utils/errors/missing-param-error";
+import MissingParamError from "../../utils/errors/missing-param-error.js";
 
 export default class BusinessRepository {
   constructor({ postgresAdapter } = {}) {
     this.postgresAdapter = postgresAdapter;
   }
 
-  async create({ id, name, email, password } = {}) {
+  async create({ id, name, email, hashedPassword } = {}) {
     if (!id) {
       throw new MissingParamError("id");
     }
@@ -15,11 +15,11 @@ export default class BusinessRepository {
     if (!email) {
       throw new MissingParamError("email");
     }
-    if (!password) {
-      throw new MissingParamError("password");
+    if (!hashedPassword) {
+      throw new MissingParamError("hashedPassword");
     }
 
-    const user = await this.postgresAdapter.query({
+    const result = await this.postgresAdapter.query({
       text: `
         INSERT INTO
           businesses (id, name, email, password)
@@ -28,13 +28,13 @@ export default class BusinessRepository {
         RETURNING
           *
       ;`,
-      values: [id, name, email, password],
+      values: [id, name, email, hashedPassword],
     });
-    if (!user) {
+    if (!result) {
       // Fazer um erro mais específico depois
       return null;
     }
-    return user;
+    return result.rows[0];
   }
 }
 
