@@ -1,5 +1,5 @@
 import { Client } from "pg";
-import MissingParamError from "../../utils/errors/missing-param-error";
+import MissingParamError from "../../utils/errors/missing-param-error.js";
 
 import dotenv from "dotenv";
 dotenv.config({ path: ".env.development" });

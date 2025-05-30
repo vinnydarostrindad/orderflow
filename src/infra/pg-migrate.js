@@ -28,7 +28,6 @@ export default class PgMigrate {
         ...options,
         dbClient: dbClient,
       });
-
       return migrations;
     } finally {
       dbClient?.end();

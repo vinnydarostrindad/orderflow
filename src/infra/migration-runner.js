@@ -9,7 +9,7 @@ export default class MigrationRunner {
   }
 
   async postPendingMigrations() {
-    const runnedMigrations = await this.pgMigrate.up();
+    const runnedMigrations = await this.pgMigrate.up({ dryRun: false });
     return runnedMigrations;
   }
 }
