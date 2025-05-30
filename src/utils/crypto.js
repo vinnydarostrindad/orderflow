@@ -10,7 +10,8 @@ const crypto = {
       throw new MissingParamError("password");
     }
     const derivedKey = await scryptPromise(password, "salt", 64);
-    return derivedKey.toString("hex");
+    const hashedPassword = derivedKey.toString("hex");
+    return hashedPassword;
   },
 };
 

@@ -1,9 +1,15 @@
 import { jest } from "@jest/globals";
 
 jest.unstable_mockModule("node:crypto", () => ({
-  scrypt(password) {
+  scrypt(password, salt, keylen, callback) {
     scrypt.password = password;
-    return "any_hash";
+    // Simula o retorno de um "Buffer"
+    const fakeBuffer = {
+      toString(encoding) {
+        if (encoding === "hex") return "hashed_password";
+      },
+    };
+    callback(null, fakeBuffer); // Simula sucesso
   },
 }));
 
@@ -17,8 +23,8 @@ describe("Crypto", () => {
   });
 
   test("Should return a hashed password", async () => {
-    const hashedPassword = sut.hash("any_password");
-    expect(hashedPassword).resolves.toBe("hashed_password");
+    const hashedPassword = await sut.hash("any_password");
+    expect(hashedPassword).toBe("hashed_password");
   });
 
   test("Should call scrypt with correct password", async () => {
