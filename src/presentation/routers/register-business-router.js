@@ -8,7 +8,7 @@ export default class RegisterBusinessRouter {
     this.emailValidator = emailValidator;
   }
 
-  route(httpRequest) {
+  async route(httpRequest) {
     try {
       const { name, email, password } = httpRequest.body;
 
@@ -24,16 +24,16 @@ export default class RegisterBusinessRouter {
       if (!password) {
         return httpResponse.badRequest(new MissingParamError("password"));
       }
-      const entity = this.registerBusinessUseCase.execute({
+      const business = await this.registerBusinessUseCase.execute({
         name,
         email,
         password,
       });
-      if (!entity) {
+      if (!business) {
         // O Error que irá retornar ainda será definido
         return { statusCode: 400 };
       }
-      return httpResponse.created(entity);
+      return httpResponse.created(business);
     } catch {
       return httpResponse.serverError();
     }
