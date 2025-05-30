@@ -1,5 +1,5 @@
-import MissingParamError from "../../utils/errors/missing-param-error";
-import httpResponse from "../httpResponse";
+import MissingParamError from "../../utils/errors/missing-param-error.js";
+import httpResponse from "../httpResponse.js";
 
 export default class RegisterEmployeeRouter {
   constructor({ registerEmployeeUseCase } = {}) {
@@ -21,7 +21,6 @@ export default class RegisterEmployeeRouter {
       if (!password) {
         return httpResponse.badRequest(new MissingParamError("password"));
       }
-
       const employee = await this.registerEmployeeUseCase.execute({
         business_id,
         name,
@@ -33,7 +32,8 @@ export default class RegisterEmployeeRouter {
         return httpResponse.serverError();
       }
       return httpResponse.created(employee);
-    } catch {
+    } catch (err) {
+      console.log(err);
       return httpResponse.serverError();
     }
   }

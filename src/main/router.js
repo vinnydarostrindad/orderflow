@@ -2,7 +2,7 @@
 // import { join, extname } from "node:path";
 import migrationRouterComposer from "./composer/migration-router-composer.js";
 import registerBusinessRouterComposer from "./composer/register-business-router-composer.js";
-// import registerEmployeeRouter from "../presentation/register-employee-router.js";
+import registerEmployeeRouterComposer from "./composer/register-employee-router-composer.js";
 
 const router = async function (req, res) {
   const method = req.method;
@@ -48,9 +48,29 @@ const router = async function (req, res) {
 
         return;
       }
-      // if (url === "/api/v1/business/employee") {
-      //   return await registerEmployeeRouter(req, res, method);
-      // }
+      if (url === "/api/v1/business/employee") {
+        let body = "";
+
+        req.on("data", (chunk) => {
+          body += chunk.toString();
+        });
+
+        req.on("end", async () => {
+          const httpRequest = {
+            body: JSON.parse(body),
+          };
+          const registerEmployeeRouter =
+            registerEmployeeRouterComposer.execute();
+
+          const httpResponse = await registerEmployeeRouter.route(httpRequest);
+          res.writeHead(httpResponse.statusCode, {
+            "content-type": "application/json",
+          });
+          res.end(JSON.stringify(httpResponse.body));
+        });
+
+        return;
+      }
     }
 
     res.writeHead(400);

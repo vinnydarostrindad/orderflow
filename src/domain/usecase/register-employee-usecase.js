@@ -40,12 +40,12 @@ export default class RegisterEmployeeUseCase {
       role,
     });
 
-    const results = await this.employeeRepository.create(employee);
-    if (!results) {
+    const result = await this.employeeRepository.create(employee);
+    if (!result) {
       // Fazer um erro mais específico depois
       return null;
     }
-    return results;
+    return result;
   }
 }
 
