@@ -12,6 +12,8 @@
     "test:unitary": "npm run test:watch -- -c jest-unitary-config.js",
     "test:integration": "npm run test:watch -- -c jest-integration-config.js",
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --silent -c jest-unitary-config.js",
+    "lint:prettier:check": "prettier . --check",
+    "lint:eslint:check": "eslint",
     "services:up": "docker compose -f src/infra/compose.yaml up -d",
     "services:down": "docker compose -f src/infra/compose.yaml down",
     "migrations:create": "node-pg-migrate -m src/infra/migrations create",
