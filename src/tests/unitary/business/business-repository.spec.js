@@ -21,10 +21,14 @@ const makePostgresAdapter = () => {
   };
 
   postgresAdapterSpy.user = {
-    id: "any_id",
-    name: "any_name",
-    email: "any_email",
-    password: "any_hash",
+    rows: [
+      {
+        id: "any_id",
+        name: "any_name",
+        email: "any_email",
+        hashedPassword: "any_hash",
+      },
+    ],
   };
   return postgresAdapterSpy;
 };
@@ -51,7 +55,7 @@ describe("Business Repository", () => {
     const props = {
       name: "any_name",
       email: "any_email",
-      password: "any_hash",
+      hashedPassword: "any_hash",
     };
     const promise = sut.create(props);
     expect(promise).rejects.toThrow(new MissingParamError("id"));
@@ -62,7 +66,7 @@ describe("Business Repository", () => {
     const props = {
       id: "any_id",
       email: "any_email",
-      password: "any_hash",
+      hashedPassword: "any_hash",
     };
     const promise = sut.create(props);
     expect(promise).rejects.toThrow(new MissingParamError("name"));
@@ -73,13 +77,13 @@ describe("Business Repository", () => {
     const props = {
       id: "any_id",
       name: "any_name",
-      password: "any_hash",
+      hashedPassword: "any_hash",
     };
     const promise = sut.create(props);
     expect(promise).rejects.toThrow(new MissingParamError("email"));
   });
 
-  test("Should throw if no password is provided", async () => {
+  test("Should throw if no hashedPassword is provided", async () => {
     const { sut } = makeSut();
     const props = {
       id: "any_id",
@@ -87,7 +91,7 @@ describe("Business Repository", () => {
       email: "any_email",
     };
     const promise = sut.create(props);
-    expect(promise).rejects.toThrow(new MissingParamError("password"));
+    expect(promise).rejects.toThrow(new MissingParamError("hashedPassword"));
   });
 
   test("Should call postgresAdapter with correct object ", async () => {
@@ -96,7 +100,7 @@ describe("Business Repository", () => {
       id: "any_id",
       name: "any_name",
       email: "any_email",
-      password: "any_hash",
+      hashedPassword: "any_hash",
     };
     await sut.create(props);
     expect(postgresAdapterSpy.queryObject).toEqual({
@@ -108,7 +112,12 @@ describe("Business Repository", () => {
         RETURNING
           *
       ;`,
-      values: ["any_id", "any_name", "any_email", "any_hash"],
+      values: [
+        "00000000-0000-4000-8000-000000000000",
+        "any_name",
+        "any_email",
+        "any_hash",
+      ],
     });
   });
 
@@ -118,7 +127,7 @@ describe("Business Repository", () => {
       id: "any_id",
       name: "any_name",
       email: "any_email",
-      password: "any_hash",
+      hashedPassword: "any_hash",
     };
     postgresAdapterSpy.user = null;
     const user = await sut.create(props);
@@ -131,7 +140,7 @@ describe("Business Repository", () => {
       id: "any_id",
       name: "any_name",
       email: "any_email",
-      password: "any_hash",
+      hashedPassword: "any_hash",
     };
 
     const user = await sut.create(props);
@@ -139,7 +148,7 @@ describe("Business Repository", () => {
       id: "any_id",
       name: "any_name",
       email: "any_email",
-      password: "any_hash",
+      hashedPassword: "any_hash",
     });
   });
 
@@ -155,7 +164,7 @@ describe("Business Repository", () => {
       id: "any_id",
       name: "any_name",
       email: "any_email",
-      password: "any_hash",
+      hashedPassword: "any_hash",
     };
 
     for (const sut of suts) {
@@ -174,7 +183,7 @@ describe("Business Repository", () => {
       id: "any_id",
       name: "any_name",
       email: "any_email",
-      password: "any_hash",
+      hashedPassword: "any_hash",
     };
 
     for (const sut of suts) {
