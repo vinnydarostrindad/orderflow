@@ -1,18 +1,27 @@
-import generateID from "../../utils/generate-id.js";
-import hashPassword from "../../utils/hash-password.js";
+import MissingParamError from "../../utils/errors/missing-param-error.js";
 
 export default class Business {
-  constructor(id, name, email, password) {
+  constructor({ id, name, email, hashedPassword } = {}) {
+    this.validate(id, name, email, hashedPassword);
+
     this.id = id;
     this.name = name;
     this.email = email;
-    this.password = password;
+    this.hashedPassword = hashedPassword;
   }
 
-  static async create(name, email, password) {
-    const id = generateID();
-    const hashedPassword = await hashPassword(password);
-
-    return new Business(id, name, email, hashedPassword);
+  validate(id, name, email, hashedPassword) {
+    if (!id) {
+      throw new MissingParamError("id");
+    }
+    if (!name) {
+      throw new MissingParamError("name");
+    }
+    if (!email) {
+      throw new MissingParamError("email");
+    }
+    if (!hashedPassword) {
+      throw new MissingParamError("hashedPassword");
+    }
   }
 }

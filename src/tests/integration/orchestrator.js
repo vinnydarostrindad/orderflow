@@ -1,7 +1,9 @@
-import { query } from "../../infra/database.js";
+import postgresAdaptor from "../../infra/adaptors/postgres-adapter.js";
 
 async function cleanDatabase() {
-  await query("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
+  await postgresAdaptor.query(
+    "DROP SCHEMA public CASCADE; CREATE SCHEMA public;",
+  );
 }
 
 async function runMigrations() {

@@ -28,6 +28,7 @@ describe("register employee api", () => {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
+          business_id: "00000000-0000-4000-8000-000000000000",
           role: "waiter",
           name: "valid_name",
           password: "valid_password",

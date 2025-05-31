@@ -1,52 +1,80 @@
-import { readFile as readFileAsync } from "node:fs/promises";
-import { join, extname } from "node:path";
-import migrationsRouter from "../presentation/migrations-router.js";
-import registerBusinessRouter from "../presentation/register-business-router.js";
-import registerEmployeeRouter from "../presentation/register-employee-router.js";
+// import { readFile as readFileAsync } from "node:fs/promises";
+// import { join, extname } from "node:path";
+import migrationRouterComposer from "./composer/migration-router-composer.js";
+import registerBusinessRouterComposer from "./composer/register-business-router-composer.js";
+import registerEmployeeRouterComposer from "./composer/register-employee-router-composer.js";
 
 const router = async function (req, res) {
   const method = req.method;
   const url = req.url;
 
-  const basePath = join(process.cwd(), "src/main/pages");
-  console.log(basePath);
+  // const basePath = join(process.cwd(), "src/main/pages");
 
   try {
     if (url === "/api/v1/migrations") {
-      return await migrationsRouter(req, res, method);
-    }
-    if (url === "/api/v1/business") {
-      return await registerBusinessRouter(req, res, method);
-    }
-    if (url === "/api/v1/business/employee") {
-      return await registerEmployeeRouter(req, res, method);
-    }
-
-    if (method === "GET") {
-      if (url === "/") {
-        const htmlPath = join(basePath, "index.html");
-        const content = await readFileAsync(htmlPath);
-        res.writeHead(200, { "content-type": "text/html" });
-        return res.end(content);
-      }
-
-      const ext = extname(url);
-      const filePath = join(basePath, url);
-
-      const mimeTypes = {
-        ".html": "text/html",
-        ".css": "text/css",
+      const httpRequest = {
+        method,
       };
+      const migrationRouter = migrationRouterComposer.execute();
+      const httpResponse = await migrationRouter.route(httpRequest);
 
-      if (mimeTypes[ext]) {
-        const content = await readFileAsync(filePath);
-        res.writeHead(200, { "content-type": mimeTypes[ext] });
-        return res.end(content);
-      }
-
-      res.writeHead(404);
-      return res.end("Página não encontrada");
+      res.writeHead(httpResponse.statusCode, {
+        "content-type": "application/json",
+      });
+      return res.end(JSON.stringify(httpResponse.body));
     }
+
+    if (method === "POST") {
+      if (url === "/api/v1/business") {
+        let body = "";
+
+        req.on("data", (chunk) => {
+          body += chunk.toString();
+        });
+
+        req.on("end", async () => {
+          const httpRequest = {
+            body: JSON.parse(body),
+          };
+          const registerBusinessRouter =
+            registerBusinessRouterComposer.execute();
+
+          const httpResponse = await registerBusinessRouter.route(httpRequest);
+          res.writeHead(httpResponse.statusCode, {
+            "content-type": "application/json",
+          });
+          res.end(JSON.stringify(httpResponse.body));
+        });
+
+        return;
+      }
+      if (url === "/api/v1/business/employee") {
+        let body = "";
+
+        req.on("data", (chunk) => {
+          body += chunk.toString();
+        });
+
+        req.on("end", async () => {
+          const httpRequest = {
+            body: JSON.parse(body),
+          };
+          const registerEmployeeRouter =
+            registerEmployeeRouterComposer.execute();
+
+          const httpResponse = await registerEmployeeRouter.route(httpRequest);
+          res.writeHead(httpResponse.statusCode, {
+            "content-type": "application/json",
+          });
+          res.end(JSON.stringify(httpResponse.body));
+        });
+
+        return;
+      }
+    }
+
+    res.writeHead(400);
+    return res.end();
   } catch (error) {
     console.error("Erro ao processar requisição:", error);
     res.writeHead(500);
