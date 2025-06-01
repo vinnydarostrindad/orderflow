@@ -1,5 +1,3 @@
-// import { readFile as readFileAsync } from "node:fs/promises";
-// import { join, extname } from "node:path";
 import migrationRouterComposer from "./composer/migration-router-composer.js";
 import registerBusinessRouterComposer from "./composer/register-business-router-composer.js";
 import registerEmployeeRouterComposer from "./composer/register-employee-router-composer.js";
@@ -7,8 +5,6 @@ import registerEmployeeRouterComposer from "./composer/register-employee-router-
 const router = async function (req, res) {
   const method = req.method;
   const url = req.url;
-
-  // const basePath = join(process.cwd(), "src/main/pages");
 
   try {
     if (url === "/api/v1/migrations") {
