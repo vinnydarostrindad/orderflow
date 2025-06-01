@@ -6,17 +6,22 @@
   "main": "src/main/index.js",
   "scripts": {
     "dev": "npm run services:up && npm run wait:database && npm run migrations:up && node --watch src/main",
-    "test": "npm run services:up && npm run wait:database && concurrently -n node,jest --hide node -k -s command-jest \"node src/main\" \"node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --verbose -c jest-integration-config.js\"",
+    "test": "npm run services:up && npm run wait:database && concurrently -n node,jest --hide node -k -s command-jest \"node src/main\" \"npm run test:integration\"",
     "posttest": "npm run services:down",
-    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch --runInBand --verbose",
-    "test:unitary": "npm run test:watch -- -c jest-unitary-config.js",
-    "test:integration": "npm run test:watch -- -c jest-integration-config.js",
-    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --silent -c jest-unitary-config.js",
+    "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --verbose --colors -c jest-unitary-config.js",
+    "test:unit:watch": "npm run test:unit -- --watch",
+    "test:unit:silent": "npm run test:unit -- --silent --verbose=false",
+    "test:integration": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --verbose --colors -c jest-integration-config.js",
+    "test:integration:watch": "npm run test:integration -- --watch",
+    "test:coverage": "npm run test:unit:silent -- --coverage",
+    "lint:prettier:check": "prettier . --check",
+    "lint:eslint:check": "eslint",
     "services:up": "docker compose -f src/infra/compose.yaml up -d",
     "services:down": "docker compose -f src/infra/compose.yaml down",
     "migrations:create": "node-pg-migrate -m src/infra/migrations create",
     "migrations:up": "node-pg-migrate -m src/infra/migrations --envPath .env.development up",
-    "wait:database": "node src/utils/wait-for-postgres.js"
+    "wait:database": "node src/utils/wait-for-postgres.js",
+    "prepare": "husky"
   },
   "author": "",
   "license": "MIT",
@@ -35,6 +40,7 @@
   "dependencies": {
     "dotenv": "^16.5.0",
     "dotenv-expand": "^12.0.2",
+    "husky": "^9.1.7",
     "pg": "^8.15.6",
     "validator": "^13.15.0"
   }
