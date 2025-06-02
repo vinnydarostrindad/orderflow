@@ -34,22 +34,22 @@ const makeJwtWithError = () => {
 };
 
 describe("Auth Usecase", () => {
-  describe("inRegister method", () => {
+  describe("generateToken method", () => {
     test("Should throw if no id is provided", () => {
       const { sut } = makeSut();
-      expect(() => sut.inRegister()).toThrow(new MissingParamError("id"));
+      expect(() => sut.generateToken()).toThrow(new MissingParamError("id"));
     });
 
     test("Should call jwt.sign with the correct values", () => {
       const { sut, jwtSpy } = makeSut();
-      sut.inRegister("any_id");
+      sut.generateToken("any_id");
       expect(jwtSpy.id).toBe("any_id");
       expect(jwtSpy.secret).toBe("secret");
     });
 
     test("Should return token correctly", () => {
       const { sut } = makeSut();
-      const token = sut.inRegister("any_id");
+      const token = sut.generateToken("any_id");
       expect(token).toBe("any_token");
     });
 
@@ -63,7 +63,7 @@ describe("Auth Usecase", () => {
       ];
 
       for (const sut of suts) {
-        expect(() => sut.inRegister("any_id")).toThrow(TypeError);
+        expect(() => sut.generateToken("any_id")).toThrow(TypeError);
       }
     });
 
@@ -75,7 +75,7 @@ describe("Auth Usecase", () => {
       ];
 
       for (const sut of suts) {
-        expect(() => sut.inRegister("any_id")).toThrow();
+        expect(() => sut.generateToken("any_id")).toThrow();
       }
     });
   });

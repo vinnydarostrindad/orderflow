@@ -8,7 +8,7 @@ export default class AuthUseCase {
     this.jwt = jwt;
   }
 
-  inRegister(id) {
+  generateToken(id) {
     if (!id) {
       throw new MissingParamError("id");
     }
