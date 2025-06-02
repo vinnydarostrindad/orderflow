@@ -4,12 +4,15 @@ import ServerError from "../../../utils/errors/server-error.js";
 
 const makeSut = () => {
   const registerEmployeeUseCaseSpy = makeRegisterEmployeeUseCase();
+  const authUseCaseSpy = makeAuthUseCase();
   const sut = new RegisterEmployeeRouter({
     registerEmployeeUseCase: registerEmployeeUseCaseSpy,
+    authUseCase: authUseCaseSpy,
   });
   return {
     sut,
     registerEmployeeUseCaseSpy,
+    authUseCaseSpy,
   };
 };
 
@@ -20,17 +23,17 @@ const makeRegisterEmployeeUseCase = () => {
       this.name = name;
       this.role = role;
       this.password = password;
-      return this.user;
+      return this.employee;
     }
   }
 
   const registerEmployeeUseCaseSpy = new RegisterEmployeeUseCaseSpy();
-  registerEmployeeUseCaseSpy.user = {
-    id: "valid_id",
-    business_id: "business_id",
-    name: "valid_name",
-    role: "valid_role",
-    password: "valid_hash",
+  registerEmployeeUseCaseSpy.employee = {
+    id: "any_id",
+    business_id: "any_business_id",
+    name: "any_name",
+    role: "any_role",
+    password: "any_hash",
   };
   return registerEmployeeUseCaseSpy;
 };
@@ -41,6 +44,30 @@ const makeRegisterEmployeeUseCaseWithError = () => {
       throw new Error();
     }
   };
+};
+
+const makeAuthUseCase = () => {
+  class AuthUseCaseSpy {
+    generateToken(id) {
+      this.id = id;
+      return this.token;
+    }
+  }
+
+  const authUseCaseSpy = new AuthUseCaseSpy();
+  authUseCaseSpy.token = "any_token";
+  return authUseCaseSpy;
+};
+
+const makeAuthUseCaseWithError = () => {
+  class AuthUseCaseSpy {
+    generateToken() {
+      throw new Error();
+    }
+  }
+
+  const authUseCaseSpy = new AuthUseCaseSpy();
+  return authUseCaseSpy;
 };
 
 describe("Register Employee Router", () => {
@@ -119,7 +146,7 @@ describe("Register Employee Router", () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  test("Should return 500 no entity is returned", async () => {
+  test("Should return Error if no employee is returned", async () => {
     const { sut, registerEmployeeUseCaseSpy } = makeSut();
     const httpRequest = {
       body: {
@@ -129,11 +156,10 @@ describe("Register Employee Router", () => {
         password: "any_password",
       },
     };
-    registerEmployeeUseCaseSpy.user = null;
+    registerEmployeeUseCaseSpy.employee = null;
 
     const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse).toEqual(new Error());
   });
 
   test("Should call registerEmployeeBusiness with correct params", async () => {
@@ -153,8 +179,24 @@ describe("Register Employee Router", () => {
     expect(registerEmployeeUseCaseSpy.password).toBe("any_password");
   });
 
+  test("Should call authuseCase with correct params", async () => {
+    const { sut, authUseCaseSpy } = makeSut();
+    const httpRequest = {
+      body: {
+        business_id: "business_id",
+        name: "any_name",
+        role: "any_role",
+        password: "any_password",
+      },
+    };
+
+    await sut.route(httpRequest);
+    console.log(authUseCaseSpy);
+    expect(authUseCaseSpy.id).toBe("any_id");
+  });
+
   test("Should return 201 with created employee if inputs are valid", async () => {
-    const { sut } = makeSut();
+    const { sut, registerEmployeeUseCaseSpy, authUseCaseSpy } = makeSut();
     const httpRequest = {
       body: {
         business_id: "business_id",
@@ -166,20 +208,19 @@ describe("Register Employee Router", () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(201);
     expect(httpResponse.body).toEqual({
-      id: "valid_id",
-      business_id: "business_id",
-      name: "valid_name",
-      role: "valid_role",
-      password: "valid_hash",
+      employee: registerEmployeeUseCaseSpy.employee,
+      token: authUseCaseSpy.token,
     });
   });
 
   test("Should throw if any dependency throws", async () => {
+    const registerEmployeeUseCase = makeRegisterEmployeeUseCase();
     const suts = [
       new RegisterEmployeeRouter(),
       new RegisterEmployeeRouter({}),
       new RegisterEmployeeRouter({
-        registerEmployeeUseCase: {},
+        registerEmployeeUseCase,
+        authUseCaseSpy: {},
       }),
     ];
 
@@ -200,9 +241,14 @@ describe("Register Employee Router", () => {
   });
 
   test("Should throw if invalid dependency is provided", async () => {
+    const registerEmployeeUseCase = makeRegisterEmployeeUseCase;
     const suts = [
       new RegisterEmployeeRouter({
         registerEmployeeUseCase: makeRegisterEmployeeUseCaseWithError(),
+      }),
+      new RegisterEmployeeRouter({
+        registerEmployeeUseCase,
+        authUseCase: makeAuthUseCaseWithError(),
       }),
     ];
 

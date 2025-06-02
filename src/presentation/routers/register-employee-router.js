@@ -2,8 +2,9 @@ import MissingParamError from "../../utils/errors/missing-param-error.js";
 import httpResponse from "../httpResponse.js";
 
 export default class RegisterEmployeeRouter {
-  constructor({ registerEmployeeUseCase } = {}) {
+  constructor({ registerEmployeeUseCase, authUseCase } = {}) {
     this.registerEmployeeUseCase = registerEmployeeUseCase;
+    this.authUseCase = authUseCase;
   }
 
   async route(httpRequest) {
@@ -28,10 +29,17 @@ export default class RegisterEmployeeRouter {
         password,
       });
       if (!employee) {
-        // Fazer um erro personalizado
-        return httpResponse.serverError();
+        // Fazer um erro melhor depois
+        return new Error();
       }
-      return httpResponse.created(employee);
+
+      const token = this.authUseCase.generateToken(employee.id);
+
+      const response = {
+        employee,
+        token,
+      };
+      return httpResponse.created(response);
     } catch (err) {
       console.log(err);
       return httpResponse.serverError();
