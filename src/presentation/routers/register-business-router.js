@@ -3,9 +3,10 @@ import MissingParamError from "../../utils/errors/missing-param-error.js";
 import httpResponse from "../httpResponse.js";
 
 export default class RegisterBusinessRouter {
-  constructor({ registerBusinessUseCase, emailValidator } = {}) {
+  constructor({ registerBusinessUseCase, emailValidator, authUseCase } = {}) {
     this.registerBusinessUseCase = registerBusinessUseCase;
     this.emailValidator = emailValidator;
+    this.authUseCase = authUseCase;
   }
 
   async route(httpRequest) {
@@ -31,9 +32,15 @@ export default class RegisterBusinessRouter {
       });
       if (!business) {
         // O Error que irá retornar ainda será definido
-        return { statusCode: 400 };
+        return new Error();
       }
-      return httpResponse.created(business);
+
+      const token = this.authUseCase.generateToken(business.id);
+      const response = {
+        business,
+        token,
+      };
+      return httpResponse.created(response);
     } catch (err) {
       console.log(err);
       return httpResponse.serverError();
