@@ -1,11 +1,13 @@
 import { jest } from "@jest/globals";
 
-let isEmailValid = true;
-
 jest.unstable_mockModule("validator", () => ({
-  isEmail(email) {
-    validator.isEmail.email = email;
-    return isEmailValid;
+  default: {
+    isEmailValid: true,
+
+    isEmail(email) {
+      validator.default.isEmail.email = email;
+      return validator.default.isEmailValid;
+    },
   },
 }));
 
@@ -20,9 +22,14 @@ describe("Email Validation", () => {
   });
 
   test("Should return false if email is invalid", () => {
-    isEmailValid = false;
+    validator.default.isEmailValid = false;
     const isValid = sut.execute("invalid_email@mail.com");
     expect(isValid).toBe(false);
+  });
+
+  test("Should call emailValidator with correct email", () => {
+    sut.execute("valid_email@mail.com");
+    expect(validator.default.isEmail.email).toBe("valid_email@mail.com");
   });
 
   test("Should throw if no email is provided", () => {

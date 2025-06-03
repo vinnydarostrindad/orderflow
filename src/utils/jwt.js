@@ -1,5 +1,5 @@
-import * as jwt from "jsonwebtoken";
-import MissingParamError from "./errors/missing-param-error";
+import jwt from "jsonwebtoken";
+import MissingParamError from "./errors/missing-param-error.js";
 
 const jsonWebToken = {
   sign(payload, secret) {

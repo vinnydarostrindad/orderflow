@@ -1,10 +1,12 @@
 import { jest } from "@jest/globals";
 
 jest.unstable_mockModule("jsonwebtoken", () => ({
-  sign(payload, secret) {
-    jwt.sign.payload = payload;
-    jwt.sign.secret = secret;
-    return "any_token";
+  default: {
+    sign(payload, secret) {
+      jwt.default.sign.payload = payload;
+      jwt.default.sign.secret = secret;
+      return "any_token";
+    },
   },
 }));
 
@@ -20,8 +22,8 @@ describe("JWT", () => {
 
   test("Should call sign with correct values", () => {
     sut.sign("any_payload", "secret");
-    expect(jwt.sign.payload).toBe("any_payload");
-    expect(jwt.sign.secret).toBe("secret");
+    expect(jwt.default.sign.payload).toBe("any_payload");
+    expect(jwt.default.sign.secret).toBe("secret");
   });
 
   test("Should throw if no payload is provided", () => {
