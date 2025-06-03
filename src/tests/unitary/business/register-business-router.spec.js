@@ -6,15 +6,18 @@ import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 const makeSut = () => {
   const registerBusinessUseCaseSpy = makeRegisterBusinessUseCase();
   const emailValidatorSpy = makeEmailValidator();
+  const authUseCaseSpy = makeAuthUseCase();
   const sut = new RegisterBusinessRouter({
     registerBusinessUseCase: registerBusinessUseCaseSpy,
     emailValidator: emailValidatorSpy,
+    authUseCase: authUseCaseSpy,
   });
 
   return {
     sut,
     registerBusinessUseCaseSpy,
     emailValidatorSpy,
+    authUseCaseSpy,
   };
 };
 
@@ -24,12 +27,13 @@ const makeRegisterBusinessUseCase = () => {
       this.name = name;
       this.email = email;
       this.password = password;
-      return this.user;
+      return this.business;
     }
   }
 
   const registerBusinessUseCaseSpy = new RegisterBusinessUseCaseSpy();
-  registerBusinessUseCaseSpy.user = {
+  registerBusinessUseCaseSpy.business = {
+    id: "any_id",
     name: "valid_name",
     email: "valid_email@mail.com",
     password: "valid_password",
@@ -48,14 +52,13 @@ const makeRegisterBusinessUseCaseWithError = () => {
 };
 
 const makeEmailValidator = () => {
-  class EmailValidatorSpy {
-    execute({ email }) {
+  const emailValidatorSpy = {
+    execute(email) {
       this.email = email;
       return this.isValid;
-    }
-  }
+    },
+  };
 
-  const emailValidatorSpy = new EmailValidatorSpy();
   emailValidatorSpy.isValid = true;
   return emailValidatorSpy;
 };
@@ -68,6 +71,30 @@ const makeEmailValidatorWithError = () => {
   }
 
   return new EmailValidatorSpy();
+};
+
+const makeAuthUseCase = () => {
+  class AuthUseCaseSpy {
+    generateToken(id) {
+      this.id = id;
+      return this.token;
+    }
+  }
+
+  const authUseCaseSpy = new AuthUseCaseSpy();
+  authUseCaseSpy.token = "any_token";
+  return authUseCaseSpy;
+};
+
+const makeAuthUseCaseWithError = () => {
+  class AuthUseCaseSpy {
+    generateToken() {
+      throw new Error();
+    }
+  }
+
+  const authUseCaseSpy = new AuthUseCaseSpy();
+  return authUseCaseSpy;
 };
 
 describe("Register Business Router", () => {
@@ -113,22 +140,6 @@ describe("Register Business Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("password"));
   });
 
-  test("Should return 400 if no business is registered", async () => {
-    const { sut, registerBusinessUseCaseSpy } = makeSut();
-    const httpRequest = {
-      body: {
-        name: "any_name",
-        email: "any_email@mail.com",
-        password: "any_password",
-      },
-    };
-    registerBusinessUseCaseSpy.user = null;
-
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toBeUndefined();
-  });
-
   test("Should return 400 if invalid email is provided", async () => {
     const { sut, emailValidatorSpy } = makeSut();
     const httpRequest = {
@@ -162,7 +173,36 @@ describe("Register Business Router", () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  test("Should call registerBusinessUseCase eith correct params", async () => {
+  test("Should return Error if no business is registered", async () => {
+    const { sut, registerBusinessUseCaseSpy } = makeSut();
+    const httpRequest = {
+      body: {
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
+      },
+    };
+    registerBusinessUseCaseSpy.business = null;
+
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse).toEqual(new Error());
+  });
+
+  test("Should call emailValidator with correct params", async () => {
+    const { sut, emailValidatorSpy } = makeSut();
+    const httpRequest = {
+      body: {
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        password: "valid_password",
+      },
+    };
+
+    await sut.route(httpRequest);
+    expect(emailValidatorSpy.email).toBe("valid_email@mail.com");
+  });
+
+  test("Should call registerBusinessUseCase with correct params", async () => {
     const { sut, registerBusinessUseCaseSpy } = makeSut();
     const httpRequest = {
       body: {
@@ -178,8 +218,22 @@ describe("Register Business Router", () => {
     expect(registerBusinessUseCaseSpy.password).toBe("valid_password");
   });
 
+  test("Should call authuseCase with correct params", async () => {
+    const { sut, authUseCaseSpy } = makeSut();
+    const httpRequest = {
+      body: {
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        password: "valid_password",
+      },
+    };
+
+    await sut.route(httpRequest);
+    expect(authUseCaseSpy.id).toBe("any_id");
+  });
+
   test("Should return 201 with created business when input is valid", async () => {
-    const { sut, registerBusinessUseCaseSpy } = makeSut();
+    const { sut, registerBusinessUseCaseSpy, authUseCaseSpy } = makeSut();
     const httpRequest = {
       body: {
         name: "valid_name",
@@ -190,11 +244,15 @@ describe("Register Business Router", () => {
 
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(201);
-    expect(httpResponse.body).toEqual(registerBusinessUseCaseSpy.user);
+    expect(httpResponse.body).toEqual({
+      business: registerBusinessUseCaseSpy.business,
+      token: authUseCaseSpy.token,
+    });
   });
 
-  test("Should throw if any dependency throws", async () => {
+  test("Should throw if invalid dependency is provided", async () => {
     const registerBusinessUseCase = makeRegisterBusinessUseCase();
+    const emailValidator = makeEmailValidator();
     const suts = [
       new RegisterBusinessRouter(),
       new RegisterBusinessRouter({}),
@@ -207,6 +265,11 @@ describe("Register Business Router", () => {
       new RegisterBusinessRouter({
         registerBusinessUseCase,
         emailValidator: {},
+      }),
+      new RegisterBusinessRouter({
+        registerBusinessUseCase,
+        emailValidator,
+        authUseCase: {},
       }),
     ];
 
@@ -225,8 +288,9 @@ describe("Register Business Router", () => {
     }
   });
 
-  test("Should throw if invalid dependency is provided", async () => {
+  test("Should throw if any dependency throws", async () => {
     const registerBusinessUseCase = makeRegisterBusinessUseCase();
+    const emailValidator = makeEmailValidator();
     const suts = [
       new RegisterBusinessRouter({
         registerBusinessUseCase: makeRegisterBusinessUseCaseWithError(),
@@ -234,6 +298,11 @@ describe("Register Business Router", () => {
       new RegisterBusinessRouter({
         registerBusinessUseCase,
         emailValidator: makeEmailValidatorWithError(),
+      }),
+      new RegisterBusinessRouter({
+        registerBusinessUseCase,
+        emailValidator,
+        authUseCase: makeAuthUseCaseWithError(),
       }),
     ];
 

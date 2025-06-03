@@ -5,7 +5,7 @@ beforeAll(async () => {
 });
 
 describe("POST /api/v1/igrations", () => {
-  it("should return 201", async () => {
+  test("should return 201", async () => {
     const response = await fetch("http://localhost:3000/api/v1/migrations", {
       method: "POST",
     });
@@ -16,7 +16,7 @@ describe("POST /api/v1/igrations", () => {
     expect(responseBody.length).toBeGreaterThan(0);
   });
 
-  it("should return 200 and an empty array", async () => {
+  test("should return 200 and an empty array", async () => {
     const response = await fetch("http://localhost:3000/api/v1/migrations", {
       method: "POST",
     });

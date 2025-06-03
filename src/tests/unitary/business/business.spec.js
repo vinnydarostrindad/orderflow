@@ -3,7 +3,6 @@ import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 describe("Business Entity", () => {
   test("Should throw if no props are provided", () => {
-    // Fazer ua validação de erros melhor
     expect(() => new Business()).toThrow(new MissingParamError("id"));
   });
 
