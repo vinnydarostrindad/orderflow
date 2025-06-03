@@ -29,7 +29,7 @@ export default class RegisterEmployeeRouter {
         password,
       });
       if (!employee) {
-        // Fazer um erro melhor depois
+        // Fazer um erro mais específico depois
         return new Error();
       }
 

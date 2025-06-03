@@ -31,7 +31,7 @@ export default class RegisterBusinessRouter {
         password,
       });
       if (!business) {
-        // O Error que irá retornar ainda será definido
+        // Fazer um erro mais específico depois
         return new Error();
       }
 

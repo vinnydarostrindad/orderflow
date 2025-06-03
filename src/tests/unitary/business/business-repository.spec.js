@@ -46,7 +46,7 @@ describe("Business Repository", () => {
     const { sut } = makeSut();
 
     const promise = sut.create();
-    // Fazer uma validação de erros melhor
+    // Fazer um erro mais específico depois
     expect(promise).rejects.toThrow(new MissingParamError("id"));
   });
 
@@ -112,12 +112,7 @@ describe("Business Repository", () => {
         RETURNING
           *
       ;`,
-      values: [
-        "00000000-0000-4000-8000-000000000000",
-        "any_name",
-        "any_email",
-        "any_hash",
-      ],
+      values: ["any_id", "any_name", "any_email", "any_hash"],
     });
   });
 

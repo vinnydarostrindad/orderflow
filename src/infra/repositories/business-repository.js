@@ -28,13 +28,7 @@ export default class BusinessRepository {
         RETURNING
           *
       ;`,
-      values: [
-        // Apenas enquanto não tem autenticação
-        "00000000-0000-4000-8000-000000000000",
-        name,
-        email,
-        hashedPassword,
-      ],
+      values: [id, name, email, hashedPassword],
     });
     if (!result) {
       // Fazer um erro mais específico depois

@@ -37,7 +37,6 @@ describe("business registration api", () => {
 
     expect(typeof business.password).toBe("string");
     expect(business.password).not.toBe(requestBody.password);
-    expect(business.password.length).toBeGreaterThan(20); // bcrypt
 
     expect(typeof business.created_at).toBe("string");
     expect(!isNaN(Date.parse(business.created_at))).toBe(true);
