@@ -1,11 +1,33 @@
 import ServerError from "../utils/errors/server-error.js";
 import MethodNotAllowedError from "../utils/errors/method-not-allowed-error.js";
+import NotFoundError from "../utils/errors/not-found-error.js";
 
 const httpResponse = {
+  created(data) {
+    return {
+      statusCode: 201,
+      body: data,
+    };
+  },
+
+  ok(data) {
+    return {
+      statusCode: 200,
+      body: data,
+    };
+  },
+
   badRequest(error) {
     return {
       statusCode: 400,
       body: error,
+    };
+  },
+
+  notFound(resource) {
+    return {
+      statusCode: 404,
+      body: new NotFoundError(resource),
     };
   },
 
@@ -20,19 +42,6 @@ const httpResponse = {
     return {
       statusCode: 500,
       body: new ServerError(),
-    };
-  },
-
-  created(entity) {
-    return {
-      statusCode: 201,
-      body: entity,
-    };
-  },
-  ok(data) {
-    return {
-      statusCode: 200,
-      body: data,
     };
   },
 };
