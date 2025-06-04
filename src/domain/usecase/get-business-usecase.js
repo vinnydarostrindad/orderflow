@@ -10,7 +10,7 @@ export default class GetBusinessUseCase {
       throw new MissingParamError("id");
     }
 
-    const business = await this.businessRepository.findOne(id);
+    const business = await this.businessRepository.findById(id);
     if (!business) {
       return null;
     }

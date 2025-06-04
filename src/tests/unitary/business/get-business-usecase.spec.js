@@ -14,7 +14,7 @@ const makeSut = () => {
 
 const makeBusinessRepository = () => {
   class BusinessRepositorySpy {
-    findOne(id) {
+    findById(id) {
       this.id = id;
       return this.business;
     }
@@ -43,7 +43,7 @@ const makeBusinessRepositoryWithError = () => {
 describe("Get Business UseCase", () => {
   test("Should throw if no id is provided", async () => {
     const { sut } = makeSut();
-    expect(() => sut.execute()).rejects.toThrow(new MissingParamError("id"));
+    await expect(sut.execute()).rejects.toThrow(new MissingParamError("id"));
   });
 
   test("Should call businessRepository.findOne correctly", async () => {
@@ -80,7 +80,7 @@ describe("Get Business UseCase", () => {
     ];
 
     for (const sut of suts) {
-      expect(() => sut.execute("any_id")).rejects.toThrow(TypeError);
+      await expect(sut.execute("any_id")).rejects.toThrow(TypeError);
     }
   });
 
@@ -92,7 +92,7 @@ describe("Get Business UseCase", () => {
     ];
 
     for (const sut of suts) {
-      expect(() => sut.execute("any_id")).rejects.toThrow();
+      await expect(sut.execute("any_id")).rejects.toThrow();
     }
   });
 });

@@ -36,4 +36,31 @@ export default class BusinessRepository {
     }
     return result.rows[0];
   }
+
+  async findById(id) {
+    if (!id) {
+      throw new MissingParamError("id");
+    }
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          *
+        FROM
+          businesses
+        WHERE
+          id = $1
+        LIMIT
+          1
+      ;`,
+      values: [id],
+    });
+
+    if (!result) {
+      // Fazer um erro mais específico depois
+      return null;
+    }
+
+    return result.rows[0];
+  }
 }
