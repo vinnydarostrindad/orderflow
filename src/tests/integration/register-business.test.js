@@ -28,6 +28,7 @@ describe("business registration api", () => {
     const { business, token } = responseBody;
 
     expect(business).toMatchObject({
+      id: business.id,
       name: requestBody.name,
       email: requestBody.email,
     });
@@ -35,14 +36,16 @@ describe("business registration api", () => {
     expect(uuidVersion(business.id)).toBe(4);
     expect(validator.isUUID(business.id)).toBe(true);
 
+    expect(validator.isEmail(business.email)).toBe(true);
+
     expect(typeof business.password).toBe("string");
     expect(business.password).not.toBe(requestBody.password);
 
     expect(typeof business.created_at).toBe("string");
-    expect(!isNaN(Date.parse(business.created_at))).toBe(true);
+    expect(Date.parse(business.created_at)).not.toBeNaN();
 
     expect(typeof business.updated_at).toBe("string");
-    expect(!isNaN(Date.parse(business.updated_at))).toBe(true);
+    expect(Date.parse(business.updated_at)).not.toBeNaN();
 
     expect(validator.isJWT(token)).toBe(true);
   });

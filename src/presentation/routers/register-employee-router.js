@@ -34,12 +34,12 @@ export default class RegisterEmployeeRouter {
       }
 
       const token = this.authUseCase.generateToken(employee.id);
-
-      const response = {
+      const createdEmployee = {
         employee,
         token,
       };
-      return httpResponse.created(response);
+
+      return httpResponse.created(createdEmployee);
     } catch (err) {
       console.log(err);
       return httpResponse.serverError();

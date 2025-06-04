@@ -58,17 +58,18 @@ const makeIdGeneratorWithError = () => {
 };
 
 const makeBusinessRepository = () => {
-  const businessRepositorySpy = {
+  class BusinessRepositorySpy {
     create({ id, name, email, hashedPassword }) {
       this.id = id;
       this.name = name;
       this.email = email;
       this.password = hashedPassword;
-      return this.user;
-    },
-  };
+      return this.business;
+    }
+  }
 
-  businessRepositorySpy.user = {
+  const businessRepositorySpy = new BusinessRepositorySpy();
+  businessRepositorySpy.business = {
     id: "any_id",
     name: "any_name",
     email: "any_email@mail.com",
@@ -78,19 +79,19 @@ const makeBusinessRepository = () => {
 };
 
 const makeBusinessRepositoryWithError = () => {
-  return {
+  class BusinessRepositorySpy {
     create() {
       throw new Error();
-    },
-  };
+    }
+  }
+
+  return new BusinessRepositorySpy();
 };
 
 describe("Register Business UseCase", () => {
   test("Should throw if no props are provided ", () => {
     const { sut } = makeSut();
-
-    const promise = sut.execute();
-    expect(promise).rejects.toThrow(new MissingParamError("name"));
+    expect(() => sut.execute()).rejects.toThrow(new MissingParamError("name"));
   });
 
   test("Should throw if no name is provided ", () => {
@@ -99,9 +100,9 @@ describe("Register Business UseCase", () => {
       email: "any_email@mail.com",
       password: "any_password",
     };
-
-    const promise = sut.execute(props);
-    expect(promise).rejects.toThrow(new MissingParamError("name"));
+    expect(() => sut.execute(props)).rejects.toThrow(
+      new MissingParamError("name"),
+    );
   });
 
   test("Should throw if no email is provided ", () => {
@@ -110,9 +111,9 @@ describe("Register Business UseCase", () => {
       name: "any_name",
       password: "any_password",
     };
-
-    const promise = sut.execute(props);
-    expect(promise).rejects.toThrow(new MissingParamError("email"));
+    expect(() => sut.execute(props)).rejects.toThrow(
+      new MissingParamError("email"),
+    );
   });
 
   test("Should throw if no password is provided ", () => {
@@ -121,9 +122,9 @@ describe("Register Business UseCase", () => {
       name: "any_name",
       email: "any_email@mail.com",
     };
-
-    const promise = sut.execute(props);
-    expect(promise).rejects.toThrow(new MissingParamError("password"));
+    expect(() => sut.execute(props)).rejects.toThrow(
+      new MissingParamError("password"),
+    );
   });
 
   test("Should call crypto with correct password", async () => {
@@ -147,8 +148,8 @@ describe("Register Business UseCase", () => {
     };
     cryptoSpy.hashedPassword = null;
 
-    const user = await sut.execute(props);
-    expect(user).toBeNull();
+    const business = await sut.execute(props);
+    expect(business).toBeNull();
   });
 
   test("Should return null if idGenerator returns invalid id", async () => {
@@ -160,8 +161,8 @@ describe("Register Business UseCase", () => {
     };
     idGeneratorSpy.id = null;
 
-    const user = await sut.execute(props);
-    expect(user).toBeNull();
+    const business = await sut.execute(props);
+    expect(business).toBeNull();
   });
 
   test("Should call businessRepository with correct values", async () => {
@@ -179,20 +180,20 @@ describe("Register Business UseCase", () => {
     expect(businessRepositorySpy.password).toBe(cryptoSpy.hashedPassword);
   });
 
-  test("Should return null if businessRepository returns invalid user", async () => {
+  test("Should return null if businessRepository returns invalid business", async () => {
     const { sut, businessRepositorySpy } = makeSut();
     const props = {
       name: "any_name",
       email: "any_email@mail.com",
       password: "any_password",
     };
-    businessRepositorySpy.user = null;
+    businessRepositorySpy.business = null;
 
-    const user = await sut.execute(props);
-    expect(user).toBeNull();
+    const business = await sut.execute(props);
+    expect(business).toBeNull();
   });
 
-  test("Should return user if everything is right", async () => {
+  test("Should return business if everything is right", async () => {
     const { sut } = makeSut();
     const props = {
       name: "any_name",
@@ -200,8 +201,8 @@ describe("Register Business UseCase", () => {
       password: "any_password",
     };
 
-    const user = await sut.execute(props);
-    expect(user).toEqual({
+    const business = await sut.execute(props);
+    expect(business).toEqual({
       id: "any_id",
       name: "any_name",
       email: "any_email@mail.com",
@@ -209,7 +210,7 @@ describe("Register Business UseCase", () => {
     });
   });
 
-  test("Should throw if invalid denpencies are provided", async () => {
+  test("Should throw if invalid denpendencies are provided", async () => {
     const crypto = makeCrypto();
     const idGenerator = makeIdGenerator();
     const suts = [
@@ -240,10 +241,8 @@ describe("Register Business UseCase", () => {
       email: "any_email@mail.com",
       password: "any_password",
     };
-
     for (const sut of suts) {
-      const promise = sut.execute(props);
-      expect(promise).rejects.toThrow(TypeError);
+      expect(() => sut.execute(props)).rejects.toThrow(TypeError);
     }
   });
 
@@ -269,10 +268,8 @@ describe("Register Business UseCase", () => {
       email: "any_email@mail.com",
       password: "any_password",
     };
-
     for (const sut of suts) {
-      const promise = sut.execute(props);
-      expect(promise).rejects.toThrow();
+      expect(() => sut.execute(props)).rejects.toThrow();
     }
   });
 });

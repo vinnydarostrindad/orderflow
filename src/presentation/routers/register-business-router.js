@@ -36,11 +36,12 @@ export default class RegisterBusinessRouter {
       }
 
       const token = this.authUseCase.generateToken(business.id);
-      const response = {
+      const createdBusiness = {
         business,
         token,
       };
-      return httpResponse.created(response);
+
+      return httpResponse.created(createdBusiness);
     } catch (err) {
       console.log(err);
       return httpResponse.serverError();
