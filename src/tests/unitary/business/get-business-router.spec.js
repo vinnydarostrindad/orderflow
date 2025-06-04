@@ -27,7 +27,6 @@ const makeGetBusinessUseCase = () => {
     id: "any_id",
     name: "any_name",
     email: "any_email@mail.com",
-    password: "any_hash",
   };
   return getBusinessUseCaseSpy;
 };
@@ -110,7 +109,6 @@ describe("Get Business Router", () => {
       id: "any_id",
       name: "any_name",
       email: "any_email@mail.com",
-      password: "any_hash",
     });
   });
 

@@ -1,6 +1,7 @@
 import migrationRouterComposer from "./composer/migration-router-composer.js";
 import registerBusinessRouterComposer from "./composer/register-business-router-composer.js";
 import registerEmployeeRouterComposer from "./composer/register-employee-router-composer.js";
+import getBusinessRouterComposer from "./composer/get-business-router-composer.js";
 
 const router = async function (req, res) {
   const method = req.method;
@@ -18,6 +19,25 @@ const router = async function (req, res) {
         "content-type": "application/json",
       });
       return res.end(JSON.stringify(httpResponse.body));
+    }
+
+    if (method === "GET") {
+      if (url.startsWith("/api/v1/business")) {
+        const match = url.match(/^\/api\/v1\/business\/([^/]+)$/);
+        if (match) {
+          const id = match[1];
+          const httpRequest = {
+            body: { id },
+          };
+
+          const getBusinessRouter = await getBusinessRouterComposer.execute();
+          const httpResponse = await getBusinessRouter.route(httpRequest);
+          res.writeHead(httpResponse.statusCode, {
+            "content-type": "application/json",
+          });
+          return res.end(JSON.stringify(httpResponse.body));
+        }
+      }
     }
 
     if (method === "POST") {
