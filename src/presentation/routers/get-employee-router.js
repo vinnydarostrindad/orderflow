@@ -8,7 +8,7 @@ export default class GetEmployeeRouter {
 
   async route(httpRequest) {
     try {
-      const { business_id, employee_id } = httpRequest.body;
+      const { business_id, employee_id } = httpRequest.params;
 
       if (!business_id) {
         return httpResponse.badRequest(new MissingParamError("business_id"));
@@ -19,6 +19,10 @@ export default class GetEmployeeRouter {
         if (!employees) {
           return httpResponse.notFound("Employee");
         }
+
+        employees.forEach((employee) => {
+          delete employee?.password;
+        });
 
         return httpResponse.ok(employees);
       }
@@ -42,7 +46,8 @@ export default class GetEmployeeRouter {
         created_at,
         updated_at,
       });
-    } catch {
+    } catch (err) {
+      console.error(err);
       return httpResponse.serverError();
     }
   }
