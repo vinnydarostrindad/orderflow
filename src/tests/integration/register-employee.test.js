@@ -1,4 +1,8 @@
-import { cleanDatabase, runMigrations } from "./orchestrator.js";
+import {
+  cleanDatabase,
+  createBusiness,
+  runMigrations,
+} from "./orchestrator.js";
 import { version as uuidVersion } from "uuid";
 import validator from "validator";
 
@@ -9,30 +13,16 @@ beforeAll(async () => {
 
 describe("Register employee api", () => {
   test("Should register a employee correctly via api", async () => {
-    const response = await fetch("http://localhost:3000/api/v1/business", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: "any_name",
-        email: "any_email@mail.com",
-        password: "any_password",
-      }),
-    });
-
-    expect(response.status).toBe(201);
-    const { business } = await response.json();
+    const business = await createBusiness();
 
     const requestBody = {
-      business_id: business.id,
       role: "waiter",
       name: "valid_name",
       password: "valid_password",
     };
 
-    const response2 = await fetch(
-      "http://localhost:3000/api/v1/business/employee",
+    const response = await fetch(
+      `http://localhost:3000/api/v1/business/${business.id}/employee`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -40,9 +30,9 @@ describe("Register employee api", () => {
       },
     );
 
-    const responseBody = await response2.json();
+    const responseBody = await response.json();
 
-    expect(response2.status).toBe(201);
+    expect(response.status).toBe(201);
 
     const { employee, token } = responseBody;
 
