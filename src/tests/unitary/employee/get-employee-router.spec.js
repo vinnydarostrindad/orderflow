@@ -59,7 +59,7 @@ describe("Get Employee Router", () => {
     test("Should return 404 if no employees are found", async () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
-        body: {
+        params: {
           business_id: "any_business_id",
         },
       };
@@ -73,7 +73,7 @@ describe("Get Employee Router", () => {
     test("Should call getEmployeeUseCase with correct value", async () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
-        body: {
+        params: {
           business_id: "any_business_id",
         },
       };
@@ -86,7 +86,7 @@ describe("Get Employee Router", () => {
     test("Should return 200 and a array of employees", async () => {
       const { sut } = makeSut();
       const httpRequest = {
-        body: {
+        params: {
           business_id: "any_business_id",
         },
       };
@@ -100,7 +100,7 @@ describe("Get Employee Router", () => {
     test("Should return 404 if no employee is found", async () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
-        body: {
+        params: {
           business_id: "any_business_id",
           employee_id: "any_employee_id",
         },
@@ -115,7 +115,7 @@ describe("Get Employee Router", () => {
     test("Should call getEmployeeUseCase with correct value", async () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
-        body: {
+        params: {
           business_id: "any_business_id",
           employee_id: "any_employee_id",
         },
@@ -129,7 +129,7 @@ describe("Get Employee Router", () => {
     test("Should return 200 with employee correctly", async () => {
       const { sut } = makeSut();
       const httpRequest = {
-        body: {
+        params: {
           business_id: "any_business_id",
           employee_id: "any_employee_id",
         },
@@ -149,7 +149,7 @@ describe("Get Employee Router", () => {
   test("Should return 400 if no business_id is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      body: {
+      params: {
         employee_id: "any_employee_id",
       },
     };
@@ -169,7 +169,7 @@ describe("Get Employee Router", () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  test("Should return 500 if no httpRequest has no body", async () => {
+  test("Should return 500 if no httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {};
     const httpResponse = await sut.route(httpRequest);
@@ -187,7 +187,7 @@ describe("Get Employee Router", () => {
       }),
     ];
     const httpRequest = {
-      body: {
+      params: {
         business_id: "any_business_id",
         employee_id: "any_employee_id",
       },
@@ -207,7 +207,7 @@ describe("Get Employee Router", () => {
       }),
     ];
     const httpRequest = {
-      body: {
+      params: {
         business_id: "any_business_id",
         employee_id: "any_employee_id",
       },

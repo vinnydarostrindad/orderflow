@@ -43,7 +43,7 @@ const makeGetBusinessUseCaseWithError = () => {
 describe("Get Business Router", () => {
   test("Should return 400 if no id is provided", async () => {
     const { sut } = makeSut();
-    const httpRequest = { body: {} };
+    const httpRequest = { params: {} };
 
     const httpResponse = await sut.route(httpRequest);
 
@@ -54,7 +54,7 @@ describe("Get Business Router", () => {
   test("Should return 404 if no business is found", async () => {
     const { sut, getBusinessUseCaseSpy } = makeSut();
     const httpRequest = {
-      body: {
+      params: {
         id: "any_id",
       },
     };
@@ -74,7 +74,7 @@ describe("Get Business Router", () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  test("Should return 500 if no httpRequest has no body", async () => {
+  test("Should return 500 if no httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {};
     const httpResponse = await sut.route(httpRequest);
@@ -86,7 +86,7 @@ describe("Get Business Router", () => {
   test("Should call getBusinessUseCase with correct value", async () => {
     const { sut, getBusinessUseCaseSpy } = makeSut();
     const httpRequest = {
-      body: {
+      params: {
         id: "any_id",
       },
     };
@@ -98,7 +98,7 @@ describe("Get Business Router", () => {
   test("Should return 200 with business correctly", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      body: {
+      params: {
         id: "any_id",
       },
     };
