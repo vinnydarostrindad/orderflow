@@ -8,7 +8,7 @@ export default class GetBusinessRouter {
 
   async route(httpRequest) {
     try {
-      const { id } = httpRequest.body;
+      const { id } = httpRequest.params;
 
       if (!id) {
         return httpResponse.badRequest(new MissingParamError("id"));
@@ -29,7 +29,8 @@ export default class GetBusinessRouter {
         created_at,
         updated_at,
       });
-    } catch {
+    } catch (err) {
+      console.error(err);
       return httpResponse.serverError();
     }
   }
