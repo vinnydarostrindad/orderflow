@@ -4,7 +4,7 @@ beforeAll(async () => {
   await cleanDatabase();
 });
 
-describe("POST /api/v1/igrations", () => {
+describe("POST /api/v1/migrations", () => {
   test("should return 201", async () => {
     const response = await fetch("http://localhost:3000/api/v1/migrations", {
       method: "POST",
