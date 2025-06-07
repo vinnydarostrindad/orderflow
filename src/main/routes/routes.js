@@ -6,51 +6,33 @@ const apiRoutes = {
   get: [
     {
       pattern: /^\/api\/v1\/migrations$/,
-      handler: async ({ req }) => {
-        return await migrationRoute.get(req);
-      },
+      handler: migrationRoute.get,
     },
     {
       pattern: /^\/api\/v1\/business\/([^/]+)$/,
-      handler: async ({ params }) => {
-        const [business_id] = params;
-        return await businessRoute.getOne(business_id);
-      },
+      handler: businessRoute.getOne,
     },
     {
       pattern: /^\/api\/v1\/business\/([^/]+)\/employee$/,
-      handler: async ({ params }) => {
-        const [business_id] = params;
-        return await employeeRoute.getAll(business_id);
-      },
+      handler: employeeRoute.getAll,
     },
     {
       pattern: /^\/api\/v1\/business\/([^/]+)\/employee\/([^/]+)$/,
-      handler: async ({ params }) => {
-        const [business_id, employee_id] = params;
-        return await employeeRoute.getOne(business_id, employee_id);
-      },
+      handler: employeeRoute.getOne,
     },
   ],
   post: [
     {
       pattern: /^\/api\/v1\/migrations$/,
-      handler: async ({ req }) => {
-        return await migrationRoute.post(req);
-      },
+      handler: migrationRoute.post,
     },
     {
       pattern: /^\/api\/v1\/business$/,
-      handler: async ({ req }) => {
-        return await businessRoute.post(req);
-      },
+      handler: businessRoute.post,
     },
     {
       pattern: /^\/api\/v1\/business\/([^/]+)\/employee$/,
-      handler: async ({ req, params }) => {
-        const [business_id] = params;
-        return await employeeRoute.post(req, business_id);
-      },
+      handler: employeeRoute.post,
     },
   ],
 };

@@ -1,3 +1,4 @@
+import adaptNodeRequest from "./adapters/node-request-adapter.js";
 import apiRoutes from "./routes/routes.js";
 
 const router = async function (req, res) {
@@ -10,7 +11,10 @@ const router = async function (req, res) {
         const match = url.match(route.pattern);
         if (match) {
           const params = match.slice(1);
-          const httpResponse = await route.handler({ req, params });
+
+          const httpRequest = await adaptNodeRequest(req, params);
+
+          const httpResponse = await route.handler(httpRequest);
 
           res.writeHead(httpResponse.statusCode, {
             "content-type": "application/json",
@@ -27,7 +31,9 @@ const router = async function (req, res) {
         if (match) {
           const params = match.slice(1);
 
-          const httpResponse = await route.handler({ req, params });
+          const httpRequest = await adaptNodeRequest(req, params);
+
+          const httpResponse = await route.handler(httpRequest);
 
           res.writeHead(httpResponse.statusCode, {
             "content-type": "application/json",

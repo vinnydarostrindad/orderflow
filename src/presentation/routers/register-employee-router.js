@@ -9,7 +9,8 @@ export default class RegisterEmployeeRouter {
 
   async route(httpRequest) {
     try {
-      const { business_id, name, role, password } = httpRequest.body;
+      const { name, role, password } = httpRequest.body;
+      const { business_id } = httpRequest.params;
       if (!business_id) {
         return httpResponse.badRequest(new MissingParamError("business_id"));
       }

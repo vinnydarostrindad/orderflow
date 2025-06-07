@@ -8,13 +8,12 @@ export default class GetBusinessRouter {
 
   async route(httpRequest) {
     try {
-      const { id } = httpRequest.params;
-
-      if (!id) {
-        return httpResponse.badRequest(new MissingParamError("id"));
+      const { business_id } = httpRequest.params;
+      if (!business_id) {
+        return httpResponse.badRequest(new MissingParamError("business_id"));
       }
 
-      const business = await this.getBusinessUseCase.execute(id);
+      const business = await this.getBusinessUseCase.execute(business_id);
 
       if (!business) {
         return httpResponse.notFound("Business");
@@ -23,7 +22,7 @@ export default class GetBusinessRouter {
       const { name, email, created_at, updated_at } = business;
 
       return httpResponse.ok({
-        id,
+        id: business_id,
         name,
         email,
         created_at,

@@ -34,6 +34,8 @@ describe("GET /api/v1/business/[business_id]/employee", () => {
         role: "waiter",
       });
 
+      console.log(employee);
+
       expect(uuidVersion(employee.id)).toBe(4);
       expect(validator.isUUID(employee.id)).toBe(true);
 

@@ -1,17 +1,11 @@
 import migrationRouterComposer from "../composer/migration-router-composer.js";
 
 const migrationRoute = {
-  get: async (req) => {
-    const httpRequest = {
-      method: req.method,
-    };
+  get: async (httpRequest) => {
     const migrationRouter = migrationRouterComposer.execute();
     return await migrationRouter.route(httpRequest);
   },
-  post: async (req) => {
-    const httpRequest = {
-      method: req.method,
-    };
+  post: async (httpRequest) => {
     const migrationRouter = migrationRouterComposer.execute();
     return await migrationRouter.route(httpRequest);
   },
