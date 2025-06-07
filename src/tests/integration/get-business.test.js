@@ -19,6 +19,7 @@ describe("Get Business API", () => {
 
     const responseBody = await response.json();
 
+    console.log(responseBody);
     expect(responseBody).toMatchObject({
       id: business.id,
       name: "any_name",
