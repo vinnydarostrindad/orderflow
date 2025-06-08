@@ -1,4 +1,4 @@
-import RegisterBusinessUseCase from "../../../domain/usecase/register-business-usecase.js";
+import RegisterBusinessUseCase from "../../../domain/usecase/business/register-business-usecase.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
@@ -89,40 +89,40 @@ const makeBusinessRepositoryWithError = () => {
 };
 
 describe("Register Business UseCase", () => {
-  test("Should throw if no props are provided ", () => {
+  test("Should throw if no props are provided ", async () => {
     const { sut } = makeSut();
-    expect(() => sut.execute()).rejects.toThrow(new MissingParamError("name"));
+    await expect(sut.execute()).rejects.toThrow(new MissingParamError("name"));
   });
 
-  test("Should throw if no name is provided ", () => {
+  test("Should throw if no name is provided ", async () => {
     const { sut } = makeSut();
     const props = {
       email: "any_email@mail.com",
       password: "any_password",
     };
-    expect(() => sut.execute(props)).rejects.toThrow(
+    await expect(sut.execute(props)).rejects.toThrow(
       new MissingParamError("name"),
     );
   });
 
-  test("Should throw if no email is provided ", () => {
+  test("Should throw if no email is provided ", async () => {
     const { sut } = makeSut();
     const props = {
       name: "any_name",
       password: "any_password",
     };
-    expect(() => sut.execute(props)).rejects.toThrow(
+    await expect(sut.execute(props)).rejects.toThrow(
       new MissingParamError("email"),
     );
   });
 
-  test("Should throw if no password is provided ", () => {
+  test("Should throw if no password is provided ", async () => {
     const { sut } = makeSut();
     const props = {
       name: "any_name",
       email: "any_email@mail.com",
     };
-    expect(() => sut.execute(props)).rejects.toThrow(
+    await expect(sut.execute(props)).rejects.toThrow(
       new MissingParamError("password"),
     );
   });
@@ -241,8 +241,9 @@ describe("Register Business UseCase", () => {
       email: "any_email@mail.com",
       password: "any_password",
     };
+
     for (const sut of suts) {
-      expect(() => sut.execute(props)).rejects.toThrow(TypeError);
+      await expect(sut.execute(props)).rejects.toThrow(TypeError);
     }
   });
 
@@ -268,8 +269,9 @@ describe("Register Business UseCase", () => {
       email: "any_email@mail.com",
       password: "any_password",
     };
+
     for (const sut of suts) {
-      expect(() => sut.execute(props)).rejects.toThrow();
+      await expect(sut.execute(props)).rejects.toThrow();
     }
   });
 });

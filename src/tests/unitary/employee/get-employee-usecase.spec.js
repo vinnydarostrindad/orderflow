@@ -1,5 +1,5 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import GetEmployeeUseCase from "../../../domain/usecase/get-employee-usecase.js";
+import GetEmployeeUseCase from "../../../domain/usecase/employee/get-employee-usecase.js";
 
 const makeSut = () => {
   const employeeRepositorySpy = makeEmployeeRepository();

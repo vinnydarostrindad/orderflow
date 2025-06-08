@@ -1,5 +1,5 @@
-import Employee from "../entities/employee.js";
-import MissingParamError from "../../utils/errors/missing-param-error.js";
+import Employee from "../../entities/employee.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 export default class RegisterEmployeeUseCase {
   constructor({ crypto, idGenerator, employeeRepository } = {}) {

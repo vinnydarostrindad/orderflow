@@ -1,4 +1,4 @@
-import httpResponse from "../httpResponse.js";
+import httpResponse from "../../httpResponse.js";
 
 export default class MigrationRouter {
   constructor({ migrationRunner } = {}) {

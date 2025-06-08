@@ -1,5 +1,5 @@
-import Business from "../entities/business.js";
-import MissingParamError from "../../utils/errors/missing-param-error.js";
+import Business from "../../entities/business.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 export default class RegisterBusinessUseCase {
   constructor({ crypto, idGenerator, businessRepository } = {}) {

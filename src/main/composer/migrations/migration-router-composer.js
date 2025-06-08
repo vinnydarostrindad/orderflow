@@ -1,7 +1,7 @@
-import MigrationRouter from "../../presentation/routers/migration-router.js";
-import MigrationRunner from "../../infra/migration-runner.js";
-import PgMigrate from "../../infra/pg-migrate.js";
-import postgresAdapter from "../../infra/adaptors/postgres-adapter.js";
+import MigrationRouter from "../../../presentation/routers/migrations/migration-router.js";
+import MigrationRunner from "../../../infra/migration-runner.js";
+import PgMigrate from "../../../infra/pg-migrate.js";
+import postgresAdapter from "../../../infra/adaptors/postgres-adapter.js";
 
 const migrationRouterComposer = {
   execute() {

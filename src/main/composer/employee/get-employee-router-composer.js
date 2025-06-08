@@ -1,7 +1,7 @@
-import GetEmployeeRouter from "../../presentation/routers/get-employee-router.js";
-import GetEmployeeUseCase from "../../domain/usecase/get-employee-usecase.js";
-import EmployeeRepository from "../../infra/repositories/employee-repository.js";
-import postgresAdapter from "../../infra/adaptors/postgres-adapter.js";
+import GetEmployeeRouter from "../../../presentation/routers/employee/get-employee-router.js";
+import GetEmployeeUseCase from "../../../domain/usecase/employee/get-employee-usecase.js";
+import EmployeeRepository from "../../../infra/repositories/employee-repository.js";
+import postgresAdapter from "../../../infra/adaptors/postgres-adapter.js";
 
 const getEmployeeRouterComposer = {
   execute() {

@@ -1,5 +1,5 @@
-import getBusinessRouterComposer from "../composer/get-business-router-composer.js";
-import registerBusinessRouterComposer from "../composer/register-business-router-composer.js";
+import getBusinessRouterComposer from "../composer/business/get-business-router-composer.js";
+import registerBusinessRouterComposer from "../composer/business/register-business-router-composer.js";
 
 const businessRoute = {
   getOne: async (httpRequest) => {

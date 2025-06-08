@@ -1,5 +1,5 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import RegisterEmployeeRouter from "../../../presentation/routers/register-employee-router.js";
+import RegisterEmployeeRouter from "../../../presentation/routers/employee/register-employee-router.js";
 import ServerError from "../../../utils/errors/server-error.js";
 
 const makeSut = () => {
@@ -149,7 +149,7 @@ describe("Register Employee Router", () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
+  test("Should return 500 if httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -208,7 +208,6 @@ describe("Register Employee Router", () => {
     };
 
     await sut.route(httpRequest);
-    console.log(authUseCaseSpy);
     expect(authUseCaseSpy.id).toBe("any_id");
   });
 

@@ -1,5 +1,5 @@
 import { jest } from "@jest/globals";
-import MigrationRouter from "../../../presentation/routers/migration-router.js";
+import MigrationRouter from "../../../presentation/routers/migrations/migration-router.js";
 import ServerError from "../../../utils/errors/server-error.js";
 import MethodNotAllowedError from "../../../utils/errors/method-not-allowed-error.js";
 

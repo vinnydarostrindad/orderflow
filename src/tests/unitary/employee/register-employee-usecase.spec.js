@@ -1,4 +1,4 @@
-import RegisterEmployeeUseCase from "../../../domain/usecase/register-employee-usecase.js";
+import RegisterEmployeeUseCase from "../../../domain/usecase/employee/register-employee-usecase.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {

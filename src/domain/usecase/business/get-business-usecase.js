@@ -1,4 +1,4 @@
-import MissingParamError from "../../utils/errors/missing-param-error.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 export default class GetBusinessUseCase {
   constructor({ businessRepository } = {}) {

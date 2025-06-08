@@ -1,6 +1,6 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import ServerError from "../../../utils/errors/server-error.js";
-import GetEmployeeRouter from "../../../presentation/routers/get-employee-router.js";
+import GetEmployeeRouter from "../../../presentation/routers/employee/get-employee-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
 
 const makeSut = () => {
