@@ -1,4 +1,4 @@
-import adaptNodeRequest from "./adapters/node-request-adapter.js";
+import nodeRequestAdapter from "./adapters/node-request-adapter.js";
 import apiRoutes from "./routes/routes.js";
 
 const router = async function (req, res) {
@@ -10,9 +10,7 @@ const router = async function (req, res) {
       for (const route of apiRoutes.get) {
         const match = url.match(route.pattern);
         if (match) {
-          const params = match.slice(1);
-
-          const httpRequest = await adaptNodeRequest(req, params);
+          const httpRequest = await nodeRequestAdapter(req, match.groups);
 
           const httpResponse = await route.handler(httpRequest);
 
@@ -29,9 +27,7 @@ const router = async function (req, res) {
       for (const route of apiRoutes.post) {
         const match = url.match(route.pattern);
         if (match) {
-          const params = match.slice(1);
-
-          const httpRequest = await adaptNodeRequest(req, params);
+          const httpRequest = await nodeRequestAdapter(req, match.groups);
 
           const httpResponse = await route.handler(httpRequest);
 

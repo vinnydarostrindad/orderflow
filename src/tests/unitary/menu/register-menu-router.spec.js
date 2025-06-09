@@ -1,6 +1,5 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import ServerError from "../../../utils/errors/server-error.js";
-import NotFoundError from "../../../utils/errors/not-found-error.js";
 import RegisterMenuRouter from "../../../presentation/routers/menu/register-menu-router.js";
 
 const makeSut = () => {
@@ -99,8 +98,8 @@ describe("Register Menu Router", () => {
     registerMenuUseCaseSpy.menu = null;
 
     const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(404);
-    expect(httpResponse.body).toEqual(new NotFoundError("Menu"));
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 
   test("Should call registerMenuUseCase with correct params", async () => {

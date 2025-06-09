@@ -1,13 +1,13 @@
 import { version as uuidVersion } from "uuid";
 import validator from "validator";
-import { cleanDatabase, runMigrations, createBusiness } from "./orchestrator";
+import { cleanDatabase, runMigrations, createBusiness } from "../orchestrator";
 
 beforeAll(async () => {
   await cleanDatabase();
   await runMigrations();
 });
 
-describe("Get Business API", () => {
+describe("GET /api/v1/business/[business_id]", () => {
   test("Should return business correctly", async () => {
     const business = await createBusiness();
 
@@ -26,7 +26,6 @@ describe("Get Business API", () => {
     });
 
     expect(uuidVersion(responseBody.id)).toBe(4);
-    expect(validator.isUUID(responseBody.id)).toBe(true);
 
     expect(validator.isEmail(responseBody.email)).toBe(true);
 

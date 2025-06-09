@@ -1,10 +1,9 @@
+import { version as uuidVersion } from "uuid";
 import {
   cleanDatabase,
   createBusiness,
   runMigrations,
-} from "./orchestrator.js";
-import { version as uuidVersion } from "uuid";
-import validator from "validator";
+} from "../orchestrator.js";
 
 beforeAll(async () => {
   await cleanDatabase();
@@ -41,10 +40,8 @@ describe("menu registration api", () => {
     });
 
     expect(uuidVersion(menu.id)).toBe(4);
-    expect(validator.isUUID(menu.id)).toBe(true);
 
     expect(uuidVersion(menu.business_id)).toBe(4);
-    expect(validator.isUUID(menu.business_id)).toBe(true);
 
     expect(typeof menu.created_at).toBe("string");
     expect(Date.parse(menu.created_at)).not.toBeNaN();

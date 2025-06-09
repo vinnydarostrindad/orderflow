@@ -24,7 +24,7 @@ export default class RegisterMenuRouter {
       });
       if (!menu) {
         // Melhorar esse error
-        return httpResponse.notFound("Menu");
+        return httpResponse.serverError();
       }
 
       return httpResponse.created(menu);

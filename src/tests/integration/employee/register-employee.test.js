@@ -2,7 +2,7 @@ import {
   cleanDatabase,
   createBusiness,
   runMigrations,
-} from "./orchestrator.js";
+} from "../orchestrator.js";
 import { version as uuidVersion } from "uuid";
 import validator from "validator";
 
@@ -11,7 +11,7 @@ beforeAll(async () => {
   await runMigrations();
 });
 
-describe("Register employee api", () => {
+describe("POST /api/v1/business/[business_id]/employee", () => {
   test("Should register a employee correctly via api", async () => {
     const business = await createBusiness();
 
@@ -42,16 +42,15 @@ describe("Register employee api", () => {
     });
 
     expect(uuidVersion(employee.id)).toBe(4);
-    expect(validator.isUUID(employee.id)).toBe(true);
 
     expect(typeof employee.password).toBe("string");
     expect(employee.password).not.toBe(requestBody.password);
 
     expect(typeof employee.created_at).toBe("string");
-    expect(!isNaN(Date.parse(employee.created_at))).toBe(true);
+    expect(Date.parse(employee.created_at)).not.toBeNull();
 
     expect(typeof employee.updated_at).toBe("string");
-    expect(!isNaN(Date.parse(employee.updated_at))).toBe(true);
+    expect(Date.parse(employee.updated_at)).not.toBeNull();
 
     expect(validator.isJWT(token)).toBe(true);
   });

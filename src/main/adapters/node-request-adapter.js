@@ -1,17 +1,12 @@
 import parseBody from "../helper/parse-body.js";
 
-async function adaptNodeRequest(req, matchs = []) {
+async function nodeRequestAdapter(req, groups = {}) {
   const { method } = req;
   let body = {};
-  let params = {};
+  let params = { ...groups };
 
   if (req.method === "POST") {
     body = await parseBody(req);
-  }
-
-  if (matchs.length > 0) {
-    params.business_id = matchs[0];
-    if (matchs[1]) params.employee_id = matchs[1];
   }
 
   const httpRequest = {
@@ -23,4 +18,4 @@ async function adaptNodeRequest(req, matchs = []) {
   return httpRequest;
 }
 
-export default adaptNodeRequest;
+export default nodeRequestAdapter;
