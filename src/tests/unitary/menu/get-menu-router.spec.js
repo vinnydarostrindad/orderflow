@@ -1,77 +1,76 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import ServerError from "../../../utils/errors/server-error.js";
-import GetEmployeeRouter from "../../../presentation/routers/employee/get-employee-router.js";
+import GetMenuRouter from "../../../presentation/routers/menu/get-menu-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
 
 const makeSut = () => {
-  const getEmployeeUseCaseSpy = makeGetEmployeeUseCase();
-  const sut = new GetEmployeeRouter({
-    getEmployeeUseCase: getEmployeeUseCaseSpy,
+  const getMenuUseCaseSpy = makeGetMenuUseCase();
+  const sut = new GetMenuRouter({
+    getMenuUseCase: getMenuUseCaseSpy,
   });
   return {
     sut,
-    getEmployeeUseCaseSpy,
+    getMenuUseCaseSpy,
   };
 };
 
-const makeGetEmployeeUseCase = () => {
-  class GetEmployeeUseCaseSpy {
-    async execute(business_id, employee_id) {
+const makeGetMenuUseCase = () => {
+  class GetMenuUseCaseSpy {
+    async execute(business_id, menu_id) {
       this.business_id = business_id;
-      if (!employee_id) {
-        return this.employees;
+      if (!menu_id) {
+        return this.menus;
       }
 
-      this.employee_id = employee_id;
-      return this.employee;
+      this.menu_id = menu_id;
+      return this.menu;
     }
   }
 
-  const getEmployeeUseCaseSpy = new GetEmployeeUseCaseSpy();
-  getEmployeeUseCaseSpy.employee = {
+  const getMenuUseCaseSpy = new GetMenuUseCaseSpy();
+  getMenuUseCaseSpy.menu = {
     business_id: "any_business_id",
-    id: "any_employee_id",
+    id: "any_menu_id",
     name: "any_name",
-    role: "any_role",
   };
-  getEmployeeUseCaseSpy.employees = [
+  getMenuUseCaseSpy.menus = [
     {
       business_id: "any_business_id",
-      id: "any_employee_id",
+      id: "any_menu_id",
       name: "any_name",
-      role: "any_role",
     },
   ];
-  return getEmployeeUseCaseSpy;
+  return getMenuUseCaseSpy;
 };
-const makeGetEmployeeUseCaseWithError = () => {
-  class GetEmployeeUseCaseSpy {
+
+const makeGetMenuUseCaseWithError = () => {
+  class GetMenuUseCaseSpy {
     execute() {
       throw new Error();
     }
   }
 
-  return new GetEmployeeUseCaseSpy();
+  return new GetMenuUseCaseSpy();
 };
 
-describe("Get Employee Router", () => {
-  describe("Without employee_id", () => {
-    test("Should return 404 if no employees are found", async () => {
-      const { sut, getEmployeeUseCaseSpy } = makeSut();
+describe("Get Menu Router", () => {
+  describe("Without menu_id", () => {
+    test("Should return 404 if no menus are found", async () => {
+      const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
           business_id: "any_business_id",
         },
       };
-      getEmployeeUseCaseSpy.employees = null;
+      getMenuUseCaseSpy.menus = null;
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("Employee"));
+      expect(httpResponse.body).toEqual(new NotFoundError("Menu"));
     });
 
-    test("Should call getEmployeeUseCase with correct value", async () => {
-      const { sut, getEmployeeUseCaseSpy } = makeSut();
+    test("Should call getMenuUseCase with correct value", async () => {
+      const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
           business_id: "any_business_id",
@@ -79,11 +78,11 @@ describe("Get Employee Router", () => {
       };
 
       await sut.route(httpRequest);
-      expect(getEmployeeUseCaseSpy.business_id).toBe("any_business_id");
-      expect(getEmployeeUseCaseSpy.employee_id).toBeUndefined();
+      expect(getMenuUseCaseSpy.business_id).toBe("any_business_id");
+      expect(getMenuUseCaseSpy.menu_id).toBeUndefined();
     });
 
-    test("Should return 200 and a array of employees", async () => {
+    test("Should return 200 and a array of menus", async () => {
       const { sut } = makeSut();
       const httpRequest = {
         params: {
@@ -94,54 +93,59 @@ describe("Get Employee Router", () => {
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(200);
       expect(Array.isArray(httpResponse.body)).toBe(true);
+      expect(httpResponse.body[0]).toEqual({
+        id: "any_menu_id",
+        business_id: "any_business_id",
+        name: "any_name",
+      });
     });
   });
-  describe("With employee_id", () => {
-    test("Should return 404 if no employee is found", async () => {
-      const { sut, getEmployeeUseCaseSpy } = makeSut();
+
+  describe("With menu_id", () => {
+    test("Should return 404 if no menu is found", async () => {
+      const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
           business_id: "any_business_id",
-          employee_id: "any_employee_id",
+          menu_id: "any_menu_id",
         },
       };
-      getEmployeeUseCaseSpy.employee = null;
+      getMenuUseCaseSpy.menu = null;
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("Employee"));
+      expect(httpResponse.body).toEqual(new NotFoundError("Menu"));
     });
 
-    test("Should call getEmployeeUseCase with correct value", async () => {
-      const { sut, getEmployeeUseCaseSpy } = makeSut();
+    test("Should call getMenuUseCase with correct value", async () => {
+      const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
           business_id: "any_business_id",
-          employee_id: "any_employee_id",
+          menu_id: "any_menu_id",
         },
       };
 
       await sut.route(httpRequest);
-      expect(getEmployeeUseCaseSpy.business_id).toBe("any_business_id");
-      expect(getEmployeeUseCaseSpy.employee_id).toBe("any_employee_id");
+      expect(getMenuUseCaseSpy.business_id).toBe("any_business_id");
+      expect(getMenuUseCaseSpy.menu_id).toBe("any_menu_id");
     });
 
-    test("Should return 200 with employee correctly", async () => {
+    test("Should return 200 with menu correctly", async () => {
       const { sut } = makeSut();
       const httpRequest = {
         params: {
           business_id: "any_business_id",
-          employee_id: "any_employee_id",
+          menu_id: "any_menu_id",
         },
       };
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(200);
       expect(httpResponse.body).toEqual({
-        id: "any_employee_id",
+        id: "any_menu_id",
         business_id: "any_business_id",
         name: "any_name",
-        role: "any_role",
       });
     });
   });
@@ -150,7 +154,7 @@ describe("Get Employee Router", () => {
     const { sut } = makeSut();
     const httpRequest = {
       params: {
-        employee_id: "any_employee_id",
+        menu_id: "any_menu_id",
       },
     };
 
@@ -180,16 +184,16 @@ describe("Get Employee Router", () => {
 
   test("Should throw if invalid dependency is provided", async () => {
     const suts = [
-      new GetEmployeeRouter(),
-      new GetEmployeeRouter({}),
-      new GetEmployeeRouter({
-        getEmployeeUseCase: {},
+      new GetMenuRouter(),
+      new GetMenuRouter({}),
+      new GetMenuRouter({
+        getMenuUseCase: {},
       }),
     ];
     const httpRequest = {
       params: {
         business_id: "any_business_id",
-        employee_id: "any_employee_id",
+        menu_id: "any_menu_id",
       },
     };
 
@@ -202,14 +206,14 @@ describe("Get Employee Router", () => {
 
   test("Should throw if dependency throws", async () => {
     const suts = [
-      new GetEmployeeRouter({
-        getEmployeeUseCase: makeGetEmployeeUseCaseWithError(),
+      new GetMenuRouter({
+        getMenuUseCase: makeGetMenuUseCaseWithError(),
       }),
     ];
     const httpRequest = {
       params: {
         business_id: "any_business_id",
-        employee_id: "any_employee_id",
+        menu_id: "any_menu_id",
       },
     };
 

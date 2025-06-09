@@ -1,4 +1,4 @@
-import migrationRouterComposer from "../composer/migration-router-composer.js";
+import migrationRouterComposer from "../composer/migrations/migration-router-composer.js";
 
 const migrationRoute = {
   get: async (httpRequest) => {

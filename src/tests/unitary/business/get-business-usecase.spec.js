@@ -1,5 +1,5 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import GetBusinessUseCase from "../../../domain/usecase/get-business-usecase.js";
+import GetBusinessUseCase from "../../../domain/usecase/business/get-business-usecase.js";
 
 const makeSut = () => {
   const businessRepositorySpy = makeBusinessRepository();

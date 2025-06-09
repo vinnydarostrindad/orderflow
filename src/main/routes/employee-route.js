@@ -1,5 +1,5 @@
-import getEmployeeRouterComposer from "../composer/get-employee-router-composer.js";
-import registerEmployeeRouterComposer from "../composer/register-employee-router-composer.js";
+import getEmployeeRouterComposer from "../composer/employee/get-employee-router-composer.js";
+import registerEmployeeRouterComposer from "../composer/employee/register-employee-router-composer.js";
 
 const employeeRoute = {
   getAll: async (httpRequest) => {

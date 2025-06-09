@@ -2,9 +2,7 @@ export const up = function up(pgm) {
   pgm.createTable("businesses", {
     id: {
       type: "uuid",
-      unique: true,
       primaryKey: true,
-      notNull: true,
     },
 
     name: {
@@ -13,7 +11,6 @@ export const up = function up(pgm) {
       notNull: true,
     },
 
-    // Why 254 in length? https://stackoverflow.com/a/1199238
     email: {
       type: "varchar(254)",
       unique: true,

@@ -1,4 +1,4 @@
-import { cleanDatabase, runMigrations } from "./orchestrator.js";
+import { cleanDatabase, runMigrations } from "../orchestrator.js";
 import { version as uuidVersion } from "uuid";
 import validator from "validator";
 
@@ -7,7 +7,7 @@ beforeAll(async () => {
   await runMigrations();
 });
 
-describe("business registration api", () => {
+describe("POST /api/v1/business", () => {
   test("should register a business and return 201 with token", async () => {
     const requestBody = {
       name: "valid_name",
@@ -34,7 +34,6 @@ describe("business registration api", () => {
     });
 
     expect(uuidVersion(business.id)).toBe(4);
-    expect(validator.isUUID(business.id)).toBe(true);
 
     expect(validator.isEmail(business.email)).toBe(true);
 
