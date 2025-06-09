@@ -21,6 +21,7 @@ const makeRegisterMenuUseCase = () => {
 
   const registerMenuUseCaseSpy = new RegisterMenuUseCaseSpy();
   registerMenuUseCaseSpy.menu = {
+    id: "any_menu_id",
     business_id: "any_business_id",
     name: "any_name",
   };
@@ -70,7 +71,7 @@ describe("Register Menu Router", () => {
   test("Should return 500 if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      paras: { business_id: "any_business_id" },
+      params: { business_id: "any_business_id" },
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
@@ -126,12 +127,13 @@ describe("Register Menu Router", () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(201);
     expect(httpResponse.body).toEqual({
+      id: "any_menu_id",
       business_id: "any_business_id",
       name: "any_name",
     });
   });
 
-  test("Should throw if any dependency throws", async () => {
+  test("Should return 500 if invalid dependency is provided", async () => {
     const suts = [
       new RegisterMenuRouter(),
       new RegisterMenuRouter({}),
@@ -152,7 +154,7 @@ describe("Register Menu Router", () => {
     }
   });
 
-  test("Should throw if invalid dependency is provided", async () => {
+  test("Should return 500 if any dependency throws", async () => {
     const suts = [
       new RegisterMenuRouter({
         registerMenuUseCase: makeRegisterMenuUseCaseWithError(),

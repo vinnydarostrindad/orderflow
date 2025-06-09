@@ -70,7 +70,7 @@ describe("Get Business UseCase", () => {
     });
   });
 
-  test("Should throw if invalid denpendencies are provided", async () => {
+  test("Should throw if invalid dependencieses are provided", async () => {
     const suts = [
       new GetBusinessUseCase(),
       new GetBusinessUseCase({}),

@@ -95,7 +95,7 @@ describe("Migrations Router", () => {
       expect(httpResponse.body).toEqual(["any_migration"]);
     });
 
-    test("Should throw if invalid dependency is provided", async () => {
+    test("Should return 500 if invalid dependency is provided", async () => {
       const suts = [
         new MigrationRouter(),
         new MigrationRouter({}),
@@ -121,7 +121,7 @@ describe("Migrations Router", () => {
       }
     });
 
-    test("Should throw if any dependency throws", async () => {
+    test("Should return 500 if any dependency throws", async () => {
       const suts = [
         new MigrationRouter({
           migrationRunner: makeMigrationRunnerWithError(),
