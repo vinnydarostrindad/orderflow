@@ -229,7 +229,7 @@ describe("Register Employee Router", () => {
     });
   });
 
-  test("Should throw if any dependency throws", async () => {
+  test("Should return 500 if invalid dependency is provided", async () => {
     const registerEmployeeUseCase = makeRegisterEmployeeUseCase();
     const suts = [
       new RegisterEmployeeRouter(),
@@ -256,7 +256,7 @@ describe("Register Employee Router", () => {
     }
   });
 
-  test("Should throw if invalid dependency is provided", async () => {
+  test("Should return 500 if any dependency throws", async () => {
     const registerEmployeeUseCase = makeRegisterEmployeeUseCase;
     const suts = [
       new RegisterEmployeeRouter({

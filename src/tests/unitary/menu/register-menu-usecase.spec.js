@@ -24,7 +24,7 @@ const makeIdGenerator = () => {
     },
   };
 
-  idGeneratorSpy.id = "any_id";
+  idGeneratorSpy.id = "any_menu_id";
   return idGeneratorSpy;
 };
 
@@ -48,7 +48,7 @@ const makeMenuRepository = () => {
 
   const menuRepositorySpy = new MenuRepositorySpy();
   menuRepositorySpy.menu = {
-    id: "any_id",
+    id: "any_menu_id",
     business_id: "any_business_id",
     name: "any_name",
   };
@@ -56,13 +56,13 @@ const makeMenuRepository = () => {
 };
 
 const makeMenuRepositoryWithError = () => {
-  class menuRepositorySpy {
+  class MenuRepositorySpy {
     create() {
       throw new Error();
     }
   }
 
-  return new menuRepositorySpy();
+  return new MenuRepositorySpy();
 };
 
 describe("Register Menu UseCase", () => {
@@ -139,13 +139,13 @@ describe("Register Menu UseCase", () => {
 
     const menu = await sut.execute(props);
     expect(menu).toEqual({
-      id: "any_id",
+      id: "any_menu_id",
       business_id: "any_business_id",
       name: "any_name",
     });
   });
 
-  test("Should throw if invalid denpendencies are provided", async () => {
+  test("Should throw if invalid dependencieses are provided", async () => {
     const idGenerator = makeIdGenerator();
     const suts = [
       new RegisterMenuUseCase(),

@@ -45,7 +45,7 @@ const makeIdGenerator = () => {
     },
   };
 
-  idGeneratorSpy.id = "any_id";
+  idGeneratorSpy.id = "any_employee_id";
   return idGeneratorSpy;
 };
 
@@ -70,7 +70,7 @@ const makeEmployeeRepository = () => {
   };
 
   employeeRepositorySpy.employee = {
-    id: "any_id",
+    id: "any_employee_id",
     business_id: "business_id",
     name: "any_name",
     role: "any_role",
@@ -227,7 +227,7 @@ describe("Register Employee UseCase", () => {
 
     const employee = await sut.execute(props);
     expect(employee).toEqual({
-      id: "any_id",
+      id: "any_employee_id",
       business_id: "business_id",
       name: "any_name",
       role: "any_role",

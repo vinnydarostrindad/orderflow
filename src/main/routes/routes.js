@@ -2,6 +2,7 @@ import migrationRoute from "./migration-route.js";
 import businessRoute from "./business-route.js";
 import employeeRoute from "./employee-route.js";
 import menuRoute from "./menu-routes.js";
+import menuItemRoute from "./menu-item-route.js";
 
 const apiRoutes = {
   get: [
@@ -48,6 +49,11 @@ const apiRoutes = {
     {
       pattern: /^\/api\/v1\/business\/(?<business_id>[^/]+)\/menu$/,
       handler: menuRoute.post,
+    },
+    {
+      pattern:
+        /^\/api\/v1\/business\/(?<business_id>[^/]+)\/menu\/(?<menu_id>[^/]+)\/item$/,
+      handler: menuItemRoute.post,
     },
   ],
 };

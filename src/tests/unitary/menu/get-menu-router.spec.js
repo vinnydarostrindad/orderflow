@@ -182,7 +182,7 @@ describe("Get Menu Router", () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  test("Should throw if invalid dependency is provided", async () => {
+  test("Should return 500 if invalid dependency is provided", async () => {
     const suts = [
       new GetMenuRouter(),
       new GetMenuRouter({}),
@@ -204,7 +204,7 @@ describe("Get Menu Router", () => {
     }
   });
 
-  test("Should throw if dependency throws", async () => {
+  test("Should return 500 if dependency throws", async () => {
     const suts = [
       new GetMenuRouter({
         getMenuUseCase: makeGetMenuUseCaseWithError(),

@@ -210,7 +210,7 @@ describe("Register Business UseCase", () => {
     });
   });
 
-  test("Should throw if invalid denpendencies are provided", async () => {
+  test("Should throw if invalid dependencieses are provided", async () => {
     const crypto = makeCrypto();
     const idGenerator = makeIdGenerator();
     const suts = [
