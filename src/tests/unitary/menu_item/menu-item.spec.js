@@ -19,7 +19,7 @@ describe("MenuItem Entity", () => {
     expect(() => new MenuItem(props)).toThrow(new MissingParamError("id"));
   });
 
-  test("Should throw if no menu_id are provided", () => {
+  test("Should throw if no menu_id is provided", () => {
     const props = {
       id: "any_menu_item_id",
       name: "any_name",
@@ -31,7 +31,7 @@ describe("MenuItem Entity", () => {
     expect(() => new MenuItem(props)).toThrow(new MissingParamError("menu_id"));
   });
 
-  test("Should throw if no name are provided", () => {
+  test("Should throw if no name is provided", () => {
     const props = {
       id: "any_menu_item_id",
       menu_id: "any_menu_id",
@@ -41,6 +41,18 @@ describe("MenuItem Entity", () => {
       type: "any_type",
     };
     expect(() => new MenuItem(props)).toThrow(new MissingParamError("name"));
+  });
+
+  test("Should throw if no price is provided", () => {
+    const props = {
+      id: "any_menu_item_id",
+      menu_id: "any_menu_id",
+      name: "any_name",
+      image_path: "any_img_path",
+      description: "any_description",
+      type: "any_type",
+    };
+    expect(() => new MenuItem(props)).toThrow(new MissingParamError("price"));
   });
 
   test("Should return MenuItem", () => {

@@ -6,7 +6,7 @@ describe("Employee Entity", () => {
     expect(() => new Employee()).toThrow(new MissingParamError("id"));
   });
 
-  test("Should throw if no id are provided", () => {
+  test("Should throw if no id is provided", () => {
     const props = {
       business_id: "any_business_id",
       name: "any_name",
@@ -16,7 +16,7 @@ describe("Employee Entity", () => {
     expect(() => new Employee(props)).toThrow(new MissingParamError("id"));
   });
 
-  test("Should throw if no buisness_id are provided", () => {
+  test("Should throw if no buisness_id is provided", () => {
     const props = {
       id: "any_id",
       name: "any_name",
@@ -28,7 +28,7 @@ describe("Employee Entity", () => {
     );
   });
 
-  test("Should throw if no name are provided", () => {
+  test("Should throw if no name is provided", () => {
     const props = {
       id: "any_id",
       business_id: "any_business_id",
@@ -38,7 +38,7 @@ describe("Employee Entity", () => {
     expect(() => new Employee(props)).toThrow(new MissingParamError("name"));
   });
 
-  test("Should throw if no hashedPassword are provided", () => {
+  test("Should throw if no hashedPassword is provided", () => {
     const props = {
       id: "any_id",
       business_id: "any_business_id",
@@ -49,7 +49,7 @@ describe("Employee Entity", () => {
       new MissingParamError("hashedPassword"),
     );
   });
-  test("Should throw if no role are provided", () => {
+  test("Should throw if no role is provided", () => {
     const props = {
       id: "any_id",
       business_id: "any_business_id",

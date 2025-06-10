@@ -27,6 +27,8 @@ const router = async function (req, res) {
       for (const route of apiRoutes.post) {
         const match = url.match(route.pattern);
         if (match) {
+          console.log(url);
+          console.log(match);
           const httpRequest = await nodeRequestAdapter(req, match.groups);
 
           const httpResponse = await route.handler(httpRequest);
