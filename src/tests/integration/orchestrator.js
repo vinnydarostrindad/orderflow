@@ -69,10 +69,35 @@ async function createMenu(businessId, quantity = 1) {
   return quantity === 1 ? menus[0] : menus;
 }
 
+async function createMenuItem(businessId, menuId, quantity = 1) {
+  let menuItems = [];
+  for (let i = 0; i < quantity; i++) {
+    const response = await fetch(
+      `http://localhost:3000/api/v1/business/${businessId}/menu/${menuId}/item`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          name: "any_name",
+          price: 9.9,
+          imagePath: "any_img_path",
+          description: "any_description",
+          type: "any_type",
+        }),
+      },
+    );
+
+    menuItems.push(await response.json());
+  }
+
+  return quantity === 1 ? menuItems[0] : menuItems;
+}
+
 export {
   cleanDatabase,
   runMigrations,
   createBusiness,
   createEmployee,
   createMenu,
+  createMenuItem,
 };

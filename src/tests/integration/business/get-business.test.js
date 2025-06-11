@@ -25,6 +25,7 @@ describe("GET /api/v1/business/[businessId]", () => {
       email: "any_email@mail.com",
     });
 
+    expect(typeof responseBody.id).toBe("string");
     expect(uuidVersion(responseBody.id)).toBe(4);
 
     expect(validator.isEmail(responseBody.email)).toBe(true);

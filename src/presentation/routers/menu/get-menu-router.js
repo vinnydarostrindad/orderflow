@@ -21,7 +21,15 @@ export default class GetMenuRouter {
         }
 
         menu.forEach((menu) => {
-          delete menu?.password;
+          const { created_at, updated_at } = menu;
+
+          delete menu?.created_at;
+          delete menu?.updated_at;
+          delete menu?.business_id;
+
+          menu.createdAt = created_at;
+          menu.updatedAt = updated_at;
+          menu.businessId = businessId;
         });
 
         return httpResponse.ok(menu);
@@ -33,14 +41,14 @@ export default class GetMenuRouter {
         return httpResponse.notFound("Menu");
       }
 
-      const { name, createdAt, updatedAt } = menu;
+      const { name, created_at, updated_at } = menu;
 
       return httpResponse.ok({
         businessId,
         id: menuId,
         name,
-        createdAt,
-        updatedAt,
+        createdAt: created_at,
+        updatedAt: updated_at,
       });
     } catch (err) {
       console.error(err);

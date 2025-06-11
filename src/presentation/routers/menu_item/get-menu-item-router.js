@@ -20,6 +20,20 @@ export default class GetMenuItemRouter {
           return httpResponse.notFound("MenuItem");
         }
 
+        menuItems.forEach((menuItem) => {
+          const { image_path, created_at, updated_at } = menuItem;
+
+          delete menuItem?.menu_id;
+          delete menuItem?.image_path;
+          delete menuItem?.created_at;
+          delete menuItem?.updated_at;
+
+          menuItem.createdAt = created_at;
+          menuItem.updatedAt = updated_at;
+          menuItem.menuId = menuId;
+          menuItem.imagePath = image_path;
+        });
+
         return httpResponse.ok(menuItems);
       }
 
@@ -31,6 +45,18 @@ export default class GetMenuItemRouter {
       if (!menuItem) {
         return httpResponse.notFound("MenuItem");
       }
+
+      const { image_path, created_at, updated_at } = menuItem;
+
+      delete menuItem?.menu_id;
+      delete menuItem?.image_path;
+      delete menuItem?.created_at;
+      delete menuItem?.updated_at;
+
+      menuItem.createdAt = created_at;
+      menuItem.updatedAt = updated_at;
+      menuItem.menuId = menuId;
+      menuItem.imagePath = image_path;
 
       return httpResponse.ok(menuItem);
     } catch (err) {

@@ -33,7 +33,11 @@ describe("GET /api/v1/business/[businessId]/employee", () => {
         role: "waiter",
       });
 
+      expect(typeof employee.id).toBe("string");
       expect(uuidVersion(employee.id)).toBe(4);
+
+      expect(typeof employee.businessId).toBe("string");
+      expect(uuidVersion(employee.businessId)).toBe(4);
 
       expect(typeof employee.createdAt).toBe("string");
       expect(Date.parse(employee.createdAt)).not.toBeNaN();
@@ -80,7 +84,11 @@ describe("GET /api/v1/business/[businessId]/employee/[employeeId]", () => {
       role: "waiter",
     });
 
+    expect(typeof responseBody.id).toBe("string");
     expect(uuidVersion(responseBody.id)).toBe(4);
+
+    expect(typeof responseBody.businessId).toBe("string");
+    expect(uuidVersion(responseBody.businessId)).toBe(4);
 
     expect(typeof responseBody.createdAt).toBe("string");
     expect(Date.parse(responseBody.createdAt)).not.toBeNaN();

@@ -30,20 +30,20 @@ const makeGetMenuItemUseCase = () => {
   const getMenuItemUseCaseSpy = new GetMenuItemUseCaseSpy();
   getMenuItemUseCaseSpy.menuItem = {
     id: "any_menu_item_id",
-    menuId: "any_menu_id",
+    menu_id: "any_menu_id",
     name: "any_name",
     price: "any_price",
-    imagePath: "any_img_path",
+    image_path: "any_img_path",
     description: "any_description",
     type: "any_type",
   };
   getMenuItemUseCaseSpy.menuItems = [
     {
       id: "any_menu_item_id",
-      menuId: "any_menu_id",
+      menu_id: "any_menu_id",
       name: "any_name",
       price: "any_price",
-      imagePath: "any_img_path",
+      image_path: "any_img_path",
       description: "any_description",
       type: "any_type",
     },

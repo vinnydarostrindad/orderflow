@@ -21,7 +21,16 @@ export default class GetEmployeeRouter {
         }
 
         employees.forEach((employee) => {
+          const { created_at, updated_at } = employee;
+
           delete employee?.password;
+          delete employee?.created_at;
+          delete employee?.updated_at;
+          delete employee?.business_id;
+
+          employee.createdAt = created_at;
+          employee.updatedAt = updated_at;
+          employee.businessId = businessId;
         });
 
         return httpResponse.ok(employees);
@@ -36,15 +45,15 @@ export default class GetEmployeeRouter {
         return httpResponse.notFound("Employee");
       }
 
-      const { name, role, createdAt, updatedAt } = employee;
+      const { name, role, created_at, updated_at } = employee;
 
       return httpResponse.ok({
         businessId,
         id: employeeId,
         name,
         role,
-        createdAt,
-        updatedAt,
+        createdAt: created_at,
+        updatedAt: updated_at,
       });
     } catch (err) {
       console.error(err);

@@ -19,14 +19,14 @@ export default class GetBusinessRouter {
         return httpResponse.notFound("Business");
       }
 
-      const { name, email, createdAt, updatedAt } = business;
+      const { name, email, created_at, updated_at } = business;
 
       return httpResponse.ok({
         id: businessId,
         name,
         email,
-        createdAt,
-        updatedAt,
+        createdAt: created_at,
+        updatedAt: updated_at,
       });
     } catch (err) {
       console.error(err);

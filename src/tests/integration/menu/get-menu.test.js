@@ -36,8 +36,10 @@ describe("GET /api/v1/business/[businessId]/menu", () => {
       });
       n += 1;
 
+      expect(typeof menu.id).toBe("string");
       expect(uuidVersion(menu.id)).toBe(4);
 
+      expect(typeof menu.businessId).toBe("string");
       expect(uuidVersion(menu.businessId)).toBe(4);
 
       expect(typeof menu.createdAt).toBe("string");
@@ -83,8 +85,10 @@ describe("GET /api/v1/business/[businessId]/menu/[menuId]", () => {
       name: "any_name_1",
     });
 
+    expect(typeof responseBody.id).toBe("string");
     expect(uuidVersion(responseBody.id)).toBe(4);
 
+    expect(typeof responseBody.businessId).toBe("string");
     expect(uuidVersion(responseBody.businessId)).toBe(4);
 
     expect(typeof responseBody.createdAt).toBe("string");
