@@ -11,7 +11,7 @@ beforeAll(async () => {
   await runMigrations();
 });
 
-describe("POST /api/v1/business/[business_id]/employee", () => {
+describe("POST /api/v1/business/[businessId]/employee", () => {
   test("Should register a employee correctly via api", async () => {
     const business = await createBusiness();
 
@@ -46,11 +46,11 @@ describe("POST /api/v1/business/[business_id]/employee", () => {
     expect(typeof employee.password).toBe("string");
     expect(employee.password).not.toBe(requestBody.password);
 
-    expect(typeof employee.created_at).toBe("string");
-    expect(Date.parse(employee.created_at)).not.toBeNull();
+    expect(typeof employee.createdAt).toBe("string");
+    expect(Date.parse(employee.createdAt)).not.toBeNull();
 
-    expect(typeof employee.updated_at).toBe("string");
-    expect(Date.parse(employee.updated_at)).not.toBeNull();
+    expect(typeof employee.updatedAt).toBe("string");
+    expect(Date.parse(employee.updatedAt)).not.toBeNull();
 
     expect(validator.isJWT(token)).toBe(true);
   });

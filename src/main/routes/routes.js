@@ -11,25 +11,25 @@ const apiRoutes = {
       handler: migrationRoute.get,
     },
     {
-      pattern: /^\/api\/v1\/business\/(?<business_id>[^/]+)$/,
+      pattern: /^\/api\/v1\/business\/(?<businessId>[^/]+)$/,
       handler: businessRoute.getOne,
     },
     {
-      pattern: /^\/api\/v1\/business\/(?<business_id>[^/]+)\/employee$/,
+      pattern: /^\/api\/v1\/business\/(?<businessId>[^/]+)\/employee$/,
       handler: employeeRoute.getAll,
     },
     {
       pattern:
-        /^\/api\/v1\/business\/(?<business_id>[^/]+)\/employee\/(?<employee_id>[^/]+)$/,
+        /^\/api\/v1\/business\/(?<businessId>[^/]+)\/employee\/(?<employeeId>[^/]+)$/,
       handler: employeeRoute.getOne,
     },
     {
-      pattern: /^\/api\/v1\/business\/(?<business_id>[^/]+)\/menu$/,
+      pattern: /^\/api\/v1\/business\/(?<businessId>[^/]+)\/menu$/,
       handler: menuRoute.getAll,
     },
     {
       pattern:
-        /^\/api\/v1\/business\/(?<business_id>[^/]+)\/menu\/(?<menu_id>[^/]+)$/,
+        /^\/api\/v1\/business\/(?<businessId>[^/]+)\/menu\/(?<menuId>[^/]+)$/,
       handler: menuRoute.getOne,
     },
   ],
@@ -43,16 +43,16 @@ const apiRoutes = {
       handler: businessRoute.post,
     },
     {
-      pattern: /^\/api\/v1\/business\/(?<business_id>[^/]+)\/employee$/,
+      pattern: /^\/api\/v1\/business\/(?<businessId>[^/]+)\/employee$/,
       handler: employeeRoute.post,
     },
     {
-      pattern: /^\/api\/v1\/business\/(?<business_id>[^/]+)\/menu$/,
+      pattern: /^\/api\/v1\/business\/(?<businessId>[^/]+)\/menu$/,
       handler: menuRoute.post,
     },
     {
       pattern:
-        /^\/api\/v1\/business\/(?<business_id>[^/]+)\/menu\/(?<menu_id>[^/]+)\/item$/,
+        /^\/api\/v1\/business\/(?<businessId>[^/]+)\/menu\/(?<menuId>[^/]+)\/item$/,
       handler: menuItemRoute.post,
     },
   ],

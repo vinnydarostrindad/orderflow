@@ -5,12 +5,12 @@ export default class EmployeeRepository {
     this.postgresAdapter = postgresAdapter;
   }
 
-  async create({ id, business_id, name, role, hashedPassword } = {}) {
+  async create({ id, businessId, name, role, hashedPassword } = {}) {
     if (!id) {
       throw new MissingParamError("id");
     }
-    if (!business_id) {
-      throw new MissingParamError("business_id");
+    if (!businessId) {
+      throw new MissingParamError("businessId");
     }
     if (!name) {
       throw new MissingParamError("name");
@@ -31,7 +31,7 @@ export default class EmployeeRepository {
         RETURNING
           *
       ;`,
-      values: [id, business_id, name, role, hashedPassword],
+      values: [id, businessId, name, role, hashedPassword],
     });
     if (!result) {
       // Fazer um erro mais específico depois
@@ -40,9 +40,9 @@ export default class EmployeeRepository {
     return result.rows[0];
   }
 
-  async findAll(business_id) {
-    if (!business_id) {
-      throw new MissingParamError("business_id");
+  async findAll(businessId) {
+    if (!businessId) {
+      throw new MissingParamError("businessId");
     }
 
     const result = await this.postgresAdapter.query({
@@ -56,7 +56,7 @@ export default class EmployeeRepository {
         LIMIT
           10
       ;`,
-      values: [business_id],
+      values: [businessId],
     });
 
     if (!result) {
@@ -67,12 +67,12 @@ export default class EmployeeRepository {
     return result.rows;
   }
 
-  async findById(business_id, employee_id) {
-    if (!business_id) {
-      throw new MissingParamError("business_id");
+  async findById(businessId, employeeId) {
+    if (!businessId) {
+      throw new MissingParamError("businessId");
     }
-    if (!employee_id) {
-      throw new MissingParamError("employee_id");
+    if (!employeeId) {
+      throw new MissingParamError("employeeId");
     }
 
     const result = await this.postgresAdapter.query({
@@ -86,7 +86,7 @@ export default class EmployeeRepository {
         LIMIT 
           1
       ;`,
-      values: [employee_id, business_id],
+      values: [employeeId, businessId],
     });
 
     if (!result) {

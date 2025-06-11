@@ -8,14 +8,14 @@ export default class GetMenuRouter {
 
   async route(httpRequest) {
     try {
-      const { business_id, menu_id } = httpRequest.params;
+      const { businessId, menuId } = httpRequest.params;
 
-      if (!business_id) {
-        return httpResponse.badRequest(new MissingParamError("business_id"));
+      if (!businessId) {
+        return httpResponse.badRequest(new MissingParamError("businessId"));
       }
 
-      if (!menu_id) {
-        const menu = await this.getMenuUseCase.execute(business_id);
+      if (!menuId) {
+        const menu = await this.getMenuUseCase.execute(businessId);
         if (!menu) {
           return httpResponse.notFound("Menu");
         }
@@ -27,20 +27,20 @@ export default class GetMenuRouter {
         return httpResponse.ok(menu);
       }
 
-      const menu = await this.getMenuUseCase.execute(business_id, menu_id);
+      const menu = await this.getMenuUseCase.execute(businessId, menuId);
 
       if (!menu) {
         return httpResponse.notFound("Menu");
       }
 
-      const { name, created_at, updated_at } = menu;
+      const { name, createdAt, updatedAt } = menu;
 
       return httpResponse.ok({
-        business_id,
-        id: menu_id,
+        businessId,
+        id: menuId,
         name,
-        created_at,
-        updated_at,
+        createdAt,
+        updatedAt,
       });
     } catch (err) {
       console.error(err);

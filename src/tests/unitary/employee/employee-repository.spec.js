@@ -14,7 +14,7 @@ const makeSut = () => {
 
 const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
-    query(queryObject) {
+    async query(queryObject) {
       this.queryObject = queryObject;
       return this.employee;
     },
@@ -53,7 +53,7 @@ describe("Employee Repository", () => {
     test("Should throw if no id is provided", async () => {
       const { sut } = makeSut();
       const props = {
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
         role: "any_role",
         hashedPassword: "any_hash",
@@ -64,7 +64,7 @@ describe("Employee Repository", () => {
       );
     });
 
-    test("Should throw if no business_id is provided", async () => {
+    test("Should throw if no businessId is provided", async () => {
       const { sut } = makeSut();
       const props = {
         id: "any_id",
@@ -74,7 +74,7 @@ describe("Employee Repository", () => {
       };
 
       await expect(sut.create(props)).rejects.toThrow(
-        new MissingParamError("business_id"),
+        new MissingParamError("businessId"),
       );
     });
 
@@ -82,7 +82,7 @@ describe("Employee Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         role: "any_role",
         hashedPassword: "any_hash",
       };
@@ -96,7 +96,7 @@ describe("Employee Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
         hashedPassword: "any_hash",
       };
@@ -110,7 +110,7 @@ describe("Employee Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
         role: "any_role",
       };
@@ -124,7 +124,7 @@ describe("Employee Repository", () => {
       const { sut, postgresAdapterSpy } = makeSut();
       const props = {
         id: "any_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
         role: "any_role",
         hashedPassword: "any_hash",
@@ -153,7 +153,7 @@ describe("Employee Repository", () => {
       const { sut, postgresAdapterSpy } = makeSut();
       const props = {
         id: "any_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
         role: "any_role",
         hashedPassword: "any_hash",
@@ -167,7 +167,7 @@ describe("Employee Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
         role: "any_role",
         hashedPassword: "any_hash",
@@ -185,10 +185,10 @@ describe("Employee Repository", () => {
   });
 
   describe("findAll method", () => {
-    test("Should throw if no business_id is provided", async () => {
+    test("Should throw if no businessId is provided", async () => {
       const { sut } = makeSut();
       await expect(sut.findAll()).rejects.toThrow(
-        new MissingParamError("business_id"),
+        new MissingParamError("businessId"),
       );
     });
 
@@ -228,17 +228,17 @@ describe("Employee Repository", () => {
   });
 
   describe("findById method", () => {
-    test("Should throw if no business_id is provided", async () => {
+    test("Should throw if no businessId is provided", async () => {
       const { sut } = makeSut();
       await expect(sut.findById()).rejects.toThrow(
-        new MissingParamError("business_id"),
+        new MissingParamError("businessId"),
       );
     });
 
-    test("Should throw if no employee_id is provided", async () => {
+    test("Should throw if no employeeId is provided", async () => {
       const { sut } = makeSut();
       await expect(sut.findById("any_business_id")).rejects.toThrow(
-        new MissingParamError("employee_id"),
+        new MissingParamError("employeeId"),
       );
     });
 
@@ -293,7 +293,7 @@ describe("Employee Repository", () => {
     ];
     const props = {
       id: "any_id",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       name: "any_name",
       role: "any_role",
       hashedPassword: "any_hash",
@@ -301,8 +301,8 @@ describe("Employee Repository", () => {
 
     for (const sut of suts) {
       await expect(sut.create(props)).rejects.toThrow(TypeError);
-      await expect(sut.findAll(props.business_id)).rejects.toThrow(TypeError);
-      await expect(sut.findById(props.business_id, props.id)).rejects.toThrow(
+      await expect(sut.findAll(props.businessId)).rejects.toThrow(TypeError);
+      await expect(sut.findById(props.businessId, props.id)).rejects.toThrow(
         TypeError,
       );
     }
@@ -316,7 +316,7 @@ describe("Employee Repository", () => {
     ];
     const props = {
       id: "any_id",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       name: "any_name",
       role: "any_role",
       hashedPassword: "any_hash",
@@ -324,8 +324,8 @@ describe("Employee Repository", () => {
 
     for (const sut of suts) {
       await expect(sut.create(props)).rejects.toThrow();
-      await expect(sut.findAll(props.business_id)).rejects.toThrow();
-      await expect(sut.findById(props.business_id, props.id)).rejects.toThrow();
+      await expect(sut.findAll(props.businessId)).rejects.toThrow();
+      await expect(sut.findById(props.businessId, props.id)).rejects.toThrow();
     }
   });
 });

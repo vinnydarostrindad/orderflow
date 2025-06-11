@@ -10,7 +10,7 @@ beforeAll(async () => {
   await runMigrations();
 });
 
-describe("POST /api/v1/business/[business_id]/menu", () => {
+describe("POST /api/v1/business/[businessId]/menu", () => {
   test("should register a menu and return 201", async () => {
     const business = await createBusiness();
 
@@ -35,18 +35,18 @@ describe("POST /api/v1/business/[business_id]/menu", () => {
 
     expect(menu).toMatchObject({
       id: menu.id,
-      business_id: business.id,
+      businessId: business.id,
       name: requestBody.name,
     });
 
     expect(uuidVersion(menu.id)).toBe(4);
 
-    expect(uuidVersion(menu.business_id)).toBe(4);
+    expect(uuidVersion(menu.businessId)).toBe(4);
 
-    expect(typeof menu.created_at).toBe("string");
-    expect(Date.parse(menu.created_at)).not.toBeNaN();
+    expect(typeof menu.createdAt).toBe("string");
+    expect(Date.parse(menu.createdAt)).not.toBeNaN();
 
-    expect(typeof menu.updated_at).toBe("string");
-    expect(Date.parse(menu.updated_at)).not.toBeNaN();
+    expect(typeof menu.updatedAt).toBe("string");
+    expect(Date.parse(menu.updatedAt)).not.toBeNaN();
   });
 });

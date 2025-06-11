@@ -40,11 +40,11 @@ describe("POST /api/v1/business", () => {
     expect(typeof business.password).toBe("string");
     expect(business.password).not.toBe(requestBody.password);
 
-    expect(typeof business.created_at).toBe("string");
-    expect(Date.parse(business.created_at)).not.toBeNaN();
+    expect(typeof business.createdAt).toBe("string");
+    expect(Date.parse(business.createdAt)).not.toBeNaN();
 
-    expect(typeof business.updated_at).toBe("string");
-    expect(Date.parse(business.updated_at)).not.toBeNaN();
+    expect(typeof business.updatedAt).toBe("string");
+    expect(Date.parse(business.updatedAt)).not.toBeNaN();
 
     expect(validator.isJWT(token)).toBe(true);
   });

@@ -14,7 +14,7 @@ const makeSut = () => {
 
 const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
-    query(queryObject) {
+    async query(queryObject) {
       this.queryObject = queryObject;
       return this.queryResult;
     },
@@ -27,7 +27,7 @@ const makePostgresAdapter = () => {
         menu_id: "any_menu_id",
         name: "any_name",
         price: "any_price",
-        image_path: "any_img",
+        image_path: "any_img_path",
         description: "any_description",
         type: "any_type",
       },
@@ -55,10 +55,10 @@ describe("MenuItem Repository", () => {
     test("Should throw if no id is provided", async () => {
       const { sut } = makeSut();
       const props = {
-        menu_id: "any_menu_id",
+        menuId: "any_menu_id",
         name: "any_name",
         price: "any_price",
-        image_path: "any_img_path",
+        imagePath: "any_img_path",
         description: "any_description",
         type: "any_type",
       };
@@ -67,18 +67,18 @@ describe("MenuItem Repository", () => {
       );
     });
 
-    test("Should throw if no menu_id is provided", async () => {
+    test("Should throw if no menuId is provided", async () => {
       const { sut } = makeSut();
       const props = {
         id: "any_menu_item_id",
         name: "any_name",
         price: "any_price",
-        image_path: "any_img_path",
+        imagePath: "any_img_path",
         description: "any_description",
         type: "any_type",
       };
       await expect(sut.create(props)).rejects.toThrow(
-        new MissingParamError("menu_id"),
+        new MissingParamError("menuId"),
       );
     });
 
@@ -86,9 +86,9 @@ describe("MenuItem Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_menu_item_id",
-        menu_id: "any_menu_id",
+        menuId: "any_menu_id",
         price: "any_price",
-        image_path: "any_img_path",
+        imagePath: "any_img_path",
         description: "any_description",
         type: "any_type",
       };
@@ -101,9 +101,9 @@ describe("MenuItem Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_menu_item_id",
-        menu_id: "any_menu_id",
+        menuId: "any_menu_id",
         name: "any_name",
-        image_path: "any_img_path",
+        imagePath: "any_img_path",
         description: "any_description",
         type: "any_type",
       };
@@ -116,10 +116,10 @@ describe("MenuItem Repository", () => {
       const { sut, postgresAdapterSpy } = makeSut();
       const props = {
         id: "any_menu_item_id",
-        menu_id: "any_menu_id",
+        menuId: "any_menu_id",
         name: "any_name",
         price: "any_price",
-        image_path: "any_img_path",
+        imagePath: "any_img_path",
         description: "any_description",
         type: "any_type",
       };
@@ -149,10 +149,10 @@ describe("MenuItem Repository", () => {
       const { sut, postgresAdapterSpy } = makeSut();
       const props = {
         id: "any_menu_item_id",
-        menu_id: "any_menu_id",
+        menuId: "any_menu_id",
         name: "any_name",
         price: "any_price",
-        image_path: "any_img",
+        imagePath: "any_img_path",
         description: "any_description",
         type: "any_type",
       };
@@ -166,10 +166,10 @@ describe("MenuItem Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_menu_item_id",
-        menu_id: "any_menu_id",
+        menuId: "any_menu_id",
         name: "any_name",
         price: "any_price",
-        image_path: "any_img",
+        imagePath: "any_img_path",
         description: "any_description",
         type: "any_type",
       };
@@ -180,7 +180,122 @@ describe("MenuItem Repository", () => {
         menu_id: "any_menu_id",
         name: "any_name",
         price: "any_price",
-        image_path: "any_img",
+        image_path: "any_img_path",
+        description: "any_description",
+        type: "any_type",
+      });
+    });
+  });
+
+  describe("findAll Method", () => {
+    test("Should throw if no menuId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.findAll()).rejects.toThrow(
+        new MissingParamError("menuId"),
+      );
+    });
+
+    test("Should call postgresAdapter with correct object ", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+
+      await sut.findAll("any_menu_id");
+      expect(postgresAdapterSpy.queryObject).toEqual({
+        text: `
+        SELECT 
+          *
+        FROM
+          menu_items
+        WHERE
+          menu_id = $1
+        LIMIT
+          10
+      ;`,
+        values: ["any_menu_id"],
+      });
+    });
+
+    test("Should return null if postgresAdapter return invalid menu items", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+
+      postgresAdapterSpy.queryResult = null;
+
+      const menuItems = await sut.findAll("any_menu_id");
+      expect(menuItems).toBeNull();
+    });
+
+    test("Should return menu items if everything is right", async () => {
+      const { sut } = makeSut();
+
+      const menuItems = await sut.findAll("any_menu_id");
+      expect(Array.isArray(menuItems)).toBe(true);
+      expect(menuItems[0]).toEqual({
+        id: "any_menu_item_id",
+        menu_id: "any_menu_id",
+        name: "any_name",
+        price: "any_price",
+        image_path: "any_img_path",
+        description: "any_description",
+        type: "any_type",
+      });
+    });
+  });
+
+  describe("findById Method", () => {
+    test("Should throw if no menuId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.findById(undefined, "any_menu_id")).rejects.toThrow(
+        new MissingParamError("menuId"),
+      );
+    });
+
+    test("Should throw if no menuItemId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.findById("any_menu_id")).rejects.toThrow(
+        new MissingParamError("menuItemId"),
+      );
+    });
+
+    test("Should call postgresAdapter with correct object ", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+
+      await sut.findById("any_menu_id", "any_menu_item_id");
+      expect(postgresAdapterSpy.queryObject).toEqual({
+        text: `
+        SELECT
+          *
+        FROM
+          menu_items
+        WHERE
+          id = $1 AND menu_id = $2
+        LIMIT
+          1
+        ;`,
+        values: ["any_menu_item_id", "any_menu_id"],
+      });
+    });
+
+    test("Should return null if postgresAdapter return invalid menu", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+
+      postgresAdapterSpy.queryResult = null;
+
+      const menuItem = await sut.findById("any_menu_id", "any_menu_item_id");
+      expect(menuItem).toBeNull();
+    });
+
+    test("Should return menu item if everything is right", async () => {
+      const { sut } = makeSut();
+
+      const menuItem = await sut.findById("any_menu_id", "any_menu_item_id");
+      expect(menuItem).toEqual({
+        id: "any_menu_item_id",
+        menu_id: "any_menu_id",
+        name: "any_name",
+        price: "any_price",
+        image_path: "any_img_path",
         description: "any_description",
         type: "any_type",
       });
@@ -197,16 +312,20 @@ describe("MenuItem Repository", () => {
     ];
     const props = {
       id: "any_menu_item_id",
-      menu_id: "any_menu_id",
+      menuId: "any_menu_id",
       name: "any_name",
       price: "any_price",
-      image_path: "any_img",
+      imagePath: "any_img_path",
       description: "any_description",
       type: "any_type",
     };
 
     for (const sut of suts) {
       await expect(sut.create(props)).rejects.toThrow(TypeError);
+      await expect(sut.findAll(props.menuId)).rejects.toThrow(TypeError);
+      await expect(sut.findById(props.menuId, props.id)).rejects.toThrow(
+        TypeError,
+      );
     }
   });
 
@@ -218,16 +337,18 @@ describe("MenuItem Repository", () => {
     ];
     const props = {
       id: "any_menu_item_id",
-      menu_id: "any_menu_id",
+      menuId: "any_menu_id",
       name: "any_name",
       price: "any_price",
-      image_path: "any_img",
+      imagePath: "any_img_path",
       description: "any_description",
       type: "any_type",
     };
 
     for (const sut of suts) {
       await expect(sut.create(props)).rejects.toThrow();
+      await expect(sut.findAll(props.menuId)).rejects.toThrow();
+      await expect(sut.findById(props.menuId, props.id)).rejects.toThrow();
     }
   });
 });

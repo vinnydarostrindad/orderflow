@@ -38,9 +38,9 @@ const makeIdGeneratorWithError = () => {
 
 const makeMenuRepository = () => {
   class MenuRepositorySpy {
-    async create({ id, business_id, name }) {
+    async create({ id, businessId, name }) {
       this.id = id;
-      this.business_id = business_id;
+      this.businessId = businessId;
       this.name = name;
       return this.menu;
     }
@@ -49,7 +49,7 @@ const makeMenuRepository = () => {
   const menuRepositorySpy = new MenuRepositorySpy();
   menuRepositorySpy.menu = {
     id: "any_menu_id",
-    business_id: "any_business_id",
+    businessId: "any_business_id",
     name: "any_name",
   };
   return menuRepositorySpy;
@@ -74,20 +74,20 @@ describe("Register Menu UseCase", () => {
   test("Should throw if no name is provided ", async () => {
     const { sut } = makeSut();
     const props = {
-      business_id: "any_business_id",
+      businessId: "any_business_id",
     };
     await expect(sut.execute(props)).rejects.toThrow(
       new MissingParamError("name"),
     );
   });
 
-  test("Should throw if no business_id is provided ", async () => {
+  test("Should throw if no businessId is provided ", async () => {
     const { sut } = makeSut();
     const props = {
       name: "any_name",
     };
     await expect(sut.execute(props)).rejects.toThrow(
-      new MissingParamError("business_id"),
+      new MissingParamError("businessId"),
     );
   });
 
@@ -95,7 +95,7 @@ describe("Register Menu UseCase", () => {
     const { sut, idGeneratorSpy } = makeSut();
     const props = {
       name: "any_name",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
     };
     idGeneratorSpy.id = null;
 
@@ -108,12 +108,12 @@ describe("Register Menu UseCase", () => {
     const { sut, menuRepositorySpy, idGeneratorSpy } = makeSut();
     const props = {
       name: "any_name",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
     };
 
     await sut.execute(props);
     expect(menuRepositorySpy.id).toBe(idGeneratorSpy.id);
-    expect(menuRepositorySpy.business_id).toBe("any_business_id");
+    expect(menuRepositorySpy.businessId).toBe("any_business_id");
     expect(menuRepositorySpy.name).toBe("any_name");
   });
 
@@ -121,7 +121,7 @@ describe("Register Menu UseCase", () => {
     const { sut, menuRepositorySpy } = makeSut();
     const props = {
       name: "any_name",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
     };
     menuRepositorySpy.menu = null;
 
@@ -134,13 +134,13 @@ describe("Register Menu UseCase", () => {
     const { sut } = makeSut();
     const props = {
       name: "any_name",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
     };
 
     const menu = await sut.execute(props);
     expect(menu).toEqual({
       id: "any_menu_id",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       name: "any_name",
     });
   });
@@ -163,7 +163,7 @@ describe("Register Menu UseCase", () => {
     ];
     const props = {
       name: "any_name",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
     };
 
     for (const sut of suts) {
@@ -184,7 +184,7 @@ describe("Register Menu UseCase", () => {
     ];
     const props = {
       name: "any_name",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
     };
 
     for (const sut of suts) {

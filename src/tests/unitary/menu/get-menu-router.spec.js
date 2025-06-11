@@ -16,26 +16,26 @@ const makeSut = () => {
 
 const makeGetMenuUseCase = () => {
   class GetMenuUseCaseSpy {
-    async execute(business_id, menu_id) {
-      this.business_id = business_id;
-      if (!menu_id) {
+    async execute(businessId, menuId) {
+      this.businessId = businessId;
+      if (!menuId) {
         return this.menus;
       }
 
-      this.menu_id = menu_id;
+      this.menuId = menuId;
       return this.menu;
     }
   }
 
   const getMenuUseCaseSpy = new GetMenuUseCaseSpy();
   getMenuUseCaseSpy.menu = {
-    business_id: "any_business_id",
+    businessId: "any_business_id",
     id: "any_menu_id",
     name: "any_name",
   };
   getMenuUseCaseSpy.menus = [
     {
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       id: "any_menu_id",
       name: "any_name",
     },
@@ -54,12 +54,12 @@ const makeGetMenuUseCaseWithError = () => {
 };
 
 describe("Get Menu Router", () => {
-  describe("Without menu_id", () => {
+  describe("Without menuId", () => {
     test("Should return 404 if no menus are found", async () => {
       const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
-          business_id: "any_business_id",
+          businessId: "any_business_id",
         },
       };
       getMenuUseCaseSpy.menus = null;
@@ -73,20 +73,20 @@ describe("Get Menu Router", () => {
       const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
-          business_id: "any_business_id",
+          businessId: "any_business_id",
         },
       };
 
       await sut.route(httpRequest);
-      expect(getMenuUseCaseSpy.business_id).toBe("any_business_id");
-      expect(getMenuUseCaseSpy.menu_id).toBeUndefined();
+      expect(getMenuUseCaseSpy.businessId).toBe("any_business_id");
+      expect(getMenuUseCaseSpy.menuId).toBeUndefined();
     });
 
     test("Should return 200 and a array of menus", async () => {
       const { sut } = makeSut();
       const httpRequest = {
         params: {
-          business_id: "any_business_id",
+          businessId: "any_business_id",
         },
       };
 
@@ -95,19 +95,19 @@ describe("Get Menu Router", () => {
       expect(Array.isArray(httpResponse.body)).toBe(true);
       expect(httpResponse.body[0]).toEqual({
         id: "any_menu_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
       });
     });
   });
 
-  describe("With menu_id", () => {
+  describe("With menuId", () => {
     test("Should return 404 if no menu is found", async () => {
       const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
-          business_id: "any_business_id",
-          menu_id: "any_menu_id",
+          businessId: "any_business_id",
+          menuId: "any_menu_id",
         },
       };
       getMenuUseCaseSpy.menu = null;
@@ -121,22 +121,22 @@ describe("Get Menu Router", () => {
       const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
-          business_id: "any_business_id",
-          menu_id: "any_menu_id",
+          businessId: "any_business_id",
+          menuId: "any_menu_id",
         },
       };
 
       await sut.route(httpRequest);
-      expect(getMenuUseCaseSpy.business_id).toBe("any_business_id");
-      expect(getMenuUseCaseSpy.menu_id).toBe("any_menu_id");
+      expect(getMenuUseCaseSpy.businessId).toBe("any_business_id");
+      expect(getMenuUseCaseSpy.menuId).toBe("any_menu_id");
     });
 
     test("Should return 200 with menu correctly", async () => {
       const { sut } = makeSut();
       const httpRequest = {
         params: {
-          business_id: "any_business_id",
-          menu_id: "any_menu_id",
+          businessId: "any_business_id",
+          menuId: "any_menu_id",
         },
       };
 
@@ -144,24 +144,24 @@ describe("Get Menu Router", () => {
       expect(httpResponse.statusCode).toBe(200);
       expect(httpResponse.body).toEqual({
         id: "any_menu_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
       });
     });
   });
 
-  test("Should return 400 if no business_id is provided", async () => {
+  test("Should return 400 if no businessId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       params: {
-        menu_id: "any_menu_id",
+        menuId: "any_menu_id",
       },
     };
 
     const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError("business_id"));
+    expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
   });
 
   test("Should return 500 if no httpRequest is provided", async () => {
@@ -192,8 +192,8 @@ describe("Get Menu Router", () => {
     ];
     const httpRequest = {
       params: {
-        business_id: "any_business_id",
-        menu_id: "any_menu_id",
+        businessId: "any_business_id",
+        menuId: "any_menu_id",
       },
     };
 
@@ -212,8 +212,8 @@ describe("Get Menu Router", () => {
     ];
     const httpRequest = {
       params: {
-        business_id: "any_business_id",
-        menu_id: "any_menu_id",
+        businessId: "any_business_id",
+        menuId: "any_menu_id",
       },
     };
 

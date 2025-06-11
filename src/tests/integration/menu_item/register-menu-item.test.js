@@ -11,7 +11,7 @@ beforeAll(async () => {
   await runMigrations();
 });
 
-describe("POST /api/v1/business/[business_id]/menu/[menu_id]/item", () => {
+describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
   test("should register a menu and return 201", async () => {
     const business = await createBusiness();
     const menu = await createMenu(business.id);
@@ -19,7 +19,7 @@ describe("POST /api/v1/business/[business_id]/menu/[menu_id]/item", () => {
     const requestBody = {
       name: "any_name",
       price: "39.90",
-      image_path: "any_img",
+      imagePath: "any_img_path",
       description: "any_description",
       type: "any_type",
     };
@@ -41,22 +41,22 @@ describe("POST /api/v1/business/[business_id]/menu/[menu_id]/item", () => {
 
     expect(menuItem).toMatchObject({
       id: menuItem.id,
-      menu_id: menu.id,
+      menuId: menu.id,
       name: requestBody.name,
       price: requestBody.price,
-      image_path: requestBody.image_path,
+      imagePath: requestBody.imagePath,
       description: requestBody.description,
       type: requestBody.type,
     });
 
     expect(uuidVersion(menuItem.id)).toBe(4);
 
-    expect(uuidVersion(menuItem.menu_id)).toBe(4);
+    expect(uuidVersion(menuItem.menuId)).toBe(4);
 
-    expect(typeof menuItem.created_at).toBe("string");
-    expect(Date.parse(menuItem.created_at)).not.toBeNaN();
+    expect(typeof menuItem.createdAt).toBe("string");
+    expect(Date.parse(menuItem.createdAt)).not.toBeNaN();
 
-    expect(typeof menuItem.updated_at).toBe("string");
-    expect(Date.parse(menuItem.updated_at)).not.toBeNaN();
+    expect(typeof menuItem.updatedAt).toBe("string");
+    expect(Date.parse(menuItem.updatedAt)).not.toBeNaN();
   });
 });

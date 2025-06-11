@@ -48,14 +48,14 @@ describe("Get Business Router", () => {
     const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError("business_id"));
+    expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
   });
 
   test("Should return 404 if no business is found", async () => {
     const { sut, getBusinessUseCaseSpy } = makeSut();
     const httpRequest = {
       params: {
-        business_id: "any_id",
+        businessId: "any_id",
       },
     };
     getBusinessUseCaseSpy.business = null;
@@ -87,7 +87,7 @@ describe("Get Business Router", () => {
     const { sut, getBusinessUseCaseSpy } = makeSut();
     const httpRequest = {
       params: {
-        business_id: "any_id",
+        businessId: "any_id",
       },
     };
 
@@ -99,7 +99,7 @@ describe("Get Business Router", () => {
     const { sut } = makeSut();
     const httpRequest = {
       params: {
-        business_id: "any_id",
+        businessId: "any_id",
       },
     };
 
@@ -124,7 +124,7 @@ describe("Get Business Router", () => {
     for (const sut of suts) {
       const httpRequest = {
         body: {
-          business_id: "any_id",
+          businessId: "any_id",
         },
       };
 
@@ -144,7 +144,7 @@ describe("Get Business Router", () => {
     for (const sut of suts) {
       const httpRequest = {
         body: {
-          business_id: "any_id",
+          businessId: "any_id",
         },
       };
 

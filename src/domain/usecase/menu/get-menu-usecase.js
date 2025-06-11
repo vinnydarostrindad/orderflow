@@ -5,13 +5,13 @@ export default class GetMenuUseCase {
     this.menuRepository = menuRepository;
   }
 
-  async execute(business_id, menu_id) {
-    if (!business_id) {
-      throw new MissingParamError("business_id");
+  async execute(businessId, menuId) {
+    if (!businessId) {
+      throw new MissingParamError("businessId");
     }
 
-    if (!menu_id) {
-      const menus = await this.menuRepository.findAll(business_id);
+    if (!menuId) {
+      const menus = await this.menuRepository.findAll(businessId);
       if (!menus) {
         return null;
       }
@@ -19,7 +19,7 @@ export default class GetMenuUseCase {
       return menus;
     }
 
-    const menu = await this.menuRepository.findById(business_id, menu_id);
+    const menu = await this.menuRepository.findById(businessId, menuId);
     if (!menu) {
       return null;
     }

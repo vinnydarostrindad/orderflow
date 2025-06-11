@@ -14,7 +14,7 @@ const makeSut = () => {
 
 const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
-    query(queryObject) {
+    async query(queryObject) {
       this.queryObject = queryObject;
       return this.queryResult;
     },
@@ -51,7 +51,7 @@ describe("Menu Repository", () => {
     test("Should throw if no id is provided", async () => {
       const { sut } = makeSut();
       const props = {
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
       };
       await expect(sut.create(props)).rejects.toThrow(
@@ -59,14 +59,14 @@ describe("Menu Repository", () => {
       );
     });
 
-    test("Should throw if no business_id is provided", async () => {
+    test("Should throw if no businessId is provided", async () => {
       const { sut } = makeSut();
       const props = {
         id: "any_id",
         name: "any_name",
       };
       await expect(sut.create(props)).rejects.toThrow(
-        new MissingParamError("business_id"),
+        new MissingParamError("businessId"),
       );
     });
 
@@ -74,7 +74,7 @@ describe("Menu Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
       };
       await expect(sut.create(props)).rejects.toThrow(
         new MissingParamError("name"),
@@ -85,7 +85,7 @@ describe("Menu Repository", () => {
       const { sut, postgresAdapterSpy } = makeSut();
       const props = {
         id: "any_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
       };
       await sut.create(props);
@@ -106,7 +106,7 @@ describe("Menu Repository", () => {
       const { sut, postgresAdapterSpy } = makeSut();
       const props = {
         id: "any_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
       };
       postgresAdapterSpy.queryResult = null;
@@ -119,7 +119,7 @@ describe("Menu Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
       };
 
@@ -133,11 +133,11 @@ describe("Menu Repository", () => {
   });
 
   describe("findAll Method", () => {
-    test("Should throw if no business_id is provided", async () => {
+    test("Should throw if no businessId is provided", async () => {
       const { sut } = makeSut();
 
       await expect(sut.findAll()).rejects.toThrow(
-        new MissingParamError("business_id"),
+        new MissingParamError("businessId"),
       );
     });
 
@@ -165,8 +165,8 @@ describe("Menu Repository", () => {
 
       postgresAdapterSpy.queryResult = null;
 
-      const menu = await sut.findAll("any_business_id");
-      expect(menu).toBeNull();
+      const menus = await sut.findAll("any_business_id");
+      expect(menus).toBeNull();
     });
 
     test("Should return menu if everything is right", async () => {
@@ -183,19 +183,19 @@ describe("Menu Repository", () => {
   });
 
   describe("findById Method", () => {
-    test("Should throw if no business_id is provided", async () => {
+    test("Should throw if no businessId is provided", async () => {
       const { sut } = makeSut();
 
       await expect(sut.findById(undefined, "any_menu_id")).rejects.toThrow(
-        new MissingParamError("business_id"),
+        new MissingParamError("businessId"),
       );
     });
 
-    test("Should throw if no menu_id is provided", async () => {
+    test("Should throw if no menuId is provided", async () => {
       const { sut } = makeSut();
 
       await expect(sut.findById("any_business_id")).rejects.toThrow(
-        new MissingParamError("menu_id"),
+        new MissingParamError("menuId"),
       );
     });
 
@@ -249,14 +249,14 @@ describe("Menu Repository", () => {
     ];
     const props = {
       id: "any_menu_id",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       name: "any_name",
     };
 
     for (const sut of suts) {
       await expect(sut.create(props)).rejects.toThrow(TypeError);
-      await expect(sut.findAll(props.business_id)).rejects.toThrow(TypeError);
-      await expect(sut.findById(props.business_id, props.id)).rejects.toThrow(
+      await expect(sut.findAll(props.businessId)).rejects.toThrow(TypeError);
+      await expect(sut.findById(props.businessId, props.id)).rejects.toThrow(
         TypeError,
       );
     }
@@ -270,14 +270,14 @@ describe("Menu Repository", () => {
     ];
     const props = {
       id: "any_menu_id",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       name: "any_name",
     };
 
     for (const sut of suts) {
       await expect(sut.create(props)).rejects.toThrow();
-      await expect(sut.findAll(props.business_id)).rejects.toThrow();
-      await expect(sut.findById(props.business_id, props.id)).rejects.toThrow();
+      await expect(sut.findAll(props.businessId)).rejects.toThrow();
+      await expect(sut.findById(props.businessId, props.id)).rejects.toThrow();
     }
   });
 });

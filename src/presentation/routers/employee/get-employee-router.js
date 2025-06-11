@@ -8,14 +8,14 @@ export default class GetEmployeeRouter {
 
   async route(httpRequest) {
     try {
-      const { business_id, employee_id } = httpRequest.params;
+      const { businessId, employeeId } = httpRequest.params;
 
-      if (!business_id) {
-        return httpResponse.badRequest(new MissingParamError("business_id"));
+      if (!businessId) {
+        return httpResponse.badRequest(new MissingParamError("businessId"));
       }
 
-      if (!employee_id) {
-        const employees = await this.getEmployeeUseCase.execute(business_id);
+      if (!employeeId) {
+        const employees = await this.getEmployeeUseCase.execute(businessId);
         if (!employees) {
           return httpResponse.notFound("Employee");
         }
@@ -28,23 +28,23 @@ export default class GetEmployeeRouter {
       }
 
       const employee = await this.getEmployeeUseCase.execute(
-        business_id,
-        employee_id,
+        businessId,
+        employeeId,
       );
 
       if (!employee) {
         return httpResponse.notFound("Employee");
       }
 
-      const { name, role, created_at, updated_at } = employee;
+      const { name, role, createdAt, updatedAt } = employee;
 
       return httpResponse.ok({
-        business_id,
-        id: employee_id,
+        businessId,
+        id: employeeId,
         name,
         role,
-        created_at,
-        updated_at,
+        createdAt,
+        updatedAt,
       });
     } catch (err) {
       console.error(err);

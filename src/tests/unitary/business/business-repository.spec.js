@@ -14,7 +14,7 @@ const makeSut = () => {
 
 const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
-    query(queryObject) {
+    async query(queryObject) {
       this.queryObject = queryObject;
       return this.queryResult;
     },

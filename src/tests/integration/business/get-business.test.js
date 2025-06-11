@@ -7,7 +7,7 @@ beforeAll(async () => {
   await runMigrations();
 });
 
-describe("GET /api/v1/business/[business_id]", () => {
+describe("GET /api/v1/business/[businessId]", () => {
   test("Should return business correctly", async () => {
     const business = await createBusiness();
 
@@ -31,10 +31,10 @@ describe("GET /api/v1/business/[business_id]", () => {
 
     expect(responseBody.password).toBeUndefined();
 
-    expect(typeof responseBody.created_at).toBe("string");
-    expect(Date.parse(responseBody.created_at)).not.toBeNaN();
+    expect(typeof responseBody.createdAt).toBe("string");
+    expect(Date.parse(responseBody.createdAt)).not.toBeNaN();
 
-    expect(typeof responseBody.updated_at).toBe("string");
-    expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
+    expect(typeof responseBody.updatedAt).toBe("string");
+    expect(Date.parse(responseBody.updatedAt)).not.toBeNaN();
   });
 });
