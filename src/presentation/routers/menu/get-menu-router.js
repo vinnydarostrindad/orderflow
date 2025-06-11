@@ -15,24 +15,22 @@ export default class GetMenuRouter {
       }
 
       if (!menuId) {
-        const menu = await this.getMenuUseCase.execute(businessId);
-        if (!menu) {
+        const menus = await this.getMenuUseCase.execute(businessId);
+        if (!menus) {
           return httpResponse.notFound("Menu");
         }
 
-        menu.forEach((menu) => {
-          const { created_at, updated_at } = menu;
+        const editedMenus = menus.map(
+          ({ id, name, created_at, updated_at }) => ({
+            id,
+            businessId,
+            name,
+            createdAt: created_at,
+            updatedAt: updated_at,
+          }),
+        );
 
-          delete menu?.created_at;
-          delete menu?.updated_at;
-          delete menu?.business_id;
-
-          menu.createdAt = created_at;
-          menu.updatedAt = updated_at;
-          menu.businessId = businessId;
-        });
-
-        return httpResponse.ok(menu);
+        return httpResponse.ok(editedMenus);
       }
 
       const menu = await this.getMenuUseCase.execute(businessId, menuId);

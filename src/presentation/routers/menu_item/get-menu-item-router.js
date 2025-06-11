@@ -20,21 +20,30 @@ export default class GetMenuItemRouter {
           return httpResponse.notFound("MenuItem");
         }
 
-        menuItems.forEach((menuItem) => {
-          const { image_path, created_at, updated_at } = menuItem;
+        const editedMenuItems = menuItems.map(
+          ({
+            id,
+            name,
+            price,
+            image_path,
+            description,
+            type,
+            created_at,
+            updated_at,
+          }) => ({
+            id,
+            menuId,
+            name,
+            price,
+            imagePath: image_path,
+            description,
+            type,
+            createdAt: created_at,
+            updatedAt: updated_at,
+          }),
+        );
 
-          delete menuItem?.menu_id;
-          delete menuItem?.image_path;
-          delete menuItem?.created_at;
-          delete menuItem?.updated_at;
-
-          menuItem.createdAt = created_at;
-          menuItem.updatedAt = updated_at;
-          menuItem.menuId = menuId;
-          menuItem.imagePath = image_path;
-        });
-
-        return httpResponse.ok(menuItems);
+        return httpResponse.ok(editedMenuItems);
       }
 
       const menuItem = await this.getMenuItemUseCase.execute(
@@ -46,19 +55,28 @@ export default class GetMenuItemRouter {
         return httpResponse.notFound("MenuItem");
       }
 
-      const { image_path, created_at, updated_at } = menuItem;
+      const {
+        id,
+        name,
+        price,
+        image_path,
+        description,
+        type,
+        created_at,
+        updated_at,
+      } = menuItem;
 
-      delete menuItem?.menu_id;
-      delete menuItem?.image_path;
-      delete menuItem?.created_at;
-      delete menuItem?.updated_at;
-
-      menuItem.createdAt = created_at;
-      menuItem.updatedAt = updated_at;
-      menuItem.menuId = menuId;
-      menuItem.imagePath = image_path;
-
-      return httpResponse.ok(menuItem);
+      return httpResponse.ok({
+        id,
+        menuId,
+        name,
+        price,
+        imagePath: image_path,
+        description,
+        type,
+        createdAt: created_at,
+        updatedAt: updated_at,
+      });
     } catch (err) {
       console.error(err);
       return httpResponse.serverError();
