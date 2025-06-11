@@ -14,27 +14,27 @@ const makeSut = () => {
 
 const makeMenuRepository = () => {
   class MenuRepositorySpy {
-    async findAll(business_id) {
-      this.business_id = business_id;
+    async findAll(businessId) {
+      this.businessId = businessId;
       return this.menus;
     }
 
-    async findById(business_id, menu_id) {
-      this.business_id = business_id;
-      this.menu_id = menu_id;
+    async findById(businessId, menuId) {
+      this.businessId = businessId;
+      this.menuId = menuId;
       return this.menu;
     }
   }
 
   const menuRepositorySpy = new MenuRepositorySpy();
   menuRepositorySpy.menu = {
-    business_id: "any_business_id",
+    businessId: "any_business_id",
     id: "any_menu_id",
     name: "any_name",
   };
   menuRepositorySpy.menus = [
     {
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       id: "any_menu_id",
       name: "any_name",
     },
@@ -56,7 +56,7 @@ const makeMenuRepositoryWithError = () => {
 };
 
 describe("Get Menu Usecase", () => {
-  describe("Without menu_id", () => {
+  describe("Without menuId", () => {
     test("Should return null if menus is invalid", async () => {
       const { sut, menuRepositorySpy } = makeSut();
       menuRepositorySpy.menus = null;
@@ -69,7 +69,7 @@ describe("Get Menu Usecase", () => {
       const { sut, menuRepositorySpy } = makeSut();
 
       await sut.execute("any_business_id");
-      expect(menuRepositorySpy.business_id).toBe("any_business_id");
+      expect(menuRepositorySpy.businessId).toBe("any_business_id");
     });
 
     test("Should return an array of menus", async () => {
@@ -79,13 +79,13 @@ describe("Get Menu Usecase", () => {
       expect(Array.isArray(menus)).toBe(true);
       expect(menus[0]).toEqual({
         id: "any_menu_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
       });
     });
   });
-  describe("With menu_id", () => {
-    test("Should return null if no menu is found", async () => {
+  describe("With menuId", () => {
+    test("Should return null if menu is invalid", async () => {
       const { sut, menuRepositorySpy } = makeSut();
       menuRepositorySpy.menu = null;
 
@@ -97,8 +97,8 @@ describe("Get Menu Usecase", () => {
       const { sut, menuRepositorySpy } = makeSut();
 
       await sut.execute("any_business_id", "any_menu_id");
-      expect(menuRepositorySpy.business_id).toBe("any_business_id");
-      expect(menuRepositorySpy.menu_id).toBe("any_menu_id");
+      expect(menuRepositorySpy.businessId).toBe("any_business_id");
+      expect(menuRepositorySpy.menuId).toBe("any_menu_id");
     });
 
     test("Should return menu correctly", async () => {
@@ -107,17 +107,17 @@ describe("Get Menu Usecase", () => {
       const menu = await sut.execute("any_business_id", "any_menu_id");
       expect(menu).toEqual({
         id: "any_menu_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
       });
     });
   });
 
-  test("Should throw if no business_id is provided", async () => {
+  test("Should throw if no businessId is provided", async () => {
     const { sut } = makeSut();
 
     await expect(sut.execute(undefined, "any_menu_id")).rejects.toThrow(
-      new MissingParamError("business_id"),
+      new MissingParamError("businessId"),
     );
   });
 

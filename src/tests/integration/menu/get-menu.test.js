@@ -11,7 +11,7 @@ beforeEach(async () => {
   await runMigrations();
 });
 
-describe("GET /api/v1/business/[business_id]/menu", () => {
+describe("GET /api/v1/business/[businessId]/menu", () => {
   test("Should return all menus with correct data", async () => {
     const business = await createBusiness();
     await createMenu(business.id, 2);
@@ -31,20 +31,22 @@ describe("GET /api/v1/business/[business_id]/menu", () => {
     responseBody.forEach((menu) => {
       expect(menu).toMatchObject({
         id: menu.id,
-        business_id: business.id,
+        businessId: business.id,
         name: `any_name_${n}`,
       });
       n += 1;
 
+      expect(typeof menu.id).toBe("string");
       expect(uuidVersion(menu.id)).toBe(4);
 
-      expect(uuidVersion(menu.business_id)).toBe(4);
+      expect(typeof menu.businessId).toBe("string");
+      expect(uuidVersion(menu.businessId)).toBe(4);
 
-      expect(typeof menu.created_at).toBe("string");
-      expect(Date.parse(menu.created_at)).not.toBeNaN();
+      expect(typeof menu.createdAt).toBe("string");
+      expect(Date.parse(menu.createdAt)).not.toBeNaN();
 
-      expect(typeof menu.updated_at).toBe("string");
-      expect(Date.parse(menu.updated_at)).not.toBeNaN();
+      expect(typeof menu.updatedAt).toBe("string");
+      expect(Date.parse(menu.updatedAt)).not.toBeNaN();
     });
   });
 
@@ -64,7 +66,7 @@ describe("GET /api/v1/business/[business_id]/menu", () => {
   });
 });
 
-describe("GET /api/v1/business/[business_id]/menu/[menu_id]", () => {
+describe("GET /api/v1/business/[businessId]/menu/[menuId]", () => {
   test("Should return correct menu", async () => {
     const business = await createBusiness();
     const menu = await createMenu(business.id);
@@ -79,18 +81,20 @@ describe("GET /api/v1/business/[business_id]/menu/[menu_id]", () => {
 
     expect(responseBody).toMatchObject({
       id: menu.id,
-      business_id: business.id,
+      businessId: business.id,
       name: "any_name_1",
     });
 
+    expect(typeof responseBody.id).toBe("string");
     expect(uuidVersion(responseBody.id)).toBe(4);
 
-    expect(uuidVersion(responseBody.business_id)).toBe(4);
+    expect(typeof responseBody.businessId).toBe("string");
+    expect(uuidVersion(responseBody.businessId)).toBe(4);
 
-    expect(typeof responseBody.created_at).toBe("string");
-    expect(Date.parse(responseBody.created_at)).not.toBeNaN();
+    expect(typeof responseBody.createdAt).toBe("string");
+    expect(Date.parse(responseBody.createdAt)).not.toBeNaN();
 
-    expect(typeof responseBody.updated_at).toBe("string");
-    expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
+    expect(typeof responseBody.updatedAt).toBe("string");
+    expect(Date.parse(responseBody.updatedAt)).not.toBeNaN();
   });
 });

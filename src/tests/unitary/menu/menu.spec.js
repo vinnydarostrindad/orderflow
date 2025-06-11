@@ -9,7 +9,7 @@ describe("Menu Entity", () => {
 
   test("Should throw if no id is provided", () => {
     const props = {
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       name: "any_name",
     };
     expect(() => new Menu(props)).toThrow(new MissingParamError("id"));
@@ -20,13 +20,13 @@ describe("Menu Entity", () => {
       id: "any_id",
       name: "any_name",
     };
-    expect(() => new Menu(props)).toThrow(new MissingParamError("business_id"));
+    expect(() => new Menu(props)).toThrow(new MissingParamError("businessId"));
   });
 
   test("Should throw if no name is provided", () => {
     const props = {
       id: "any_id",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
     };
     expect(() => new Menu(props)).toThrow(new MissingParamError("name"));
   });
@@ -34,14 +34,14 @@ describe("Menu Entity", () => {
   test("Should return Menu", () => {
     const props = {
       id: "any_id",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       name: "any_name",
     };
 
     const menu = new Menu(props);
     expect(menu).toEqual({
       id: "any_id",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       name: "any_name",
     });
   });

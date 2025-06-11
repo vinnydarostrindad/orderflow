@@ -11,7 +11,7 @@ beforeEach(async () => {
   await runMigrations();
 });
 
-describe("GET /api/v1/business/[business_id]/employee", () => {
+describe("GET /api/v1/business/[businessId]/employee", () => {
   test("Should return all employees with correct data", async () => {
     const business = await createBusiness();
     await createEmployee(business.id, 2);
@@ -28,20 +28,24 @@ describe("GET /api/v1/business/[business_id]/employee", () => {
 
     responseBody.forEach((employee) => {
       expect(employee).toMatchObject({
-        business_id: business.id,
+        businessId: business.id,
         name: "any_name",
         role: "waiter",
       });
 
+      expect(typeof employee.id).toBe("string");
       expect(uuidVersion(employee.id)).toBe(4);
 
-      expect(typeof employee.created_at).toBe("string");
-      expect(Date.parse(employee.created_at)).not.toBeNaN();
+      expect(typeof employee.businessId).toBe("string");
+      expect(uuidVersion(employee.businessId)).toBe(4);
+
+      expect(typeof employee.createdAt).toBe("string");
+      expect(Date.parse(employee.createdAt)).not.toBeNaN();
 
       expect(employee.password).toBeUndefined();
 
-      expect(typeof employee.updated_at).toBe("string");
-      expect(Date.parse(employee.updated_at)).not.toBeNaN();
+      expect(typeof employee.updatedAt).toBe("string");
+      expect(Date.parse(employee.updatedAt)).not.toBeNaN();
     });
   });
 
@@ -61,7 +65,7 @@ describe("GET /api/v1/business/[business_id]/employee", () => {
   });
 });
 
-describe("GET /api/v1/business/[business_id]/employee/[employee_id]", () => {
+describe("GET /api/v1/business/[businessId]/employee/[employeeId]", () => {
   test("Should return correct employee", async () => {
     const business = await createBusiness();
     const employee = await createEmployee(business.id);
@@ -75,19 +79,23 @@ describe("GET /api/v1/business/[business_id]/employee/[employee_id]", () => {
     const responseBody = await response.json();
 
     expect(responseBody).toMatchObject({
-      business_id: business.id,
+      businessId: business.id,
       name: "any_name",
       role: "waiter",
     });
 
+    expect(typeof responseBody.id).toBe("string");
     expect(uuidVersion(responseBody.id)).toBe(4);
 
-    expect(typeof responseBody.created_at).toBe("string");
-    expect(Date.parse(responseBody.created_at)).not.toBeNaN();
+    expect(typeof responseBody.businessId).toBe("string");
+    expect(uuidVersion(responseBody.businessId)).toBe(4);
+
+    expect(typeof responseBody.createdAt).toBe("string");
+    expect(Date.parse(responseBody.createdAt)).not.toBeNaN();
 
     expect(responseBody.password).toBeUndefined();
 
-    expect(typeof responseBody.updated_at).toBe("string");
-    expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
+    expect(typeof responseBody.updatedAt).toBe("string");
+    expect(Date.parse(responseBody.updatedAt)).not.toBeNaN();
   });
 });

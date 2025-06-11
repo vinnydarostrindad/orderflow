@@ -9,18 +9,18 @@ export default class RegisterMenuRouter {
   async route(httpRequest) {
     try {
       const { name } = httpRequest.body;
-      const { business_id } = httpRequest.params;
+      const { businessId } = httpRequest.params;
 
       if (!name) {
         return httpResponse.badRequest(new MissingParamError("name"));
       }
-      if (!business_id) {
-        return httpResponse.badRequest(new MissingParamError("business_id"));
+      if (!businessId) {
+        return httpResponse.badRequest(new MissingParamError("businessId"));
       }
 
       const menu = await this.registerMenuUseCase.execute({
         name,
-        business_id,
+        businessId,
       });
       if (!menu) {
         // Melhorar esse error

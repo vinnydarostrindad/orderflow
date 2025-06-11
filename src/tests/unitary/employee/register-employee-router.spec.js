@@ -18,8 +18,8 @@ const makeSut = () => {
 
 const makeRegisterEmployeeUseCase = () => {
   class RegisterEmployeeUseCaseSpy {
-    execute({ business_id, name, role, password }) {
-      this.business_id = business_id;
+    execute({ businessId, name, role, password }) {
+      this.businessId = businessId;
       this.name = name;
       this.role = role;
       this.password = password;
@@ -30,7 +30,7 @@ const makeRegisterEmployeeUseCase = () => {
   const registerEmployeeUseCaseSpy = new RegisterEmployeeUseCaseSpy();
   registerEmployeeUseCaseSpy.employee = {
     id: "any_id",
-    business_id: "any_business_id",
+    businessId: "any_business_id",
     name: "any_name",
     role: "any_role",
     password: "any_hash",
@@ -71,7 +71,7 @@ const makeAuthUseCaseWithError = () => {
 };
 
 describe("Register Employee Router", () => {
-  test("Should return 400 if no business_id is provided", async () => {
+  test("Should return 400 if no businessId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       params: {},
@@ -84,13 +84,13 @@ describe("Register Employee Router", () => {
 
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError("business_id"));
+    expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
   });
 
   test("Should return 400 if no name is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { business_id: "any_business_id" },
+      params: { businessId: "any_business_id" },
       body: {
         role: "any_role",
         password: "any_password",
@@ -105,7 +105,7 @@ describe("Register Employee Router", () => {
   test("Should return 400 if no role is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { business_id: "any_business_id" },
+      params: { businessId: "any_business_id" },
       body: {
         name: "any_name",
         password: "any_password",
@@ -120,7 +120,7 @@ describe("Register Employee Router", () => {
   test("Should return 400 if no password is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { business_id: "any_business_id" },
+      params: { businessId: "any_business_id" },
       body: {
         name: "any_name",
         role: "any_role",
@@ -142,7 +142,7 @@ describe("Register Employee Router", () => {
   test("Should return 500 if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      paras: { business_id: "any_business_id" },
+      paras: { businessId: "any_business_id" },
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
@@ -166,7 +166,7 @@ describe("Register Employee Router", () => {
   test("Should return Error if no employee is returned", async () => {
     const { sut, registerEmployeeUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: { business_id: "business_id" },
+      params: { businessId: "any_business_id" },
       body: {
         name: "any_name",
         role: "any_role",
@@ -182,7 +182,7 @@ describe("Register Employee Router", () => {
   test("Should call registerEmployeeBusiness with correct params", async () => {
     const { sut, registerEmployeeUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: { business_id: "any_business_id" },
+      params: { businessId: "any_business_id" },
       body: {
         name: "any_name",
         role: "any_role",
@@ -190,7 +190,7 @@ describe("Register Employee Router", () => {
       },
     };
     await sut.route(httpRequest);
-    expect(registerEmployeeUseCaseSpy.business_id).toBe("any_business_id");
+    expect(registerEmployeeUseCaseSpy.businessId).toBe("any_business_id");
     expect(registerEmployeeUseCaseSpy.name).toBe("any_name");
     expect(registerEmployeeUseCaseSpy.role).toBe("any_role");
     expect(registerEmployeeUseCaseSpy.password).toBe("any_password");
@@ -199,7 +199,7 @@ describe("Register Employee Router", () => {
   test("Should call authuseCase with correct params", async () => {
     const { sut, authUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: { business_id: "any_business_id" },
+      params: { businessId: "any_business_id" },
       body: {
         name: "any_name",
         role: "any_role",
@@ -214,7 +214,7 @@ describe("Register Employee Router", () => {
   test("Should return 201 with created employee if inputs are valid", async () => {
     const { sut, registerEmployeeUseCaseSpy, authUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: { business_id: "any_business_id" },
+      params: { businessId: "any_business_id" },
       body: {
         name: "any_name",
         role: "any_role",
@@ -242,7 +242,7 @@ describe("Register Employee Router", () => {
 
     for (const sut of suts) {
       const httpRequest = {
-        params: { business_id: "any_business_id" },
+        params: { businessId: "any_business_id" },
         body: {
           name: "any_name",
           role: "any_role",
@@ -270,7 +270,7 @@ describe("Register Employee Router", () => {
 
     for (const sut of suts) {
       const httpRequest = {
-        params: { business_id: "any_business_id" },
+        params: { businessId: "any_business_id" },
         body: {
           name: "any_name",
           role: "any_role",

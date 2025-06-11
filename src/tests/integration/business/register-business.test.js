@@ -33,6 +33,7 @@ describe("POST /api/v1/business", () => {
       email: requestBody.email,
     });
 
+    expect(typeof business.id).toBe("string");
     expect(uuidVersion(business.id)).toBe(4);
 
     expect(validator.isEmail(business.email)).toBe(true);

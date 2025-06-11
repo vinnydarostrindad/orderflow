@@ -9,14 +9,14 @@ export default class RegisterMenuUseCase {
     this.menuRepository = menuRepository;
   }
 
-  async execute({ name, business_id } = {}) {
+  async execute({ name, businessId } = {}) {
     // Talvez isso não precise ser verificado, pois Menu() também faz isso
     // Dar uma observada nisso depois
     if (!name) {
       throw new MissingParamError("name");
     }
-    if (!business_id) {
-      throw new MissingParamError("business_id");
+    if (!businessId) {
+      throw new MissingParamError("businessId");
     }
 
     const id = this.idGenerator.execute();
@@ -27,7 +27,7 @@ export default class RegisterMenuUseCase {
 
     const menu = new Menu({
       id,
-      business_id,
+      businessId,
       name,
     });
 

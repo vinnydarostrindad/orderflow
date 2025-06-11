@@ -8,28 +8,35 @@ export default class GetEmployeeRouter {
 
   async route(httpRequest) {
     try {
-      const { business_id, employee_id } = httpRequest.params;
+      const { businessId, employeeId } = httpRequest.params;
 
-      if (!business_id) {
-        return httpResponse.badRequest(new MissingParamError("business_id"));
+      if (!businessId) {
+        return httpResponse.badRequest(new MissingParamError("businessId"));
       }
 
-      if (!employee_id) {
-        const employees = await this.getEmployeeUseCase.execute(business_id);
+      if (!employeeId) {
+        const employees = await this.getEmployeeUseCase.execute(businessId);
         if (!employees) {
           return httpResponse.notFound("Employee");
         }
 
-        employees.forEach((employee) => {
-          delete employee?.password;
-        });
+        const editedEmployees = employees.map(
+          ({ id, name, role, created_at, updated_at }) => ({
+            id,
+            businessId,
+            name,
+            role,
+            createdAt: created_at,
+            updatedAt: updated_at,
+          }),
+        );
 
-        return httpResponse.ok(employees);
+        return httpResponse.ok(editedEmployees);
       }
 
       const employee = await this.getEmployeeUseCase.execute(
-        business_id,
-        employee_id,
+        businessId,
+        employeeId,
       );
 
       if (!employee) {
@@ -39,12 +46,12 @@ export default class GetEmployeeRouter {
       const { name, role, created_at, updated_at } = employee;
 
       return httpResponse.ok({
-        business_id,
-        id: employee_id,
+        businessId,
+        id: employeeId,
         name,
         role,
-        created_at,
-        updated_at,
+        createdAt: created_at,
+        updatedAt: updated_at,
       });
     } catch (err) {
       console.error(err);

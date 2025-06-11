@@ -16,27 +16,27 @@ const makeSut = () => {
 
 const makeGetEmployeeUseCase = () => {
   class GetEmployeeUseCaseSpy {
-    async execute(business_id, employee_id) {
-      this.business_id = business_id;
-      if (!employee_id) {
+    async execute(businessId, employeeId) {
+      this.businessId = businessId;
+      if (!employeeId) {
         return this.employees;
       }
 
-      this.employee_id = employee_id;
+      this.employeeId = employeeId;
       return this.employee;
     }
   }
 
   const getEmployeeUseCaseSpy = new GetEmployeeUseCaseSpy();
   getEmployeeUseCaseSpy.employee = {
-    business_id: "any_business_id",
+    businessId: "any_business_id",
     id: "any_employee_id",
     name: "any_name",
     role: "any_role",
   };
   getEmployeeUseCaseSpy.employees = [
     {
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       id: "any_employee_id",
       name: "any_name",
       role: "any_role",
@@ -55,12 +55,12 @@ const makeGetEmployeeUseCaseWithError = () => {
 };
 
 describe("Get Employee Router", () => {
-  describe("Without employee_id", () => {
+  describe("Without employeeId", () => {
     test("Should return 404 if no employees are found", async () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
-          business_id: "any_business_id",
+          businessId: "any_business_id",
         },
       };
       getEmployeeUseCaseSpy.employees = null;
@@ -74,20 +74,20 @@ describe("Get Employee Router", () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
-          business_id: "any_business_id",
+          businessId: "any_business_id",
         },
       };
 
       await sut.route(httpRequest);
-      expect(getEmployeeUseCaseSpy.business_id).toBe("any_business_id");
-      expect(getEmployeeUseCaseSpy.employee_id).toBeUndefined();
+      expect(getEmployeeUseCaseSpy.businessId).toBe("any_business_id");
+      expect(getEmployeeUseCaseSpy.employeeId).toBeUndefined();
     });
 
     test("Should return 200 and a array of employees", async () => {
       const { sut } = makeSut();
       const httpRequest = {
         params: {
-          business_id: "any_business_id",
+          businessId: "any_business_id",
         },
       };
 
@@ -96,13 +96,13 @@ describe("Get Employee Router", () => {
       expect(Array.isArray(httpResponse.body)).toBe(true);
     });
   });
-  describe("With employee_id", () => {
+  describe("With employeeId", () => {
     test("Should return 404 if no employee is found", async () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
-          business_id: "any_business_id",
-          employee_id: "any_employee_id",
+          businessId: "any_business_id",
+          employeeId: "any_employee_id",
         },
       };
       getEmployeeUseCaseSpy.employee = null;
@@ -116,22 +116,22 @@ describe("Get Employee Router", () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
-          business_id: "any_business_id",
-          employee_id: "any_employee_id",
+          businessId: "any_business_id",
+          employeeId: "any_employee_id",
         },
       };
 
       await sut.route(httpRequest);
-      expect(getEmployeeUseCaseSpy.business_id).toBe("any_business_id");
-      expect(getEmployeeUseCaseSpy.employee_id).toBe("any_employee_id");
+      expect(getEmployeeUseCaseSpy.businessId).toBe("any_business_id");
+      expect(getEmployeeUseCaseSpy.employeeId).toBe("any_employee_id");
     });
 
     test("Should return 200 with employee correctly", async () => {
       const { sut } = makeSut();
       const httpRequest = {
         params: {
-          business_id: "any_business_id",
-          employee_id: "any_employee_id",
+          businessId: "any_business_id",
+          employeeId: "any_employee_id",
         },
       };
 
@@ -139,25 +139,25 @@ describe("Get Employee Router", () => {
       expect(httpResponse.statusCode).toBe(200);
       expect(httpResponse.body).toEqual({
         id: "any_employee_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
         role: "any_role",
       });
     });
   });
 
-  test("Should return 400 if no business_id is provided", async () => {
+  test("Should return 400 if no businessId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       params: {
-        employee_id: "any_employee_id",
+        employeeId: "any_employee_id",
       },
     };
 
     const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError("business_id"));
+    expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
   });
 
   test("Should return 500 if no httpRequest is provided", async () => {
@@ -188,8 +188,8 @@ describe("Get Employee Router", () => {
     ];
     const httpRequest = {
       params: {
-        business_id: "any_business_id",
-        employee_id: "any_employee_id",
+        businessId: "any_business_id",
+        employeeId: "any_employee_id",
       },
     };
 
@@ -208,8 +208,8 @@ describe("Get Employee Router", () => {
     ];
     const httpRequest = {
       params: {
-        business_id: "any_business_id",
-        employee_id: "any_employee_id",
+        businessId: "any_business_id",
+        employeeId: "any_employee_id",
       },
     };
 

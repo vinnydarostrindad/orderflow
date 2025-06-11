@@ -59,9 +59,9 @@ const makeIdGeneratorWithError = () => {
 
 const makeEmployeeRepository = () => {
   const employeeRepositorySpy = {
-    create({ id, business_id, name, role, hashedPassword }) {
+    create({ id, businessId, name, role, hashedPassword }) {
       this.id = id;
-      this.business_id = business_id;
+      this.businessId = businessId;
       this.name = name;
       this.role = role;
       this.password = hashedPassword;
@@ -71,7 +71,7 @@ const makeEmployeeRepository = () => {
 
   employeeRepositorySpy.employee = {
     id: "any_employee_id",
-    business_id: "business_id",
+    businessId: "any_business_id",
     name: "any_name",
     role: "any_role",
     password: "any_hash",
@@ -93,13 +93,13 @@ describe("Register Employee UseCase", () => {
 
     const promise = sut.execute();
     // Fazer uma validação de errors melhor
-    expect(promise).rejects.toThrow(new MissingParamError("business_id"));
+    expect(promise).rejects.toThrow(new MissingParamError("businessId"));
   });
 
   test("Should throw if no name is provided ", async () => {
     const { sut } = makeSut();
     const props = {
-      business_id: "business_id",
+      businessId: "any_business_id",
       role: "any_role",
       password: "any_password",
     };
@@ -111,7 +111,7 @@ describe("Register Employee UseCase", () => {
   test("Should throw if no role is provided ", async () => {
     const { sut } = makeSut();
     const props = {
-      business_id: "business_id",
+      businessId: "any_business_id",
       name: "any_name",
       password: "any_password",
     };
@@ -123,7 +123,7 @@ describe("Register Employee UseCase", () => {
   test("Should throw if no password is provided ", async () => {
     const { sut } = makeSut();
     const props = {
-      business_id: "business_id",
+      businessId: "any_business_id",
       name: "any_name",
       role: "any_role",
     };
@@ -132,7 +132,7 @@ describe("Register Employee UseCase", () => {
     expect(promise).rejects.toThrow(new MissingParamError("password"));
   });
 
-  test("Should throw if no business_id is provided ", async () => {
+  test("Should throw if no businessId is provided ", async () => {
     const { sut } = makeSut();
     const props = {
       name: "any_name",
@@ -141,13 +141,13 @@ describe("Register Employee UseCase", () => {
     };
 
     const promise = sut.execute(props);
-    expect(promise).rejects.toThrow(new MissingParamError("business_id"));
+    expect(promise).rejects.toThrow(new MissingParamError("businessId"));
   });
 
   test("Should call crypto with correct password", async () => {
     const { sut, cryptoSpy } = makeSut();
     const props = {
-      business_id: "business_id",
+      businessId: "any_business_id",
       name: "any_name",
       role: "any_role",
       password: "any_password",
@@ -160,7 +160,7 @@ describe("Register Employee UseCase", () => {
   test("Should return null if crypto returns invalid hash", async () => {
     const { sut, cryptoSpy } = makeSut();
     const props = {
-      business_id: "business_id",
+      businessId: "any_business_id",
       name: "any_name",
       role: "any_role",
       password: "any_password",
@@ -174,7 +174,7 @@ describe("Register Employee UseCase", () => {
   test("Should return null if idGenerator returns invalid id", async () => {
     const { sut, idGeneratorSpy } = makeSut();
     const props = {
-      business_id: "business_id",
+      businessId: "any_business_id",
       name: "any_name",
       role: "any_role",
       password: "any_password",
@@ -188,7 +188,7 @@ describe("Register Employee UseCase", () => {
   test("Should call employeeRepository with correct values", async () => {
     const { sut, employeeRepositorySpy, cryptoSpy, idGeneratorSpy } = makeSut();
     const props = {
-      business_id: "business_id",
+      businessId: "any_business_id",
       name: "any_name",
       role: "any_role",
       password: "any_password",
@@ -196,7 +196,7 @@ describe("Register Employee UseCase", () => {
 
     await sut.execute(props);
     expect(employeeRepositorySpy.id).toBe(idGeneratorSpy.id);
-    expect(employeeRepositorySpy.business_id).toBe("business_id");
+    expect(employeeRepositorySpy.businessId).toBe("any_business_id");
     expect(employeeRepositorySpy.name).toBe("any_name");
     expect(employeeRepositorySpy.role).toBe("any_role");
     expect(employeeRepositorySpy.password).toBe(cryptoSpy.hashedPassword);
@@ -205,7 +205,7 @@ describe("Register Employee UseCase", () => {
   test("Should return null if employeeRepository returns invalid employee", async () => {
     const { sut, employeeRepositorySpy } = makeSut();
     const props = {
-      business_id: "business_id",
+      businessId: "any_business_id",
       name: "any_name",
       role: "any_role",
       password: "any_password",
@@ -219,7 +219,7 @@ describe("Register Employee UseCase", () => {
   test("Should return employee if everything is right", async () => {
     const { sut } = makeSut();
     const props = {
-      business_id: "business_id",
+      businessId: "any_business_id",
       name: "any_name",
       role: "any_role",
       password: "any_password",
@@ -228,7 +228,7 @@ describe("Register Employee UseCase", () => {
     const employee = await sut.execute(props);
     expect(employee).toEqual({
       id: "any_employee_id",
-      business_id: "business_id",
+      businessId: "any_business_id",
       name: "any_name",
       role: "any_role",
       password: "any_hash",
@@ -262,7 +262,7 @@ describe("Register Employee UseCase", () => {
       }),
     ];
     const props = {
-      business_id: "business_id",
+      businessId: "any_business_id",
       name: "any_name",
       role: "any_role",
       password: "any_password",
@@ -292,7 +292,7 @@ describe("Register Employee UseCase", () => {
       }),
     ];
     const props = {
-      business_id: "business_id",
+      businessId: "any_business_id",
       name: "any_name",
       role: "any_role",
       password: "any_password",

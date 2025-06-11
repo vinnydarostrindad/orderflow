@@ -5,12 +5,12 @@ export default class MenuRepository {
     this.postgresAdapter = postgresAdapter;
   }
 
-  async create({ id, business_id, name } = {}) {
+  async create({ id, businessId, name } = {}) {
     if (!id) {
       throw new MissingParamError("id");
     }
-    if (!business_id) {
-      throw new MissingParamError("business_id");
+    if (!businessId) {
+      throw new MissingParamError("businessId");
     }
     if (!name) {
       throw new MissingParamError("name");
@@ -25,19 +25,20 @@ export default class MenuRepository {
         RETURNING
           *
       ;`,
-      values: [id, business_id, name],
+      values: [id, businessId, name],
     });
 
     if (!result) {
+      // Fazer um erro mais específico depois
       return null;
     }
 
     return result.rows[0];
   }
 
-  async findAll(business_id) {
-    if (!business_id) {
-      throw new MissingParamError("business_id");
+  async findAll(businessId) {
+    if (!businessId) {
+      throw new MissingParamError("businessId");
     }
 
     const result = await this.postgresAdapter.query({
@@ -51,7 +52,7 @@ export default class MenuRepository {
         LIMIT
           10
       ;`,
-      values: [business_id],
+      values: [businessId],
     });
 
     if (!result) {
@@ -62,12 +63,12 @@ export default class MenuRepository {
     return result.rows;
   }
 
-  async findById(business_id, menu_id) {
-    if (!business_id) {
-      throw new MissingParamError("business_id");
+  async findById(businessId, menuId) {
+    if (!businessId) {
+      throw new MissingParamError("businessId");
     }
-    if (!menu_id) {
-      throw new MissingParamError("menu_id");
+    if (!menuId) {
+      throw new MissingParamError("menuId");
     }
 
     const result = await this.postgresAdapter.query({
@@ -81,7 +82,7 @@ export default class MenuRepository {
         LIMIT
           1
         ;`,
-      values: [menu_id, business_id],
+      values: [menuId, businessId],
     });
 
     if (!result) {

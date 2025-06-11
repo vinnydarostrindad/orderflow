@@ -9,7 +9,7 @@ export default class RegisterMenuItemUseCase {
     this.menuItemRepository = menuItemRepository;
   }
 
-  async execute({ menu_id, name, price, image_path, description, type } = {}) {
+  async execute({ menuId, name, price, imagePath, description, type } = {}) {
     // Talvez isso não precise ser verificado, pois MenuItem() também faz isso
     // Dar uma observada nisso depois
     if (!name) {
@@ -18,8 +18,8 @@ export default class RegisterMenuItemUseCase {
     if (!price) {
       throw new MissingParamError("price");
     }
-    if (!menu_id) {
-      throw new MissingParamError("menu_id");
+    if (!menuId) {
+      throw new MissingParamError("menuId");
     }
 
     const id = this.idGenerator.execute();
@@ -30,10 +30,10 @@ export default class RegisterMenuItemUseCase {
 
     const menuItem = new MenuItem({
       id,
-      menu_id,
+      menuId,
       name,
       price,
-      image_path,
+      imagePath,
       description,
       type,
     });

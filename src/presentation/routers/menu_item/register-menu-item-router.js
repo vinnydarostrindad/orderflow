@@ -8,8 +8,8 @@ export default class RegisterMenuItemRouter {
 
   async route(httpRequest) {
     try {
-      const { name, price, image_path, description, type } = httpRequest.body;
-      const { menu_id } = httpRequest.params;
+      const { name, price, imagePath, description, type } = httpRequest.body;
+      const { menuId } = httpRequest.params;
 
       if (!name) {
         return httpResponse.badRequest(new MissingParamError("name"));
@@ -17,24 +17,24 @@ export default class RegisterMenuItemRouter {
       if (!price) {
         return httpResponse.badRequest(new MissingParamError("price"));
       }
-      if (!menu_id) {
-        return httpResponse.badRequest(new MissingParamError("menu_id"));
+      if (!menuId) {
+        return httpResponse.badRequest(new MissingParamError("menuId"));
       }
 
-      const menu_item = await this.registerMenuItemUseCase.execute({
-        menu_id,
+      const menuItem = await this.registerMenuItemUseCase.execute({
+        menuId,
         name,
         price,
-        image_path,
+        imagePath,
         description,
         type,
       });
-      if (!menu_item) {
+      if (!menuItem) {
         // Melhorar esse error
         return httpResponse.serverError();
       }
 
-      return httpResponse.created(menu_item);
+      return httpResponse.created(menuItem);
     } catch (err) {
       console.error(err);
       return httpResponse.serverError();

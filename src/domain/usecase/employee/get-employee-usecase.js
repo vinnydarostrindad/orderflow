@@ -5,13 +5,13 @@ export default class GetEmployeeUseCase {
     this.employeeRepository = employeeRepository;
   }
 
-  async execute(business_id, employee_id) {
-    if (!business_id) {
-      throw new MissingParamError("business_id");
+  async execute(businessId, employeeId) {
+    if (!businessId) {
+      throw new MissingParamError("businessId");
     }
 
-    if (!employee_id) {
-      const employees = await this.employeeRepository.findAll(business_id);
+    if (!employeeId) {
+      const employees = await this.employeeRepository.findAll(businessId);
       if (!employees) {
         return null;
       }
@@ -20,8 +20,8 @@ export default class GetEmployeeUseCase {
     }
 
     const employee = await this.employeeRepository.findById(
-      business_id,
-      employee_id,
+      businessId,
+      employeeId,
     );
     if (!employee) {
       // Fazer um erro mais específico depois

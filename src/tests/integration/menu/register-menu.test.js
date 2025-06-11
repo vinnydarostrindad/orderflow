@@ -10,7 +10,7 @@ beforeAll(async () => {
   await runMigrations();
 });
 
-describe("POST /api/v1/business/[business_id]/menu", () => {
+describe("POST /api/v1/business/[businessId]/menu", () => {
   test("should register a menu and return 201", async () => {
     const business = await createBusiness();
 

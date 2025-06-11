@@ -14,28 +14,28 @@ const makeSut = () => {
 
 const makeEmployeeRepository = () => {
   class EmployeeRepositorySpy {
-    async findAll(business_id) {
-      this.business_id = business_id;
+    async findAll(businessId) {
+      this.businessId = businessId;
       return this.employees;
     }
 
-    async findById(business_id, employee_id) {
-      this.business_id = business_id;
-      this.employee_id = employee_id;
+    async findById(businessId, employeeId) {
+      this.businessId = businessId;
+      this.employeeId = employeeId;
       return this.employee;
     }
   }
 
   const employeeRepositorySpy = new EmployeeRepositorySpy();
   employeeRepositorySpy.employee = {
-    business_id: "any_business_id",
+    businessId: "any_business_id",
     id: "any_employee_id",
     name: "any_name",
     role: "any_role",
   };
   employeeRepositorySpy.employees = [
     {
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       id: "any_employee_id",
       name: "any_name",
       role: "any_role",
@@ -58,7 +58,7 @@ const makeEmployeeRepositoryWithError = () => {
 };
 
 describe("Get Employee Usecase", () => {
-  describe("Without employee_id", () => {
+  describe("Without employeeId", () => {
     test("Should return null if employees is invalid", async () => {
       const { sut, employeeRepositorySpy } = makeSut();
       employeeRepositorySpy.employees = null;
@@ -71,7 +71,7 @@ describe("Get Employee Usecase", () => {
       const { sut, employeeRepositorySpy } = makeSut();
 
       await sut.execute("any_business_id");
-      expect(employeeRepositorySpy.business_id).toBe("any_business_id");
+      expect(employeeRepositorySpy.businessId).toBe("any_business_id");
     });
 
     test("Should return an array of employees", async () => {
@@ -81,7 +81,7 @@ describe("Get Employee Usecase", () => {
       expect(Array.isArray(employees)).toBe(true);
     });
   });
-  describe("With employee_id", () => {
+  describe("With employeeId", () => {
     test("Should return null if no employee is found", async () => {
       const { sut, employeeRepositorySpy } = makeSut();
       employeeRepositorySpy.employee = null;
@@ -94,8 +94,8 @@ describe("Get Employee Usecase", () => {
       const { sut, employeeRepositorySpy } = makeSut();
 
       await sut.execute("any_business_id", "any_employee_id");
-      expect(employeeRepositorySpy.business_id).toBe("any_business_id");
-      expect(employeeRepositorySpy.employee_id).toBe("any_employee_id");
+      expect(employeeRepositorySpy.businessId).toBe("any_business_id");
+      expect(employeeRepositorySpy.employeeId).toBe("any_employee_id");
     });
 
     test("Should return employee correctly", async () => {
@@ -104,18 +104,18 @@ describe("Get Employee Usecase", () => {
       const employee = await sut.execute("any_business_id", "any_employee_id");
       expect(employee).toEqual({
         id: "any_employee_id",
-        business_id: "any_business_id",
+        businessId: "any_business_id",
         name: "any_name",
         role: "any_role",
       });
     });
   });
 
-  test("Should throw if no business_id is provided", async () => {
+  test("Should throw if no businessId is provided", async () => {
     const { sut } = makeSut();
 
     await expect(sut.execute(undefined, "any_employee_id")).rejects.toThrow(
-      new MissingParamError("business_id"),
+      new MissingParamError("businessId"),
     );
   });
 

@@ -11,15 +11,15 @@ beforeAll(async () => {
   await runMigrations();
 });
 
-describe("POST /api/v1/business/[business_id]/menu/[menu_id]/item", () => {
+describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
   test("should register a menu and return 201", async () => {
     const business = await createBusiness();
     const menu = await createMenu(business.id);
 
     const requestBody = {
       name: "any_name",
-      price: "39.90",
-      image_path: "any_img",
+      price: 9.9,
+      imagePath: "any_img_path",
       description: "any_description",
       type: "any_type",
     };
@@ -43,14 +43,16 @@ describe("POST /api/v1/business/[business_id]/menu/[menu_id]/item", () => {
       id: menuItem.id,
       menu_id: menu.id,
       name: requestBody.name,
-      price: requestBody.price,
-      image_path: requestBody.image_path,
+      price: "9.90",
+      image_path: requestBody.imagePath,
       description: requestBody.description,
       type: requestBody.type,
     });
 
+    expect(typeof menuItem.id).toBe("string");
     expect(uuidVersion(menuItem.id)).toBe(4);
 
+    expect(typeof menuItem.menu_id).toBe("string");
     expect(uuidVersion(menuItem.menu_id)).toBe(4);
 
     expect(typeof menuItem.created_at).toBe("string");

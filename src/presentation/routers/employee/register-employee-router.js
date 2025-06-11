@@ -10,9 +10,9 @@ export default class RegisterEmployeeRouter {
   async route(httpRequest) {
     try {
       const { name, role, password } = httpRequest.body;
-      const { business_id } = httpRequest.params;
-      if (!business_id) {
-        return httpResponse.badRequest(new MissingParamError("business_id"));
+      const { businessId } = httpRequest.params;
+      if (!businessId) {
+        return httpResponse.badRequest(new MissingParamError("businessId"));
       }
       if (!name) {
         return httpResponse.badRequest(new MissingParamError("name"));
@@ -25,7 +25,7 @@ export default class RegisterEmployeeRouter {
       }
 
       const employee = await this.registerEmployeeUseCase.execute({
-        business_id,
+        businessId,
         name,
         role,
         password,

@@ -8,9 +8,9 @@ export default class RegisterEmployeeUseCase {
     this.employeeRepository = employeeRepository;
   }
 
-  async execute({ business_id, name, role, password } = {}) {
-    if (!business_id) {
-      throw new MissingParamError("business_id");
+  async execute({ businessId, name, role, password } = {}) {
+    if (!businessId) {
+      throw new MissingParamError("businessId");
     }
     if (!name) {
       throw new MissingParamError("name");
@@ -34,7 +34,7 @@ export default class RegisterEmployeeUseCase {
 
     const employee = new Employee({
       id,
-      business_id,
+      businessId,
       name,
       hashedPassword,
       role,

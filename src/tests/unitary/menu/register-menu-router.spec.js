@@ -12,8 +12,8 @@ const makeSut = () => {
 
 const makeRegisterMenuUseCase = () => {
   class RegisterMenuUseCaseSpy {
-    async execute({ business_id, name }) {
-      this.business_id = business_id;
+    async execute({ businessId, name }) {
+      this.businessId = businessId;
       this.name = name;
       return this.menu;
     }
@@ -22,7 +22,7 @@ const makeRegisterMenuUseCase = () => {
   const registerMenuUseCaseSpy = new RegisterMenuUseCaseSpy();
   registerMenuUseCaseSpy.menu = {
     id: "any_menu_id",
-    business_id: "any_business_id",
+    businessId: "any_business_id",
     name: "any_name",
   };
   return registerMenuUseCaseSpy;
@@ -42,7 +42,7 @@ describe("Register Menu Router", () => {
   test("Should return 400 if no name is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { business_id: "any_business_id" },
+      params: { businessId: "any_business_id" },
       body: {},
     };
     const httpResponse = await sut.route(httpRequest);
@@ -50,7 +50,7 @@ describe("Register Menu Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("name"));
   });
 
-  test("Should return 400 if no business_id is provided", async () => {
+  test("Should return 400 if no businessId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       params: {},
@@ -58,7 +58,7 @@ describe("Register Menu Router", () => {
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError("business_id"));
+    expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
   });
 
   test("Should return 500 if no httpRequest is provided", async () => {
@@ -71,7 +71,7 @@ describe("Register Menu Router", () => {
   test("Should return 500 if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { business_id: "any_business_id" },
+      params: { businessId: "any_business_id" },
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
@@ -93,7 +93,7 @@ describe("Register Menu Router", () => {
   test("Should return Error if no menu is returned", async () => {
     const { sut, registerMenuUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: { business_id: "business_id" },
+      params: { businessId: "any_business_id" },
       body: { name: "any_name" },
     };
     registerMenuUseCaseSpy.menu = null;
@@ -106,20 +106,20 @@ describe("Register Menu Router", () => {
   test("Should call registerMenuUseCase with correct params", async () => {
     const { sut, registerMenuUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: { business_id: "any_business_id" },
+      params: { businessId: "any_business_id" },
       body: {
         name: "any_name",
       },
     };
     await sut.route(httpRequest);
-    expect(registerMenuUseCaseSpy.business_id).toBe("any_business_id");
+    expect(registerMenuUseCaseSpy.businessId).toBe("any_business_id");
     expect(registerMenuUseCaseSpy.name).toBe("any_name");
   });
 
   test("Should return 201 with created menu if inputs are valid", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { business_id: "any_business_id" },
+      params: { businessId: "any_business_id" },
       body: {
         name: "any_name",
       },
@@ -128,7 +128,7 @@ describe("Register Menu Router", () => {
     expect(httpResponse.statusCode).toBe(201);
     expect(httpResponse.body).toEqual({
       id: "any_menu_id",
-      business_id: "any_business_id",
+      businessId: "any_business_id",
       name: "any_name",
     });
   });
@@ -142,7 +142,7 @@ describe("Register Menu Router", () => {
       }),
     ];
     const httpRequest = {
-      params: { business_id: "any_business_id" },
+      params: { businessId: "any_business_id" },
       body: { name: "any_name" },
     };
 
@@ -161,7 +161,7 @@ describe("Register Menu Router", () => {
       }),
     ];
     const httpRequest = {
-      params: { business_id: "any_business_id" },
+      params: { businessId: "any_business_id" },
       body: { name: "any_name" },
     };
 

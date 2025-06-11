@@ -11,7 +11,7 @@ beforeAll(async () => {
   await runMigrations();
 });
 
-describe("POST /api/v1/business/[business_id]/employee", () => {
+describe("POST /api/v1/business/[businessId]/employee", () => {
   test("Should register a employee correctly via api", async () => {
     const business = await createBusiness();
 
@@ -37,11 +37,17 @@ describe("POST /api/v1/business/[business_id]/employee", () => {
     const { employee, token } = responseBody;
 
     expect(employee).toMatchObject({
+      id: employee.id,
+      business_id: business.id,
       name: requestBody.name,
       role: requestBody.role,
     });
 
+    expect(typeof employee.id).toBe("string");
     expect(uuidVersion(employee.id)).toBe(4);
+
+    expect(typeof employee.business_id).toBe("string");
+    expect(uuidVersion(employee.business_id)).toBe(4);
 
     expect(typeof employee.password).toBe("string");
     expect(employee.password).not.toBe(requestBody.password);
