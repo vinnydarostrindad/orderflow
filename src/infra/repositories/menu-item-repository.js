@@ -32,10 +32,10 @@ export default class MenuItemRepository {
     });
 
     if (!result) {
+      // Fazer um erro mais específico depois
       return null;
     }
 
-    console.log(result.rows[0]);
     return result.rows[0];
   }
 
@@ -93,7 +93,6 @@ export default class MenuItemRepository {
       return null;
     }
 
-    console.log(result.rows[0]);
     return result.rows[0];
   }
 }

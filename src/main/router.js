@@ -6,8 +6,8 @@ const router = async function (req, res) {
   const url = req.url;
 
   try {
-    if (method === "GET") {
-      for (const route of apiRoutes.get) {
+    if (method == "GET" || method == "POST")
+      for (const route of apiRoutes[method.toLowerCase()]) {
         const match = url.match(route.pattern);
         if (match) {
           const httpRequest = await nodeRequestAdapter(req, match.groups);
@@ -21,24 +21,6 @@ const router = async function (req, res) {
           return res.end(JSON.stringify(httpResponse.body));
         }
       }
-    }
-
-    if (method === "POST") {
-      for (const route of apiRoutes.post) {
-        const match = url.match(route.pattern);
-        if (match) {
-          const httpRequest = await nodeRequestAdapter(req, match.groups);
-
-          const httpResponse = await route.handler(httpRequest);
-
-          res.writeHead(httpResponse.statusCode, {
-            "content-type": "application/json",
-          });
-
-          return res.end(JSON.stringify(httpResponse.body));
-        }
-      }
-    }
 
     // Fazer um erro mais específico depois
     res.writeHead(400);

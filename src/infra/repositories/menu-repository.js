@@ -29,6 +29,7 @@ export default class MenuRepository {
     });
 
     if (!result) {
+      // Fazer um erro mais específico depois
       return null;
     }
 
