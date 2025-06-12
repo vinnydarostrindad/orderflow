@@ -10,9 +10,9 @@ beforeAll(async () => {
 describe("POST /api/v1/business", () => {
   test("should register a business and return 201 with token", async () => {
     const requestBody = {
-      name: "valid_name",
-      email: "valid_email@mail.com",
-      password: "valid_password",
+      name: "any_name",
+      email: "any_email@mail.com",
+      password: "any_password",
     };
 
     const response = await fetch("http://localhost:3000/api/v1/business", {

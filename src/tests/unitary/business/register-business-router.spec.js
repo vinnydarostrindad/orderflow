@@ -34,9 +34,9 @@ const makeRegisterBusinessUseCase = () => {
   const registerBusinessUseCaseSpy = new RegisterBusinessUseCaseSpy();
   registerBusinessUseCaseSpy.business = {
     id: "any_id",
-    name: "valid_name",
-    email: "valid_email@mail.com",
-    password: "valid_password",
+    name: "any_name",
+    email: "any_email@mail.com",
+    password: "any_password",
   };
   return registerBusinessUseCaseSpy;
 };
@@ -145,7 +145,7 @@ describe("Register Business Router", () => {
     const httpRequest = {
       body: {
         name: "any_name",
-        email: "invalid_email@mail.com",
+        email: "inany_email@mail.com",
         password: "any_password",
       },
     };
@@ -192,39 +192,39 @@ describe("Register Business Router", () => {
     const { sut, emailValidatorSpy } = makeSut();
     const httpRequest = {
       body: {
-        name: "valid_name",
-        email: "valid_email@mail.com",
-        password: "valid_password",
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
       },
     };
 
     await sut.route(httpRequest);
-    expect(emailValidatorSpy.email).toBe("valid_email@mail.com");
+    expect(emailValidatorSpy.email).toBe("any_email@mail.com");
   });
 
   test("Should call registerBusinessUseCase with correct params", async () => {
     const { sut, registerBusinessUseCaseSpy } = makeSut();
     const httpRequest = {
       body: {
-        name: "valid_name",
-        email: "valid_email@mail.com",
-        password: "valid_password",
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
       },
     };
 
     await sut.route(httpRequest);
-    expect(registerBusinessUseCaseSpy.name).toBe("valid_name");
-    expect(registerBusinessUseCaseSpy.email).toBe("valid_email@mail.com");
-    expect(registerBusinessUseCaseSpy.password).toBe("valid_password");
+    expect(registerBusinessUseCaseSpy.name).toBe("any_name");
+    expect(registerBusinessUseCaseSpy.email).toBe("any_email@mail.com");
+    expect(registerBusinessUseCaseSpy.password).toBe("any_password");
   });
 
   test("Should call authuseCase with correct params", async () => {
     const { sut, authUseCaseSpy } = makeSut();
     const httpRequest = {
       body: {
-        name: "valid_name",
-        email: "valid_email@mail.com",
-        password: "valid_password",
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
       },
     };
 
@@ -236,9 +236,9 @@ describe("Register Business Router", () => {
     const { sut, registerBusinessUseCaseSpy, authUseCaseSpy } = makeSut();
     const httpRequest = {
       body: {
-        name: "valid_name",
-        email: "valid_email@mail.com",
-        password: "valid_password",
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
       },
     };
 
