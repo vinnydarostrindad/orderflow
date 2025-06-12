@@ -17,8 +17,8 @@ describe("POST /api/v1/business/[businessId]/employee", () => {
 
     const requestBody = {
       role: "waiter",
-      name: "valid_name",
-      password: "valid_password",
+      name: "any_name",
+      password: "any_password",
     };
 
     const response = await fetch(

@@ -10,16 +10,17 @@ beforeAll(async () => {
   await runMigrations();
 });
 
-describe("POST /api/v1/business/[businessId]/menu", () => {
-  test("should register a menu and return 201", async () => {
+describe("POST /api/v1/business/[businessId]/table", () => {
+  test("should register a table and return 201", async () => {
     const business = await createBusiness();
 
     const requestBody = {
+      number: 1,
       name: "any_name",
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu`,
+      `http://localhost:3000/api/v1/business/${business.id}/table`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -30,12 +31,12 @@ describe("POST /api/v1/business/[businessId]/menu", () => {
     expect(response.status).toBe(201);
 
     const responseBody = await response.json();
-
     const menu = responseBody;
 
     expect(menu).toMatchObject({
       id: menu.id,
       business_id: business.id,
+      number: requestBody.number,
       name: requestBody.name,
     });
 
