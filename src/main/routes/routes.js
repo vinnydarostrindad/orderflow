@@ -43,6 +43,15 @@ const apiRoutes = {
         /^\/api\/v1\/business\/(?<businessId>[^/]+)\/menu\/(?<menuId>[^/]+)\/item\/(?<menuItemId>[^/]+)$/,
       handler: menuItemRoute.getOne,
     },
+    {
+      pattern: /^\/api\/v1\/business\/(?<businessId>[^/]+)\/table$/,
+      handler: tableRoute.getAll,
+    },
+    {
+      pattern:
+        /^\/api\/v1\/business\/(?<businessId>[^/]+)\/table\/(?<tableId>[^/]+)$/,
+      handler: tableRoute.getOne,
+    },
   ],
   post: [
     {

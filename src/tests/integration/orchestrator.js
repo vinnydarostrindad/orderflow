@@ -93,6 +93,27 @@ async function createMenuItem(businessId, menuId, quantity = 1) {
   return quantity === 1 ? menuItems[0] : menuItems;
 }
 
+async function createTable(businessId, quantity = 1) {
+  let tables = [];
+  for (let i = 0; i < quantity; i++) {
+    const response = await fetch(
+      `http://localhost:3000/api/v1/business/${businessId}/table`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          number: 1,
+          name: `any_name`,
+        }),
+      },
+    );
+
+    tables.push(await response.json());
+  }
+
+  return quantity === 1 ? tables[0] : tables;
+}
+
 export {
   cleanDatabase,
   runMigrations,
@@ -100,4 +121,5 @@ export {
   createEmployee,
   createMenu,
   createMenuItem,
+  createTable,
 };
