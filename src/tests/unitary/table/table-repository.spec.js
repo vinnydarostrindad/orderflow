@@ -137,6 +137,107 @@ describe("Table Repository", () => {
     });
   });
 
+  describe("findAll Method", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+      // Melhorar essa validação
+      await expect(sut.findAll()).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+
+    test("Should call postgresAdapter with correct object", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      await sut.findAll("any_business_id");
+      expect(postgresAdapterSpy.queryObject).toEqual({
+        text: `
+        SELECT
+          *
+        FROM
+          tables
+        WHERE
+          business_id = $1
+        LIMIT
+          10
+      `,
+        values: ["any_business_id"],
+      });
+    });
+
+    test("Should return null if postgresAdapter returns null", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.queryResult = null;
+
+      const tables = await sut.findAll("any_business_id");
+      expect(tables).toBeNull();
+    });
+
+    test("Should return tables if everything is right", async () => {
+      const { sut } = makeSut();
+      const tables = await sut.findAll("any_business_id");
+      expect(Array.isArray(tables)).toBe(true);
+      expect(tables[0]).toEqual({
+        id: "any_table_id",
+        business_id: "any_business_id",
+        number: "any_number",
+        name: "any_name",
+      });
+    });
+  });
+
+  describe("findById Method", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+      await expect(sut.findById(undefined, "any_table_id")).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+
+    test("Should throw if no tableId is provided", async () => {
+      const { sut } = makeSut();
+      await expect(sut.findById("any_business_id")).rejects.toThrow(
+        new MissingParamError("tableId"),
+      );
+    });
+
+    test("Should call postgresAdapter with correct object", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      await sut.findById("any_business_id", "any_table_id");
+      expect(postgresAdapterSpy.queryObject).toEqual({
+        text: `
+        SELECT
+          *
+        FROM
+          tables
+        WHERE
+          id = $1 AND business_id = $2
+        LIMIT
+          1
+      `,
+        values: ["any_table_id", "any_business_id"],
+      });
+    });
+
+    test("Should return null if postgresAdapter returns null", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.queryResult = null;
+
+      const table = await sut.findById("any_business_id", "any_table_id");
+      expect(table).toBeNull();
+    });
+
+    test("Should return table if everything is right", async () => {
+      const { sut } = makeSut();
+      const table = await sut.findById("any_business_id", "any_table_id");
+      expect(table).toEqual({
+        id: "any_table_id",
+        business_id: "any_business_id",
+        number: "any_number",
+        name: "any_name",
+      });
+    });
+  });
+
   test("Should throw if invalid dependencies are provided", async () => {
     const suts = [
       new TableRepository(),
@@ -153,6 +254,10 @@ describe("Table Repository", () => {
 
     for (const sut of suts) {
       await expect(sut.create(props)).rejects.toThrow(TypeError);
+      await expect(sut.findAll(props.businessId)).rejects.toThrow(TypeError);
+      await expect(sut.findById(props.businessId, props.id)).rejects.toThrow(
+        TypeError,
+      );
     }
   });
 
@@ -169,5 +274,7 @@ describe("Table Repository", () => {
     };
 
     await expect(sut.create(props)).rejects.toThrow();
+    await expect(sut.findAll(props.businessId)).rejects.toThrow();
+    await expect(sut.findById(props.businessId, props.id)).rejects.toThrow();
   });
 });

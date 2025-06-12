@@ -34,4 +34,59 @@ export default class TableRepository {
 
     return result.rows[0];
   }
+
+  async findAll(businessId) {
+    if (!businessId) {
+      throw new MissingParamError("businessId");
+    }
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          *
+        FROM
+          tables
+        WHERE
+          business_id = $1
+        LIMIT
+          10
+      `,
+      values: [businessId],
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return result.rows;
+  }
+
+  async findById(businessId, tableId) {
+    if (!businessId) {
+      throw new MissingParamError("businessId");
+    }
+    if (!tableId) {
+      throw new MissingParamError("tableId");
+    }
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          *
+        FROM
+          tables
+        WHERE
+          id = $1 AND business_id = $2
+        LIMIT
+          1
+      `,
+      values: [tableId, businessId],
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return result.rows[0];
+  }
 }
