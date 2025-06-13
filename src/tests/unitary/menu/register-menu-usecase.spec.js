@@ -150,16 +150,9 @@ describe("Register Menu UseCase", () => {
     const suts = [
       new RegisterMenuUseCase(),
       new RegisterMenuUseCase({}),
-      new RegisterMenuUseCase({
-        idGenerator: {},
-      }),
-      new RegisterMenuUseCase({
-        idGenerator,
-      }),
-      new RegisterMenuUseCase({
-        idGenerator,
-        menuRepository: {},
-      }),
+      new RegisterMenuUseCase({ idGenerator: {} }),
+      new RegisterMenuUseCase({ idGenerator }),
+      new RegisterMenuUseCase({ idGenerator, menuRepository: {} }),
     ];
     const props = {
       name: "any_name",

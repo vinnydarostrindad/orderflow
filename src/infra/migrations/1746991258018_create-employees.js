@@ -1,6 +1,4 @@
 export const up = function up(pgm) {
-  pgm.createType("role", ["manager", "cashier", "cook", "waiter"]);
-
   pgm.createTable("employees", {
     id: {
       type: "uuid",
@@ -10,7 +8,7 @@ export const up = function up(pgm) {
     business_id: {
       type: "uuid",
       notNull: true,
-      reference: "bussinesses(id)",
+      references: "businesses(id)",
       onDelete: "cascade",
     },
 
@@ -20,7 +18,8 @@ export const up = function up(pgm) {
     },
 
     role: {
-      type: "role",
+      type: "text",
+      check: "role IN ('manager', 'cashier', 'cook', 'waiter')",
       notNull: true,
     },
 
