@@ -53,6 +53,16 @@ const apiRoutes = {
         /^\/api\/v1\/business\/(?<businessId>[^/]+)\/table\/(?<tableId>[^/]+)$/,
       handler: tableRoute.getOne,
     },
+    {
+      pattern:
+        /^\/api\/v1\/business\/(?<businessId>[^/]+)\/table\/(?<tableId>[^/]+)\/order$/,
+      handler: orderRoute.getAll,
+    },
+    {
+      pattern:
+        /^\/api\/v1\/business\/(?<businessId>[^/]+)\/table\/(?<tableId>[^/]+)\/order\/(?<orderId>[^/]+)$/,
+      handler: orderRoute.getOne,
+    },
   ],
   post: [
     {
