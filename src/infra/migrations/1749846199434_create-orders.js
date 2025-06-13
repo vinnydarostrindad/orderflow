@@ -1,5 +1,5 @@
 export const up = function up(pgm) {
-  pgm.createTable("employees", {
+  pgm.createTable("orders", {
     id: {
       type: "uuid",
       primaryKey: true,
@@ -12,20 +12,24 @@ export const up = function up(pgm) {
       onDelete: "cascade",
     },
 
-    name: {
-      type: "varchar(254)",
+    table_id: {
+      type: "uuid",
+      notNull: true,
+      references: "tables(id)",
+      onDelete: "cascade",
+    },
+
+    table_number: {
+      type: "smallint",
       notNull: true,
     },
 
-    role: {
+    status: {
       type: "text",
-      check: "role IN ('manager', 'cashier', 'cook', 'waiter')",
+      check:
+        "status IN ('pending', 'in_progress', 'ready', 'delivered', 'cancelled')",
       notNull: true,
-    },
-
-    password: {
-      type: "text",
-      notNull: true,
+      default: "pending",
     },
 
     created_at: {

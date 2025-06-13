@@ -4,6 +4,7 @@ import employeeRoute from "./employee-route.js";
 import menuRoute from "./menu-route.js";
 import menuItemRoute from "./menu-item-route.js";
 import tableRoute from "./table-route.js";
+import orderRoute from "./order-route.js";
 
 const apiRoutes = {
   get: [
@@ -78,6 +79,11 @@ const apiRoutes = {
     {
       pattern: /^\/api\/v1\/business\/(?<businessId>[^/]+)\/table$/,
       handler: tableRoute.post,
+    },
+    {
+      pattern:
+        /^\/api\/v1\/business\/(?<businessId>[^/]+)\/table\/(?<tableId>[^/]+)\/order$/,
+      handler: orderRoute.post,
     },
   ],
 };
