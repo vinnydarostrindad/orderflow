@@ -6,10 +6,18 @@ export default class OrderRepository {
   }
 
   async create({ id, businessId, tableId, tableNumber } = {}) {
-    if (!id) throw new MissingParamError("id");
-    if (!businessId) throw new MissingParamError("businessId");
-    if (!tableId) throw new MissingParamError("tableId");
-    if (!tableNumber) throw new MissingParamError("tableNumber");
+    if (!id) {
+      throw new MissingParamError("id");
+    }
+    if (!businessId) {
+      throw new MissingParamError("businessId");
+    }
+    if (!tableId) {
+      throw new MissingParamError("tableId");
+    }
+    if (!tableNumber) {
+      throw new MissingParamError("tableNumber");
+    }
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -21,6 +29,61 @@ export default class OrderRepository {
           *
       ;`,
       values: [id, businessId, tableId, tableNumber],
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return result.rows[0];
+  }
+
+  async findAll(tableId) {
+    if (!tableId) {
+      throw new MissingParamError("tableId");
+    }
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          *
+        FROM
+          orders
+        WHERE
+          table_id = $1
+        LIMIT
+          10
+      ;`,
+      values: [tableId],
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return result.rows;
+  }
+
+  async findById(tableId, orderId) {
+    if (!tableId) {
+      throw new MissingParamError("tableId");
+    }
+    if (!orderId) {
+      throw new MissingParamError("orderId");
+    }
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          *
+        FROM
+          orders
+        WHERE
+          id = $1 AND table_id = $2
+        LIMIT
+          1
+        ;`,
+      values: [orderId, tableId],
     });
 
     if (!result) {

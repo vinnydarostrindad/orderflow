@@ -16,6 +16,7 @@ const makePostgresAdapter = () => {
         business_id: "any_business_id",
         table_id: "any_table_id",
         table_number: "any_table_number",
+        status: "pending",
       },
     ],
   };
@@ -153,6 +154,112 @@ describe("OrderRepository", () => {
         business_id: "any_business_id",
         table_id: "any_table_id",
         table_number: "any_table_number",
+        status: "pending",
+      });
+    });
+  });
+  describe("findAll method", () => {
+    test("Should throw if no tableId is provided", async () => {
+      const { sut } = makeSut();
+      await expect(sut.findAll()).rejects.toThrow(
+        new MissingParamError("tableId"),
+      );
+    });
+
+    test("Should call postgresAdapter with correct query", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      await sut.findAll("any_table_id");
+
+      expect(postgresAdapterSpy.queryObject).toEqual({
+        text: `
+        SELECT
+          *
+        FROM
+          orders
+        WHERE
+          table_id = $1
+        LIMIT
+          10
+      ;`,
+        values: ["any_table_id"],
+      });
+    });
+
+    test("Should return null if postgresAdapter returns null", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.queryResult = null;
+
+      const result = await sut.findAll("any_table_id");
+      expect(result).toBeNull();
+    });
+
+    test("Should return list of orders", async () => {
+      const { sut } = makeSut();
+      const result = await sut.findAll("any_table_id");
+
+      expect(Array.isArray(result)).toBe(true);
+      expect(result[0]).toEqual({
+        id: "any_order_id",
+        business_id: "any_business_id",
+        table_id: "any_table_id",
+        table_number: "any_table_number",
+        status: "pending",
+      });
+    });
+  });
+
+  describe("findById method", () => {
+    test("Should throw if no tableId is provided", async () => {
+      const { sut } = makeSut();
+      await expect(sut.findById(undefined, "any_order_id")).rejects.toThrow(
+        new MissingParamError("tableId"),
+      );
+    });
+
+    test("Should throw if no orderId is provided", async () => {
+      const { sut } = makeSut();
+      await expect(sut.findById("any_table_id")).rejects.toThrow(
+        new MissingParamError("orderId"),
+      );
+    });
+
+    test("Should call postgresAdapter with correct query", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      await sut.findById("any_table_id", "any_order_id");
+
+      expect(postgresAdapterSpy.queryObject).toEqual({
+        text: `
+        SELECT
+          *
+        FROM
+          orders
+        WHERE
+          id = $1 AND table_id = $2
+        LIMIT
+          1
+        ;`,
+        values: ["any_order_id", "any_table_id"],
+      });
+    });
+
+    test("Should return null if postgresAdapter returns null", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.queryResult = null;
+
+      const result = await sut.findById("any_table_id", "any_order_id");
+      expect(result).toBeNull();
+    });
+
+    test("Should return order if found", async () => {
+      const { sut } = makeSut();
+      const result = await sut.findById("any_table_id", "any_order_id");
+
+      expect(result).toEqual({
+        id: "any_order_id",
+        business_id: "any_business_id",
+        table_id: "any_table_id",
+        table_number: "any_table_number",
+        status: "pending",
       });
     });
   });
@@ -173,6 +280,10 @@ describe("OrderRepository", () => {
 
     for (const sut of suts) {
       await expect(sut.create(props)).rejects.toThrow(TypeError);
+      await expect(sut.findAll(props.tableId)).rejects.toThrow(TypeError);
+      await expect(sut.findById(props.tableId, props.id)).rejects.toThrow(
+        TypeError,
+      );
     }
   });
 
@@ -189,5 +300,7 @@ describe("OrderRepository", () => {
     };
 
     await expect(sut.create(props)).rejects.toThrow();
+    await expect(sut.findAll(props.tableId)).rejects.toThrow();
+    await expect(sut.findById(props.tableId, props.id)).rejects.toThrow();
   });
 });
