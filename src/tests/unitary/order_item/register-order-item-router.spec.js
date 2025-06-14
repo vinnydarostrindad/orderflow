@@ -229,6 +229,26 @@ describe("Register Order Item Router", () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
+  test("Should return 500 if orderItem is invalid", async () => {
+    const { sut, registerOrderItemUseCaseSpy } = makeSut();
+    const httpRequest = {
+      params: { orderId: "any_order_id" },
+      body: {
+        menuItemId: "any_menu_item_id",
+        quantity: 2,
+        unitPrice: 20,
+        totalPrice: 40,
+        notes: "any_notes",
+      },
+    };
+    registerOrderItemUseCaseSpy.orderItem = null;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
+
   test("Should return 500 if dependency is invalid", async () => {
     const suts = [
       new RegisterOrderItemRouter(),
