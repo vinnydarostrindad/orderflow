@@ -5,6 +5,7 @@ import menuRoute from "./menu-route.js";
 import menuItemRoute from "./menu-item-route.js";
 import tableRoute from "./table-route.js";
 import orderRoute from "./order-route.js";
+import orderItemRoute from "./order-item-route.js";
 
 const apiRoutes = {
   get: [
@@ -63,6 +64,16 @@ const apiRoutes = {
         /^\/api\/v1\/business\/(?<businessId>[^/]+)\/table\/(?<tableId>[^/]+)\/order\/(?<orderId>[^/]+)$/,
       handler: orderRoute.getOne,
     },
+    {
+      pattern:
+        /^\/api\/v1\/business\/(?<businessId>[^/]+)\/table\/(?<tableId>[^/]+)\/order\/(?<orderId>[^/]+)\/item$/,
+      handler: orderItemRoute.getAll,
+    },
+    {
+      pattern:
+        /^\/api\/v1\/business\/(?<businessId>[^/]+)\/table\/(?<tableId>[^/]+)\/order\/(?<orderId>[^/]+)\/item\/(?<orderItemId>[^/]+)$/,
+      handler: orderItemRoute.getOne,
+    },
   ],
   post: [
     {
@@ -94,6 +105,11 @@ const apiRoutes = {
       pattern:
         /^\/api\/v1\/business\/(?<businessId>[^/]+)\/table\/(?<tableId>[^/]+)\/order$/,
       handler: orderRoute.post,
+    },
+    {
+      pattern:
+        /^\/api\/v1\/business\/(?<businessId>[^/]+)\/table\/(?<tableId>[^/]+)\/order\/(?<orderId>[^/]+)\/item$/,
+      handler: orderItemRoute.post,
     },
   ],
 };
