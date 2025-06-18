@@ -44,6 +44,7 @@ const makeGetEmployeeUseCase = () => {
   ];
   return getEmployeeUseCaseSpy;
 };
+
 const makeGetEmployeeUseCaseWithError = () => {
   class GetEmployeeUseCaseSpy {
     execute() {
@@ -164,9 +165,9 @@ describe("Get Employee Router", () => {
     const { sut } = makeSut();
 
     const httpResponse = await sut.route();
-
+    console.log(httpResponse);
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should return 500 if no httpRequest has no params", async () => {
@@ -175,7 +176,7 @@ describe("Get Employee Router", () => {
     const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should return 500 if invalid dependency is provided", async () => {
@@ -196,7 +197,7 @@ describe("Get Employee Router", () => {
     for (const sut of suts) {
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.body).toBeInstanceOf(ServerError);
     }
   });
 
@@ -216,7 +217,7 @@ describe("Get Employee Router", () => {
     for (const sut of suts) {
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.body).toBeInstanceOf(ServerError);
     }
   });
 });

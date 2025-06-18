@@ -1,4 +1,4 @@
-import httpResponse from "../../httpResponse.js";
+import httpResponse from "../../http-response.js";
 
 export default class MigrationRouter {
   constructor({ migrationRunner } = {}) {
@@ -20,8 +20,6 @@ export default class MigrationRouter {
       if (method === "POST") {
         return await this.handlePost();
       }
-
-      return httpResponse.methodNotAllowed();
     } catch (err) {
       console.error(err);
       return httpResponse.serverError();

@@ -101,7 +101,7 @@ describe("Register MenuItem Router", () => {
     const { sut } = makeSut();
     const httpResponse = await sut.route();
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should return 500 if httpRequest has no body", async () => {
@@ -111,7 +111,7 @@ describe("Register MenuItem Router", () => {
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should return 500 if httpRequest has no params", async () => {
@@ -126,7 +126,7 @@ describe("Register MenuItem Router", () => {
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should return Error if no menuItem is returned", async () => {
@@ -145,7 +145,7 @@ describe("Register MenuItem Router", () => {
 
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should call registerMenuItemUseCase with correct params", async () => {
@@ -217,7 +217,7 @@ describe("Register MenuItem Router", () => {
       const httpResponse = await sut.route(httpRequest);
 
       expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.body).toBeInstanceOf(ServerError);
     }
   });
 
@@ -242,7 +242,7 @@ describe("Register MenuItem Router", () => {
       const httpResponse = await sut.route(httpRequest);
 
       expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.body).toBeInstanceOf(ServerError);
     }
   });
 });

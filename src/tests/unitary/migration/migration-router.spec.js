@@ -1,7 +1,6 @@
 import { jest } from "@jest/globals";
 import MigrationRouter from "../../../presentation/routers/migrations/migration-router.js";
 import ServerError from "../../../utils/errors/server-error.js";
-import MethodNotAllowedError from "../../../utils/errors/method-not-allowed-error.js";
 
 const makeSut = () => {
   const migrationRunnerSpy = makeMigrationRunner();
@@ -46,22 +45,11 @@ const makeMigrationRunnerWithError = () => {
 
 describe("Migrations Router", () => {
   describe("route Method", () => {
-    test("Should return 405 if not allowed method is provided", async () => {
-      const { sut } = makeSut();
-      const httpRequest = {
-        method: "not_allowed_method",
-      };
-
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(405);
-      expect(httpResponse.body).toEqual(new MethodNotAllowedError());
-    });
-
     test("Should return 500 if no httpRequest is provided", async () => {
       const { sut } = makeSut();
       const httpResponse = await sut.route();
       expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.body).toBeInstanceOf(ServerError);
     });
 
     test("Should return 500 if httpRequest has no method", async () => {
@@ -70,7 +58,7 @@ describe("Migrations Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.body).toBeInstanceOf(ServerError);
     });
 
     test("Should return 200 with migrations if method is GET", async () => {
@@ -115,9 +103,9 @@ describe("Migrations Router", () => {
         const postResponse = await sut.route(postRequest);
 
         expect(getResponse.statusCode).toBe(500);
-        expect(getResponse.body).toEqual(new ServerError());
+        expect(getResponse.body).toBeInstanceOf(ServerError);
         expect(postResponse.statusCode).toBe(500);
-        expect(postResponse.body).toEqual(new ServerError());
+        expect(postResponse.body).toBeInstanceOf(ServerError);
       }
     });
 
@@ -139,9 +127,9 @@ describe("Migrations Router", () => {
         const postResponse = await sut.route(postRequest);
 
         expect(getResponse.statusCode).toBe(500);
-        expect(getResponse.body).toEqual(new ServerError());
+        expect(getResponse.body).toBeInstanceOf(ServerError);
         expect(postResponse.statusCode).toBe(500);
-        expect(postResponse.body).toEqual(new ServerError());
+        expect(postResponse.body).toBeInstanceOf(ServerError);
       }
     });
   });

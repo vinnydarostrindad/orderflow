@@ -71,7 +71,7 @@ describe("Get Business Router", () => {
     const httpResponse = await sut.route();
 
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should return 500 if no httpRequest has no params", async () => {
@@ -80,7 +80,7 @@ describe("Get Business Router", () => {
     const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should call getBusinessUseCase with correct value", async () => {
@@ -130,7 +130,7 @@ describe("Get Business Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.body).toBeInstanceOf(ServerError);
     }
   });
 
@@ -150,7 +150,7 @@ describe("Get Business Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.body).toBeInstanceOf(ServerError);
     }
   });
 });

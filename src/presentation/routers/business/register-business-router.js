@@ -1,6 +1,6 @@
 import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import httpResponse from "../../httpResponse.js";
+import httpResponse from "../../http-response.js";
 
 export default class RegisterBusinessRouter {
   constructor({ registerBusinessUseCase, emailValidator, authUseCase } = {}) {

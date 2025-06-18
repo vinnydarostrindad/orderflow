@@ -136,7 +136,7 @@ describe("Register Employee Router", () => {
     const { sut } = makeSut();
     const httpResponse = await sut.route();
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should return 500 if httpRequest has no body", async () => {
@@ -146,7 +146,7 @@ describe("Register Employee Router", () => {
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should return 500 if httpRequest has no params", async () => {
@@ -160,7 +160,7 @@ describe("Register Employee Router", () => {
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should return Error if no employee is returned", async () => {
@@ -252,7 +252,7 @@ describe("Register Employee Router", () => {
       const httpResponse = await sut.route(httpRequest);
 
       expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.body).toBeInstanceOf(ServerError);
     }
   });
 
@@ -280,7 +280,7 @@ describe("Register Employee Router", () => {
       const httpResponse = await sut.route(httpRequest);
 
       expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.body).toBeInstanceOf(ServerError);
     }
   });
 });

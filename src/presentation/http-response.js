@@ -38,10 +38,10 @@ const httpResponse = {
     };
   },
 
-  serverError() {
+  serverError(cause) {
     return {
       statusCode: 500,
-      body: new ServerError(),
+      body: new ServerError({ cause }),
     };
   },
 };

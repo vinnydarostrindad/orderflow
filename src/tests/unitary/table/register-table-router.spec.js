@@ -67,7 +67,7 @@ describe("Register Table Router", () => {
     const { sut } = makeSut();
     const httpResponse = await sut.route();
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should return 500 if httpRequest has no body", async () => {
@@ -77,7 +77,7 @@ describe("Register Table Router", () => {
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should return 500 if httpRequest has no params", async () => {
@@ -87,7 +87,7 @@ describe("Register Table Router", () => {
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should return 500 if no table is returned", async () => {
@@ -100,7 +100,7 @@ describe("Register Table Router", () => {
 
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toBeInstanceOf(ServerError);
   });
 
   test("Should call registerTableUseCase with correct params", async () => {
@@ -154,7 +154,7 @@ describe("Register Table Router", () => {
       const httpResponse = await sut.route(httpRequest);
 
       expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.body).toBeInstanceOf(ServerError);
     }
   });
 
@@ -173,7 +173,7 @@ describe("Register Table Router", () => {
       const httpResponse = await sut.route(httpRequest);
 
       expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.body).toBeInstanceOf(ServerError);
     }
   });
 });

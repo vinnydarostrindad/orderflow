@@ -1,5 +1,5 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import httpResponse from "../../httpResponse.js";
+import httpResponse from "../../http-response.js";
 
 export default class GetMenuRouter {
   constructor({ getMenuUseCase } = {}) {

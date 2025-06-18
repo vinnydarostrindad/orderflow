@@ -1,5 +1,5 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import httpResponse from "../../httpResponse.js";
+import httpResponse from "../../http-response.js";
 
 export default class GetEmployeeRouter {
   constructor({ getEmployeeUseCase } = {}) {
@@ -53,8 +53,8 @@ export default class GetEmployeeRouter {
         createdAt: created_at,
         updatedAt: updated_at,
       });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       return httpResponse.serverError();
     }
   }
