@@ -1,6 +1,7 @@
 import MethodNotAllowedError from "../utils/errors/method-not-allowed-error.js";
 import NotFoundError from "../utils/errors/not-found-error.js";
 import ServerError from "../utils/errors/server-error.js";
+import ValidationError from "../utils/errors/validation-error.js";
 import nodeRequestAdapter from "./adapters/node-request-adapter.js";
 import apiRoutes from "./routes/routes.js";
 
@@ -29,6 +30,9 @@ const router = async function (req, res) {
       res.writeHead(error.statusCode);
       return res.end(JSON.stringify(error));
     } else if (error instanceof NotFoundError) {
+      res.writeHead(error.statusCode);
+      return res.end(JSON.stringify(error));
+    } else if (error instanceof ValidationError) {
       res.writeHead(error.statusCode);
       return res.end(JSON.stringify(error));
     }

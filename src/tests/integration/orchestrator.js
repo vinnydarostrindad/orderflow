@@ -12,16 +12,16 @@ async function runMigrations() {
   });
 }
 
-async function createBusiness() {
+async function createBusiness(props = {}) {
   const response = await fetch("http://localhost:3000/api/v1/business", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name: "any_name",
-      email: "any_email@mail.com",
-      password: "any_password",
+      name: props.name || "any_name",
+      email: props.email || "any_email@mail.com",
+      password: props.password || "any_password",
     }),
   });
 

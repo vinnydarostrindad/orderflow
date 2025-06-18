@@ -1,6 +1,5 @@
 import RegisterBusinessRouter from "../../../presentation/routers/business/register-business-router.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import ServerError from "../../../utils/errors/server-error.js";
 import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
@@ -156,36 +155,17 @@ describe("Register Business Router", () => {
     expect(httpResponse.body).toEqual(new InvalidParamError("email"));
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
+    const { sut } = makeSut();
+
+    await expect(sut.route()).rejects.toThrow();
+  });
+
+  test("Should throw if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {};
 
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
-  });
-
-  test("Should return 500 if httpRequest has no body", async () => {
-    const { sut } = makeSut();
-
-    const httpResponse = await sut.route();
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
-  });
-
-  test("Should return Error if no business is registered", async () => {
-    const { sut, registerBusinessUseCaseSpy } = makeSut();
-    const httpRequest = {
-      body: {
-        name: "any_name",
-        email: "any_email@mail.com",
-        password: "any_password",
-      },
-    };
-    registerBusinessUseCaseSpy.business = null;
-
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse).toEqual(new Error());
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
   test("Should call emailValidator with correct params", async () => {
@@ -250,7 +230,7 @@ describe("Register Business Router", () => {
     });
   });
 
-  test("Should return 500 if invalid dependency is provided", async () => {
+  test("Should throw if invalid dependency is provided", async () => {
     const registerBusinessUseCase = makeRegisterBusinessUseCase();
     const emailValidator = makeEmailValidator();
     const suts = [
@@ -273,22 +253,20 @@ describe("Register Business Router", () => {
       }),
     ];
 
-    for (const sut of suts) {
-      const httpRequest = {
-        body: {
-          name: "any_name",
-          email: "any_email@mail.com",
-          password: "any_password",
-        },
-      };
-      const httpResponse = await sut.route(httpRequest);
+    const httpRequest = {
+      body: {
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
+      },
+    };
 
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 
-  test("Should return 500 if any dependency throws", async () => {
+  test("Should throw if any dependency throws", async () => {
     const registerBusinessUseCase = makeRegisterBusinessUseCase();
     const emailValidator = makeEmailValidator();
     const suts = [
@@ -306,18 +284,16 @@ describe("Register Business Router", () => {
       }),
     ];
 
-    for (const sut of suts) {
-      const httpRequest = {
-        body: {
-          name: "any_name",
-          email: "any_email@mail.com",
-          password: "any_password",
-        },
-      };
-      const httpResponse = await sut.route(httpRequest);
+    const httpRequest = {
+      body: {
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
+      },
+    };
 
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 });

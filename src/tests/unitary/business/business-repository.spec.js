@@ -16,6 +16,11 @@ const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
+
+      if (this.queryObject.values[0] === "any_name") {
+        return this.validateUniqueNameQueryResult;
+      }
+
       return this.queryResult;
     },
   };
@@ -29,6 +34,9 @@ const makePostgresAdapter = () => {
         hashedPassword: "any_hash",
       },
     ],
+  };
+  postgresAdapterSpy.validateUniqueNameQueryResult = {
+    rows: [],
   };
   return postgresAdapterSpy;
 };

@@ -9,15 +9,10 @@ export default class RegisterBusinessUseCase {
   }
 
   async execute({ name, email, password } = {}) {
-    if (!name) {
-      throw new MissingParamError("name");
-    }
-    if (!email) {
-      throw new MissingParamError("email");
-    }
-    if (!password) {
-      throw new MissingParamError("password");
-    }
+    if (!name) throw new MissingParamError("name");
+    if (!email) throw new MissingParamError("email");
+    if (!password) throw new MissingParamError("password");
+
     const hashedPassword = await this.crypto.hash(password);
     if (!hashedPassword) {
       // Fazer um erro mais específico depois

@@ -1,4 +1,8 @@
-import { cleanDatabase, runMigrations } from "../orchestrator.js";
+import {
+  cleanDatabase,
+  createBusiness,
+  runMigrations,
+} from "../orchestrator.js";
 import { version as uuidVersion } from "uuid";
 import validator from "validator";
 
@@ -48,5 +52,36 @@ describe("POST /api/v1/business", () => {
     expect(Date.parse(business.updated_at)).not.toBeNaN();
 
     expect(validator.isJWT(token)).toBe(true);
+  });
+
+  test("should return error if name already exists", async () => {
+    await createBusiness({
+      name: "any_name_1",
+      email: "any_email1@mail.com",
+      password: "any_password",
+    });
+
+    const requestBody = {
+      name: "any_name_1",
+      email: "any_email2@mail.com",
+      password: "any_password",
+    };
+
+    const response = await fetch("http://localhost:3000/api/v1/business", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
+    });
+
+    const responseBody = await response.json();
+    console.log(responseBody);
+    expect(response.status).toBe(400);
+
+    expect(responseBody).toEqual({
+      name: "ValidationError",
+      message: "The name provided is already in use.",
+      action: "Use another username to perform this operation.",
+      statusCode: 400,
+    });
   });
 });
