@@ -1,7 +1,5 @@
 import MenuItem from "../../entities/menu-item.js";
-import DependencyError from "../../../utils/errors/dependency-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import RepositoryError from "../../../utils/errors/repository-error.js";
 
 export default class RegisterMenuItemUseCase {
   constructor({ idGenerator, menuItemRepository } = {}) {
@@ -23,10 +21,6 @@ export default class RegisterMenuItemUseCase {
     }
 
     const id = this.idGenerator.execute();
-    if (!id) {
-      // Fazer um erro mais específico depois
-      throw new DependencyError("idGenerator");
-    }
 
     const menuItem = new MenuItem({
       id,
@@ -38,11 +32,8 @@ export default class RegisterMenuItemUseCase {
       type,
     });
 
-    const result = await this.menuItemRepository.create(menuItem);
-    if (!result) {
-      // Fazer um erro mais específico depois
-      throw new RepositoryError("menuItem");
-    }
-    return result;
+    const createdMenuItem = await this.menuItemRepository.create(menuItem);
+
+    return createdMenuItem;
   }
 }

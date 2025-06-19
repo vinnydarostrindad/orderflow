@@ -165,7 +165,6 @@ describe("Get Employee Router", () => {
     const { sut } = makeSut();
 
     const httpResponse = await sut.route();
-    console.log(httpResponse);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toBeInstanceOf(ServerError);
   });

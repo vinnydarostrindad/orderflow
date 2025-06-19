@@ -6,7 +6,7 @@ import {
 import { version as uuidVersion } from "uuid";
 import validator from "validator";
 
-beforeAll(async () => {
+beforeEach(async () => {
   await cleanDatabase();
   await runMigrations();
 });
@@ -54,7 +54,7 @@ describe("POST /api/v1/business", () => {
     expect(validator.isJWT(token)).toBe(true);
   });
 
-  test("should return error if name already exists", async () => {
+  test("should return ValidationError if name already exists", async () => {
     await createBusiness({
       name: "any_name_1",
       email: "any_email1@mail.com",
@@ -74,14 +74,59 @@ describe("POST /api/v1/business", () => {
     });
 
     const responseBody = await response.json();
-    console.log(responseBody);
     expect(response.status).toBe(400);
 
     expect(responseBody).toEqual({
       name: "ValidationError",
       message: "The name provided is already in use.",
-      action: "Use another username to perform this operation.",
+      action: "Use another name to perform this operation.",
       statusCode: 400,
     });
+  });
+
+  test("should return ValidationError if email already exists", async () => {
+    await createBusiness({
+      name: "any_name_1",
+      email: "any_email1@mail.com",
+      password: "any_password",
+    });
+
+    const requestBody = {
+      name: "any_name_2",
+      email: "any_email1@mail.com",
+      password: "any_password",
+    };
+
+    const response = await fetch("http://localhost:3000/api/v1/business", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
+    });
+
+    const responseBody = await response.json();
+    expect(response.status).toBe(400);
+
+    expect(responseBody).toEqual({
+      name: "ValidationError",
+      message: "The email provided is already in use.",
+      action: "Use another email to perform this operation.",
+      statusCode: 400,
+    });
+  });
+
+  test("should return different hashed for same password bu different clients", async () => {
+    const business1 = await createBusiness({
+      name: "any_name_1",
+      email: "any_email1@mail.com",
+      password: "any_password",
+    });
+
+    const business2 = await createBusiness({
+      name: "any_name_2",
+      email: "any_email2@mail.com",
+      password: "any_password",
+    });
+
+    expect(business1.password).not.toBe(business2.password);
   });
 });

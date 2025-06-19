@@ -1,7 +1,5 @@
 import Menu from "../../entities/menu.js";
-import DependencyError from "../../../utils/errors/dependency-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import RepositoryError from "../../../utils/errors/repository-error.js";
 
 export default class RegisterMenuUseCase {
   constructor({ idGenerator, menuRepository } = {}) {
@@ -20,10 +18,6 @@ export default class RegisterMenuUseCase {
     }
 
     const id = this.idGenerator.execute();
-    if (!id) {
-      // Fazer um erro mais específico depois
-      throw new DependencyError("idGenerator");
-    }
 
     const menu = new Menu({
       id,
@@ -31,11 +25,8 @@ export default class RegisterMenuUseCase {
       name,
     });
 
-    const result = await this.menuRepository.create(menu);
-    if (!result) {
-      // Fazer um erro mais específico depois
-      throw new RepositoryError("menu");
-    }
-    return result;
+    const createdMenu = await this.menuRepository.create(menu);
+
+    return createdMenu;
   }
 }

@@ -1,7 +1,5 @@
 import RegisterMenuItemUseCase from "../../../domain/usecase/menu_item/register-menu-item-usecase.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import DependencyError from "../../../utils/errors/dependency-error.js";
-import RepositoryError from "../../../utils/errors/repository-error.js";
 
 const makeSut = () => {
   const idGeneratorSpy = makeIdGenerator();
@@ -123,23 +121,6 @@ describe("Register Menu Item UseCase", () => {
     );
   });
 
-  test("Should throw if idGenerator returns invalid id", async () => {
-    const { sut, idGeneratorSpy } = makeSut();
-    const props = {
-      menuId: "any_menu_id",
-      name: "any_name",
-      price: "any_price",
-      imagePath: "any_img_path",
-      description: "any_description",
-      type: "any_type",
-    };
-    idGeneratorSpy.id = null;
-
-    await expect(sut.execute(props)).rejects.toThrow(
-      new DependencyError("idGenerator"),
-    );
-  });
-
   test("Should call menuItemRepository with correct values", async () => {
     const { sut, menuItemRepositorySpy, idGeneratorSpy } = makeSut();
     const props = {
@@ -159,23 +140,6 @@ describe("Register Menu Item UseCase", () => {
     expect(menuItemRepositorySpy.imagePath).toBe("any_img_path");
     expect(menuItemRepositorySpy.description).toBe("any_description");
     expect(menuItemRepositorySpy.type).toBe("any_type");
-  });
-
-  test("Should throw if menuItemRepository returns invalid menuItem", async () => {
-    const { sut, menuItemRepositorySpy } = makeSut();
-    const props = {
-      menuId: "any_menu_id",
-      name: "any_name",
-      price: "any_price",
-      imagePath: "any_img_path",
-      description: "any_description",
-      type: "any_type",
-    };
-    menuItemRepositorySpy.menuItem = null;
-
-    await expect(sut.execute(props)).rejects.toThrow(
-      new RepositoryError("menuItem"),
-    );
   });
 
   test("Should return menu item if everything is right", async () => {

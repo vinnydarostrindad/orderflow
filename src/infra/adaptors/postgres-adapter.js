@@ -1,5 +1,6 @@
 import { Client } from "pg";
 import MissingParamError from "../../utils/errors/missing-param-error.js";
+import RepositoryError from "../../utils/errors/repository-error.js";
 
 import dotenv from "dotenv";
 dotenv.config({ path: ".env.development" });
@@ -16,10 +17,8 @@ export default {
       client = await this.getNewClient();
       const queryResults = await client.query(queryObject);
       return queryResults;
-    } catch (err) {
-      // Fazer um erro mais específico depois
-      console.error(err);
-      throw err;
+    } catch (error) {
+      throw new RepositoryError("Database query failed.", { cause: error });
     } finally {
       await client?.end();
     }

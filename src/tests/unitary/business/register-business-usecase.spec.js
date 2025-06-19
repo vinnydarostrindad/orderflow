@@ -139,32 +139,6 @@ describe("Register Business UseCase", () => {
     expect(cryptoSpy.password).toBe(props.password);
   });
 
-  test("Should return null if crypto returns invalid hash", async () => {
-    const { sut, cryptoSpy } = makeSut();
-    const props = {
-      name: "any_name",
-      email: "any_email@mail.com",
-      password: "any_password",
-    };
-    cryptoSpy.hashedPassword = null;
-
-    const business = await sut.execute(props);
-    expect(business).toBeNull();
-  });
-
-  test("Should return null if idGenerator returns invalid id", async () => {
-    const { sut, idGeneratorSpy } = makeSut();
-    const props = {
-      name: "any_name",
-      email: "any_email@mail.com",
-      password: "any_password",
-    };
-    idGeneratorSpy.id = null;
-
-    const business = await sut.execute(props);
-    expect(business).toBeNull();
-  });
-
   test("Should call businessRepository with correct values", async () => {
     const { sut, businessRepositorySpy, cryptoSpy, idGeneratorSpy } = makeSut();
     const props = {

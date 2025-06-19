@@ -27,14 +27,16 @@ jest.unstable_mockModule("pg", () => ({
 }));
 
 import MissingParamError from "../../utils/errors/missing-param-error.js";
+import RepositoryError from "../../utils/errors/repository-error.js";
 const sut = (await import("../../infra/adaptors/postgres-adapter.js")).default;
 const { Client } = await import("pg");
 
 describe("Postgres Adapter", () => {
   describe("query Method", () => {
     test("Should throw if no queryObject is provided", async () => {
-      const promise = sut.query();
-      expect(promise).rejects.toThrow(new MissingParamError("queryObject"));
+      await expect(sut.query()).rejects.toThrow(
+        new MissingParamError("queryObject"),
+      );
     });
 
     test("Should throw if getNewClient throws", async () => {
@@ -50,8 +52,7 @@ describe("Postgres Adapter", () => {
           values: ["any_value"],
         };
 
-        const promise = sut.query(queryObject);
-        await expect(promise).rejects.toThrow("Erro de conexão");
+        await expect(sut.query(queryObject)).rejects.toThrow(RepositoryError);
       } finally {
         Client.connect = originalConnect; // restaura para os outros testes
       }

@@ -13,6 +13,7 @@ export default class BusinessRepository {
     if (!hashedPassword) throw new MissingParamError("hashedPassword");
 
     await this.validateUniqueName(name);
+    await this.validateUniqueEmail(email);
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -25,10 +26,7 @@ export default class BusinessRepository {
       ;`,
       values: [id, name, email, hashedPassword],
     });
-    if (!result) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
+
     return result.rows[0];
   }
 
@@ -50,11 +48,6 @@ export default class BusinessRepository {
       ;`,
       values: [id],
     });
-
-    if (!result) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
 
     return result.rows[0];
   }
@@ -78,7 +71,31 @@ export default class BusinessRepository {
     if (result.rows.length > 0) {
       throw new ValidationError({
         message: "The name provided is already in use.",
-        action: "Use another username to perform this operation.",
+        action: "Use another name to perform this operation.",
+      });
+    }
+  }
+
+  async validateUniqueEmail(email) {
+    if (!email) throw new MissingParamError("email");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          email
+        FROM
+          businesses
+        WHERE
+          LOWER(email) = LOWER($1)
+        LIMIT
+          1
+      ;`,
+      values: [email],
+    });
+    if (result.rows.length > 0) {
+      throw new ValidationError({
+        message: "The email provided is already in use.",
+        action: "Use another email to perform this operation.",
       });
     }
   }

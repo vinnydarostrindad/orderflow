@@ -1,7 +1,5 @@
 import Table from "../../entities/table.js";
-import DependencyError from "../../../utils/errors/dependency-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import RepositoryError from "../../../utils/errors/repository-error.js";
 
 export default class RegisterTableUseCase {
   constructor({ idGenerator, tableRepository } = {}) {
@@ -18,9 +16,6 @@ export default class RegisterTableUseCase {
     }
 
     const id = this.idGenerator.execute();
-    if (!id) {
-      throw new DependencyError("idGenerator");
-    }
 
     const table = new Table({
       id,
@@ -29,11 +24,8 @@ export default class RegisterTableUseCase {
       name,
     });
 
-    const result = await this.tableRepository.create(table);
-    if (!result) {
-      throw new RepositoryError("table");
-    }
+    const createdTable = await this.tableRepository.create(table);
 
-    return result;
+    return createdTable;
   }
 }

@@ -18,7 +18,9 @@ const makePostgresAdapter = () => {
       this.queryObject = queryObject;
 
       if (this.queryObject.values[0] === "any_name") {
-        return this.validateUniqueNameQueryResult;
+        return this.validateUniqueQueryResult;
+      } else if (this.queryObject.values[0] === "any_email@mail.com") {
+        return this.validateUniqueQueryResult;
       }
 
       return this.queryResult;
@@ -30,12 +32,12 @@ const makePostgresAdapter = () => {
       {
         id: "any_id",
         name: "any_name",
-        email: "any_email",
+        email: "any_email@mail.com",
         hashedPassword: "any_hash",
       },
     ],
   };
-  postgresAdapterSpy.validateUniqueNameQueryResult = {
+  postgresAdapterSpy.validateUniqueQueryResult = {
     rows: [],
   };
   return postgresAdapterSpy;
@@ -62,7 +64,7 @@ describe("Business Repository", () => {
       const { sut } = makeSut();
       const props = {
         name: "any_name",
-        email: "any_email",
+        email: "any_email@mail.com",
         hashedPassword: "any_hash",
       };
       await expect(sut.create(props)).rejects.toThrow(
@@ -74,7 +76,7 @@ describe("Business Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_id",
-        email: "any_email",
+        email: "any_email@mail.com",
         hashedPassword: "any_hash",
       };
       await expect(sut.create(props)).rejects.toThrow(
@@ -99,7 +101,7 @@ describe("Business Repository", () => {
       const props = {
         id: "any_id",
         name: "any_name",
-        email: "any_email",
+        email: "any_email@mail.com",
       };
       await expect(sut.create(props)).rejects.toThrow(
         new MissingParamError("hashedPassword"),
@@ -111,7 +113,7 @@ describe("Business Repository", () => {
       const props = {
         id: "any_id",
         name: "any_name",
-        email: "any_email",
+        email: "any_email@mail.com",
         hashedPassword: "any_hash",
       };
       await sut.create(props);
@@ -124,21 +126,8 @@ describe("Business Repository", () => {
         RETURNING
           *
       ;`,
-        values: ["any_id", "any_name", "any_email", "any_hash"],
+        values: ["any_id", "any_name", "any_email@mail.com", "any_hash"],
       });
-    });
-
-    test("Should return null if postgresAdapter return invalid business", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      const props = {
-        id: "any_id",
-        name: "any_name",
-        email: "any_email",
-        hashedPassword: "any_hash",
-      };
-      postgresAdapterSpy.queryResult = null;
-      const business = await sut.create(props);
-      expect(business).toBeNull();
     });
 
     test("Should return business if everything is right", async () => {
@@ -146,7 +135,7 @@ describe("Business Repository", () => {
       const props = {
         id: "any_id",
         name: "any_name",
-        email: "any_email",
+        email: "any_email@mail.com",
         hashedPassword: "any_hash",
       };
 
@@ -154,47 +143,9 @@ describe("Business Repository", () => {
       expect(business).toEqual({
         id: "any_id",
         name: "any_name",
-        email: "any_email",
+        email: "any_email@mail.com",
         hashedPassword: "any_hash",
       });
-    });
-
-    test("Should throw if invalid dependencies are provided", async () => {
-      const suts = [
-        new BusinessRepository(),
-        new BusinessRepository({}),
-        new BusinessRepository({
-          postgresAdapter: {},
-        }),
-      ];
-      const props = {
-        id: "any_id",
-        name: "any_name",
-        email: "any_email",
-        hashedPassword: "any_hash",
-      };
-
-      for (const sut of suts) {
-        await expect(sut.create(props)).rejects.toThrow(TypeError);
-      }
-    });
-
-    test("Should throw if any dependency throws", async () => {
-      const suts = [
-        new BusinessRepository({
-          postgresAdapter: makePostgresAdapterWithError(),
-        }),
-      ];
-      const props = {
-        id: "any_id",
-        name: "any_name",
-        email: "any_email",
-        hashedPassword: "any_hash",
-      };
-
-      for (const sut of suts) {
-        await expect(sut.create(props)).rejects.toThrow();
-      }
     });
   });
 
@@ -224,14 +175,6 @@ describe("Business Repository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter return invalid business", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-
-      const business = await sut.findById("any_id");
-      expect(business).toBeNull();
-    });
-
     test("Should return business if everything is right", async () => {
       const { sut } = makeSut();
 
@@ -239,35 +182,51 @@ describe("Business Repository", () => {
       expect(business).toEqual({
         id: "any_id",
         name: "any_name",
-        email: "any_email",
+        email: "any_email@mail.com",
         hashedPassword: "any_hash",
       });
     });
+  });
 
-    test("Should throw if invalid dependencies are provided", async () => {
-      const suts = [
-        new BusinessRepository(),
-        new BusinessRepository({}),
-        new BusinessRepository({
-          postgresAdapter: {},
-        }),
-      ];
+  test("Should throw if invalid dependencies are provided", async () => {
+    const suts = [
+      new BusinessRepository(),
+      new BusinessRepository({}),
+      new BusinessRepository({
+        postgresAdapter: {},
+      }),
+    ];
 
-      for (const sut of suts) {
-        await expect(sut.findById("any_id")).rejects.toThrow(TypeError);
-      }
-    });
+    const props = {
+      id: "any_id",
+      name: "any_name",
+      email: "any_email@mail.com",
+      hashedPassword: "any_hash",
+    };
 
-    test("Should throw if any dependency throws", async () => {
-      const suts = [
-        new BusinessRepository({
-          postgresAdapter: makePostgresAdapterWithError(),
-        }),
-      ];
+    for (const sut of suts) {
+      await expect(sut.create(props)).rejects.toThrow(TypeError);
+      await expect(sut.findById(props.id)).rejects.toThrow(TypeError);
+    }
+  });
 
-      for (const sut of suts) {
-        await expect(sut.findById("any_id")).rejects.toThrow();
-      }
-    });
+  test("Should throw if any dependency throws", async () => {
+    const suts = [
+      new BusinessRepository({
+        postgresAdapter: makePostgresAdapterWithError(),
+      }),
+    ];
+
+    const props = {
+      id: "any_id",
+      name: "any_name",
+      email: "any_email@mail.com",
+      hashedPassword: "any_hash",
+    };
+
+    for (const sut of suts) {
+      await expect(sut.create(props)).rejects.toThrow();
+      await expect(sut.findById(props.id)).rejects.toThrow();
+    }
   });
 });

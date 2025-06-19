@@ -14,15 +14,8 @@ export default class RegisterBusinessUseCase {
     if (!password) throw new MissingParamError("password");
 
     const hashedPassword = await this.crypto.hash(password);
-    if (!hashedPassword) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
+
     const id = this.idGenerator.execute();
-    if (!id) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
 
     const business = new Business({
       id,
@@ -30,11 +23,8 @@ export default class RegisterBusinessUseCase {
       email,
       hashedPassword,
     });
-    const result = await this.businessRepository.create(business);
-    if (!result) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
-    return result;
+    const createdBusiness = await this.businessRepository.create(business);
+
+    return createdBusiness;
   }
 }

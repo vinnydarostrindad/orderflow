@@ -1,7 +1,5 @@
 import RegisterTableUseCase from "../../../domain/usecase/table/register-table-usecase.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import DependencyError from "../../../utils/errors/dependency-error.js";
-import RepositoryError from "../../../utils/errors/repository-error.js";
 
 const makeSut = () => {
   const idGeneratorSpy = makeIdGenerator();
@@ -97,20 +95,6 @@ describe("Register Table UseCase", () => {
     );
   });
 
-  test("Should throw if idGenerator returns invalid id", async () => {
-    const { sut, idGeneratorSpy } = makeSut();
-    const props = {
-      businessId: "any_business_id",
-      number: "any_number",
-      name: "any_name",
-    };
-    idGeneratorSpy.id = null;
-
-    await expect(sut.execute(props)).rejects.toThrow(
-      new DependencyError("idGenerator"),
-    );
-  });
-
   test("Should call tableRepository with correct values", async () => {
     const { sut, tableRepositorySpy, idGeneratorSpy } = makeSut();
     const props = {
@@ -123,20 +107,6 @@ describe("Register Table UseCase", () => {
     expect(tableRepositorySpy.id).toBe(idGeneratorSpy.id);
     expect(tableRepositorySpy.businessId).toBe("any_business_id");
     expect(tableRepositorySpy.name).toBe("any_name");
-  });
-
-  test("Should throw if tableRepository returns invalid table", async () => {
-    const { sut, tableRepositorySpy } = makeSut();
-    const props = {
-      businessId: "any_business_id",
-      number: "any_number",
-      name: "any_name",
-    };
-    tableRepositorySpy.table = null;
-
-    await expect(sut.execute(props)).rejects.toThrow(
-      new RepositoryError("table"),
-    );
   });
 
   test("Should return table if everything is right", async () => {

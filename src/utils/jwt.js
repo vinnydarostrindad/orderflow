@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import MissingParamError from "./errors/missing-param-error.js";
+import DependencyError from "./errors/dependency-error.js";
 
 const jsonWebToken = {
   sign(payload, secret) {
@@ -9,7 +10,15 @@ const jsonWebToken = {
     if (!secret) {
       throw new MissingParamError("secret");
     }
-    return jwt.sign(payload, secret);
+
+    try {
+      return jwt.sign(payload, secret);
+    } catch (error) {
+      throw new DependencyError("jsonWebToken.sign", {
+        message: "Failed to generate token",
+        cause: error,
+      });
+    }
   },
 };
 

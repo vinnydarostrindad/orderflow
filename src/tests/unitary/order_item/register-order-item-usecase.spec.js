@@ -1,7 +1,5 @@
 import RegisterOrderItemUseCase from "../../../domain/usecase/order_item/register-order-item-usecase.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import DependencyError from "../../../utils/errors/dependency-error.js";
-import RepositoryError from "../../../utils/errors/repository-error.js";
 
 const makeSut = () => {
   const idGeneratorSpy = makeIdGenerator();
@@ -185,40 +183,6 @@ describe("Register Order Item UseCase", () => {
 
     await expect(sut.execute(props)).rejects.toThrow(
       new MissingParamError("totalPrice"),
-    );
-  });
-
-  test("Should throw if idGenerator returns invalid id", async () => {
-    const { sut, idGeneratorSpy } = makeSut();
-    const props = {
-      orderId: "any_order_id",
-      menuItemId: "any_menu_item_id",
-      quantity: 2,
-      unitPrice: 20,
-      totalPrice: 40,
-      notes: "any_notes",
-    };
-    idGeneratorSpy.id = null;
-
-    await expect(sut.execute(props)).rejects.toThrow(
-      new DependencyError("idGenerator"),
-    );
-  });
-
-  test("Should throw if orderItemRepository returns invalid orderItem", async () => {
-    const { sut, orderItemRepositorySpy } = makeSut();
-    const props = {
-      orderId: "any_order_id",
-      menuItemId: "any_menu_item_id",
-      quantity: 2,
-      unitPrice: 20,
-      totalPrice: 40,
-      notes: "any_notes",
-    };
-    orderItemRepositorySpy.orderItem = null;
-
-    await expect(sut.execute(props)).rejects.toThrow(
-      new RepositoryError("orderItem"),
     );
   });
 
