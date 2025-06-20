@@ -1,13 +1,14 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import RegisterEmployeeRouter from "../../../presentation/routers/employee/register-employee-router.js";
-import ServerError from "../../../utils/errors/server-error.js";
 
 const makeSut = () => {
   const registerEmployeeUseCaseSpy = makeRegisterEmployeeUseCase();
   const authUseCaseSpy = makeAuthUseCase();
+  const validatorsSpy = makeValidators();
   const sut = new RegisterEmployeeRouter({
     registerEmployeeUseCase: registerEmployeeUseCaseSpy,
     authUseCase: authUseCaseSpy,
+    validators: validatorsSpy,
   });
   return {
     sut,
@@ -68,6 +69,27 @@ const makeAuthUseCaseWithError = () => {
 
   const authUseCaseSpy = new AuthUseCaseSpy();
   return authUseCaseSpy;
+};
+
+const makeValidators = () => {
+  const validatorsSpy = {
+    uuid(uuid) {
+      this.uuid = uuid;
+      return true;
+    },
+  };
+
+  return validatorsSpy;
+};
+
+const makeValidatorsWithError = () => {
+  const validatorsSpy = {
+    uuid() {
+      throw new Error();
+    },
+  };
+
+  return validatorsSpy;
 };
 
 describe("Register Employee Router", () => {
@@ -132,24 +154,21 @@ describe("Register Employee Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("password"));
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
     const { sut } = makeSut();
-    const httpResponse = await sut.route();
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+    await expect(sut.route()).rejects.toThrow();
   });
 
-  test("Should return 500 if httpRequest has no body", async () => {
+  test("Should throw if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       paras: { businessId: "any_business_id" },
     };
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should return 500 if httpRequest has no params", async () => {
+  test("Should throw if httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -158,25 +177,7 @@ describe("Register Employee Router", () => {
         password: "any_password",
       },
     };
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
-  });
-
-  test("Should return Error if no employee is returned", async () => {
-    const { sut, registerEmployeeUseCaseSpy } = makeSut();
-    const httpRequest = {
-      params: { businessId: "any_business_id" },
-      body: {
-        name: "any_name",
-        role: "any_role",
-        password: "any_password",
-      },
-    };
-    registerEmployeeUseCaseSpy.employee = null;
-
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse).toEqual(new Error());
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
   test("Should call registerEmployeeBusiness with correct params", async () => {
@@ -229,14 +230,20 @@ describe("Register Employee Router", () => {
     });
   });
 
-  test("Should return 500 if invalid dependency is provided", async () => {
+  test("Should throw if invalid dependency is provided", async () => {
     const registerEmployeeUseCase = makeRegisterEmployeeUseCase();
+    const authUseCase = makeAuthUseCase();
     const suts = [
       new RegisterEmployeeRouter(),
       new RegisterEmployeeRouter({}),
       new RegisterEmployeeRouter({
         registerEmployeeUseCase,
         authUseCaseSpy: {},
+      }),
+      new RegisterEmployeeRouter({
+        registerEmployeeUseCase,
+        authUseCase,
+        validator: {},
       }),
     ];
 
@@ -249,15 +256,14 @@ describe("Register Employee Router", () => {
           password: "any_password",
         },
       };
-      const httpResponse = await sut.route(httpRequest);
 
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
+      expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 
-  test("Should return 500 if any dependency throws", async () => {
-    const registerEmployeeUseCase = makeRegisterEmployeeUseCase;
+  test("Should throw if any dependency throws", async () => {
+    const registerEmployeeUseCase = makeRegisterEmployeeUseCase();
+    const authUseCase = makeAuthUseCase();
     const suts = [
       new RegisterEmployeeRouter({
         registerEmployeeUseCase: makeRegisterEmployeeUseCaseWithError(),
@@ -266,21 +272,24 @@ describe("Register Employee Router", () => {
         registerEmployeeUseCase,
         authUseCase: makeAuthUseCaseWithError(),
       }),
+      new RegisterEmployeeRouter({
+        registerEmployeeUseCase,
+        authUseCase,
+        validators: makeValidatorsWithError(),
+      }),
     ];
 
-    for (const sut of suts) {
-      const httpRequest = {
-        params: { businessId: "any_business_id" },
-        body: {
-          name: "any_name",
-          role: "any_role",
-          password: "any_password",
-        },
-      };
-      const httpResponse = await sut.route(httpRequest);
+    const httpRequest = {
+      params: { businessId: "any_business_id" },
+      body: {
+        name: "any_name",
+        role: "any_role",
+        password: "any_password",
+      },
+    };
 
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
+    for (const sut of suts) {
+      expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 });

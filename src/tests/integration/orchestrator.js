@@ -28,7 +28,7 @@ async function createBusiness(props = {}) {
   return await response.json().then((obj) => obj.business);
 }
 
-async function createEmployee(businessId, quantity = 1) {
+async function createEmployee(businessId, quantity = 1, props = {}) {
   let employees = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
@@ -37,9 +37,9 @@ async function createEmployee(businessId, quantity = 1) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          name: "any_name",
-          role: "waiter",
-          password: "any_password",
+          name: props.name || "any_name",
+          role: props.role || "waiter",
+          password: props.password || "any_password",
         }),
       },
     );

@@ -6,21 +6,11 @@ export default class EmployeeRepository {
   }
 
   async create({ id, businessId, name, role, hashedPassword } = {}) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
-    if (!name) {
-      throw new MissingParamError("name");
-    }
-    if (!role) {
-      throw new MissingParamError("role");
-    }
-    if (!hashedPassword) {
-      throw new MissingParamError("hashedPassword");
-    }
+    if (!id) throw new MissingParamError("id");
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!name) throw new MissingParamError("name");
+    if (!role) throw new MissingParamError("role");
+    if (!hashedPassword) throw new MissingParamError("hashedPassword");
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -33,17 +23,12 @@ export default class EmployeeRepository {
       ;`,
       values: [id, businessId, name, role, hashedPassword],
     });
-    if (!result) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
+
     return result.rows[0];
   }
 
   async findAll(businessId) {
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
+    if (!businessId) throw new MissingParamError("businessId");
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -68,12 +53,8 @@ export default class EmployeeRepository {
   }
 
   async findById(businessId, employeeId) {
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
-    if (!employeeId) {
-      throw new MissingParamError("employeeId");
-    }
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!employeeId) throw new MissingParamError("employeeId");
 
     const result = await this.postgresAdapter.query({
       text: `

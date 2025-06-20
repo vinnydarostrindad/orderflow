@@ -114,7 +114,7 @@ describe("POST /api/v1/business", () => {
     });
   });
 
-  test("should return different hashed for same password bu different clients", async () => {
+  test("should return different hashes for same password but different business", async () => {
     const business1 = await createBusiness({
       name: "any_name_1",
       email: "any_email1@mail.com",

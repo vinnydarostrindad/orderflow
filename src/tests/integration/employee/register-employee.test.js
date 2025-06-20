@@ -1,12 +1,13 @@
 import {
   cleanDatabase,
   createBusiness,
+  createEmployee,
   runMigrations,
 } from "../orchestrator.js";
 import { version as uuidVersion } from "uuid";
 import validator from "validator";
 
-beforeAll(async () => {
+beforeEach(async () => {
   await cleanDatabase();
   await runMigrations();
 });
@@ -59,5 +60,12 @@ describe("POST /api/v1/business/[businessId]/employee", () => {
     expect(Date.parse(employee.updated_at)).not.toBeNull();
 
     expect(validator.isJWT(token)).toBe(true);
+  });
+
+  test("should return different hashes for same password but different employees", async () => {
+    const business = await createBusiness();
+    const employees = await createEmployee(business.id, 2);
+
+    expect(employees[0].password).not.toBe(employees[1].password);
   });
 });

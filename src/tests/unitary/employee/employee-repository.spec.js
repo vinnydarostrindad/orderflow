@@ -149,20 +149,6 @@ describe("Employee Repository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter return invalid result", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      const props = {
-        id: "any_id",
-        businessId: "any_business_id",
-        name: "any_name",
-        role: "any_role",
-        hashedPassword: "any_hash",
-      };
-      postgresAdapterSpy.employee = null;
-      const result = await sut.create(props);
-      expect(result).toBeNull();
-    });
-
     test("Should return employee correctly", async () => {
       const { sut } = makeSut();
       const props = {
