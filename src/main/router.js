@@ -14,7 +14,11 @@ const router = async function (req, res) {
   try {
     const { route, params } = findMatchingRoute(url, method);
 
-    if (!route) throw new NotFoundError(`URL ${url}`);
+    if (!route)
+      throw new NotFoundError({
+        resource: `URL ${url}`,
+        action: "Make sure the url exists.",
+      });
 
     const httpRequest = await nodeRequestAdapter(req, params);
 
@@ -27,7 +31,6 @@ const router = async function (req, res) {
     return res.end(JSON.stringify(httpResponse.body));
   } catch (error) {
     console.error(error);
-
     if (error instanceof MethodNotAllowedError) {
       res.writeHead(error.statusCode);
       return res.end(JSON.stringify(error));

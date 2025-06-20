@@ -68,7 +68,9 @@ describe("Get Order Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("Order"));
+      expect(httpResponse.body).toEqual(
+        new NotFoundError({ resource: "Order" }),
+      );
     });
 
     test("Should call getOrderUseCase with correct value", async () => {
@@ -118,7 +120,9 @@ describe("Get Order Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("Order"));
+      expect(httpResponse.body).toEqual(
+        new NotFoundError({ resource: "Order" }),
+      );
     });
 
     test("Should call getOrderUseCase with correct values", async () => {

@@ -24,10 +24,10 @@ const httpResponse = {
     };
   },
 
-  notFound(resource) {
+  notFound(resource, action) {
     return {
       statusCode: 404,
-      body: new NotFoundError(resource),
+      body: new NotFoundError({ resource, action }),
     };
   },
 

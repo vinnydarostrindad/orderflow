@@ -31,9 +31,7 @@ export default class BusinessRepository {
   }
 
   async findById(id) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
+    if (!id) throw new MissingParamError("id");
 
     const result = await this.postgresAdapter.query({
       text: `

@@ -1,9 +1,9 @@
 import BaseError from "./base-error.js";
 
 export default class NotFoundError extends BaseError {
-  constructor(resource) {
-    super(`${resource} was not found`, {
-      action: "Make sure the url exists.",
+  constructor({ resource, action }) {
+    super(`${resource} was not found.`, {
+      action,
       statusCode: 404,
     });
   }

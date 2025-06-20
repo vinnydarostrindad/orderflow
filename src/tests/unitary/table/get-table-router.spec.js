@@ -66,7 +66,9 @@ describe("Get Table Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("Table"));
+      expect(httpResponse.body).toEqual(
+        new NotFoundError({ resource: "Table" }),
+      );
     });
 
     test("Should call getTableUseCase with correct value", async () => {
@@ -115,7 +117,9 @@ describe("Get Table Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("Table"));
+      expect(httpResponse.body).toEqual(
+        new NotFoundError({ resource: "Table" }),
+      );
     });
 
     test("Should call getTableUseCase with correct values", async () => {

@@ -68,7 +68,9 @@ describe("Get Employee Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("Employee"));
+      expect(httpResponse.body).toEqual(
+        new NotFoundError({ resource: "Employee" }),
+      );
     });
 
     test("Should call getEmployeeUseCase with correct value", async () => {
@@ -110,7 +112,9 @@ describe("Get Employee Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("Employee"));
+      expect(httpResponse.body).toEqual(
+        new NotFoundError({ resource: "Employee" }),
+      );
     });
 
     test("Should call getEmployeeUseCase with correct value", async () => {

@@ -1,12 +1,13 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import ServerError from "../../../utils/errors/server-error.js";
 import GetBusinessRouter from "../../../presentation/routers/business/get-business-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
 
 const makeSut = () => {
   const getBusinessUseCaseSpy = makeGetBusinessUseCase();
+  const validatorsSpy = makeValidators();
   const sut = new GetBusinessRouter({
     getBusinessUseCase: getBusinessUseCaseSpy,
+    validators: validatorsSpy,
   });
   return {
     sut,
@@ -30,6 +31,7 @@ const makeGetBusinessUseCase = () => {
   };
   return getBusinessUseCaseSpy;
 };
+
 const makeGetBusinessUseCaseWithError = () => {
   class GetBusinessUseCaseSpy {
     execute() {
@@ -38,6 +40,27 @@ const makeGetBusinessUseCaseWithError = () => {
   }
 
   return new GetBusinessUseCaseSpy();
+};
+
+const makeValidators = () => {
+  const validatorsSpy = {
+    uuid(uuid) {
+      this.uuid = uuid;
+      return true;
+    },
+  };
+
+  return validatorsSpy;
+};
+
+const makeValidatorsWithError = () => {
+  const validatorsSpy = {
+    uuid() {
+      throw new Error();
+    },
+  };
+
+  return validatorsSpy;
 };
 
 describe("Get Business Router", () => {
@@ -62,25 +85,22 @@ describe("Get Business Router", () => {
 
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(404);
-    expect(httpResponse.body).toEqual(new NotFoundError("Business"));
+    expect(httpResponse.body).toEqual(
+      new NotFoundError({ resource: "Business" }),
+    );
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
     const { sut } = makeSut();
 
-    const httpResponse = await sut.route();
-
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+    await expect(sut.route()).rejects.toThrow();
   });
 
-  test("Should return 500 if no httpRequest has no params", async () => {
+  test("Should throw if no httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {};
-    const httpResponse = await sut.route(httpRequest);
 
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
   test("Should call getBusinessUseCase with correct value", async () => {
@@ -112,45 +132,49 @@ describe("Get Business Router", () => {
     });
   });
 
-  test("Should return 500 if invalid dependency is provided", async () => {
+  test("Should throw if invalid dependency is provided", async () => {
     const suts = [
       new GetBusinessRouter(),
       new GetBusinessRouter({}),
       new GetBusinessRouter({
         getBusinessUseCase: {},
       }),
+      new GetBusinessRouter({
+        getBusinessUseCase: makeGetBusinessUseCase(),
+        valators: {},
+      }),
     ];
 
-    for (const sut of suts) {
-      const httpRequest = {
-        body: {
-          businessId: "any_id",
-        },
-      };
+    const httpRequest = {
+      body: {
+        businessId: "any_id",
+      },
+    };
 
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 
-  test("Should return 500 if dependency throws", async () => {
+  test("Should throw if dependency throws", async () => {
     const suts = [
       new GetBusinessRouter({
         getBusinessUseCase: makeGetBusinessUseCaseWithError(),
       }),
+      new GetBusinessRouter({
+        getBusinessUseCase: makeGetBusinessUseCase(),
+        validators: makeValidatorsWithError(),
+      }),
     ];
 
-    for (const sut of suts) {
-      const httpRequest = {
-        body: {
-          businessId: "any_id",
-        },
-      };
+    const httpRequest = {
+      body: {
+        businessId: "any_id",
+      },
+    };
 
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 });

@@ -74,7 +74,9 @@ describe("Get Menu Item Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("MenuItem"));
+      expect(httpResponse.body).toEqual(
+        new NotFoundError({ resource: "MenuItem" }),
+      );
     });
 
     test("Should call getMenuItemUseCase with correct value", async () => {
@@ -126,7 +128,9 @@ describe("Get Menu Item Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("MenuItem"));
+      expect(httpResponse.body).toEqual(
+        new NotFoundError({ resource: "MenuItem" }),
+      );
     });
 
     test("Should call getMenuItemUseCase with correct value", async () => {

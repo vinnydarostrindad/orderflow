@@ -15,7 +15,7 @@ describe("Router", () => {
 
     expect(responseBody).toEqual({
       name: "NotFoundError",
-      message: "URL /invalid/url was not found",
+      message: "URL /invalid/url was not found.",
       action: "Make sure the url exists.",
       statusCode: 404,
     });
@@ -30,7 +30,7 @@ describe("Router", () => {
     const responseBody = await response.json();
     expect(responseBody).toEqual({
       name: "MethodNotAllowedError",
-      message: "OPTIONS method is not allowed to this URL",
+      message: "OPTIONS method is not allowed to this URL.",
       action: "Check if the HTTP method sent is valid for this endpoint.",
       statusCode: 405,
     });

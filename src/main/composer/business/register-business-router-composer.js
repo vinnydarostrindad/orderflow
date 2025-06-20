@@ -1,5 +1,5 @@
 import RegisterBusinessRouter from "../../../presentation/routers/business/register-business-router.js";
-import emailValidator from "../../../utils/email-validator.js";
+import validators from "../../../utils/validator.js";
 import RegisterBusinessUseCase from "../../../domain/usecase/business/register-business-usecase.js";
 import AuthUseCase from "../../../domain/usecase/auth-usecase.js";
 import crypto from "../../../utils/crypto.js";
@@ -18,7 +18,7 @@ const registerBusinessRouterComposer = {
     });
     const authUseCase = new AuthUseCase({ jwt });
     const registerBusinessRouter = new RegisterBusinessRouter({
-      emailValidator,
+      validators,
       registerBusinessUseCase,
       authUseCase,
     });
