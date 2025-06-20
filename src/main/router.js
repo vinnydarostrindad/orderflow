@@ -1,9 +1,6 @@
-import DependencyError from "../utils/errors/dependency-error.js";
 import MethodNotAllowedError from "../utils/errors/method-not-allowed-error.js";
 import NotFoundError from "../utils/errors/not-found-error.js";
-import RepositoryError from "../utils/errors/repository-error.js";
 import ServerError from "../utils/errors/server-error.js";
-import ValidationError from "../utils/errors/validation-error.js";
 import nodeRequestAdapter from "./adapters/node-request-adapter.js";
 import apiRoutes from "./routes/routes.js";
 
@@ -24,6 +21,10 @@ const router = async function (req, res) {
 
     const httpResponse = await route.methods[method](httpRequest);
 
+    if (httpResponse.body instanceof Error) {
+      throw httpResponse.body;
+    }
+
     res.writeHead(httpResponse.statusCode, {
       "content-type": "application/json",
     });
@@ -31,19 +32,7 @@ const router = async function (req, res) {
     return res.end(JSON.stringify(httpResponse.body));
   } catch (error) {
     console.error(error);
-    if (error instanceof MethodNotAllowedError) {
-      res.writeHead(error.statusCode);
-      return res.end(JSON.stringify(error));
-    } else if (error instanceof NotFoundError) {
-      res.writeHead(error.statusCode);
-      return res.end(JSON.stringify(error));
-    } else if (error instanceof ValidationError) {
-      res.writeHead(error.statusCode);
-      return res.end(JSON.stringify(error));
-    } else if (error instanceof DependencyError) {
-      res.writeHead(error.statusCode);
-      return res.end(JSON.stringify(error));
-    } else if (error instanceof RepositoryError) {
+    if (!(error instanceof ServerError)) {
       res.writeHead(error.statusCode);
       return res.end(JSON.stringify(error));
     }
