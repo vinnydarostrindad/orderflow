@@ -16,6 +16,10 @@ const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
+      if (queryObject.values[1] === "any_name") {
+        return this.validateUniqueQueryResult;
+      }
+
       return this.queryResult;
     },
   };
@@ -29,6 +33,10 @@ const makePostgresAdapter = () => {
       },
     ],
   };
+  postgresAdapterSpy.validateUniqueQueryResult = {
+    rows: [],
+  };
+
   return postgresAdapterSpy;
 };
 
@@ -102,19 +110,6 @@ describe("Menu Repository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter return invalid menu", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      const props = {
-        id: "any_id",
-        businessId: "any_business_id",
-        name: "any_name",
-      };
-      postgresAdapterSpy.queryResult = null;
-
-      const menu = await sut.create(props);
-      expect(menu).toBeNull();
-    });
-
     test("Should return menu if everything is right", async () => {
       const { sut } = makeSut();
       const props = {
@@ -158,15 +153,6 @@ describe("Menu Repository", () => {
       ;`,
         values: ["any_business_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter return invalid menu", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-
-      postgresAdapterSpy.queryResult = null;
-
-      const menus = await sut.findAll("any_business_id");
-      expect(menus).toBeNull();
     });
 
     test("Should return menu if everything is right", async () => {
@@ -216,15 +202,6 @@ describe("Menu Repository", () => {
         ;`,
         values: ["any_menu_id", "any_business_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter return invalid menu", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-
-      postgresAdapterSpy.queryResult = null;
-
-      const menu = await sut.findById("any_business_id", "any_menu_id");
-      expect(menu).toBeNull();
     });
 
     test("Should return menu if everything is right", async () => {

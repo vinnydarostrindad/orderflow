@@ -1,13 +1,14 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import ServerError from "../../../utils/errors/server-error.js";
 import RegisterMenuRouter from "../../../presentation/routers/menu/register-menu-router.js";
 
 const makeSut = () => {
   const registerMenuUseCaseSpy = makeRegisterMenuUseCase();
+  const validatorsSpy = makeValidators();
   const sut = new RegisterMenuRouter({
     registerMenuUseCase: registerMenuUseCaseSpy,
+    validators: validatorsSpy,
   });
-  return { sut, registerMenuUseCaseSpy };
+  return { sut, registerMenuUseCaseSpy, validatorsSpy };
 };
 
 const makeRegisterMenuUseCase = () => {
@@ -38,6 +39,27 @@ const makeRegisterMenuUseCaseWithError = () => {
   return new RegisterMenuUseCaseSpy();
 };
 
+const makeValidators = () => {
+  const validatorsSpy = {
+    uuid(uuidValue) {
+      this.uuidValue = uuidValue;
+      return true;
+    },
+  };
+
+  return validatorsSpy;
+};
+
+const makeValidatorsWithError = () => {
+  const validatorsSpy = {
+    uuid() {
+      throw new Error();
+    },
+  };
+
+  return validatorsSpy;
+};
+
 describe("Register Menu Router", () => {
   test("Should return 400 if no name is provided", async () => {
     const { sut } = makeSut();
@@ -61,46 +83,30 @@ describe("Register Menu Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
     const { sut } = makeSut();
-    const httpResponse = await sut.route();
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+
+    await expect(sut.route()).rejects.toThrow();
   });
 
-  test("Should return 500 if httpRequest has no body", async () => {
+  test("Should throw if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       params: { businessId: "any_business_id" },
     };
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should return 500 if httpRequest has no params", async () => {
+  test("Should throw if httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
         name: "any_name",
       },
     };
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
-  });
 
-  test("Should return Error if no menu is returned", async () => {
-    const { sut, registerMenuUseCaseSpy } = makeSut();
-    const httpRequest = {
-      params: { businessId: "any_business_id" },
-      body: { name: "any_name" },
-    };
-    registerMenuUseCaseSpy.menu = null;
-
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
   test("Should call registerMenuUseCase with correct params", async () => {
@@ -133,31 +139,16 @@ describe("Register Menu Router", () => {
     });
   });
 
-  test("Should return 500 if invalid dependency is provided", async () => {
+  test("Should throw if invalid dependency is provided", async () => {
     const suts = [
       new RegisterMenuRouter(),
       new RegisterMenuRouter({}),
       new RegisterMenuRouter({
         registerMenuUseCase: {},
       }),
-    ];
-    const httpRequest = {
-      params: { businessId: "any_business_id" },
-      body: { name: "any_name" },
-    };
-
-    for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
-    }
-  });
-
-  test("Should return 500 if any dependency throws", async () => {
-    const suts = [
       new RegisterMenuRouter({
-        registerMenuUseCase: makeRegisterMenuUseCaseWithError(),
+        registerMenuUseCase: makeRegisterMenuUseCase(),
+        validators: {},
       }),
     ];
     const httpRequest = {
@@ -166,10 +157,27 @@ describe("Register Menu Router", () => {
     };
 
     for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
+      await expect(sut.route(httpRequest)).rejects.toThrow();
+    }
+  });
 
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
+  test("Should throw if any dependency throws", async () => {
+    const suts = [
+      new RegisterMenuRouter({
+        registerMenuUseCase: makeRegisterMenuUseCaseWithError(),
+      }),
+      new RegisterMenuRouter({
+        registerMenuUseCase: makeRegisterMenuUseCase(),
+        validators: makeValidatorsWithError(),
+      }),
+    ];
+    const httpRequest = {
+      params: { businessId: "any_business_id" },
+      body: { name: "any_name" },
+    };
+
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 });

@@ -10,14 +10,8 @@ export default class Menu {
   }
 
   validate(id, businessId, name) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
-    if (!name) {
-      throw new MissingParamError("name");
-    }
+    if (!id) throw new MissingParamError("id");
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!name) throw new MissingParamError("name");
   }
 }

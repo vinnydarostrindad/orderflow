@@ -36,7 +36,6 @@ export default class GetEmployeeRouter {
       return httpResponse.ok(editedEmployees);
     }
 
-    console.log(this.validators.uuid);
     if (!this.validators.uuid(employeeId)) {
       return httpResponse.badRequest(new InvalidParamError("employeeId"));
     }

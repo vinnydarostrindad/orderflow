@@ -56,7 +56,7 @@ export default class BusinessRepository {
     const result = await this.postgresAdapter.query({
       text: `
         SELECT
-          name
+          1
         FROM
           businesses
         WHERE
@@ -66,6 +66,7 @@ export default class BusinessRepository {
       ;`,
       values: [name],
     });
+
     if (result.rows.length > 0) {
       throw new ValidationError({
         message: "The name provided is already in use.",
@@ -80,7 +81,7 @@ export default class BusinessRepository {
     const result = await this.postgresAdapter.query({
       text: `
         SELECT
-          email
+          1
         FROM
           businesses
         WHERE

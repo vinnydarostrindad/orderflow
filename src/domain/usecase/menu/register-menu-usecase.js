@@ -8,14 +8,8 @@ export default class RegisterMenuUseCase {
   }
 
   async execute({ name, businessId } = {}) {
-    // Talvez isso não precise ser verificado, pois Menu() também faz isso
-    // Dar uma observada nisso depois
-    if (!name) {
-      throw new MissingParamError("name");
-    }
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
+    if (!name) throw new MissingParamError("name");
+    if (!businessId) throw new MissingParamError("businessId");
 
     const id = this.idGenerator.execute();
 

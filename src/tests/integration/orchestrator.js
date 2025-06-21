@@ -49,7 +49,7 @@ async function createEmployee(businessId, quantity = 1, props = {}) {
   return quantity === 1 ? employees[0] : employees;
 }
 
-async function createMenu(businessId, quantity = 1) {
+async function createMenu(businessId, quantity = 1, props = {}) {
   let menus = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
@@ -58,7 +58,7 @@ async function createMenu(businessId, quantity = 1) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          name: `any_name_${i + 1}`,
+          name: props.name || `any_name_${i + 1}`,
         }),
       },
     );
