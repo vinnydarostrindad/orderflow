@@ -1,17 +1,15 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import ServerError from "../../../utils/errors/server-error.js";
 import GetMenuItemRouter from "../../../presentation/routers/menu_item/get-menu-item-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
 
 const makeSut = () => {
   const getMenuItemUseCaseSpy = makeGetMenuItemUseCase();
+  const validatorsSpy = makeValidators();
   const sut = new GetMenuItemRouter({
     getMenuItemUseCase: getMenuItemUseCaseSpy,
+    validators: validatorsSpy,
   });
-  return {
-    sut,
-    getMenuItemUseCaseSpy,
-  };
+  return { sut, getMenuItemUseCaseSpy, validatorsSpy };
 };
 
 const makeGetMenuItemUseCase = () => {
@@ -61,24 +59,29 @@ const makeGetMenuItemUseCaseWithError = () => {
   return new GetMenuItemUseCaseSpy();
 };
 
+const makeValidators = () => {
+  const validatorsSpy = {
+    uuid(uuidValue) {
+      this.uuidValue = uuidValue;
+      return true;
+    },
+  };
+
+  return validatorsSpy;
+};
+
+const makeValidatorsWithError = () => {
+  const validatorsSpy = {
+    uuid() {
+      throw new Error();
+    },
+  };
+
+  return validatorsSpy;
+};
+
 describe("Get Menu Item Router", () => {
   describe("Without menuItemId", () => {
-    test("Should return 404 if no menuItems are found", async () => {
-      const { sut, getMenuItemUseCaseSpy } = makeSut();
-      const httpRequest = {
-        params: {
-          menuId: "any_menu_id",
-        },
-      };
-      getMenuItemUseCaseSpy.menuItems = null;
-
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(
-        new NotFoundError({ resource: "MenuItem" }),
-      );
-    });
-
     test("Should call getMenuItemUseCase with correct value", async () => {
       const { sut, getMenuItemUseCaseSpy } = makeSut();
       const httpRequest = {
@@ -184,50 +187,29 @@ describe("Get Menu Item Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("menuId"));
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
     const { sut } = makeSut();
 
-    const httpResponse = await sut.route();
-
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+    await expect(sut.route()).rejects.toThrow();
   });
 
-  test("Should return 500 if no httpRequest has no params", async () => {
+  test("Should throw if no httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {};
-    const httpResponse = await sut.route(httpRequest);
 
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should return 500 if invalid dependency is provided", async () => {
+  test("Should throw if invalid dependency is provided", async () => {
     const suts = [
       new GetMenuItemRouter(),
       new GetMenuItemRouter({}),
       new GetMenuItemRouter({
         getMenuItemUseCase: {},
       }),
-    ];
-    const httpRequest = {
-      params: {
-        menuId: "any_menu_id",
-        menuItemId: "any_menu_item_id",
-      },
-    };
-
-    for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
-    }
-  });
-
-  test("Should return 500 if dependency throws", async () => {
-    const suts = [
       new GetMenuItemRouter({
-        getMenuItemUseCase: makeGetMenuItemUseCaseWithError(),
+        getMenuItemUseCase: makeGetMenuItemUseCase(),
+        validators: {},
       }),
     ];
     const httpRequest = {
@@ -238,9 +220,29 @@ describe("Get Menu Item Router", () => {
     };
 
     for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
+      await expect(sut.route(httpRequest)).rejects.toThrow();
+    }
+  });
+
+  test("Should throw if dependency throws", async () => {
+    const suts = [
+      new GetMenuItemRouter({
+        getMenuItemUseCase: makeGetMenuItemUseCaseWithError(),
+      }),
+      new GetMenuItemRouter({
+        getMenuItemUseCase: makeGetMenuItemUseCase(),
+        validators: makeValidatorsWithError(),
+      }),
+    ];
+    const httpRequest = {
+      params: {
+        menuId: "any_menu_id",
+        menuItemId: "any_menu_item_id",
+      },
+    };
+
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 });
