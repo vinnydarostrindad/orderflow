@@ -29,16 +29,18 @@ describe("GET /api/v1/business/[businessId]/menu/[menuId]/item", () => {
     expect(Array.isArray(responseBody)).toBe(true);
     expect(responseBody.length).toBeGreaterThan(0);
 
+    let i = 1;
     responseBody.forEach((menuItem) => {
       expect(menuItem).toMatchObject({
         id: menuItem.id,
         menuId: menu.id,
-        name: "any_name",
+        name: `any_name_${i}`,
         price: "9.90",
         imagePath: "any_img_path",
         description: "any_description",
         type: "any_type",
       });
+      i++;
 
       expect(typeof menuItem.id).toBe("string");
       expect(uuidVersion(menuItem.id)).toBe(4);
@@ -85,7 +87,7 @@ describe("GET /api/v1/business/[businessId]/menu/[menuId]/item/[menuItemId]", ()
     expect(responseBody).toMatchObject({
       id: menuItem.id,
       menuId: menu.id,
-      name: "any_name",
+      name: "any_name_1",
       price: "9.90",
       imagePath: "any_img_path",
       description: "any_description",

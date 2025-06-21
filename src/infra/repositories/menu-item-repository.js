@@ -1,4 +1,5 @@
 import MissingParamError from "../../utils/errors/missing-param-error.js";
+import ValidationError from "../../utils/errors/validation-error.js";
 
 export default class MenuItemRepository {
   constructor({ postgresAdapter } = {}) {
@@ -6,18 +7,12 @@ export default class MenuItemRepository {
   }
 
   async create({ id, menuId, name, price, imagePath, description, type } = {}) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
-    if (!menuId) {
-      throw new MissingParamError("menuId");
-    }
-    if (!name) {
-      throw new MissingParamError("name");
-    }
-    if (!price) {
-      throw new MissingParamError("price");
-    }
+    if (!id) throw new MissingParamError("id");
+    if (!menuId) throw new MissingParamError("menuId");
+    if (!name) throw new MissingParamError("name");
+    if (!price) throw new MissingParamError("price");
+
+    await this.verifyUniqueMenuItemName(menuId, name);
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -31,18 +26,11 @@ export default class MenuItemRepository {
       values: [id, menuId, name, price, imagePath, description, type],
     });
 
-    if (!result) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
-
     return result.rows[0];
   }
 
   async findAll(menuId) {
-    if (!menuId) {
-      throw new MissingParamError("menuId");
-    }
+    if (!menuId) throw new MissingParamError("menuId");
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -58,21 +46,12 @@ export default class MenuItemRepository {
       values: [menuId],
     });
 
-    if (!result) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
-
     return result.rows;
   }
 
   async findById(menuId, menuItemId) {
-    if (!menuId) {
-      throw new MissingParamError("menuId");
-    }
-    if (!menuItemId) {
-      throw new MissingParamError("menuItemId");
-    }
+    if (!menuId) throw new MissingParamError("menuId");
+    if (!menuItemId) throw new MissingParamError("menuItemId");
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -88,11 +67,32 @@ export default class MenuItemRepository {
       values: [menuItemId, menuId],
     });
 
-    if (!result) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
-
     return result.rows[0];
+  }
+
+  async verifyUniqueMenuItemName(menuId, name) {
+    if (!menuId) throw new MissingParamError("menuId");
+    if (!name) throw new MissingParamError("name");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+          SELECT
+            1
+          FROM
+            menu_items
+          WHERE
+            menu_id = $1 AND LOWER(name) = LOWER($2)
+          LIMIT
+            1
+          ;`,
+      values: [menuId, name],
+    });
+
+    if (result.rows.length > 0) {
+      throw new ValidationError({
+        message: "Name already exists in your menu.",
+        action: "Make sure name does not exists.",
+      });
+    }
   }
 }

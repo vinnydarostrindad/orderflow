@@ -69,7 +69,7 @@ async function createMenu(businessId, quantity = 1, props = {}) {
   return quantity === 1 ? menus[0] : menus;
 }
 
-async function createMenuItem(businessId, menuId, quantity = 1) {
+async function createMenuItem(businessId, menuId, quantity = 1, props = {}) {
   let menuItems = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
@@ -78,11 +78,11 @@ async function createMenuItem(businessId, menuId, quantity = 1) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          name: "any_name",
-          price: 9.9,
-          imagePath: "any_img_path",
-          description: "any_description",
-          type: "any_type",
+          name: props.name || `any_name_${i + 1}`,
+          price: props.price || 9.9,
+          imagePath: props.imagePath || "any_img_path",
+          description: props.description || "any_description",
+          type: props.type || "any_type",
         }),
       },
     );

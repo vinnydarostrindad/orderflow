@@ -16,6 +16,9 @@ const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
+      if (queryObject.values[1] == "any_name") {
+        return this.validateUniqueQueryResult;
+      }
       return this.queryResult;
     },
   };
@@ -33,6 +36,10 @@ const makePostgresAdapter = () => {
       },
     ],
   };
+  postgresAdapterSpy.validateUniqueQueryResult = {
+    rows: [],
+  };
+
   return postgresAdapterSpy;
 };
 
@@ -145,23 +152,6 @@ describe("MenuItem Repository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter return invalid menu item", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      const props = {
-        id: "any_menu_item_id",
-        menuId: "any_menu_id",
-        name: "any_name",
-        price: "any_price",
-        imagePath: "any_img_path",
-        description: "any_description",
-        type: "any_type",
-      };
-      postgresAdapterSpy.queryResult = null;
-
-      const menuItem = await sut.create(props);
-      expect(menuItem).toBeNull();
-    });
-
     test("Should return menu item if everything is right", async () => {
       const { sut } = makeSut();
       const props = {
@@ -215,15 +205,6 @@ describe("MenuItem Repository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter return invalid menu items", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-
-      postgresAdapterSpy.queryResult = null;
-
-      const menuItems = await sut.findAll("any_menu_id");
-      expect(menuItems).toBeNull();
-    });
-
     test("Should return menu items if everything is right", async () => {
       const { sut } = makeSut();
 
@@ -275,15 +256,6 @@ describe("MenuItem Repository", () => {
         ;`,
         values: ["any_menu_item_id", "any_menu_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter return invalid menu", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-
-      postgresAdapterSpy.queryResult = null;
-
-      const menuItem = await sut.findById("any_menu_id", "any_menu_item_id");
-      expect(menuItem).toBeNull();
     });
 
     test("Should return menu item if everything is right", async () => {
