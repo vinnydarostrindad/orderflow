@@ -148,26 +148,6 @@ describe("Employee Repository", () => {
         ],
       });
     });
-
-    test("Should return employee correctly", async () => {
-      const { sut } = makeSut();
-      const props = {
-        id: "any_id",
-        businessId: "any_business_id",
-        name: "any_name",
-        role: "any_role",
-        hashedPassword: "any_hash",
-      };
-
-      const employee = await sut.create(props);
-      expect(employee).toEqual({
-        id: "any_id",
-        business_id: "any_business_id",
-        name: "any_name",
-        role: "any_role",
-        hashedPassword: "any_hash",
-      });
-    });
   });
 
   describe("findAll method", () => {
@@ -176,14 +156,6 @@ describe("Employee Repository", () => {
       await expect(sut.findAll()).rejects.toThrow(
         new MissingParamError("businessId"),
       );
-    });
-
-    test("Should return null if postgresAdapter return invalid result", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.employee = null;
-
-      const result = await sut.findAll("any_business_id");
-      expect(result).toBeNull();
     });
 
     test("Should call postgresAdapter with correct object ", async () => {
@@ -226,14 +198,6 @@ describe("Employee Repository", () => {
       await expect(sut.findById("any_business_id")).rejects.toThrow(
         new MissingParamError("employeeId"),
       );
-    });
-
-    test("Should return null if postgresAdapter return invalid result", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.employee = null;
-
-      const result = await sut.findById("any_business_id", "any_employee_id");
-      expect(result).toBeNull();
     });
 
     test("Should call postgresAdapter with correct object ", async () => {

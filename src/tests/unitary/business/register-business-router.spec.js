@@ -52,8 +52,8 @@ const makeRegisterBusinessUseCaseWithError = () => {
 
 const makeValidators = () => {
   const validatorsSpy = {
-    email(email) {
-      this.email = email;
+    email(emailValue) {
+      this.emailValue = emailValue;
       return this.isValid;
     },
   };
@@ -180,7 +180,7 @@ describe("Register Business Router", () => {
     };
 
     await sut.route(httpRequest);
-    expect(validatorsSpy.email).toBe("any_email@mail.com");
+    expect(validatorsSpy.emailValue).toBe("any_email@mail.com");
   });
 
   test("Should call registerBusinessUseCase with correct params", async () => {

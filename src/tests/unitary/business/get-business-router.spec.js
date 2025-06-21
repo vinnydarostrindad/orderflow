@@ -44,8 +44,8 @@ const makeGetBusinessUseCaseWithError = () => {
 
 const makeValidators = () => {
   const validatorsSpy = {
-    uuid(uuid) {
-      this.uuid = uuid;
+    uuid(uuidValue) {
+      this.uuidValue = uuidValue;
       return true;
     },
   };

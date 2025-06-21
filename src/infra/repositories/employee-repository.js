@@ -44,11 +44,6 @@ export default class EmployeeRepository {
       values: [businessId],
     });
 
-    if (!result) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
-
     return result.rows;
   }
 
@@ -69,11 +64,6 @@ export default class EmployeeRepository {
       ;`,
       values: [employeeId, businessId],
     });
-
-    if (!result) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
 
     return result.rows[0];
   }

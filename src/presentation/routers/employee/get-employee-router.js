@@ -1,61 +1,64 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 import httpResponse from "../../http-response.js";
 
 export default class GetEmployeeRouter {
-  constructor({ getEmployeeUseCase } = {}) {
+  constructor({ getEmployeeUseCase, validators } = {}) {
     this.getEmployeeUseCase = getEmployeeUseCase;
+    this.validators = validators;
   }
 
   async route(httpRequest) {
-    try {
-      const { businessId, employeeId } = httpRequest.params;
+    const { businessId, employeeId } = httpRequest.params;
 
-      if (!businessId) {
-        return httpResponse.badRequest(new MissingParamError("businessId"));
-      }
+    if (!businessId) {
+      return httpResponse.badRequest(new MissingParamError("businessId"));
+    }
 
-      if (!employeeId) {
-        const employees = await this.getEmployeeUseCase.execute(businessId);
-        if (!employees) {
-          return httpResponse.notFound("Employee");
-        }
+    if (!this.validators.uuid(businessId)) {
+      return httpResponse.badRequest(new InvalidParamError("businessId"));
+    }
 
-        const editedEmployees = employees.map(
-          ({ id, name, role, created_at, updated_at }) => ({
-            id,
-            businessId,
-            name,
-            role,
-            createdAt: created_at,
-            updatedAt: updated_at,
-          }),
-        );
+    if (!employeeId) {
+      const employees = await this.getEmployeeUseCase.execute(businessId);
 
-        return httpResponse.ok(editedEmployees);
-      }
-
-      const employee = await this.getEmployeeUseCase.execute(
-        businessId,
-        employeeId,
+      const editedEmployees = employees.map(
+        ({ id, name, role, created_at, updated_at }) => ({
+          id,
+          businessId,
+          name,
+          role,
+          createdAt: created_at,
+          updatedAt: updated_at,
+        }),
       );
 
-      if (!employee) {
-        return httpResponse.notFound("Employee");
-      }
-
-      const { name, role, created_at, updated_at } = employee;
-
-      return httpResponse.ok({
-        businessId,
-        id: employeeId,
-        name,
-        role,
-        createdAt: created_at,
-        updatedAt: updated_at,
-      });
-    } catch (error) {
-      console.error(error);
-      return httpResponse.serverError();
+      return httpResponse.ok(editedEmployees);
     }
+
+    console.log(this.validators.uuid);
+    if (!this.validators.uuid(employeeId)) {
+      return httpResponse.badRequest(new InvalidParamError("employeeId"));
+    }
+
+    const employee = await this.getEmployeeUseCase.execute(
+      businessId,
+      employeeId,
+    );
+
+    if (!employee) {
+      return httpResponse.notFound("Employee", "Make sure the employee exists");
+    }
+
+    const { name, role, created_at, updated_at } = employee;
+
+    return httpResponse.ok({
+      businessId,
+      id: employeeId,
+      name,
+      role,
+      createdAt: created_at,
+      updatedAt: updated_at,
+    });
   }
 }
