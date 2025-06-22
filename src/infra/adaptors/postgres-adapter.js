@@ -25,15 +25,21 @@ export default {
   },
 
   async getNewClient() {
-    const client = new Client({
-      user: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DB,
-      host: process.env.POSTGRES_HOST,
-      port: process.env.POSTGRES_PORT,
-    });
+    try {
+      const client = new Client({
+        user: process.env.POSTGRES_USER,
+        password: process.env.POSTGRES_PASSWORD,
+        database: process.env.POSTGRES_DB,
+        host: process.env.POSTGRES_HOST,
+        port: process.env.POSTGRES_PORT,
+      });
 
-    await client.connect();
-    return client;
+      await client.connect();
+      return client;
+    } catch (error) {
+      throw new RepositoryError("Failed to connect to database.", {
+        cause: error,
+      });
+    }
   },
 };
