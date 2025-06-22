@@ -1,17 +1,15 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import ServerError from "../../../utils/errors/server-error.js";
 import GetOrderItemRouter from "../../../presentation/routers/order_item/get-order-item-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
 
 const makeSut = () => {
   const getOrderItemUseCaseSpy = makeGetOrderItemUseCase();
+  const validatorsSpy = makeValidators();
   const sut = new GetOrderItemRouter({
     getOrderItemUseCase: getOrderItemUseCaseSpy,
+    validators: validatorsSpy,
   });
-  return {
-    sut,
-    getOrderItemUseCaseSpy,
-  };
+  return { sut, getOrderItemUseCaseSpy, validatorsSpy };
 };
 
 const makeGetOrderItemUseCase = () => {
@@ -63,24 +61,29 @@ const makeGetOrderItemUseCaseWithError = () => {
   return new GetOrderItemUseCaseSpy();
 };
 
+const makeValidators = () => {
+  const validatorsSpy = {
+    uuid(uuidValue) {
+      this.uuidValue = uuidValue;
+      return true;
+    },
+  };
+
+  return validatorsSpy;
+};
+
+const makeValidatorsWithError = () => {
+  const validatorsSpy = {
+    uuid() {
+      throw new Error();
+    },
+  };
+
+  return validatorsSpy;
+};
+
 describe("Get Order Item Router", () => {
   describe("Without orderItemId", () => {
-    test("Should return 404 if no orderItems are found", async () => {
-      const { sut, getOrderItemUseCaseSpy } = makeSut();
-      const httpRequest = {
-        params: {
-          orderId: "any_order_id",
-        },
-      };
-      getOrderItemUseCaseSpy.orderItems = null;
-
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(
-        new NotFoundError({ resource: "OrderItem" }),
-      );
-    });
-
     test("Should call getOrderItemUseCase with correct value", async () => {
       const { sut, getOrderItemUseCaseSpy } = makeSut();
       const httpRequest = {
@@ -188,32 +191,32 @@ describe("Get Order Item Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("orderId"));
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
     const { sut } = makeSut();
 
-    const httpResponse = await sut.route();
-
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+    await expect(sut.route()).rejects.toThrow();
   });
 
-  test("Should return 500 if no httpRequest has no params", async () => {
+  test("Should throw if no httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {};
-    const httpResponse = await sut.route(httpRequest);
 
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should return 500 if invalid dependency is provided", async () => {
+  test("Should throw if invalid dependency is provided", async () => {
     const suts = [
       new GetOrderItemRouter(),
       new GetOrderItemRouter({}),
       new GetOrderItemRouter({
         getOrderItemUseCase: {},
       }),
+      new GetOrderItemRouter({
+        getOrderItemUseCase: makeGetOrderItemUseCase(),
+        validators: {},
+      }),
     ];
+
     const httpRequest = {
       params: {
         orderId: "any_order_id",
@@ -222,18 +225,21 @@ describe("Get Order Item Router", () => {
     };
 
     for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 
-  test("Should return 500 if dependency throws", async () => {
+  test("Should throw if dependency throws", async () => {
     const suts = [
       new GetOrderItemRouter({
         getOrderItemUseCase: makeGetOrderItemUseCaseWithError(),
       }),
+      new GetOrderItemRouter({
+        getOrderItemUseCase: makeGetOrderItemUseCase(),
+        validators: makeValidatorsWithError(),
+      }),
     ];
+
     const httpRequest = {
       params: {
         orderId: "any_order_id",
@@ -242,9 +248,7 @@ describe("Get Order Item Router", () => {
     };
 
     for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 });

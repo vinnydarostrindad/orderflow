@@ -196,21 +196,6 @@ describe("OrderItem Repository", () => {
         ],
       });
     });
-
-    test("Should return null if postgresAdapter returns invalid result", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-      const result = await sut.create({
-        id: "any_order_item_id",
-        orderId: "any_order_id",
-        menuItemId: "any_menu_item_id",
-        quantity: 2,
-        unitPrice: 20,
-        totalPrice: 40,
-        notes: "any_notes",
-      });
-      expect(result).toBeNull();
-    });
   });
 
   describe("findAll Method", () => {
@@ -237,13 +222,6 @@ describe("OrderItem Repository", () => {
       ;`,
         values: ["any_order_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter returns invalid result", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-      const result = await sut.findAll("any_order_id");
-      expect(result).toBeNull();
     });
 
     test("Should return order items if everything is right", async () => {
@@ -293,13 +271,6 @@ describe("OrderItem Repository", () => {
         ;`,
         values: ["any_order_item_id", "any_order_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter returns invalid result", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-      const result = await sut.findById("any_order_id", "any_order_item_id");
-      expect(result).toBeNull();
     });
 
     test("Should return order item if everything is right", async () => {

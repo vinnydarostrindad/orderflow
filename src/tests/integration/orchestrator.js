@@ -93,7 +93,7 @@ async function createMenuItem(businessId, menuId, quantity = 1, props = {}) {
   return quantity === 1 ? menuItems[0] : menuItems;
 }
 
-async function createTable(businessId, quantity = 1) {
+async function createTable(businessId, quantity = 1, props = {}) {
   let tables = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
@@ -102,8 +102,8 @@ async function createTable(businessId, quantity = 1) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          number: 1,
-          name: `any_name`,
+          number: props.number || 1,
+          name: props.name || "any_name",
         }),
       },
     );
@@ -114,7 +114,7 @@ async function createTable(businessId, quantity = 1) {
   return quantity === 1 ? tables[0] : tables;
 }
 
-async function createOrder(businessId, tableId, quantity = 1) {
+async function createOrder(businessId, tableId, quantity = 1, props = {}) {
   let orders = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
@@ -123,7 +123,7 @@ async function createOrder(businessId, tableId, quantity = 1) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          tableNumber: 1,
+          tableNumber: props.tableNumber || 1,
         }),
       },
     );
@@ -140,6 +140,7 @@ async function createOrderItem(
   orderId,
   menuItemId,
   quantity = 1,
+  props = {},
 ) {
   let orderItems = [];
   for (let i = 0; i < quantity; i++) {
@@ -150,10 +151,10 @@ async function createOrderItem(
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           menuItemId: menuItemId,
-          quantity: 2,
-          unitPrice: 20,
-          totalPrice: 40,
-          notes: "any_notes",
+          quantity: props.quantity || 2,
+          unitPrice: props.unitPrice || 20,
+          totalPrice: props.totalPrice || 40,
+          notes: props.notes || "any_notes",
         }),
       },
     );
