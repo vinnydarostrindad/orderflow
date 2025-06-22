@@ -9,9 +9,7 @@ export default class AuthUseCase {
   }
 
   generateToken(id) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
+    if (!id) throw new MissingParamError("id");
 
     return this.jwt.sign(id, process.env.SECRET);
   }

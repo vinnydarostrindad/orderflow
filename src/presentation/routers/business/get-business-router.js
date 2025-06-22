@@ -20,7 +20,10 @@ export default class GetBusinessRouter {
     const business = await this.getBusinessUseCase.execute(businessId);
 
     if (!business) {
-      return httpResponse.notFound("Business", "Make sure the business exists");
+      return httpResponse.notFound(
+        "Business",
+        "Make sure the business exists.",
+      );
     }
 
     const { name, email, created_at, updated_at } = business;

@@ -50,7 +50,7 @@ describe("GET /api/v1/business/[businessId]", () => {
     expect(responseBody).toEqual({
       name: "NotFoundError",
       statusCode: 404,
-      action: "Make sure the business exists",
+      action: "Make sure the business exists.",
       message: "Business was not found.",
     });
   });

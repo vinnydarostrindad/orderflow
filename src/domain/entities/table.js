@@ -11,14 +11,8 @@ export default class Table {
   }
 
   validate(id, businessId, number) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
-    if (!number) {
-      throw new MissingParamError("number");
-    }
+    if (!id) throw new MissingParamError("id");
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!number) throw new MissingParamError("number");
   }
 }

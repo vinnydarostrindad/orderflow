@@ -1,3 +1,4 @@
+import ValidationError from "../../utils/errors/validation-error.js";
 import MissingParamError from "../../utils/errors/missing-param-error.js";
 
 export default class TableRepository {
@@ -6,15 +7,11 @@ export default class TableRepository {
   }
 
   async create({ id, businessId, number, name } = {}) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
-    if (!number) {
-      throw new MissingParamError("number");
-    }
+    if (!id) throw new MissingParamError("id");
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!number) throw new MissingParamError("number");
+
+    await this.validateUniqueNumber(businessId, number);
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -28,17 +25,11 @@ export default class TableRepository {
       values: [id, businessId, number, name],
     });
 
-    if (!result) {
-      return null;
-    }
-
     return result.rows[0];
   }
 
   async findAll(businessId) {
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
+    if (!businessId) throw new MissingParamError("businessId");
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -54,20 +45,12 @@ export default class TableRepository {
       values: [businessId],
     });
 
-    if (!result) {
-      return null;
-    }
-
     return result.rows;
   }
 
   async findById(businessId, tableId) {
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
-    if (!tableId) {
-      throw new MissingParamError("tableId");
-    }
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!tableId) throw new MissingParamError("tableId");
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -83,10 +66,32 @@ export default class TableRepository {
       values: [tableId, businessId],
     });
 
-    if (!result) {
-      return null;
-    }
-
     return result.rows[0];
+  }
+
+  async validateUniqueNumber(businessId, number) {
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!number) throw new MissingParamError("number");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          1
+        FROM
+          tables
+        WHERE
+         business_id = $1 AND number = $2
+        LIMIT
+          1
+      `,
+      values: [businessId, number],
+    });
+
+    if (result.rows.length > 0) {
+      throw new ValidationError({
+        message: "The number provided is already in use.",
+        action: "Use another number to perform this operation.",
+      });
+    }
   }
 }

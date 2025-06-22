@@ -16,6 +16,9 @@ const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
+      if (queryObject.values[1] == "any_number") {
+        return this.validateUniqueQueryResult;
+      }
       return this.queryResult;
     },
   };
@@ -30,6 +33,10 @@ const makePostgresAdapter = () => {
       },
     ],
   };
+  postgresAdapterSpy.validateUniqueQueryResult = {
+    rows: [],
+  };
+
   return postgresAdapterSpy;
 };
 
@@ -107,19 +114,6 @@ describe("Table Repository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter returns null", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-
-      const table = await sut.create({
-        id: "any_table_id",
-        businessId: "any_business_id",
-        number: "any_number",
-        name: "any_name",
-      });
-      expect(table).toBeNull();
-    });
-
     test("Should return table if everything is right", async () => {
       const { sut } = makeSut();
       const table = await sut.create({
@@ -162,14 +156,6 @@ describe("Table Repository", () => {
       `,
         values: ["any_business_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter returns null", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-
-      const tables = await sut.findAll("any_business_id");
-      expect(tables).toBeNull();
     });
 
     test("Should return tables if everything is right", async () => {
@@ -216,14 +202,6 @@ describe("Table Repository", () => {
       `,
         values: ["any_table_id", "any_business_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter returns null", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-
-      const table = await sut.findById("any_business_id", "any_table_id");
-      expect(table).toBeNull();
     });
 
     test("Should return table if everything is right", async () => {

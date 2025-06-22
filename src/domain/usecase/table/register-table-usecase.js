@@ -8,12 +8,8 @@ export default class RegisterTableUseCase {
   }
 
   async execute({ businessId, number, name } = {}) {
-    if (!number) {
-      throw new MissingParamError("number");
-    }
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
+    if (!number) throw new MissingParamError("number");
+    if (!businessId) throw new MissingParamError("businessId");
 
     const id = this.idGenerator.execute();
 
