@@ -11,17 +11,9 @@ export default class MenuItem {
   }
 
   validate(id, businessId, tableId, tableNumber) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
-    if (!tableId) {
-      throw new MissingParamError("tableId");
-    }
-    if (!tableNumber) {
-      throw new MissingParamError("tableNumber");
-    }
+    if (!id) throw new MissingParamError("id");
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!tableId) throw new MissingParamError("tableId");
+    if (!tableNumber) throw new MissingParamError("tableNumber");
   }
 }

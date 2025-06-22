@@ -10,17 +10,12 @@ export default class GetOrderUseCase {
 
     if (!orderId) {
       const orders = await this.orderRepository.findAll(tableId);
-      if (!orders) {
-        return null;
-      }
 
       return orders;
     }
 
     const order = await this.orderRepository.findById(tableId, orderId);
-    if (!order) {
-      return null;
-    }
+
     return order;
   }
 }

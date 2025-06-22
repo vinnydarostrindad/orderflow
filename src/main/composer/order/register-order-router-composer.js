@@ -1,5 +1,6 @@
 import RegisterOrderRouter from "../../../presentation/routers/order/register-order-router.js";
 import RegisterOrderUseCase from "../../../domain/usecase/order/register-order-usecase.js";
+import validators from "../../../utils/validator.js";
 import OrderRepository from "../../../infra/repositories/order-repository.js";
 import idGenerator from "../../../utils/id-generator.js";
 import postgresAdapter from "../../../infra/adaptors/postgres-adapter.js";
@@ -13,6 +14,7 @@ const registerOrderRouterComposer = {
     });
     const registerOrderRouter = new RegisterOrderRouter({
       registerOrderUseCase,
+      validators,
     });
     return registerOrderRouter;
   },

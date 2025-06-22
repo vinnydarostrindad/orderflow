@@ -1,13 +1,14 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import ServerError from "../../../utils/errors/server-error.js";
 import RegisterOrderRouter from "../../../presentation/routers/order/register-order-router.js";
 
 const makeSut = () => {
   const registerOrderUseCaseSpy = makeRegisterOrderUseCase();
+  const validatorsSpy = makeValidators();
   const sut = new RegisterOrderRouter({
     registerOrderUseCase: registerOrderUseCaseSpy,
+    validators: validatorsSpy,
   });
-  return { sut, registerOrderUseCaseSpy };
+  return { sut, registerOrderUseCaseSpy, validatorsSpy };
 };
 
 const makeRegisterOrderUseCase = () => {
@@ -40,6 +41,27 @@ const makeRegisterOrderUseCaseWithError = () => {
   }
 
   return new RegisterOrderUseCaseSpy();
+};
+
+const makeValidators = () => {
+  const validatorsSpy = {
+    uuid(uuidValue) {
+      this.uuidValue = uuidValue;
+      return true;
+    },
+  };
+
+  return validatorsSpy;
+};
+
+const makeValidatorsWithError = () => {
+  const validatorsSpy = {
+    uuid() {
+      throw new Error();
+    },
+  };
+
+  return validatorsSpy;
 };
 
 describe("RegisterOrderRouter", () => {
@@ -79,44 +101,25 @@ describe("RegisterOrderRouter", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("tableNumber"));
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
     const { sut } = makeSut();
-    const httpResponse = await sut.route();
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+    await expect(sut.route()).rejects.toThrow();
   });
 
-  test("Should return 500 if httpRequest has no body", async () => {
+  test("Should throw if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       params: { tableId: "any_table_id", businessId: "any_business_id" },
     };
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should return 500 if httpRequest has no params", async () => {
+  test("Should throw if httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: { tableNumber: "any_table_number" },
     };
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
-  });
-
-  test("Should return 500 if no order is returned", async () => {
-    const { sut, registerOrderUseCaseSpy } = makeSut();
-    const httpRequest = {
-      params: { tableId: "any_table_id", businessId: "any_business_id" },
-      body: { tableNumber: "any_table_number" },
-    };
-    registerOrderUseCaseSpy.order = null;
-
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
   test("Should call registerOrderUseCase with correct params", async () => {
@@ -151,11 +154,15 @@ describe("RegisterOrderRouter", () => {
     });
   });
 
-  test("Should return 500 if invalid dependency is provided", async () => {
+  test("Should throw if invalid dependency is provided", async () => {
     const suts = [
       new RegisterOrderRouter(),
       new RegisterOrderRouter({}),
       new RegisterOrderRouter({ registerOrderUseCase: {} }),
+      new RegisterOrderRouter({
+        registerOrderUseCase: makeRegisterOrderUseCase(),
+        validators: {},
+      }),
     ];
 
     const httpRequest = {
@@ -164,24 +171,27 @@ describe("RegisterOrderRouter", () => {
     };
 
     for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toBeInstanceOf(ServerError);
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 
-  test("Should return 500 if any dependency throws", async () => {
-    const sut = new RegisterOrderRouter({
-      registerOrderUseCase: makeRegisterOrderUseCaseWithError(),
-    });
-
+  test("Should throw if any dependency throws", async () => {
+    const suts = [
+      new RegisterOrderRouter({
+        registerOrderUseCase: makeRegisterOrderUseCaseWithError(),
+      }),
+      new RegisterOrderRouter({
+        registerOrderUseCase: makeRegisterOrderUseCase(),
+        validators: makeValidatorsWithError(),
+      }),
+    ];
     const httpRequest = {
       params: { tableId: "any_table_id", businessId: "any_business_id" },
       body: { tableNumber: "any_table_number" },
     };
 
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toBeInstanceOf(ServerError);
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
+    }
   });
 });

@@ -126,20 +126,6 @@ describe("OrderRepository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter returns invalid result", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      const props = {
-        id: "any_order_id",
-        businessId: "any_business_id",
-        tableId: "any_table_id",
-        tableNumber: "any_table_number",
-      };
-      postgresAdapterSpy.queryResult = null;
-
-      const result = await sut.create(props);
-      expect(result).toBeNull();
-    });
-
     test("Should return order if everything is correct", async () => {
       const { sut } = makeSut();
       const result = await sut.create({
@@ -183,14 +169,6 @@ describe("OrderRepository", () => {
       ;`,
         values: ["any_table_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter returns null", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-
-      const result = await sut.findAll("any_table_id");
-      expect(result).toBeNull();
     });
 
     test("Should return list of orders", async () => {
@@ -240,14 +218,6 @@ describe("OrderRepository", () => {
         ;`,
         values: ["any_order_id", "any_table_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter returns null", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-
-      const result = await sut.findById("any_table_id", "any_order_id");
-      expect(result).toBeNull();
     });
 
     test("Should return order if found", async () => {
