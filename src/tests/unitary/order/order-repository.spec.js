@@ -5,6 +5,9 @@ const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
+      if (queryObject.values[1] === "any_table_number") {
+        return this.validateUniqueQueryResult;
+      }
       return this.queryResult;
     },
   };
@@ -19,6 +22,9 @@ const makePostgresAdapter = () => {
         status: "pending",
       },
     ],
+  };
+  postgresAdapterSpy.validateUniqueQueryResult = {
+    rows: [],
   };
 
   return postgresAdapterSpy;

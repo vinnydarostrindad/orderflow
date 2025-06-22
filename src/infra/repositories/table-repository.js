@@ -11,7 +11,7 @@ export default class TableRepository {
     if (!businessId) throw new MissingParamError("businessId");
     if (!number) throw new MissingParamError("number");
 
-    await this.validateUniqueNumber(businessId, number);
+    // await this.validateUniqueNumber(businessId, number);
 
     const result = await this.postgresAdapter.query({
       text: `

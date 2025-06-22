@@ -17,7 +17,6 @@ export const up = (pgm) => {
       number: {
         type: "smallint",
         notNull: true,
-        unique: true,
       },
 
       name: {
@@ -37,7 +36,7 @@ export const up = (pgm) => {
       },
     },
     {
-      constraint: {
+      constraints: {
         unique: ["business_id", "number"],
       },
     },
