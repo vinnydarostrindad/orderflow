@@ -67,7 +67,7 @@ const makeTableRepositoryWithError = () => {
 describe("Register Table UseCase", () => {
   test("Should throw if no props are provided", async () => {
     const { sut } = makeSut();
-    // Fazer uma validação melhor
+
     await expect(sut.execute()).rejects.toThrow(
       new MissingParamError("number"),
     );

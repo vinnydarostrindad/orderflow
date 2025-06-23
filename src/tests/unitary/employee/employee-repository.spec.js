@@ -46,7 +46,7 @@ describe("Employee Repository", () => {
   describe("create Method", () => {
     test("Should throw if no props are provided", async () => {
       const { sut } = makeSut();
-      // Fazer uma validação de erros melhor
+
       await expect(sut.create()).rejects.toThrow(new MissingParamError("id"));
     });
 

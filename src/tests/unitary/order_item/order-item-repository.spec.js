@@ -70,7 +70,7 @@ describe("OrderItem Repository", () => {
 
     test("Should throw if no props are provided", async () => {
       const { sut } = makeSut();
-      // Fazer uma validação melhor
+
       await expect(sut.create()).rejects.toThrow(new MissingParamError("id"));
     });
 

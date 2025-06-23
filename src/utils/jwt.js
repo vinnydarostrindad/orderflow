@@ -4,12 +4,8 @@ import DependencyError from "./errors/dependency-error.js";
 
 const jsonWebToken = {
   sign(payload, secret) {
-    if (!payload) {
-      throw new MissingParamError("payload");
-    }
-    if (!secret) {
-      throw new MissingParamError("secret");
-    }
+    if (!payload) throw new MissingParamError("payload");
+    if (!secret) throw new MissingParamError("secret");
 
     try {
       return jwt.sign(payload, secret);

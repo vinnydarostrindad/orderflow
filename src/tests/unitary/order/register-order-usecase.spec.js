@@ -65,7 +65,7 @@ const makeOrderRepositoryWithError = () => {
 describe("Register Order UseCase", () => {
   test("Should throw if no props are provided", async () => {
     const { sut } = makeSut();
-    // melhorar essa validação
+
     await expect(sut.execute()).rejects.toThrow(
       new MissingParamError("businessId"),
     );

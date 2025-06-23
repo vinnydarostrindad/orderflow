@@ -7,9 +7,7 @@ const scryptPromise = promisify(scrypt);
 
 const crypto = {
   async hash(password) {
-    if (!password) {
-      throw new MissingParamError("password");
-    }
+    if (!password) throw new MissingParamError("password");
 
     try {
       const salt = randomBytes(16).toString("hex");

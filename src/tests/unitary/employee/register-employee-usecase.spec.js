@@ -91,9 +91,9 @@ describe("Register Employee UseCase", () => {
   test("Should throw if no props are provided ", async () => {
     const { sut } = makeSut();
 
-    const promise = sut.execute();
-    // Fazer uma validação de errors melhor
-    expect(promise).rejects.toThrow(new MissingParamError("businessId"));
+    await expect(sut.execute()).rejects.toThrow(
+      new MissingParamError("businessId"),
+    );
   });
 
   test("Should throw if no name is provided ", async () => {
@@ -104,8 +104,7 @@ describe("Register Employee UseCase", () => {
       password: "any_password",
     };
 
-    const promise = sut.execute(props);
-    expect(promise).rejects.toThrow(new MissingParamError("name"));
+    expect(sut.execute(props)).rejects.toThrow(new MissingParamError("name"));
   });
 
   test("Should throw if no role is provided ", async () => {
@@ -116,8 +115,9 @@ describe("Register Employee UseCase", () => {
       password: "any_password",
     };
 
-    const promise = sut.execute(props);
-    expect(promise).rejects.toThrow(new MissingParamError("role"));
+    await expect(sut.execute(props)).rejects.toThrow(
+      new MissingParamError("role"),
+    );
   });
 
   test("Should throw if no password is provided ", async () => {
@@ -128,8 +128,9 @@ describe("Register Employee UseCase", () => {
       role: "any_role",
     };
 
-    const promise = sut.execute(props);
-    expect(promise).rejects.toThrow(new MissingParamError("password"));
+    await expect(sut.execute(props)).rejects.toThrow(
+      new MissingParamError("password"),
+    );
   });
 
   test("Should throw if no businessId is provided ", async () => {
@@ -140,8 +141,9 @@ describe("Register Employee UseCase", () => {
       password: "any_password",
     };
 
-    const promise = sut.execute(props);
-    expect(promise).rejects.toThrow(new MissingParamError("businessId"));
+    await expect(sut.execute(props)).rejects.toThrow(
+      new MissingParamError("businessId"),
+    );
   });
 
   test("Should call crypto with correct password", async () => {
@@ -227,8 +229,7 @@ describe("Register Employee UseCase", () => {
     };
 
     for (const sut of suts) {
-      const promise = sut.execute(props);
-      expect(promise).rejects.toThrow(TypeError);
+      await expect(sut.execute(props)).rejects.toThrow(TypeError);
     }
   });
 
@@ -257,8 +258,7 @@ describe("Register Employee UseCase", () => {
     };
 
     for (const sut of suts) {
-      const promise = sut.execute(props);
-      expect(promise).rejects.toThrow();
+      await expect(sut.execute(props)).rejects.toThrow();
     }
   });
 });

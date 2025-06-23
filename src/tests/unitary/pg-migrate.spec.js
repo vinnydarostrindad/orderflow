@@ -51,8 +51,7 @@ const makePostgresAdapterWithError = () => {
 describe("Pg Migrate", () => {
   test("Should throw if no options are provided", async () => {
     const { sut } = makeSut();
-    const promise = sut.up();
-    expect(promise).rejects.toThrow(new MissingParamError("options"));
+    expect(sut.up()).rejects.toThrow(new MissingParamError("options"));
   });
 
   test("Should call migrationRunner with correct options and dryRun true", async () => {

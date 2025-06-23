@@ -56,7 +56,6 @@ describe("Business Repository", () => {
     test("Should throw if no props are provided", async () => {
       const { sut } = makeSut();
 
-      // Fazer um erro mais específico depois
       await expect(sut.create()).rejects.toThrow(new MissingParamError("id"));
     });
 

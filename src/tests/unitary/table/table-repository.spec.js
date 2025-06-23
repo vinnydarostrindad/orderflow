@@ -52,7 +52,7 @@ describe("Table Repository", () => {
   describe("create Method", () => {
     test("Should throw if no props are provided", async () => {
       const { sut } = makeSut();
-      // Melhorar essa validação
+
       await expect(sut.create()).rejects.toThrow(new MissingParamError("id"));
     });
 
@@ -134,7 +134,7 @@ describe("Table Repository", () => {
   describe("findAll Method", () => {
     test("Should throw if no businessId is provided", async () => {
       const { sut } = makeSut();
-      // Melhorar essa validação
+
       await expect(sut.findAll()).rejects.toThrow(
         new MissingParamError("businessId"),
       );

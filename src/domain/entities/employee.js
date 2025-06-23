@@ -12,20 +12,10 @@ export default class Employee {
   }
 
   validate(id, businessId, name, hashedPassword, role) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
-    if (!name) {
-      throw new MissingParamError("name");
-    }
-    if (!hashedPassword) {
-      throw new MissingParamError("hashedPassword");
-    }
-    if (!role) {
-      throw new MissingParamError("role");
-    }
+    if (!id) throw new MissingParamError("id");
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!name) throw new MissingParamError("name");
+    if (!hashedPassword) throw new MissingParamError("hashedPassword");
+    if (!role) throw new MissingParamError("role");
   }
 }

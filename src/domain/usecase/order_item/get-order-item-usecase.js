@@ -6,9 +6,7 @@ export default class GetMenuItemUseCase {
   }
 
   async execute(orderId, orderItemId) {
-    if (!orderId) {
-      throw new MissingParamError("orderId");
-    }
+    if (!orderId) throw new MissingParamError("orderId");
 
     if (!orderItemId) {
       const orderItems = await this.orderItemRepository.findAll(orderId);

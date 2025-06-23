@@ -7,9 +7,7 @@ dotenv.config({ path: ".env.development" });
 
 export default {
   async query(queryObject) {
-    if (!queryObject) {
-      throw new MissingParamError("queryObject");
-    }
+    if (!queryObject) throw new MissingParamError("queryObject");
 
     let client;
 

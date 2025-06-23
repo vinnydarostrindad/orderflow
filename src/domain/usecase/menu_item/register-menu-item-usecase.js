@@ -8,8 +8,6 @@ export default class RegisterMenuItemUseCase {
   }
 
   async execute({ menuId, name, price, imagePath, description, type } = {}) {
-    // Talvez isso não precise ser verificado, pois MenuItem() também faz isso
-    // Dar uma observada nisso depois
     if (!name) throw new MissingParamError("name");
     if (!price) throw new MissingParamError("price");
     if (!menuId) throw new MissingParamError("menuId");

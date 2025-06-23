@@ -3,7 +3,6 @@ import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 describe("Menu Entity", () => {
   test("Should throw if no props is provided", () => {
-    // Fazer uma validação melhor
     expect(() => new Menu()).toThrow(new MissingParamError("id"));
   });
 
