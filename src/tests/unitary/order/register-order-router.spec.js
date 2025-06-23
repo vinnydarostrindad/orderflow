@@ -1,5 +1,6 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import RegisterOrderRouter from "../../../presentation/routers/order/register-order-router.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const registerOrderUseCaseSpy = makeRegisterOrderUseCase();
@@ -46,10 +47,17 @@ const makeRegisterOrderUseCaseWithError = () => {
 const makeValidators = () => {
   const validatorsSpy = {
     uuid(uuidValue) {
+      if (this.isValid === false) {
+        return uuidValue.split("_")[0] === "valid" ? true : false;
+      }
+
       this.uuidValue = uuidValue;
-      return true;
+
+      return this.isValid;
     },
   };
+
+  validatorsSpy.isValid = true;
 
   return validatorsSpy;
 };
@@ -65,6 +73,33 @@ const makeValidatorsWithError = () => {
 };
 
 describe("RegisterOrderRouter", () => {
+  test("Should return 400 if no businessId is provided", async () => {
+    const { sut } = makeSut();
+    const httpRequest = {
+      params: { tableId: "any_table_id" },
+      body: { tableNumber: "any_table_number" },
+    };
+
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
+  });
+
+  test("Should return 400 if businessId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: { businessId: "invalid_business_id", tableId: "valid_table_id" },
+      body: { number: "any_number" },
+    };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("businessId"));
+  });
+
   test("Should return 400 if no tableId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
@@ -77,16 +112,19 @@ describe("RegisterOrderRouter", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("tableId"));
   });
 
-  test("Should return 400 if no businessId is provided", async () => {
-    const { sut } = makeSut();
+  test("Should return 400 if tableId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
-      params: { tableId: "any_table_id" },
-      body: { tableNumber: "any_table_number" },
+      params: { businessId: "valid_business_id", tableId: "invalid_table_id" },
+      body: { number: "any_number" },
     };
 
+    validatorsSpy.isValid = false;
+
     const httpResponse = await sut.route(httpRequest);
+
     expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
+    expect(httpResponse.body).toEqual(new InvalidParamError("tableId"));
   });
 
   test("Should return 400 if no tableNumber is provided", async () => {

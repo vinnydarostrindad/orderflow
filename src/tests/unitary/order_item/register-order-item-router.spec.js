@@ -1,5 +1,6 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import RegisterOrderItemRouter from "../../../presentation/routers/order_item/register-order-item-router.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const registerOrderItemUseCaseSpy = makeRegisterOrderItemUseCase();
@@ -58,10 +59,17 @@ const makeRegisterOrderItemUseCaseWithError = () => {
 const makeValidators = () => {
   const validatorsSpy = {
     uuid(uuidValue) {
+      if (this.isValid === false) {
+        return uuidValue.split("_")[0] === "valid" ? true : false;
+      }
+
       this.uuidValue = uuidValue;
-      return true;
+
+      return this.isValid;
     },
   };
+
+  validatorsSpy.isValid = true;
 
   return validatorsSpy;
 };
@@ -144,6 +152,27 @@ describe("Register Order Item Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("orderId"));
   });
 
+  test("Should return 400 if orderId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: { orderId: "invalid_order_id" },
+      body: {
+        menuItemId: "valid_menu_item_id",
+        quantity: 2,
+        unitPrice: 20,
+        totalPrice: 40,
+        notes: "any_notes",
+      },
+    };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("orderId"));
+  });
+
   test("Should return 400 if no menuItemId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
@@ -159,6 +188,27 @@ describe("Register Order Item Router", () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("menuItemId"));
+  });
+
+  test("Should return 400 if menuItemId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: { orderId: "valid_order_id" },
+      body: {
+        menuItemId: "invalid_menu_item_id",
+        quantity: 2,
+        unitPrice: 20,
+        totalPrice: 40,
+        notes: "any_notes",
+      },
+    };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("menuItemId"));
   });
 
   test("Should return 400 if no quantity is provided", async () => {

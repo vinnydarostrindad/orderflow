@@ -7,6 +7,11 @@ jest.unstable_mockModule("node:crypto", () => ({
     scrypt.keylen = keylen;
 
     // Simula o retorno de um "Buffer"
+    if (scrypt.error) {
+      scrypt.error = false;
+      throw "Simulated Error";
+    }
+
     const fakeBuffer = {
       toString(encoding) {
         if (encoding === "hex") return "hashed_password";
@@ -21,6 +26,7 @@ jest.unstable_mockModule("node:crypto", () => ({
 }));
 
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
+import DependencyError from "../../../utils/errors/dependency-error.js";
 import { randomBytes } from "node:crypto";
 const sut = (await import("../../../utils/crypto.js")).default;
 const { scrypt } = await import("node:crypto");
@@ -45,5 +51,16 @@ describe("Crypto", () => {
   test("Should call randomBytes with correct value", async () => {
     await sut.hash("any_password");
     expect(randomBytes.bytes).toBe(16);
+  });
+
+  test("Should throw if hash fails", async () => {
+    scrypt.error = true;
+
+    await expect(sut.hash("any_password")).rejects.toThrow(
+      new DependencyError("node:crypto", {
+        message: "Failed to hash",
+        cause: "Simulated Error",
+      }),
+    );
   });
 });

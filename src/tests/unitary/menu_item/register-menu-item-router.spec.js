@@ -1,5 +1,6 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import RegisterMenuItemRouter from "../../../presentation/routers/menu_item/register-menu-item-router.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const registerMenuItemUseCaseSpy = makeRegisterMenuItemUseCase();
@@ -50,10 +51,17 @@ const makeRegisterMenuItemUseCaseWithError = () => {
 const makeValidators = () => {
   const validatorsSpy = {
     uuid(uuidValue) {
+      if (this.isValid === false) {
+        return uuidValue.split("_")[0] === "valid" ? true : false;
+      }
+
       this.uuidValue = uuidValue;
-      return true;
+
+      return this.isValid;
     },
   };
+
+  validatorsSpy.isValid = true;
 
   return validatorsSpy;
 };
@@ -85,6 +93,27 @@ describe("Register MenuItem Router", () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("menuId"));
+  });
+
+  test("Should return 400 if menuId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: { menuId: "invalid_menu_id" },
+      body: {
+        name: "any_name",
+        price: "any_price",
+        imagePath: "any_img_path",
+        description: "any_description",
+        type: "any_type",
+      },
+    };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("menuId"));
   });
 
   test("Should return 400 if no name is provided", async () => {

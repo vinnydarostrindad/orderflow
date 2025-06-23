@@ -11,7 +11,7 @@ export default class MenuRepository {
     if (!businessId) throw new MissingParamError("businessId");
     if (!name) throw new MissingParamError("name");
 
-    await this.verifyUniqueMenuName(businessId, name);
+    await this.validateUniqueName(businessId, name);
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -69,7 +69,7 @@ export default class MenuRepository {
     return result.rows[0];
   }
 
-  async verifyUniqueMenuName(businessId, name) {
+  async validateUniqueName(businessId, name) {
     if (!businessId) throw new MissingParamError("businessId");
     if (!name) throw new MissingParamError("name");
 

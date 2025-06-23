@@ -5,12 +5,19 @@ jest.unstable_mockModule("jsonwebtoken", () => ({
     sign(payload, secret) {
       jwt.default.sign.payload = payload;
       jwt.default.sign.secret = secret;
+
+      if (jwt.default.sign.error) {
+        jwt.default.sign.error = false;
+        throw "Simulated Error";
+      }
+
       return "any_token";
     },
   },
 }));
 
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
+import DependencyError from "../../../utils/errors/dependency-error.js";
 const sut = (await import("../../../utils/jwt.js")).default;
 const jwt = await import("jsonwebtoken");
 
@@ -35,6 +42,17 @@ describe("JWT", () => {
   test("Should throw if no secret is provided", () => {
     expect(() => sut.sign("any_payload")).toThrow(
       new MissingParamError("secret"),
+    );
+  });
+
+  test("Should throw if token generation fails", () => {
+    jwt.default.sign.error = true;
+
+    expect(() => sut.sign("any_payload", "secret")).toThrow(
+      new DependencyError("jsonWebToken.sign", {
+        message: "Failed to generate token",
+        cause: "Simulated Error",
+      }),
     );
   });
 });

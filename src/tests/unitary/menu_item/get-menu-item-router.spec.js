@@ -1,6 +1,7 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import GetMenuItemRouter from "../../../presentation/routers/menu_item/get-menu-item-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const getMenuItemUseCaseSpy = makeGetMenuItemUseCase();
@@ -62,10 +63,17 @@ const makeGetMenuItemUseCaseWithError = () => {
 const makeValidators = () => {
   const validatorsSpy = {
     uuid(uuidValue) {
+      if (this.isValid === false) {
+        return uuidValue.split("_")[0] === "valid" ? true : false;
+      }
+
       this.uuidValue = uuidValue;
-      return true;
+
+      return this.isValid;
     },
   };
+
+  validatorsSpy.isValid = true;
 
   return validatorsSpy;
 };
@@ -119,6 +127,20 @@ describe("Get Menu Item Router", () => {
   });
 
   describe("With menuItemId", () => {
+    test("Should return 400 if menuItemId is invalid", async () => {
+      const { sut, validatorsSpy } = makeSut();
+      const httpRequest = {
+        params: { menuId: "valid_menu_id", menuItemId: "invalid_menu_item_id" },
+      };
+
+      validatorsSpy.isValid = false;
+
+      const httpResponse = await sut.route(httpRequest);
+
+      expect(httpResponse.statusCode).toBe(400);
+      expect(httpResponse.body).toEqual(new InvalidParamError("menuItemId"));
+    });
+
     test("Should return 404 if no menuItem is found", async () => {
       const { sut, getMenuItemUseCaseSpy } = makeSut();
       const httpRequest = {
@@ -185,6 +207,20 @@ describe("Get Menu Item Router", () => {
 
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("menuId"));
+  });
+
+  test("Should return 400 if menuId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: { menuId: "invalid_menu_id" },
+    };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("menuId"));
   });
 
   test("Should throw if no httpRequest is provided", async () => {

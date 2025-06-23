@@ -1,5 +1,6 @@
 import BusinessRepository from "../../../infra/repositories/business-repository.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
+import ValidationError from "../../../utils/errors/validation-error.js";
 
 const makeSut = () => {
   const postgresAdapterSpy = makePostgresAdapter();
@@ -17,10 +18,16 @@ const makePostgresAdapter = () => {
     async query(queryObject) {
       this.queryObject = queryObject;
 
-      if (this.queryObject.values[0] === "any_name") {
-        return this.validateUniqueQueryResult;
-      } else if (this.queryObject.values[0] === "any_email@mail.com") {
-        return this.validateUniqueQueryResult;
+      if (
+        this.queryObject.values[0] === "any_name" ||
+        this.queryObject.values[0] === "repeated_name"
+      ) {
+        return this.validateUniqueNameQueryResult;
+      } else if (
+        this.queryObject.values[0] === "any_email@mail.com" ||
+        this.queryObject.values[0] === "repeated_email@mail.com"
+      ) {
+        return this.validateUniqueEmailQueryResult;
       }
 
       return this.queryResult;
@@ -37,9 +44,13 @@ const makePostgresAdapter = () => {
       },
     ],
   };
-  postgresAdapterSpy.validateUniqueQueryResult = {
+  postgresAdapterSpy.validateUniqueNameQueryResult = {
     rows: [],
   };
+  postgresAdapterSpy.validateUniqueEmailQueryResult = {
+    rows: [],
+  };
+
   return postgresAdapterSpy;
 };
 
@@ -184,6 +195,52 @@ describe("Business Repository", () => {
         email: "any_email@mail.com",
         hashedPassword: "any_hash",
       });
+    });
+  });
+
+  describe("valideUniqueName method", () => {
+    test("Should throw if no name is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueName()).rejects.toThrow(
+        new MissingParamError("name"),
+      );
+    });
+
+    test("Should throw if rows length is bigger than 0", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.validateUniqueNameQueryResult.rows = [{}];
+
+      await expect(sut.validateUniqueName("repeated_name")).rejects.toThrow(
+        new ValidationError({
+          message: "The name provided is already in use.",
+          action: "Use another name to perform this operation.",
+        }),
+      );
+    });
+  });
+
+  describe("valideUniqueEmail method", () => {
+    test("Should throw if no name is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueEmail()).rejects.toThrow(
+        new MissingParamError("email"),
+      );
+    });
+
+    test("Should throw if rows length is bigger than 0", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.validateUniqueEmailQueryResult.rows = [{}];
+
+      await expect(
+        sut.validateUniqueEmail("repeated_email@mail.com"),
+      ).rejects.toThrow(
+        new ValidationError({
+          message: "The email provided is already in use.",
+          action: "Use another email to perform this operation.",
+        }),
+      );
     });
   });
 

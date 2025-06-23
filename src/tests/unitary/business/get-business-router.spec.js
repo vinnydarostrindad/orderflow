@@ -1,6 +1,7 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import GetBusinessRouter from "../../../presentation/routers/business/get-business-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const getBusinessUseCaseSpy = makeGetBusinessUseCase();
@@ -12,6 +13,7 @@ const makeSut = () => {
   return {
     sut,
     getBusinessUseCaseSpy,
+    validatorsSpy,
   };
 };
 
@@ -46,10 +48,11 @@ const makeValidators = () => {
   const validatorsSpy = {
     uuid(uuidValue) {
       this.uuidValue = uuidValue;
-      return true;
+      return this.isValid;
     },
   };
 
+  validatorsSpy.isValid = true;
   return validatorsSpy;
 };
 
@@ -64,7 +67,7 @@ const makeValidatorsWithError = () => {
 };
 
 describe("Get Business Router", () => {
-  test("Should return 400 if no id is provided", async () => {
+  test("Should return 400 if no businessId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = { params: {} };
 
@@ -72,6 +75,18 @@ describe("Get Business Router", () => {
 
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
+  });
+
+  test("Should return 400 if businessId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = { params: { businessId: "invalid_business_id" } };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("businessId"));
   });
 
   test("Should return 404 if no business is found", async () => {

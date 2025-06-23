@@ -1,6 +1,7 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
 import GetTableRouter from "../../../presentation/routers/table/get-table-router.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const getTableUseCaseSpy = makeGetTableUseCase();
@@ -54,10 +55,17 @@ const makeGetTableUseCaseWithError = () => {
 const makeValidators = () => {
   const validatorsSpy = {
     uuid(uuidValue) {
+      if (this.isValid === false) {
+        return uuidValue.split("_")[0] === "valid" ? true : false;
+      }
+
       this.uuidValue = uuidValue;
-      return true;
+
+      return this.isValid;
     },
   };
+
+  validatorsSpy.isValid = true;
 
   return validatorsSpy;
 };
@@ -108,6 +116,23 @@ describe("Get Table Router", () => {
   });
 
   describe("With tableId", () => {
+    test("Should return 400 if tableId is invalid", async () => {
+      const { sut, validatorsSpy } = makeSut();
+      const httpRequest = {
+        params: {
+          businessId: "valid_business_id",
+          tableId: "invalid_order_id",
+        },
+      };
+
+      validatorsSpy.isValid = false;
+
+      const httpResponse = await sut.route(httpRequest);
+
+      expect(httpResponse.statusCode).toBe(400);
+      expect(httpResponse.body).toEqual(new InvalidParamError("tableId"));
+    });
+
     test("Should return 404 if no table is found", async () => {
       const { sut, getTableUseCaseSpy } = makeSut();
       const httpRequest = {
@@ -170,6 +195,20 @@ describe("Get Table Router", () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
+  });
+
+  test("Should return 400 if businessId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: { businessId: "invalid_business_id" },
+    };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("businessId"));
   });
 
   test("Should throw if no httpRequest is provided", async () => {

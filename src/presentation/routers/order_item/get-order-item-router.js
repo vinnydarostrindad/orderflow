@@ -50,7 +50,7 @@ export default class GetOrderItemRouter {
     }
 
     if (!this.validators.uuid(orderItemId)) {
-      return httpResponse.badRequest(new InvalidParamError(orderItemId));
+      return httpResponse.badRequest(new InvalidParamError("orderItemId"));
     }
 
     const orderItem = await this.getOrderItemUseCase.execute(

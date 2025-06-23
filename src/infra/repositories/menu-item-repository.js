@@ -12,7 +12,7 @@ export default class MenuItemRepository {
     if (!name) throw new MissingParamError("name");
     if (!price) throw new MissingParamError("price");
 
-    await this.verifyUniqueMenuItemName(menuId, name);
+    await this.validateUniqueName(menuId, name);
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -70,7 +70,7 @@ export default class MenuItemRepository {
     return result.rows[0];
   }
 
-  async verifyUniqueMenuItemName(menuId, name) {
+  async validateUniqueName(menuId, name) {
     if (!menuId) throw new MissingParamError("menuId");
     if (!name) throw new MissingParamError("name");
 

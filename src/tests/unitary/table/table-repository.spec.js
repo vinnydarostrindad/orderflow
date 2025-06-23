@@ -1,4 +1,5 @@
 import TableRepository from "../../../infra/repositories/table-repository.js";
+import ValidationError from "../../../utils/errors/validation-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
@@ -16,8 +17,11 @@ const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
-      if (queryObject.values[1] == "any_number") {
-        return this.validateUniqueQueryResult;
+      if (
+        this.queryObject.values[1] == "any_number" ||
+        this.queryObject.values[1] == "repeated_number"
+      ) {
+        return this.validateUniqueNumberQueryResult;
       }
       return this.queryResult;
     },
@@ -33,7 +37,7 @@ const makePostgresAdapter = () => {
       },
     ],
   };
-  postgresAdapterSpy.validateUniqueQueryResult = {
+  postgresAdapterSpy.validateUniqueNumberQueryResult = {
     rows: [],
   };
 
@@ -213,6 +217,38 @@ describe("Table Repository", () => {
         number: "any_number",
         name: "any_name",
       });
+    });
+  });
+
+  describe("valideUniqueNumber method", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueNumber()).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+
+    test("Should throw if no number is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueNumber("any_business_id")).rejects.toThrow(
+        new MissingParamError("number"),
+      );
+    });
+
+    test("Should throw rows if length is bigger than 0", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.validateUniqueNumberQueryResult.rows = [{}];
+
+      await expect(
+        sut.validateUniqueNumber("any_business_id", "repeated_number"),
+      ).rejects.toThrow(
+        new ValidationError({
+          message: "The number provided is already in use.",
+          action: "Use another number to perform this operation.",
+        }),
+      );
     });
   });
 

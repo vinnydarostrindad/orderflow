@@ -1,4 +1,5 @@
 import MenuRepository from "../../../infra/repositories/menu-repository.js";
+import ValidationError from "../../../utils/errors/validation-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
@@ -16,8 +17,11 @@ const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
-      if (queryObject.values[1] === "any_name") {
-        return this.validateUniqueQueryResult;
+      if (
+        this.queryObject.values[1] === "any_name" ||
+        this.queryObject.values[1] === "repeated_name"
+      ) {
+        return this.validateUniqueNameQueryResult;
       }
 
       return this.queryResult;
@@ -33,7 +37,7 @@ const makePostgresAdapter = () => {
       },
     ],
   };
-  postgresAdapterSpy.validateUniqueQueryResult = {
+  postgresAdapterSpy.validateUniqueNameQueryResult = {
     rows: [],
   };
 
@@ -213,6 +217,38 @@ describe("Menu Repository", () => {
         business_id: "any_business_id",
         name: "any_name",
       });
+    });
+  });
+
+  describe("valideUniqueName method", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueName()).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+
+    test("Should throw if no name is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueName("any_business_id")).rejects.toThrow(
+        new MissingParamError("name"),
+      );
+    });
+
+    test("Should throw if rows length is bigger than 0", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.validateUniqueNameQueryResult.rows = [{}];
+
+      await expect(
+        sut.validateUniqueName("any_business_id", "repeated_name"),
+      ).rejects.toThrow(
+        new ValidationError({
+          message: "Name already exists in your business.",
+          action: "Make sure name does not exists.",
+        }),
+      );
     });
   });
 

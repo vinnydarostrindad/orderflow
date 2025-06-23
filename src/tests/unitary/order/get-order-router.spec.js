@@ -1,6 +1,7 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
 import GetOrderRouter from "../../../presentation/routers/order/get-order-router.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const getOrderUseCaseSpy = makeGetOrderUseCase();
@@ -56,10 +57,17 @@ const makeGetOrderUseCaseWithError = () => {
 const makeValidators = () => {
   const validatorsSpy = {
     uuid(uuidValue) {
+      if (this.isValid === false) {
+        return uuidValue.split("_")[0] === "valid" ? true : false;
+      }
+
       this.uuidValue = uuidValue;
-      return true;
+
+      return this.isValid;
     },
   };
+
+  validatorsSpy.isValid = true;
 
   return validatorsSpy;
 };
@@ -111,6 +119,20 @@ describe("Get Order Router", () => {
   });
 
   describe("With orderId", () => {
+    test("Should return 400 if orderId is invalid", async () => {
+      const { sut, validatorsSpy } = makeSut();
+      const httpRequest = {
+        params: { tableId: "valid_table_id", orderId: "invalid_order_id" },
+      };
+
+      validatorsSpy.isValid = false;
+
+      const httpResponse = await sut.route(httpRequest);
+
+      expect(httpResponse.statusCode).toBe(400);
+      expect(httpResponse.body).toEqual(new InvalidParamError("orderId"));
+    });
+
     test("Should return 404 if no order is found", async () => {
       const { sut, getOrderUseCaseSpy } = makeSut();
       const httpRequest = {
@@ -174,6 +196,20 @@ describe("Get Order Router", () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("tableId"));
+  });
+
+  test("Should return 400 if tableId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: { tableId: "invalid_table_id" },
+    };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("tableId"));
   });
 
   test("Should throw if no httpRequest is provided", async () => {

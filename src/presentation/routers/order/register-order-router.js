@@ -12,17 +12,17 @@ export default class RegisterOrderRouter {
     const { tableNumber } = httpRequest.body;
     const { tableId, businessId } = httpRequest.params;
 
-    if (!tableId) {
-      return httpResponse.badRequest(new MissingParamError("tableId"));
-    }
-    if (!this.validators.uuid(tableId)) {
-      return httpResponse.badRequest(new InvalidParamError("tableId"));
-    }
     if (!businessId) {
       return httpResponse.badRequest(new MissingParamError("businessId"));
     }
     if (!this.validators.uuid(businessId)) {
       return httpResponse.badRequest(new InvalidParamError("businessId"));
+    }
+    if (!tableId) {
+      return httpResponse.badRequest(new MissingParamError("tableId"));
+    }
+    if (!this.validators.uuid(tableId)) {
+      return httpResponse.badRequest(new InvalidParamError("tableId"));
     }
     if (!tableNumber) {
       return httpResponse.badRequest(new MissingParamError("tableNumber"));

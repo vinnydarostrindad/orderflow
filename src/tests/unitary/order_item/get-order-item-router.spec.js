@@ -1,6 +1,7 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import GetOrderItemRouter from "../../../presentation/routers/order_item/get-order-item-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const getOrderItemUseCaseSpy = makeGetOrderItemUseCase();
@@ -64,10 +65,17 @@ const makeGetOrderItemUseCaseWithError = () => {
 const makeValidators = () => {
   const validatorsSpy = {
     uuid(uuidValue) {
+      if (this.isValid === false) {
+        return uuidValue.split("_")[0] === "valid" ? true : false;
+      }
+
       this.uuidValue = uuidValue;
-      return true;
+
+      return this.isValid;
     },
   };
+
+  validatorsSpy.isValid = true;
 
   return validatorsSpy;
 };
@@ -122,6 +130,23 @@ describe("Get Order Item Router", () => {
   });
 
   describe("With orderItemId", () => {
+    test("Should return 400 if orderItemId is invalid", async () => {
+      const { sut, validatorsSpy } = makeSut();
+      const httpRequest = {
+        params: {
+          orderId: "valid_order_id",
+          orderItemId: "invalid_order_item_id",
+        },
+      };
+
+      validatorsSpy.isValid = false;
+
+      const httpResponse = await sut.route(httpRequest);
+
+      expect(httpResponse.statusCode).toBe(400);
+      expect(httpResponse.body).toEqual(new InvalidParamError("orderItemId"));
+    });
+
     test("Should return 404 if no orderItem is found", async () => {
       const { sut, getOrderItemUseCaseSpy } = makeSut();
       const httpRequest = {
@@ -189,6 +214,23 @@ describe("Get Order Item Router", () => {
 
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("orderId"));
+  });
+
+  test("Should return 400 if orderId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: {
+        orderId: "invalid_order_id",
+        orderItemId: "valid_order_item_id",
+      },
+    };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("orderId"));
   });
 
   test("Should throw if no httpRequest is provided", async () => {

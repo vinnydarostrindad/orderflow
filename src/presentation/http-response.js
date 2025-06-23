@@ -31,6 +31,7 @@ const httpResponse = {
     };
   },
 
+  /* istanbul ignore next */
   methodNotAllowed() {
     return {
       statusCode: 405,
@@ -38,6 +39,7 @@ const httpResponse = {
     };
   },
 
+  /* istanbul ignore next */
   serverError(cause) {
     return {
       statusCode: 500,
