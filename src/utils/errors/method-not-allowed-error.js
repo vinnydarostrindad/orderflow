@@ -1,6 +1,11 @@
-export default class MethodNotAllowedError extends Error {
-  constructor() {
-    super("Method Not Allowed");
-    this.name = "MethodNotAllowedError";
+import BaseError from "./base-error.js";
+
+/* istanbul ignore next */
+export default class MethodNotAllowedError extends BaseError {
+  constructor(method) {
+    super(`${method.toUpperCase()} method is not allowed to this URL.`, {
+      action: "Check if the HTTP method sent is valid for this endpoint.",
+      statusCode: 405,
+    });
   }
 }

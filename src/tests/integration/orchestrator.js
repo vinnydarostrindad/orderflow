@@ -12,23 +12,23 @@ async function runMigrations() {
   });
 }
 
-async function createBusiness() {
+async function createBusiness(props = {}) {
   const response = await fetch("http://localhost:3000/api/v1/business", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name: "any_name",
-      email: "any_email@mail.com",
-      password: "any_password",
+      name: props.name || "any_name",
+      email: props.email || "any_email@mail.com",
+      password: props.password || "any_password",
     }),
   });
 
   return await response.json().then((obj) => obj.business);
 }
 
-async function createEmployee(businessId, quantity = 1) {
+async function createEmployee(businessId, quantity = 1, props = {}) {
   let employees = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
@@ -37,9 +37,9 @@ async function createEmployee(businessId, quantity = 1) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          name: "any_name",
-          role: "waiter",
-          password: "any_password",
+          name: props.name || "any_name",
+          role: props.role || "waiter",
+          password: props.password || "any_password",
         }),
       },
     );
@@ -49,7 +49,7 @@ async function createEmployee(businessId, quantity = 1) {
   return quantity === 1 ? employees[0] : employees;
 }
 
-async function createMenu(businessId, quantity = 1) {
+async function createMenu(businessId, quantity = 1, props = {}) {
   let menus = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
@@ -58,7 +58,7 @@ async function createMenu(businessId, quantity = 1) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          name: `any_name_${i + 1}`,
+          name: props.name || `any_name_${i + 1}`,
         }),
       },
     );
@@ -69,7 +69,7 @@ async function createMenu(businessId, quantity = 1) {
   return quantity === 1 ? menus[0] : menus;
 }
 
-async function createMenuItem(businessId, menuId, quantity = 1) {
+async function createMenuItem(businessId, menuId, quantity = 1, props = {}) {
   let menuItems = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
@@ -78,11 +78,11 @@ async function createMenuItem(businessId, menuId, quantity = 1) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          name: "any_name",
-          price: 9.9,
-          imagePath: "any_img_path",
-          description: "any_description",
-          type: "any_type",
+          name: props.name || `any_name_${i + 1}`,
+          price: props.price || 9.9,
+          imagePath: props.imagePath || "any_img_path",
+          description: props.description || "any_description",
+          type: props.type || "any_type",
         }),
       },
     );
@@ -93,7 +93,7 @@ async function createMenuItem(businessId, menuId, quantity = 1) {
   return quantity === 1 ? menuItems[0] : menuItems;
 }
 
-async function createTable(businessId, quantity = 1) {
+async function createTable(businessId, quantity = 1, props = {}) {
   let tables = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
@@ -102,8 +102,8 @@ async function createTable(businessId, quantity = 1) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          number: 1,
-          name: `any_name`,
+          number: props.number || 1,
+          name: props.name || "any_name",
         }),
       },
     );
@@ -114,7 +114,7 @@ async function createTable(businessId, quantity = 1) {
   return quantity === 1 ? tables[0] : tables;
 }
 
-async function createOrder(businessId, tableId, quantity = 1) {
+async function createOrder(businessId, tableId, quantity = 1, props = {}) {
   let orders = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
@@ -123,7 +123,7 @@ async function createOrder(businessId, tableId, quantity = 1) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          tableNumber: 1,
+          tableNumber: props.tableNumber || 1,
         }),
       },
     );
@@ -140,6 +140,7 @@ async function createOrderItem(
   orderId,
   menuItemId,
   quantity = 1,
+  props = {},
 ) {
   let orderItems = [];
   for (let i = 0; i < quantity; i++) {
@@ -150,10 +151,10 @@ async function createOrderItem(
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           menuItemId: menuItemId,
-          quantity: 2,
-          unitPrice: 20,
-          totalPrice: 40,
-          notes: "any_notes",
+          quantity: props.quantity || 2,
+          unitPrice: props.unitPrice || 20,
+          totalPrice: props.totalPrice || 40,
+          notes: props.notes || "any_notes",
         }),
       },
     );

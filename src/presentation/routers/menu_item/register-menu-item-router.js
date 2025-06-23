@@ -1,43 +1,39 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import httpResponse from "../../httpResponse.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
+import httpResponse from "../../http-response.js";
 
 export default class RegisterMenuItemRouter {
-  constructor({ registerMenuItemUseCase } = {}) {
+  constructor({ registerMenuItemUseCase, validators } = {}) {
     this.registerMenuItemUseCase = registerMenuItemUseCase;
+    this.validators = validators;
   }
 
   async route(httpRequest) {
-    try {
-      const { name, price, imagePath, description, type } = httpRequest.body;
-      const { menuId } = httpRequest.params;
+    const { name, price, imagePath, description, type } = httpRequest.body;
+    const { menuId } = httpRequest.params;
 
-      if (!name) {
-        return httpResponse.badRequest(new MissingParamError("name"));
-      }
-      if (!price) {
-        return httpResponse.badRequest(new MissingParamError("price"));
-      }
-      if (!menuId) {
-        return httpResponse.badRequest(new MissingParamError("menuId"));
-      }
-
-      const menuItem = await this.registerMenuItemUseCase.execute({
-        menuId,
-        name,
-        price,
-        imagePath,
-        description,
-        type,
-      });
-      if (!menuItem) {
-        // Melhorar esse error
-        return httpResponse.serverError();
-      }
-
-      return httpResponse.created(menuItem);
-    } catch (err) {
-      console.error(err);
-      return httpResponse.serverError();
+    if (!name) {
+      return httpResponse.badRequest(new MissingParamError("name"));
     }
+    if (!price) {
+      return httpResponse.badRequest(new MissingParamError("price"));
+    }
+    if (!menuId) {
+      return httpResponse.badRequest(new MissingParamError("menuId"));
+    }
+    if (!this.validators.uuid(menuId)) {
+      return httpResponse.badRequest(new InvalidParamError("menuId"));
+    }
+
+    const menuItem = await this.registerMenuItemUseCase.execute({
+      menuId,
+      name,
+      price,
+      imagePath,
+      description,
+      type,
+    });
+
+    return httpResponse.created(menuItem);
   }
 }

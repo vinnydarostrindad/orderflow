@@ -6,15 +6,10 @@ export default class GetEmployeeUseCase {
   }
 
   async execute(businessId, employeeId) {
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
+    if (!businessId) throw new MissingParamError("businessId");
 
     if (!employeeId) {
       const employees = await this.employeeRepository.findAll(businessId);
-      if (!employees) {
-        return null;
-      }
 
       return employees;
     }
@@ -23,10 +18,7 @@ export default class GetEmployeeUseCase {
       businessId,
       employeeId,
     );
-    if (!employee) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
+
     return employee;
   }
 }

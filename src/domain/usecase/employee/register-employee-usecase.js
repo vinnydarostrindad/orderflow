@@ -9,28 +9,14 @@ export default class RegisterEmployeeUseCase {
   }
 
   async execute({ businessId, name, role, password } = {}) {
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
-    if (!name) {
-      throw new MissingParamError("name");
-    }
-    if (!role) {
-      throw new MissingParamError("role");
-    }
-    if (!password) {
-      throw new MissingParamError("password");
-    }
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!name) throw new MissingParamError("name");
+    if (!role) throw new MissingParamError("role");
+    if (!password) throw new MissingParamError("password");
+
     const hashedPassword = await this.crypto.hash(password);
-    if (!hashedPassword) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
+
     const id = this.idGenerator.execute();
-    if (!id) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
 
     const employee = new Employee({
       id,
@@ -40,11 +26,8 @@ export default class RegisterEmployeeUseCase {
       role,
     });
 
-    const result = await this.employeeRepository.create(employee);
-    if (!result) {
-      // Fazer um erro mais específico depois
-      return null;
-    }
-    return result;
+    const createdEmployee = await this.employeeRepository.create(employee);
+
+    return createdEmployee;
   }
 }

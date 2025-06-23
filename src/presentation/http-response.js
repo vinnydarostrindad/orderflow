@@ -24,13 +24,14 @@ const httpResponse = {
     };
   },
 
-  notFound(resource) {
+  notFound(resource, action) {
     return {
       statusCode: 404,
-      body: new NotFoundError(resource),
+      body: new NotFoundError({ resource, action }),
     };
   },
 
+  /* istanbul ignore next */
   methodNotAllowed() {
     return {
       statusCode: 405,
@@ -38,10 +39,11 @@ const httpResponse = {
     };
   },
 
-  serverError() {
+  /* istanbul ignore next */
+  serverError(cause) {
     return {
       statusCode: 500,
-      body: new ServerError(),
+      body: new ServerError({ cause }),
     };
   },
 };

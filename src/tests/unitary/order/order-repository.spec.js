@@ -1,10 +1,17 @@
 import OrderRepository from "../../../infra/repositories/order-repository.js";
+import ValidationError from "../../../utils/errors/validation-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
+      if (
+        this.queryObject.values[1] === "any_table_number" ||
+        this.queryObject.values[1] === "repeated_table_number"
+      ) {
+        return this.validateUniqueTableNumberQueryResult;
+      }
       return this.queryResult;
     },
   };
@@ -19,6 +26,9 @@ const makePostgresAdapter = () => {
         status: "pending",
       },
     ],
+  };
+  postgresAdapterSpy.validateUniqueTableNumberQueryResult = {
+    rows: [],
   };
 
   return postgresAdapterSpy;
@@ -45,7 +55,6 @@ describe("OrderRepository", () => {
   describe("create method", () => {
     test("Should throw if no props are provided", async () => {
       const { sut } = makeSut();
-      // Fazer uma validação melhor
       await expect(sut.create()).rejects.toThrow(new MissingParamError("id"));
     });
 
@@ -126,20 +135,6 @@ describe("OrderRepository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter returns invalid result", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      const props = {
-        id: "any_order_id",
-        businessId: "any_business_id",
-        tableId: "any_table_id",
-        tableNumber: "any_table_number",
-      };
-      postgresAdapterSpy.queryResult = null;
-
-      const result = await sut.create(props);
-      expect(result).toBeNull();
-    });
-
     test("Should return order if everything is correct", async () => {
       const { sut } = makeSut();
       const result = await sut.create({
@@ -183,14 +178,6 @@ describe("OrderRepository", () => {
       ;`,
         values: ["any_table_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter returns null", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-
-      const result = await sut.findAll("any_table_id");
-      expect(result).toBeNull();
     });
 
     test("Should return list of orders", async () => {
@@ -242,14 +229,6 @@ describe("OrderRepository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter returns null", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-
-      const result = await sut.findById("any_table_id", "any_order_id");
-      expect(result).toBeNull();
-    });
-
     test("Should return order if found", async () => {
       const { sut } = makeSut();
       const result = await sut.findById("any_table_id", "any_order_id");
@@ -264,6 +243,41 @@ describe("OrderRepository", () => {
     });
   });
 
+  describe("valideUniqueTableNumber method", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueTableNumber()).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+
+    test("Should throw if no tableNumber is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(
+        sut.validateUniqueTableNumber("any_business_id"),
+      ).rejects.toThrow(new MissingParamError("tableNumber"));
+    });
+
+    test("Should throw rows if length is bigger than 0", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.validateUniqueTableNumberQueryResult.rows = [{}];
+
+      await expect(
+        sut.validateUniqueTableNumber(
+          "any_business_id",
+          "repeated_table_number",
+        ),
+      ).rejects.toThrow(
+        new ValidationError({
+          message: "The table number provided is already in use.",
+          action: "Use another table number to perform this operation.",
+        }),
+      );
+    });
+  });
+
   test("Should throw if invalid dependencies are provided", async () => {
     const suts = [
       new OrderRepository(),
@@ -275,7 +289,7 @@ describe("OrderRepository", () => {
       id: "any_order_id",
       businessId: "any_business_id",
       tableId: "any_table_id",
-      tableNumber: "any_table_number",
+      tableNumber: "repeated",
     };
 
     for (const sut of suts) {

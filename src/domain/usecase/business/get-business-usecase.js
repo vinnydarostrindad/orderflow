@@ -6,14 +6,10 @@ export default class GetBusinessUseCase {
   }
 
   async execute(id) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
+    if (!id) throw new MissingParamError("id");
 
     const business = await this.businessRepository.findById(id);
-    if (!business) {
-      return null;
-    }
+
     return business;
   }
 }

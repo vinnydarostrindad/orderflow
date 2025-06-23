@@ -1,13 +1,15 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import ServerError from "../../../utils/errors/server-error.js";
 import RegisterMenuItemRouter from "../../../presentation/routers/menu_item/register-menu-item-router.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const registerMenuItemUseCaseSpy = makeRegisterMenuItemUseCase();
+  const validatorsSpy = makeValidators();
   const sut = new RegisterMenuItemRouter({
     registerMenuItemUseCase: registerMenuItemUseCaseSpy,
+    validators: validatorsSpy,
   });
-  return { sut, registerMenuItemUseCaseSpy };
+  return { sut, registerMenuItemUseCaseSpy, validatorsSpy };
 };
 
 const makeRegisterMenuItemUseCase = () => {
@@ -46,6 +48,34 @@ const makeRegisterMenuItemUseCaseWithError = () => {
   return new RegisterMenuItemUseCaseSpy();
 };
 
+const makeValidators = () => {
+  const validatorsSpy = {
+    uuid(uuidValue) {
+      if (this.isValid === false) {
+        return uuidValue.split("_")[0] === "valid" ? true : false;
+      }
+
+      this.uuidValue = uuidValue;
+
+      return this.isValid;
+    },
+  };
+
+  validatorsSpy.isValid = true;
+
+  return validatorsSpy;
+};
+
+const makeValidatorsWithError = () => {
+  const validatorsSpy = {
+    uuid() {
+      throw new Error();
+    },
+  };
+
+  return validatorsSpy;
+};
+
 describe("Register MenuItem Router", () => {
   test("Should return 400 if no menuId is provided", async () => {
     const { sut } = makeSut();
@@ -63,6 +93,27 @@ describe("Register MenuItem Router", () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("menuId"));
+  });
+
+  test("Should return 400 if menuId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: { menuId: "invalid_menu_id" },
+      body: {
+        name: "any_name",
+        price: "any_price",
+        imagePath: "any_img_path",
+        description: "any_description",
+        type: "any_type",
+      },
+    };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("menuId"));
   });
 
   test("Should return 400 if no name is provided", async () => {
@@ -97,24 +148,21 @@ describe("Register MenuItem Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("price"));
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
     const { sut } = makeSut();
-    const httpResponse = await sut.route();
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    await expect(sut.route()).rejects.toThrow();
   });
 
-  test("Should return 500 if httpRequest has no body", async () => {
+  test("Should throw if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       params: { menuId: "any_menu_id" },
     };
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should return 500 if httpRequest has no params", async () => {
+  test("Should throw if httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -124,28 +172,8 @@ describe("Register MenuItem Router", () => {
         type: "any_type",
       },
     };
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
-  });
 
-  test("Should return Error if no menuItem is returned", async () => {
-    const { sut, registerMenuItemUseCaseSpy } = makeSut();
-    const httpRequest = {
-      params: { menuId: "any_menu_id" },
-      body: {
-        name: "any_name",
-        price: "any_price",
-        imagePath: "any_img_path",
-        description: "any_description",
-        type: "any_type",
-      },
-    };
-    registerMenuItemUseCaseSpy.menuItem = null;
-
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
   test("Should call registerMenuItemUseCase with correct params", async () => {
@@ -194,37 +222,16 @@ describe("Register MenuItem Router", () => {
     });
   });
 
-  test("Should return 500 if invalid dependency is provided", async () => {
+  test("Should throw if invalid dependency is provided", async () => {
     const suts = [
       new RegisterMenuItemRouter(),
       new RegisterMenuItemRouter({}),
       new RegisterMenuItemRouter({
         registerMenuItemUseCase: {},
       }),
-    ];
-    const httpRequest = {
-      params: { menuId: "any_menu_id" },
-      body: {
-        name: "any_name",
-        price: "any_price",
-        imagePath: "any_img_path",
-        description: "any_description",
-        type: "any_type",
-      },
-    };
-
-    for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
-    }
-  });
-
-  test("Should return 500 if any dependency throws", async () => {
-    const suts = [
       new RegisterMenuItemRouter({
-        registerMenuItemUseCase: makeRegisterMenuItemUseCaseWithError(),
+        registerMenuItemUseCase: makeRegisterMenuItemUseCase,
+        validators: {},
       }),
     ];
     const httpRequest = {
@@ -239,10 +246,33 @@ describe("Register MenuItem Router", () => {
     };
 
     for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
+      await expect(sut.route(httpRequest)).rejects.toThrow();
+    }
+  });
 
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+  test("Should throw if any dependency throws", async () => {
+    const suts = [
+      new RegisterMenuItemRouter({
+        registerMenuItemUseCase: makeRegisterMenuItemUseCaseWithError(),
+      }),
+      new RegisterMenuItemRouter({
+        registerMenuItemUseCase: makeRegisterMenuItemUseCase(),
+        validators: makeValidatorsWithError(),
+      }),
+    ];
+    const httpRequest = {
+      params: { menuId: "any_menu_id" },
+      body: {
+        name: "any_name",
+        price: "any_price",
+        imagePath: "any_img_path",
+        description: "any_description",
+        type: "any_type",
+      },
+    };
+
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 });

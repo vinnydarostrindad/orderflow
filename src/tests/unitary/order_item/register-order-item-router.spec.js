@@ -1,16 +1,15 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import ServerError from "../../../utils/errors/server-error.js";
 import RegisterOrderItemRouter from "../../../presentation/routers/order_item/register-order-item-router.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const registerOrderItemUseCaseSpy = makeRegisterOrderItemUseCase();
+  const validatorsSpy = makeValidators();
   const sut = new RegisterOrderItemRouter({
     registerOrderItemUseCase: registerOrderItemUseCaseSpy,
+    validators: validatorsSpy,
   });
-  return {
-    sut,
-    registerOrderItemUseCaseSpy,
-  };
+  return { sut, registerOrderItemUseCaseSpy, validatorsSpy };
 };
 
 const makeRegisterOrderItemUseCase = () => {
@@ -55,6 +54,34 @@ const makeRegisterOrderItemUseCaseWithError = () => {
   }
 
   return new RegisterOrderItemUseCaseSpy();
+};
+
+const makeValidators = () => {
+  const validatorsSpy = {
+    uuid(uuidValue) {
+      if (this.isValid === false) {
+        return uuidValue.split("_")[0] === "valid" ? true : false;
+      }
+
+      this.uuidValue = uuidValue;
+
+      return this.isValid;
+    },
+  };
+
+  validatorsSpy.isValid = true;
+
+  return validatorsSpy;
+};
+
+const makeValidatorsWithError = () => {
+  const validatorsSpy = {
+    uuid() {
+      throw new Error();
+    },
+  };
+
+  return validatorsSpy;
 };
 
 describe("Register Order Item Router", () => {
@@ -125,6 +152,27 @@ describe("Register Order Item Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("orderId"));
   });
 
+  test("Should return 400 if orderId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: { orderId: "invalid_order_id" },
+      body: {
+        menuItemId: "valid_menu_item_id",
+        quantity: 2,
+        unitPrice: 20,
+        totalPrice: 40,
+        notes: "any_notes",
+      },
+    };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("orderId"));
+  });
+
   test("Should return 400 if no menuItemId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
@@ -140,6 +188,27 @@ describe("Register Order Item Router", () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("menuItemId"));
+  });
+
+  test("Should return 400 if menuItemId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: { orderId: "valid_order_id" },
+      body: {
+        menuItemId: "invalid_menu_item_id",
+        quantity: 2,
+        unitPrice: 20,
+        totalPrice: 40,
+        notes: "any_notes",
+      },
+    };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("menuItemId"));
   });
 
   test("Should return 400 if no quantity is provided", async () => {
@@ -193,15 +262,13 @@ describe("Register Order Item Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("totalPrice"));
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
     const { sut } = makeSut();
-    const httpResponse = await sut.route();
 
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    await expect(sut.route()).rejects.toThrow();
   });
 
-  test("Should return 500 if no httpRequest has no params", async () => {
+  test("Should throw if no httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -213,47 +280,25 @@ describe("Register Order Item Router", () => {
       },
     };
 
-    const httpResponse = await sut.route(httpRequest);
-
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should return 500 if no httpRequest has no body", async () => {
+  test("Should throw if no httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = { params: { orderId: "any_order_id" } };
 
-    const httpResponse = await sut.route(httpRequest);
-
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should return 500 if orderItem is invalid", async () => {
-    const { sut, registerOrderItemUseCaseSpy } = makeSut();
-    const httpRequest = {
-      params: { orderId: "any_order_id" },
-      body: {
-        menuItemId: "any_menu_item_id",
-        quantity: 2,
-        unitPrice: 20,
-        totalPrice: 40,
-        notes: "any_notes",
-      },
-    };
-    registerOrderItemUseCaseSpy.orderItem = null;
-
-    const httpResponse = await sut.route(httpRequest);
-
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
-  });
-
-  test("Should return 500 if dependency is invalid", async () => {
+  test("Should throw if dependency is invalid", async () => {
     const suts = [
       new RegisterOrderItemRouter(),
       new RegisterOrderItemRouter({}),
       new RegisterOrderItemRouter({ registerOrderItemUseCase: {} }),
+      new RegisterOrderItemRouter({
+        registerOrderItemUseCase: makeRegisterOrderItemUseCase(),
+        validators: {},
+      }),
     ];
 
     const httpRequest = {
@@ -268,16 +313,20 @@ describe("Register Order Item Router", () => {
     };
 
     for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 
-  test("Should return 500 if dependency throws", async () => {
-    const sut = new RegisterOrderItemRouter({
-      registerOrderItemUseCase: makeRegisterOrderItemUseCaseWithError(),
-    });
+  test("Should throw if dependency throws", async () => {
+    const suts = [
+      new RegisterOrderItemRouter({
+        registerOrderItemUseCase: makeRegisterOrderItemUseCaseWithError(),
+      }),
+      new RegisterOrderItemRouter({
+        registerOrderItemUseCase: makeRegisterOrderItemUseCase(),
+        validators: makeValidatorsWithError(),
+      }),
+    ];
 
     const httpRequest = {
       params: { orderId: "any_order_id" },
@@ -290,8 +339,8 @@ describe("Register Order Item Router", () => {
       },
     };
 
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
+    }
   });
 });

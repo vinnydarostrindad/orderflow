@@ -1,17 +1,16 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import ServerError from "../../../utils/errors/server-error.js";
 import GetMenuRouter from "../../../presentation/routers/menu/get-menu-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const getMenuUseCaseSpy = makeGetMenuUseCase();
+  const validatorsSpy = makeValidators();
   const sut = new GetMenuRouter({
     getMenuUseCase: getMenuUseCaseSpy,
+    validators: validatorsSpy,
   });
-  return {
-    sut,
-    getMenuUseCaseSpy,
-  };
+  return { sut, getMenuUseCaseSpy, validatorsSpy };
 };
 
 const makeGetMenuUseCase = () => {
@@ -53,22 +52,36 @@ const makeGetMenuUseCaseWithError = () => {
   return new GetMenuUseCaseSpy();
 };
 
+const makeValidators = () => {
+  const validatorsSpy = {
+    uuid(uuidValue) {
+      if (this.isValid === false) {
+        return uuidValue.split("_")[0] === "valid" ? true : false;
+      }
+
+      this.uuidValue = uuidValue;
+
+      return this.isValid;
+    },
+  };
+
+  validatorsSpy.isValid = true;
+
+  return validatorsSpy;
+};
+
+const makeValidatorsWithError = () => {
+  const validatorsSpy = {
+    uuid() {
+      throw new Error();
+    },
+  };
+
+  return validatorsSpy;
+};
+
 describe("Get Menu Router", () => {
   describe("Without menuId", () => {
-    test("Should return 404 if no menus are found", async () => {
-      const { sut, getMenuUseCaseSpy } = makeSut();
-      const httpRequest = {
-        params: {
-          businessId: "any_business_id",
-        },
-      };
-      getMenuUseCaseSpy.menus = null;
-
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("Menu"));
-    });
-
     test("Should call getMenuUseCase with correct value", async () => {
       const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
@@ -102,6 +115,20 @@ describe("Get Menu Router", () => {
   });
 
   describe("With menuId", () => {
+    test("Should return 400 if menuId is invalid", async () => {
+      const { sut, validatorsSpy } = makeSut();
+      const httpRequest = {
+        params: { businessId: "valid_business_id", menuId: "invalid_menu_id" },
+      };
+
+      validatorsSpy.isValid = false;
+
+      const httpResponse = await sut.route(httpRequest);
+
+      expect(httpResponse.statusCode).toBe(400);
+      expect(httpResponse.body).toEqual(new InvalidParamError("menuId"));
+    });
+
     test("Should return 404 if no menu is found", async () => {
       const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
@@ -114,7 +141,9 @@ describe("Get Menu Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("Menu"));
+      expect(httpResponse.body).toEqual(
+        new NotFoundError({ resource: "Menu" }),
+      );
     });
 
     test("Should call getMenuUseCase with correct value", async () => {
@@ -164,50 +193,41 @@ describe("Get Menu Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
-    const { sut } = makeSut();
+  test("Should return 400 if businessId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = { params: { businessId: "invalid_business_id" } };
 
-    const httpResponse = await sut.route();
+    validatorsSpy.isValid = false;
 
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
-  });
-
-  test("Should return 500 if no httpRequest has no params", async () => {
-    const { sut } = makeSut();
-    const httpRequest = {};
     const httpResponse = await sut.route(httpRequest);
 
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("businessId"));
   });
 
-  test("Should return 500 if invalid dependency is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
+    const { sut } = makeSut();
+
+    await expect(sut.route()).rejects.toThrow();
+  });
+
+  test("Should throw if no httpRequest has no params", async () => {
+    const { sut } = makeSut();
+    const httpRequest = {};
+
+    await expect(sut.route(httpRequest)).rejects.toThrow();
+  });
+
+  test("Should throw if invalid dependency is provided", async () => {
     const suts = [
       new GetMenuRouter(),
       new GetMenuRouter({}),
       new GetMenuRouter({
         getMenuUseCase: {},
       }),
-    ];
-    const httpRequest = {
-      params: {
-        businessId: "any_business_id",
-        menuId: "any_menu_id",
-      },
-    };
-
-    for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
-    }
-  });
-
-  test("Should return 500 if dependency throws", async () => {
-    const suts = [
       new GetMenuRouter({
-        getMenuUseCase: makeGetMenuUseCaseWithError(),
+        getMenuUseCase: makeGetMenuUseCase(),
+        validators: {},
       }),
     ];
     const httpRequest = {
@@ -218,9 +238,29 @@ describe("Get Menu Router", () => {
     };
 
     for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      await expect(sut.route(httpRequest)).rejects.toThrow();
+    }
+  });
+
+  test("Should throw if dependency throws", async () => {
+    const suts = [
+      new GetMenuRouter({
+        getMenuUseCase: makeGetMenuUseCaseWithError(),
+      }),
+      new GetMenuRouter({
+        getMenuUseCase: makeGetMenuUseCase(),
+        validators: makeValidatorsWithError(),
+      }),
+    ];
+    const httpRequest = {
+      params: {
+        businessId: "any_business_id",
+        menuId: "any_menu_id",
+      },
+    };
+
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 });

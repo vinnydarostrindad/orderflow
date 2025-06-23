@@ -1,7 +1,5 @@
 import Order from "../../entities/order.js";
-import DependencyError from "../../../utils/errors/dependency-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import RepositoryError from "../../../utils/errors/repository-error.js";
 
 export default class RegisterOrderUseCase {
   constructor({ idGenerator, orderRepository } = {}) {
@@ -15,7 +13,6 @@ export default class RegisterOrderUseCase {
     if (!tableNumber) throw new MissingParamError("tableNumber");
 
     const id = this.idGenerator.execute();
-    if (!id) throw new DependencyError("idGenerator");
 
     const order = new Order({
       id,
@@ -24,9 +21,8 @@ export default class RegisterOrderUseCase {
       tableNumber,
     });
 
-    const result = await this.orderRepository.create(order);
-    if (!result) throw new RepositoryError("order");
+    const createdOrder = await this.orderRepository.create(order);
 
-    return result;
+    return createdOrder;
   }
 }

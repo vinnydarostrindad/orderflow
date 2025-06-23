@@ -33,10 +33,6 @@ export default class OrderItemRepository {
       values: [id, orderId, menuItemId, quantity, unitPrice, totalPrice, notes],
     });
 
-    if (!result) {
-      return null;
-    }
-
     return result.rows[0];
   }
 
@@ -56,10 +52,6 @@ export default class OrderItemRepository {
       ;`,
       values: [orderId],
     });
-
-    if (!result) {
-      return null;
-    }
 
     return result.rows;
   }
@@ -81,10 +73,6 @@ export default class OrderItemRepository {
         ;`,
       values: [orderItemId, orderId],
     });
-
-    if (!result) {
-      return null;
-    }
 
     return result.rows[0];
   }

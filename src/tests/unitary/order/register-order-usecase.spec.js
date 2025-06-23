@@ -1,7 +1,5 @@
 import RegisterOrderUseCase from "../../../domain/usecase/order/register-order-usecase.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import DependencyError from "../../../utils/errors/dependency-error.js";
-import RepositoryError from "../../../utils/errors/repository-error.js";
 
 const makeSut = () => {
   const idGeneratorSpy = makeIdGenerator();
@@ -67,7 +65,7 @@ const makeOrderRepositoryWithError = () => {
 describe("Register Order UseCase", () => {
   test("Should throw if no props are provided", async () => {
     const { sut } = makeSut();
-    // melhorar essa validação
+
     await expect(sut.execute()).rejects.toThrow(
       new MissingParamError("businessId"),
     );
@@ -101,20 +99,6 @@ describe("Register Order UseCase", () => {
     );
   });
 
-  test("Should throw if idGenerator returns invalid id", async () => {
-    const { sut, idGeneratorSpy } = makeSut();
-    const props = {
-      businessId: "any_business_id",
-      tableId: "any_table_id",
-      tableNumber: "any_table_number",
-    };
-    idGeneratorSpy.id = null;
-
-    await expect(sut.execute(props)).rejects.toThrow(
-      new DependencyError("idGenerator"),
-    );
-  });
-
   test("Should call orderRepository with correct values", async () => {
     const { sut, orderRepositorySpy, idGeneratorSpy } = makeSut();
     const props = {
@@ -128,20 +112,6 @@ describe("Register Order UseCase", () => {
     expect(orderRepositorySpy.businessId).toBe(props.businessId);
     expect(orderRepositorySpy.tableId).toBe(props.tableId);
     expect(orderRepositorySpy.tableNumber).toBe(props.tableNumber);
-  });
-
-  test("Should throw if orderRepository returns invalid order", async () => {
-    const { sut, orderRepositorySpy } = makeSut();
-    const props = {
-      businessId: "any_business_id",
-      tableId: "any_table_id",
-      tableNumber: "any_table_number",
-    };
-    orderRepositorySpy.order = null;
-
-    await expect(sut.execute(props)).rejects.toThrow(
-      new RepositoryError("order"),
-    );
   });
 
   test("Should return order if everything is right", async () => {

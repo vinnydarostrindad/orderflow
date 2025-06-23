@@ -11,17 +11,9 @@ export default class Business {
   }
 
   validate(id, name, email, hashedPassword) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
-    if (!name) {
-      throw new MissingParamError("name");
-    }
-    if (!email) {
-      throw new MissingParamError("email");
-    }
-    if (!hashedPassword) {
-      throw new MissingParamError("hashedPassword");
-    }
+    if (!id) throw new MissingParamError("id");
+    if (!name) throw new MissingParamError("name");
+    if (!email) throw new MissingParamError("email");
+    if (!hashedPassword) throw new MissingParamError("hashedPassword");
   }
 }

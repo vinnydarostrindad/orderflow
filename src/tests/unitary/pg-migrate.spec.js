@@ -11,6 +11,7 @@ jest.unstable_mockModule("node-pg-migrate", () => mockMigrationRunner);
 
 import { resolve } from "node:path";
 import MissingParamError from "../../utils/errors/missing-param-error.js";
+import DependencyError from "../../utils/errors/dependency-error.js";
 const PgMigrate = (await import("../../infra/pg-migrate.js")).default;
 
 const makeSut = () => {
@@ -50,8 +51,7 @@ const makePostgresAdapterWithError = () => {
 describe("Pg Migrate", () => {
   test("Should throw if no options are provided", async () => {
     const { sut } = makeSut();
-    const promise = sut.up();
-    expect(promise).rejects.toThrow(new MissingParamError("options"));
+    expect(sut.up()).rejects.toThrow(new MissingParamError("options"));
   });
 
   test("Should call migrationRunner with correct options and dryRun true", async () => {
@@ -109,10 +109,10 @@ describe("Pg Migrate", () => {
       }),
     ];
 
+    const options = { dryRun: false };
+
     for (const sut of suts) {
-      const options = { dryRun: false };
-      const promise = sut.up(options);
-      expect(promise).rejects.toThrow(TypeError);
+      await expect(sut.up(options)).rejects.toThrow(DependencyError);
     }
   });
 
@@ -123,10 +123,10 @@ describe("Pg Migrate", () => {
       }),
     ];
 
+    const options = { dryRun: false };
+
     for (const sut of suts) {
-      const options = { dryRun: false };
-      const promise = sut.up(options);
-      expect(promise).rejects.toThrow();
+      await expect(sut.up(options)).rejects.toThrow();
     }
   });
 

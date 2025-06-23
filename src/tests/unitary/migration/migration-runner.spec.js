@@ -57,8 +57,7 @@ describe("Migration Runner", () => {
       ];
 
       for (const sut of suts) {
-        const promise = sut.getPendingMigrations();
-        expect(promise).rejects.toThrow(TypeError);
+        expect(sut.getPendingMigrations()).rejects.toThrow(TypeError);
       }
     });
 
@@ -70,8 +69,7 @@ describe("Migration Runner", () => {
       ];
 
       for (const sut of suts) {
-        const promise = sut.getPendingMigrations();
-        expect(promise).rejects.toThrow();
+        expect(sut.getPendingMigrations()).rejects.toThrow();
       }
     });
   });
@@ -98,8 +96,7 @@ describe("Migration Runner", () => {
       ];
 
       for (const sut of suts) {
-        const promise = sut.postPendingMigrations();
-        expect(promise).rejects.toThrow(TypeError);
+        expect(sut.postPendingMigrations()).rejects.toThrow(TypeError);
       }
     });
 
@@ -111,8 +108,7 @@ describe("Migration Runner", () => {
       ];
 
       for (const sut of suts) {
-        const promise = sut.postPendingMigrations();
-        expect(promise).rejects.toThrow();
+        expect(sut.postPendingMigrations()).rejects.toThrow();
       }
     });
   });

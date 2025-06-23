@@ -1,22 +1,21 @@
 import RegisterBusinessRouter from "../../../presentation/routers/business/register-business-router.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import ServerError from "../../../utils/errors/server-error.js";
 import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const registerBusinessUseCaseSpy = makeRegisterBusinessUseCase();
-  const emailValidatorSpy = makeEmailValidator();
+  const validatorsSpy = makeValidators();
   const authUseCaseSpy = makeAuthUseCase();
   const sut = new RegisterBusinessRouter({
     registerBusinessUseCase: registerBusinessUseCaseSpy,
-    emailValidator: emailValidatorSpy,
+    validators: validatorsSpy,
     authUseCase: authUseCaseSpy,
   });
 
   return {
     sut,
     registerBusinessUseCaseSpy,
-    emailValidatorSpy,
+    validatorsSpy,
     authUseCaseSpy,
   };
 };
@@ -51,26 +50,27 @@ const makeRegisterBusinessUseCaseWithError = () => {
   return new registerBusinessUseCaseSpy();
 };
 
-const makeEmailValidator = () => {
-  const emailValidatorSpy = {
-    execute(email) {
-      this.email = email;
+const makeValidators = () => {
+  const validatorsSpy = {
+    email(emailValue) {
+      this.emailValue = emailValue;
       return this.isValid;
     },
   };
 
-  emailValidatorSpy.isValid = true;
-  return emailValidatorSpy;
+  validatorsSpy.isValid = true;
+
+  return validatorsSpy;
 };
 
-const makeEmailValidatorWithError = () => {
-  class EmailValidatorSpy {
-    execute() {
+const makeValidatorsWithError = () => {
+  const validatorsSpy = {
+    email() {
       throw new Error();
-    }
-  }
+    },
+  };
 
-  return new EmailValidatorSpy();
+  return validatorsSpy;
 };
 
 const makeAuthUseCase = () => {
@@ -141,55 +141,36 @@ describe("Register Business Router", () => {
   });
 
   test("Should return 400 if invalid email is provided", async () => {
-    const { sut, emailValidatorSpy } = makeSut();
+    const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
       body: {
         name: "any_name",
-        email: "inany_email@mail.com",
+        email: "invalid_email@mail.com",
         password: "any_password",
       },
     };
-    emailValidatorSpy.isValid = false;
+    validatorsSpy.isValid = false;
 
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new InvalidParamError("email"));
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
+    const { sut } = makeSut();
+
+    await expect(sut.route()).rejects.toThrow();
+  });
+
+  test("Should throw if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {};
 
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should return 500 if httpRequest has no body", async () => {
-    const { sut } = makeSut();
-
-    const httpResponse = await sut.route();
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
-  });
-
-  test("Should return Error if no business is registered", async () => {
-    const { sut, registerBusinessUseCaseSpy } = makeSut();
-    const httpRequest = {
-      body: {
-        name: "any_name",
-        email: "any_email@mail.com",
-        password: "any_password",
-      },
-    };
-    registerBusinessUseCaseSpy.business = null;
-
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse).toEqual(new Error());
-  });
-
-  test("Should call emailValidator with correct params", async () => {
-    const { sut, emailValidatorSpy } = makeSut();
+  test("Should call validators with correct params", async () => {
+    const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
       body: {
         name: "any_name",
@@ -199,7 +180,7 @@ describe("Register Business Router", () => {
     };
 
     await sut.route(httpRequest);
-    expect(emailValidatorSpy.email).toBe("any_email@mail.com");
+    expect(validatorsSpy.emailValue).toBe("any_email@mail.com");
   });
 
   test("Should call registerBusinessUseCase with correct params", async () => {
@@ -250,9 +231,9 @@ describe("Register Business Router", () => {
     });
   });
 
-  test("Should return 500 if invalid dependency is provided", async () => {
+  test("Should throw if invalid dependency is provided", async () => {
     const registerBusinessUseCase = makeRegisterBusinessUseCase();
-    const emailValidator = makeEmailValidator();
+    const validators = makeValidators();
     const suts = [
       new RegisterBusinessRouter(),
       new RegisterBusinessRouter({}),
@@ -264,60 +245,56 @@ describe("Register Business Router", () => {
       }),
       new RegisterBusinessRouter({
         registerBusinessUseCase,
-        emailValidator: {},
+        validators: {},
       }),
       new RegisterBusinessRouter({
         registerBusinessUseCase,
-        emailValidator,
+        validators,
         authUseCase: {},
       }),
     ];
 
-    for (const sut of suts) {
-      const httpRequest = {
-        body: {
-          name: "any_name",
-          email: "any_email@mail.com",
-          password: "any_password",
-        },
-      };
-      const httpResponse = await sut.route(httpRequest);
+    const httpRequest = {
+      body: {
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
+      },
+    };
 
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 
-  test("Should return 500 if any dependency throws", async () => {
+  test("Should throw if any dependency throws", async () => {
     const registerBusinessUseCase = makeRegisterBusinessUseCase();
-    const emailValidator = makeEmailValidator();
+    const validators = makeValidators();
     const suts = [
       new RegisterBusinessRouter({
         registerBusinessUseCase: makeRegisterBusinessUseCaseWithError(),
       }),
       new RegisterBusinessRouter({
         registerBusinessUseCase,
-        emailValidator: makeEmailValidatorWithError(),
+        validators: makeValidatorsWithError(),
       }),
       new RegisterBusinessRouter({
         registerBusinessUseCase,
-        emailValidator,
+        validators,
         authUseCase: makeAuthUseCaseWithError(),
       }),
     ];
 
-    for (const sut of suts) {
-      const httpRequest = {
-        body: {
-          name: "any_name",
-          email: "any_email@mail.com",
-          password: "any_password",
-        },
-      };
-      const httpResponse = await sut.route(httpRequest);
+    const httpRequest = {
+      body: {
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
+      },
+    };
 
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 });

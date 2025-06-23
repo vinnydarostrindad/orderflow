@@ -1,4 +1,5 @@
 import MenuItemRepository from "../../../infra/repositories/menu-item-repository.js";
+import ValidationError from "../../../utils/errors/validation-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
@@ -16,6 +17,12 @@ const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
+      if (
+        this.queryObject.values[1] == "any_name" ||
+        this.queryObject.values[1] === "repeated_name"
+      ) {
+        return this.validateUniqueNameQueryResult;
+      }
       return this.queryResult;
     },
   };
@@ -33,6 +40,10 @@ const makePostgresAdapter = () => {
       },
     ],
   };
+  postgresAdapterSpy.validateUniqueNameQueryResult = {
+    rows: [],
+  };
+
   return postgresAdapterSpy;
 };
 
@@ -48,7 +59,7 @@ describe("MenuItem Repository", () => {
   describe("create Method", () => {
     test("Should throw if no props are provided", async () => {
       const { sut } = makeSut();
-      // Fazer um erro mais específico depois
+
       await expect(sut.create()).rejects.toThrow(new MissingParamError("id"));
     });
 
@@ -145,23 +156,6 @@ describe("MenuItem Repository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter return invalid menu item", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      const props = {
-        id: "any_menu_item_id",
-        menuId: "any_menu_id",
-        name: "any_name",
-        price: "any_price",
-        imagePath: "any_img_path",
-        description: "any_description",
-        type: "any_type",
-      };
-      postgresAdapterSpy.queryResult = null;
-
-      const menuItem = await sut.create(props);
-      expect(menuItem).toBeNull();
-    });
-
     test("Should return menu item if everything is right", async () => {
       const { sut } = makeSut();
       const props = {
@@ -213,15 +207,6 @@ describe("MenuItem Repository", () => {
       ;`,
         values: ["any_menu_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter return invalid menu items", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-
-      postgresAdapterSpy.queryResult = null;
-
-      const menuItems = await sut.findAll("any_menu_id");
-      expect(menuItems).toBeNull();
     });
 
     test("Should return menu items if everything is right", async () => {
@@ -277,15 +262,6 @@ describe("MenuItem Repository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter return invalid menu", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-
-      postgresAdapterSpy.queryResult = null;
-
-      const menuItem = await sut.findById("any_menu_id", "any_menu_item_id");
-      expect(menuItem).toBeNull();
-    });
-
     test("Should return menu item if everything is right", async () => {
       const { sut } = makeSut();
 
@@ -299,6 +275,38 @@ describe("MenuItem Repository", () => {
         description: "any_description",
         type: "any_type",
       });
+    });
+  });
+
+  describe("valideUniqueName method", () => {
+    test("Should throw if no menuId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueName()).rejects.toThrow(
+        new MissingParamError("menuId"),
+      );
+    });
+
+    test("Should throw if no name is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueName("any_menu_id")).rejects.toThrow(
+        new MissingParamError("name"),
+      );
+    });
+
+    test("Should throw rows if length is bigger than 0", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.validateUniqueNameQueryResult.rows = [{}];
+
+      await expect(
+        sut.validateUniqueName("any_menu_id", "repeated_name"),
+      ).rejects.toThrow(
+        new ValidationError({
+          message: "Name already exists in your menu.",
+          action: "Make sure name does not exists.",
+        }),
+      );
     });
   });
 

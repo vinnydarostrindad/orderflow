@@ -1,35 +1,66 @@
+import MethodNotAllowedError from "../utils/errors/method-not-allowed-error.js";
+import NotFoundError from "../utils/errors/not-found-error.js";
+import ServerError from "../utils/errors/server-error.js";
 import nodeRequestAdapter from "./adapters/node-request-adapter.js";
 import apiRoutes from "./routes/routes.js";
 
 const router = async function (req, res) {
-  const method = req.method;
+  const method = req.method.toLowerCase();
   const url = req.url;
 
   try {
-    if (method == "GET" || method == "POST")
-      for (const route of apiRoutes[method.toLowerCase()]) {
-        const match = url.match(route.pattern);
-        if (match) {
-          const httpRequest = await nodeRequestAdapter(req, match.groups);
+    const { route, params } = findMatchingRoute(url, method);
 
-          const httpResponse = await route.handler(httpRequest);
+    if (!route)
+      throw new NotFoundError({
+        resource: `URL ${url}`,
+        action: "Make sure the url exists.",
+      });
 
-          res.writeHead(httpResponse.statusCode, {
-            "content-type": "application/json",
-          });
+    const httpRequest = await nodeRequestAdapter(req, params);
 
-          return res.end(JSON.stringify(httpResponse.body));
-        }
-      }
+    const httpResponse = await route.methods[method](httpRequest);
 
-    // Fazer um erro mais específico depois
-    res.writeHead(400);
-    return res.end();
+    if (httpResponse.body instanceof Error) {
+      throw httpResponse.body;
+    }
+
+    res.writeHead(httpResponse.statusCode, {
+      "content-type": "application/json",
+    });
+
+    return res.end(JSON.stringify(httpResponse.body));
   } catch (error) {
-    console.error("Erro ao processar requisição:", error);
-    res.writeHead(500);
-    return res.end("Erro interno do servidor");
+    console.error(error);
+    if (!(error instanceof ServerError)) {
+      res.writeHead(error.statusCode);
+      return res.end(JSON.stringify(error));
+    }
+
+    const serverError = new ServerError({ cause: error });
+
+    res.writeHead(serverError.statusCode);
+    return res.end(JSON.stringify(serverError));
   }
 };
+
+function verifyIfMethodIsAllowed(route, method) {
+  if (method in route.methods) {
+    return;
+  }
+  throw new MethodNotAllowedError(method);
+}
+
+function findMatchingRoute(url, method) {
+  for (const route of apiRoutes) {
+    const match = url.match(route.pattern);
+    if (match) {
+      verifyIfMethodIsAllowed(route, method);
+
+      return { route, params: match.groups };
+    }
+  }
+  return {};
+}
 
 export default router;

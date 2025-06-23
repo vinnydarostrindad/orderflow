@@ -1,7 +1,6 @@
-import { jest } from "@jest/globals";
+import { expect, jest } from "@jest/globals";
 import MigrationRouter from "../../../presentation/routers/migrations/migration-router.js";
-import ServerError from "../../../utils/errors/server-error.js";
-import MethodNotAllowedError from "../../../utils/errors/method-not-allowed-error.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
   const migrationRunnerSpy = makeMigrationRunner();
@@ -46,31 +45,20 @@ const makeMigrationRunnerWithError = () => {
 
 describe("Migrations Router", () => {
   describe("route Method", () => {
-    test("Should return 405 if not allowed method is provided", async () => {
+    test("Should throw if no httpRequest is provided", async () => {
       const { sut } = makeSut();
-      const httpRequest = {
-        method: "not_allowed_method",
-      };
 
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(405);
-      expect(httpResponse.body).toEqual(new MethodNotAllowedError());
+      await expect(sut.route()).rejects.toThrow();
     });
 
-    test("Should return 500 if no httpRequest is provided", async () => {
-      const { sut } = makeSut();
-      const httpResponse = await sut.route();
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
-    });
-
-    test("Should return 500 if httpRequest has no method", async () => {
+    test("Should 400 if httpRequest has no method", async () => {
       const { sut } = makeSut();
       const httpRequest = {};
 
       const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      expect(httpResponse.statusCode).toBe(400);
+      console.log(httpResponse.body);
+      expect(httpResponse.body).toEqual(new MissingParamError("method"));
     });
 
     test("Should return 200 with migrations if method is GET", async () => {
@@ -95,7 +83,7 @@ describe("Migrations Router", () => {
       expect(httpResponse.body).toEqual(["any_migration"]);
     });
 
-    test("Should return 500 if invalid dependency is provided", async () => {
+    test("Should throw if invalid dependency is provided", async () => {
       const suts = [
         new MigrationRouter(),
         new MigrationRouter({}),
@@ -104,24 +92,20 @@ describe("Migrations Router", () => {
         }),
       ];
 
-      for (const sut of suts) {
-        const getRequest = {
-          method: "GET",
-        };
-        const postRequest = {
-          method: "POST",
-        };
-        const getResponse = await sut.route(getRequest);
-        const postResponse = await sut.route(postRequest);
+      const getRequest = {
+        method: "GET",
+      };
+      const postRequest = {
+        method: "POST",
+      };
 
-        expect(getResponse.statusCode).toBe(500);
-        expect(getResponse.body).toEqual(new ServerError());
-        expect(postResponse.statusCode).toBe(500);
-        expect(postResponse.body).toEqual(new ServerError());
+      for (const sut of suts) {
+        await expect(sut.route(getRequest)).rejects.toThrow();
+        await expect(sut.route(postRequest)).rejects.toThrow();
       }
     });
 
-    test("Should return 500 if any dependency throws", async () => {
+    test("Should throw if any dependency throws", async () => {
       const suts = [
         new MigrationRouter({
           migrationRunner: makeMigrationRunnerWithError(),
@@ -135,13 +119,8 @@ describe("Migrations Router", () => {
         const postRequest = {
           method: "POST",
         };
-        const getResponse = await sut.route(getRequest);
-        const postResponse = await sut.route(postRequest);
-
-        expect(getResponse.statusCode).toBe(500);
-        expect(getResponse.body).toEqual(new ServerError());
-        expect(postResponse.statusCode).toBe(500);
-        expect(postResponse.body).toEqual(new ServerError());
+        await expect(sut.route(getRequest)).rejects.toThrow();
+        await expect(sut.route(postRequest)).rejects.toThrow();
       }
     });
   });

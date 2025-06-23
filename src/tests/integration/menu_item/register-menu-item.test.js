@@ -3,10 +3,11 @@ import {
   cleanDatabase,
   createBusiness,
   createMenu,
+  createMenuItem,
   runMigrations,
 } from "../orchestrator.js";
 
-beforeAll(async () => {
+beforeEach(async () => {
   await cleanDatabase();
   await runMigrations();
 });
@@ -60,5 +61,39 @@ describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
 
     expect(typeof menuItem.updated_at).toBe("string");
     expect(Date.parse(menuItem.updated_at)).not.toBeNaN();
+  });
+
+  test("should return ValidationError if name already exists on menu", async () => {
+    const business = await createBusiness();
+    const menu = await createMenu(business.id);
+    await createMenuItem(business.id, menu.id, 1, { name: "any_name_1" });
+
+    const requestBody = {
+      name: "any_name_1",
+      price: 9.9,
+      imagePath: "any_img_path",
+      description: "any_description",
+      type: "any_type",
+    };
+
+    const response = await fetch(
+      `http://localhost:3000/api/v1/business/${business.id}/menu/${menu.id}/item`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      },
+    );
+
+    expect(response.status).toBe(400);
+
+    const responseBody = await response.json();
+
+    expect(responseBody).toEqual({
+      name: "ValidationError",
+      statusCode: 400,
+      action: "Make sure name does not exists.",
+      message: "Name already exists in your menu.",
+    });
   });
 });

@@ -1,5 +1,6 @@
 import GetOrderRouter from "../../../presentation/routers/order/get-order-router.js";
 import GetOrderUseCase from "../../../domain/usecase/order/get-order-usecase.js";
+import validators from "../../../utils/validator.js";
 import OrderRepository from "../../../infra/repositories/order-repository.js";
 import postgresAdapter from "../../../infra/adaptors/postgres-adapter.js";
 
@@ -11,6 +12,7 @@ const getOrderRouterComposer = {
     });
     const getOrderRouter = new GetOrderRouter({
       getOrderUseCase,
+      validators,
     });
     return getOrderRouter;
   },

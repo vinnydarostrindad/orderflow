@@ -1,13 +1,15 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import ServerError from "../../../utils/errors/server-error.js";
 import RegisterTableRouter from "../../../presentation/routers/table/register-table-router.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const registerTableUseCaseSpy = makeRegisterTableUseCase();
+  const validatorsSpy = makeValidators();
   const sut = new RegisterTableRouter({
     registerTableUseCase: registerTableUseCaseSpy,
+    validators: validatorsSpy,
   });
-  return { sut, registerTableUseCaseSpy };
+  return { sut, registerTableUseCaseSpy, validatorsSpy };
 };
 
 const makeRegisterTableUseCase = () => {
@@ -40,6 +42,34 @@ const makeRegisterTableUseCaseWithError = () => {
   return new RegisterTableUseCaseSpy();
 };
 
+const makeValidators = () => {
+  const validatorsSpy = {
+    uuid(uuidValue) {
+      if (this.isValid === false) {
+        return uuidValue.split("_")[0] === "valid" ? true : false;
+      }
+
+      this.uuidValue = uuidValue;
+
+      return this.isValid;
+    },
+  };
+
+  validatorsSpy.isValid = true;
+
+  return validatorsSpy;
+};
+
+const makeValidatorsWithError = () => {
+  const validatorsSpy = {
+    uuid() {
+      throw new Error();
+    },
+  };
+
+  return validatorsSpy;
+};
+
 describe("Register Table Router", () => {
   test("Should return 400 if no number is provided", async () => {
     const { sut } = makeSut();
@@ -63,44 +93,43 @@ describe("Register Table Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
-    const { sut } = makeSut();
-    const httpResponse = await sut.route();
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+  test("Should return 400 if businessid is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: { businessId: "invalid_business_id" },
+      body: {
+        number: "any_number",
+        name: "any_name",
+      },
+    };
+
+    validatorsSpy.isValid = false;
+
+    const httpResponse = await sut.route(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("businessId"));
   });
 
-  test("Should return 500 if httpRequest has no body", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
+    const { sut } = makeSut();
+    await expect(sut.route()).rejects.toThrow();
+  });
+
+  test("Should throw if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       params: { businessId: "any_business_id" },
     };
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should return 500 if httpRequest has no params", async () => {
+  test("Should throw if httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: { number: "any_number", name: "any_name" },
     };
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
-  });
-
-  test("Should return 500 if no table is returned", async () => {
-    const { sut, registerTableUseCaseSpy } = makeSut();
-    const httpRequest = {
-      params: { businessId: "any_business_id" },
-      body: { number: "any_number", name: "any_name" },
-    };
-    registerTableUseCaseSpy.table = null;
-
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
   test("Should call registerTableUseCase with correct params", async () => {
@@ -137,31 +166,16 @@ describe("Register Table Router", () => {
     });
   });
 
-  test("Should return 500 if invalid dependency is provided", async () => {
+  test("Should throw if invalid dependency is provided", async () => {
     const suts = [
       new RegisterTableRouter(),
       new RegisterTableRouter({}),
       new RegisterTableRouter({
         registerTableUseCase: {},
       }),
-    ];
-    const httpRequest = {
-      params: { businessId: "any_business_id" },
-      body: { number: "any_number", name: "any_name" },
-    };
-
-    for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
-    }
-  });
-
-  test("Should return 500 if any dependency throws", async () => {
-    const suts = [
       new RegisterTableRouter({
-        registerTableUseCase: makeRegisterTableUseCaseWithError(),
+        registerTableUseCase: makeRegisterTableUseCase(),
+        validators: {},
       }),
     ];
     const httpRequest = {
@@ -170,10 +184,28 @@ describe("Register Table Router", () => {
     };
 
     for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
+      await expect(sut.route(httpRequest)).rejects.toThrow();
+    }
+  });
 
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+  test("Should throw if any dependency throws", async () => {
+    const suts = [
+      new RegisterTableRouter({
+        registerTableUseCase: makeRegisterTableUseCaseWithError(),
+      }),
+      new RegisterTableRouter({
+        registerTableUseCase: makeRegisterTableUseCase(),
+        validators: makeValidatorsWithError(),
+      }),
+    ];
+
+    const httpRequest = {
+      params: { businessId: "any_business_id" },
+      body: { number: "any_number", name: "any_name" },
+    };
+
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 });

@@ -1,17 +1,16 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import ServerError from "../../../utils/errors/server-error.js";
 import GetEmployeeRouter from "../../../presentation/routers/employee/get-employee-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const getEmployeeUseCaseSpy = makeGetEmployeeUseCase();
+  const validatorsSpy = makeValidators();
   const sut = new GetEmployeeRouter({
     getEmployeeUseCase: getEmployeeUseCaseSpy,
+    validators: validatorsSpy,
   });
-  return {
-    sut,
-    getEmployeeUseCaseSpy,
-  };
+  return { sut, getEmployeeUseCaseSpy, validatorsSpy };
 };
 
 const makeGetEmployeeUseCase = () => {
@@ -44,6 +43,7 @@ const makeGetEmployeeUseCase = () => {
   ];
   return getEmployeeUseCaseSpy;
 };
+
 const makeGetEmployeeUseCaseWithError = () => {
   class GetEmployeeUseCaseSpy {
     execute() {
@@ -54,22 +54,36 @@ const makeGetEmployeeUseCaseWithError = () => {
   return new GetEmployeeUseCaseSpy();
 };
 
+const makeValidators = () => {
+  const validatorsSpy = {
+    uuid(uuidValue) {
+      if (this.isValid === false) {
+        return uuidValue.split("_")[0] === "valid" ? true : false;
+      }
+
+      this.uuidValue = uuidValue;
+
+      return this.isValid;
+    },
+  };
+
+  validatorsSpy.isValid = true;
+
+  return validatorsSpy;
+};
+
+const makeValidatorsWithError = () => {
+  const validatorsSpy = {
+    uuid() {
+      throw new Error();
+    },
+  };
+
+  return validatorsSpy;
+};
+
 describe("Get Employee Router", () => {
   describe("Without employeeId", () => {
-    test("Should return 404 if no employees are found", async () => {
-      const { sut, getEmployeeUseCaseSpy } = makeSut();
-      const httpRequest = {
-        params: {
-          businessId: "any_business_id",
-        },
-      };
-      getEmployeeUseCaseSpy.employees = null;
-
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("Employee"));
-    });
-
     test("Should call getEmployeeUseCase with correct value", async () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
@@ -96,7 +110,25 @@ describe("Get Employee Router", () => {
       expect(Array.isArray(httpResponse.body)).toBe(true);
     });
   });
+
   describe("With employeeId", () => {
+    test("Should return 400 if businessId is invalid", async () => {
+      const { sut, validatorsSpy } = makeSut();
+      const httpRequest = {
+        params: {
+          businessId: "valid_business_id",
+          employeeId: "invalid_employee_id",
+        },
+      };
+
+      validatorsSpy.isValid = false;
+
+      const httpResponse = await sut.route(httpRequest);
+
+      expect(httpResponse.statusCode).toBe(400);
+      expect(httpResponse.body).toEqual(new InvalidParamError("employeeId"));
+    });
+
     test("Should return 404 if no employee is found", async () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
@@ -109,7 +141,9 @@ describe("Get Employee Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(404);
-      expect(httpResponse.body).toEqual(new NotFoundError("Employee"));
+      expect(httpResponse.body).toEqual(
+        new NotFoundError({ resource: "Employee" }),
+      );
     });
 
     test("Should call getEmployeeUseCase with correct value", async () => {
@@ -160,50 +194,45 @@ describe("Get Employee Router", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
   });
 
-  test("Should return 500 if no httpRequest is provided", async () => {
-    const { sut } = makeSut();
+  test("Should return 400 if businessId is invalid", async () => {
+    const { sut, validatorsSpy } = makeSut();
+    const httpRequest = {
+      params: {
+        businessId: "invalid_business_id",
+      },
+    };
 
-    const httpResponse = await sut.route();
+    validatorsSpy.isValid = false;
 
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
-  });
-
-  test("Should return 500 if no httpRequest has no params", async () => {
-    const { sut } = makeSut();
-    const httpRequest = {};
     const httpResponse = await sut.route(httpRequest);
 
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("businessId"));
   });
 
-  test("Should return 500 if invalid dependency is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
+    const { sut } = makeSut();
+
+    await expect(sut.route()).rejects.toThrow();
+  });
+
+  test("Should throw if no httpRequest has no params", async () => {
+    const { sut } = makeSut();
+    const httpRequest = {};
+
+    await expect(sut.route(httpRequest)).rejects.toThrow();
+  });
+
+  test("Should throw if invalid dependency is provided", async () => {
     const suts = [
       new GetEmployeeRouter(),
       new GetEmployeeRouter({}),
       new GetEmployeeRouter({
         getEmployeeUseCase: {},
       }),
-    ];
-    const httpRequest = {
-      params: {
-        businessId: "any_business_id",
-        employeeId: "any_employee_id",
-      },
-    };
-
-    for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
-    }
-  });
-
-  test("Should return 500 if dependency throws", async () => {
-    const suts = [
       new GetEmployeeRouter({
-        getEmployeeUseCase: makeGetEmployeeUseCaseWithError(),
+        getEmployeeUseCase: makeGetEmployeeUseCase(),
+        validators: {},
       }),
     ];
     const httpRequest = {
@@ -214,9 +243,29 @@ describe("Get Employee Router", () => {
     };
 
     for (const sut of suts) {
-      const httpResponse = await sut.route(httpRequest);
-      expect(httpResponse.statusCode).toBe(500);
-      expect(httpResponse.body).toEqual(new ServerError());
+      await expect(sut.route(httpRequest)).rejects.toThrow();
+    }
+  });
+
+  test("Should throw if dependency throws", async () => {
+    const suts = [
+      new GetEmployeeRouter({
+        getEmployeeUseCase: makeGetEmployeeUseCaseWithError(),
+      }),
+      new GetEmployeeRouter({
+        getEmployeeUseCase: makeGetEmployeeUseCase(),
+        validators: makeValidatorsWithError(),
+      }),
+    ];
+    const httpRequest = {
+      params: {
+        businessId: "any_business_id",
+        employeeId: "any_employee_id",
+      },
+    };
+
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 });

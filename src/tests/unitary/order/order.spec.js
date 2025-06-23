@@ -3,7 +3,6 @@ import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 describe("Order Entity", () => {
   test("Should throw if no props are provided", () => {
-    // Fazer uma validação melhor
     expect(() => new Order()).toThrow(new MissingParamError("id"));
   });
 

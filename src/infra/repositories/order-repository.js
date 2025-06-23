@@ -1,4 +1,5 @@
 import MissingParamError from "../../utils/errors/missing-param-error.js";
+import ValidationError from "../../utils/errors/validation-error.js";
 
 export default class OrderRepository {
   constructor({ postgresAdapter } = {}) {
@@ -6,18 +7,12 @@ export default class OrderRepository {
   }
 
   async create({ id, businessId, tableId, tableNumber } = {}) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
-    if (!businessId) {
-      throw new MissingParamError("businessId");
-    }
-    if (!tableId) {
-      throw new MissingParamError("tableId");
-    }
-    if (!tableNumber) {
-      throw new MissingParamError("tableNumber");
-    }
+    if (!id) throw new MissingParamError("id");
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!tableId) throw new MissingParamError("tableId");
+    if (!tableNumber) throw new MissingParamError("tableNumber");
+
+    await this.validateUniqueTableNumber(businessId, tableNumber);
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -31,17 +26,11 @@ export default class OrderRepository {
       values: [id, businessId, tableId, tableNumber],
     });
 
-    if (!result) {
-      return null;
-    }
-
     return result.rows[0];
   }
 
   async findAll(tableId) {
-    if (!tableId) {
-      throw new MissingParamError("tableId");
-    }
+    if (!tableId) throw new MissingParamError("tableId");
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -57,20 +46,12 @@ export default class OrderRepository {
       values: [tableId],
     });
 
-    if (!result) {
-      return null;
-    }
-
     return result.rows;
   }
 
   async findById(tableId, orderId) {
-    if (!tableId) {
-      throw new MissingParamError("tableId");
-    }
-    if (!orderId) {
-      throw new MissingParamError("orderId");
-    }
+    if (!tableId) throw new MissingParamError("tableId");
+    if (!orderId) throw new MissingParamError("orderId");
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -86,10 +67,32 @@ export default class OrderRepository {
       values: [orderId, tableId],
     });
 
-    if (!result) {
-      return null;
-    }
-
     return result.rows[0];
+  }
+
+  async validateUniqueTableNumber(businessId, tableNumber) {
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!tableNumber) throw new MissingParamError("tableNumber");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          1
+        FROM
+          orders
+        WHERE
+         business_id = $1 AND table_number = $2
+        LIMIT
+          1
+      `,
+      values: [businessId, tableNumber],
+    });
+
+    if (result.rows.length > 0) {
+      throw new ValidationError({
+        message: "The table number provided is already in use.",
+        action: "Use another table number to perform this operation.",
+      });
+    }
   }
 }

@@ -1,4 +1,5 @@
-import httpResponse from "../../httpResponse.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
+import httpResponse from "../../http-response.js";
 
 export default class MigrationRouter {
   constructor({ migrationRunner } = {}) {
@@ -6,26 +7,14 @@ export default class MigrationRouter {
   }
 
   async route(httpRequest) {
-    try {
-      const { method } = httpRequest;
+    const { method } = httpRequest;
 
-      if (!method) {
-        // Arrumar esse throw depois
-        throw "Method was not provided";
-      }
-
-      if (method === "GET") {
-        return await this.handleGet();
-      }
-      if (method === "POST") {
-        return await this.handlePost();
-      }
-
-      return httpResponse.methodNotAllowed();
-    } catch (err) {
-      console.error(err);
-      return httpResponse.serverError();
+    if (!method) {
+      return httpResponse.badRequest(new MissingParamError("method"));
     }
+
+    if (method === "GET") return await this.handleGet();
+    if (method === "POST") return await this.handlePost();
   }
 
   async handleGet() {
@@ -34,10 +23,10 @@ export default class MigrationRouter {
   }
 
   async handlePost() {
-    const postedMigrations = await this.migrationRunner.postPendingMigrations();
-    if (postedMigrations.length === 0) {
-      return httpResponse.ok(postedMigrations);
+    const runnedMigrations = await this.migrationRunner.postPendingMigrations();
+    if (runnedMigrations.length === 0) {
+      return httpResponse.ok(runnedMigrations);
     }
-    return httpResponse.created(postedMigrations);
+    return httpResponse.created(runnedMigrations);
   }
 }

@@ -1,38 +1,46 @@
 export const up = (pgm) => {
-  pgm.createTable("tables", {
-    id: {
-      type: "uuid",
-      primaryKey: true,
-    },
+  pgm.createTable(
+    "tables",
+    {
+      id: {
+        type: "uuid",
+        primaryKey: true,
+      },
 
-    business_id: {
-      type: "uuid",
-      references: "businesses(id)",
-      notNull: true,
-      onDelete: "cascade",
-    },
+      business_id: {
+        type: "uuid",
+        references: "businesses(id)",
+        notNull: true,
+        onDelete: "cascade",
+      },
 
-    number: {
-      type: "smallint",
-      notNull: true,
-    },
+      number: {
+        type: "smallint",
+        notNull: true,
+      },
 
-    name: {
-      type: "varchar(254)",
-    },
+      name: {
+        type: "varchar(254)",
+      },
 
-    created_at: {
-      type: "timestamptz",
-      notNull: true,
-      default: pgm.func("timezone('utc', now())"),
-    },
+      created_at: {
+        type: "timestamptz",
+        notNull: true,
+        default: pgm.func("timezone('utc', now())"),
+      },
 
-    updated_at: {
-      type: "timestamptz",
-      notNull: true,
-      default: pgm.func("timezone('utc', now())"),
+      updated_at: {
+        type: "timestamptz",
+        notNull: true,
+        default: pgm.func("timezone('utc', now())"),
+      },
     },
-  });
+    {
+      constraints: {
+        unique: ["business_id", "number"],
+      },
+    },
+  );
 };
 
 export const down = false;

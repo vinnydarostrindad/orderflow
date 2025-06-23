@@ -14,17 +14,9 @@ export default class MenuItem {
   }
 
   validate(id, menuId, name, price) {
-    if (!id) {
-      throw new MissingParamError("id");
-    }
-    if (!menuId) {
-      throw new MissingParamError("menuId");
-    }
-    if (!name) {
-      throw new MissingParamError("name");
-    }
-    if (!price) {
-      throw new MissingParamError("price");
-    }
+    if (!id) throw new MissingParamError("id");
+    if (!menuId) throw new MissingParamError("menuId");
+    if (!name) throw new MissingParamError("name");
+    if (!price) throw new MissingParamError("price");
   }
 }

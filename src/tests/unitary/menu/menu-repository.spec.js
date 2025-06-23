@@ -1,4 +1,5 @@
 import MenuRepository from "../../../infra/repositories/menu-repository.js";
+import ValidationError from "../../../utils/errors/validation-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
@@ -16,6 +17,13 @@ const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
+      if (
+        this.queryObject.values[1] === "any_name" ||
+        this.queryObject.values[1] === "repeated_name"
+      ) {
+        return this.validateUniqueNameQueryResult;
+      }
+
       return this.queryResult;
     },
   };
@@ -29,6 +37,10 @@ const makePostgresAdapter = () => {
       },
     ],
   };
+  postgresAdapterSpy.validateUniqueNameQueryResult = {
+    rows: [],
+  };
+
   return postgresAdapterSpy;
 };
 
@@ -44,7 +56,7 @@ describe("Menu Repository", () => {
   describe("create Method", () => {
     test("Should throw if no props are provided", async () => {
       const { sut } = makeSut();
-      // Fazer um erro mais específico depois
+
       await expect(sut.create()).rejects.toThrow(new MissingParamError("id"));
     });
 
@@ -102,19 +114,6 @@ describe("Menu Repository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter return invalid menu", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      const props = {
-        id: "any_id",
-        businessId: "any_business_id",
-        name: "any_name",
-      };
-      postgresAdapterSpy.queryResult = null;
-
-      const menu = await sut.create(props);
-      expect(menu).toBeNull();
-    });
-
     test("Should return menu if everything is right", async () => {
       const { sut } = makeSut();
       const props = {
@@ -158,15 +157,6 @@ describe("Menu Repository", () => {
       ;`,
         values: ["any_business_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter return invalid menu", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-
-      postgresAdapterSpy.queryResult = null;
-
-      const menus = await sut.findAll("any_business_id");
-      expect(menus).toBeNull();
     });
 
     test("Should return menu if everything is right", async () => {
@@ -218,15 +208,6 @@ describe("Menu Repository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter return invalid menu", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-
-      postgresAdapterSpy.queryResult = null;
-
-      const menu = await sut.findById("any_business_id", "any_menu_id");
-      expect(menu).toBeNull();
-    });
-
     test("Should return menu if everything is right", async () => {
       const { sut } = makeSut();
 
@@ -236,6 +217,38 @@ describe("Menu Repository", () => {
         business_id: "any_business_id",
         name: "any_name",
       });
+    });
+  });
+
+  describe("valideUniqueName method", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueName()).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+
+    test("Should throw if no name is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueName("any_business_id")).rejects.toThrow(
+        new MissingParamError("name"),
+      );
+    });
+
+    test("Should throw if rows length is bigger than 0", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.validateUniqueNameQueryResult.rows = [{}];
+
+      await expect(
+        sut.validateUniqueName("any_business_id", "repeated_name"),
+      ).rejects.toThrow(
+        new ValidationError({
+          message: "Name already exists in your business.",
+          action: "Make sure name does not exists.",
+        }),
+      );
     });
   });
 

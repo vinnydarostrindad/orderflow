@@ -1,4 +1,5 @@
 import TableRepository from "../../../infra/repositories/table-repository.js";
+import ValidationError from "../../../utils/errors/validation-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
@@ -16,6 +17,12 @@ const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
+      if (
+        this.queryObject.values[1] == "any_number" ||
+        this.queryObject.values[1] == "repeated_number"
+      ) {
+        return this.validateUniqueNumberQueryResult;
+      }
       return this.queryResult;
     },
   };
@@ -30,6 +37,10 @@ const makePostgresAdapter = () => {
       },
     ],
   };
+  postgresAdapterSpy.validateUniqueNumberQueryResult = {
+    rows: [],
+  };
+
   return postgresAdapterSpy;
 };
 
@@ -45,7 +56,7 @@ describe("Table Repository", () => {
   describe("create Method", () => {
     test("Should throw if no props are provided", async () => {
       const { sut } = makeSut();
-      // Melhorar essa validação
+
       await expect(sut.create()).rejects.toThrow(new MissingParamError("id"));
     });
 
@@ -107,19 +118,6 @@ describe("Table Repository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter returns null", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-
-      const table = await sut.create({
-        id: "any_table_id",
-        businessId: "any_business_id",
-        number: "any_number",
-        name: "any_name",
-      });
-      expect(table).toBeNull();
-    });
-
     test("Should return table if everything is right", async () => {
       const { sut } = makeSut();
       const table = await sut.create({
@@ -140,7 +138,7 @@ describe("Table Repository", () => {
   describe("findAll Method", () => {
     test("Should throw if no businessId is provided", async () => {
       const { sut } = makeSut();
-      // Melhorar essa validação
+
       await expect(sut.findAll()).rejects.toThrow(
         new MissingParamError("businessId"),
       );
@@ -162,14 +160,6 @@ describe("Table Repository", () => {
       `,
         values: ["any_business_id"],
       });
-    });
-
-    test("Should return null if postgresAdapter returns null", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-
-      const tables = await sut.findAll("any_business_id");
-      expect(tables).toBeNull();
     });
 
     test("Should return tables if everything is right", async () => {
@@ -218,14 +208,6 @@ describe("Table Repository", () => {
       });
     });
 
-    test("Should return null if postgresAdapter returns null", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.queryResult = null;
-
-      const table = await sut.findById("any_business_id", "any_table_id");
-      expect(table).toBeNull();
-    });
-
     test("Should return table if everything is right", async () => {
       const { sut } = makeSut();
       const table = await sut.findById("any_business_id", "any_table_id");
@@ -235,6 +217,38 @@ describe("Table Repository", () => {
         number: "any_number",
         name: "any_name",
       });
+    });
+  });
+
+  describe("valideUniqueNumber method", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueNumber()).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+
+    test("Should throw if no number is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueNumber("any_business_id")).rejects.toThrow(
+        new MissingParamError("number"),
+      );
+    });
+
+    test("Should throw rows if length is bigger than 0", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.validateUniqueNumberQueryResult.rows = [{}];
+
+      await expect(
+        sut.validateUniqueNumber("any_business_id", "repeated_number"),
+      ).rejects.toThrow(
+        new ValidationError({
+          message: "The number provided is already in use.",
+          action: "Use another number to perform this operation.",
+        }),
+      );
     });
   });
 
