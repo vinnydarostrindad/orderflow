@@ -1,16 +1,55 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
-    <title>OrderFlow - Resgistro</title>
+    <title>OrderFlow - Registro</title>
   </head>
   <body>
-    <main>
-      <h1>OrderFlow</h1>
-      <h2>Em construção</h2>
-      <p>Estamos trabalhando para lançar o sistema</p>
+    <main class="container">
+      <div>
+        <h1>OrderFlow</h1>
+        <p>Faça seu registro</p>
+      </div>
+      <form method="post" action="/api/v1/business" name="registerForm">
+        <div class="inputBox">
+          <input
+            type="text"
+            name="name"
+            id="name"
+            autocomplete="off"
+            placeholder=" "
+            required
+          />
+          <label for="name">Nome</label>
+        </div>
+        <div class="inputBox">
+          <input
+            type="email"
+            name="email"
+            id="email"
+            autocomplete="email"
+            placeholder=" "
+            required
+          />
+          <label for="email">Email</label>
+        </div>
+        <div class="inputBox">
+          <input
+            type="password"
+            name="password"
+            id="password"
+            autocomplete="new-password"
+            placeholder=" "
+            required
+          />
+          <label for="password">Senha</label>
+        </div>
+        <button type="submit" class="button">Registrar</button>
+      </form>
     </main>
+
+    <script src="script.js"></script>
   </body>
 </html>
