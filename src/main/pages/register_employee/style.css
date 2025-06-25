@@ -1,0 +1,251 @@
+:root {
+  --primary-color: #d81212;
+  --background-color: #dfdfdf;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  font-size: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background-color);
+  min-height: 100dvh;
+}
+
+/*--------------------*/
+/*       HEADER       */
+/*--------------------*/
+
+header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: var(--primary-color);
+  padding: 1.5rem 0;
+  height: 10vh;
+
+  h1 {
+    color: #fff;
+    font-size: 2rem;
+  }
+
+  .button {
+    font-weight: bold;
+    background-color: #fff;
+    color: var(--primary-color);
+    padding: 0.6rem 1rem;
+    border: 2px #000 solid;
+    box-shadow: 0px 0px black;
+    translate: 1px 1px;
+    transition:
+      box-shadow 250ms,
+      translate 150ms;
+    outline-offset: 4px;
+  }
+
+  .button:hover {
+    box-shadow: 2px 2px black;
+    translate: 0px 0px;
+  }
+}
+
+/*--------------------*/
+/*        MAIN        */
+/*--------------------*/
+
+main.container {
+  font-size: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding-bottom: 2.5rem;
+
+  .formSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    height: 90%;
+  }
+
+  .text {
+    text-align: center;
+    padding: 4.6rem 1.5rem 0;
+
+    h2 {
+      font-size: 2.8rem;
+    }
+
+    p {
+      color: #6d6d6d;
+      font-size: 1.4rem;
+      text-align: center;
+      padding-top: 1rem;
+      text-decoration: underline;
+    }
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
+    padding-top: 2rem;
+    width: 80%;
+    height: 70%;
+
+    .inputBox {
+      display: flex;
+      flex-direction: column;
+
+      input {
+        font-size: 1.6rem;
+        background-color: var(--background-color);
+        padding: 1rem 0.7rem;
+        border: none;
+        outline: 2px solid rgb(50, 50, 50);
+        border-radius: 3px;
+      }
+
+      input:placeholder-shown {
+        border-bottom: 1.5px solid black;
+        outline: none;
+        border-radius: 0px;
+      }
+
+      input:focus {
+        outline: 2px solid rgb(50, 50, 50);
+        border-radius: 3px;
+        border: none;
+      }
+
+      .inputLabel {
+        width: fit-content;
+        opacity: 1;
+        translate: 9px -49px;
+        background-color: var(--background-color);
+        padding: 0 2px;
+        margin-bottom: -2rem;
+      }
+
+      input:placeholder-shown + .inputLabel {
+        width: fit-content;
+        opacity: 0.6;
+        translate: 9px -24px;
+        transition:
+          250ms translate,
+          100ms opacity;
+      }
+
+      input:focus + .inputLabel {
+        opacity: 1;
+        translate: 9px -49px;
+        background-color: var(--background-color);
+        padding: 0 2px;
+      }
+
+      select {
+        font-size: 1.6rem;
+        background-color: var(--background-color);
+        padding: 0.7rem;
+        margin-top: 1rem;
+        border: none;
+        outline: 2px solid black;
+      }
+    }
+
+    .roleBox {
+      background-color: #c0c0c0;
+      text-align: justify;
+      line-height: 2rem;
+      letter-spacing: 0.1rem;
+      padding: 1rem;
+      border-radius: 5px;
+    }
+
+    .button {
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 0.8rem 0;
+      border: 2px #000 solid;
+      box-shadow: 0px 0px black;
+      translate: 1px 1px;
+      transition:
+        box-shadow 250ms,
+        translate 150ms;
+      outline-offset: 4px;
+    }
+
+    .button:hover {
+      box-shadow: 2px 2px black;
+      translate: 0px 0px;
+    }
+  }
+
+  .employees {
+    width: 80%;
+
+    table {
+      border-collapse: collapse;
+      border: 2px solid rgb(140 140 140);
+      text-align: center;
+      width: 100%;
+      margin: 0 auto;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+
+      caption {
+        text-align: start;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      thead,
+      tfoot {
+        background-color: rgb(228 240 245);
+      }
+
+      th,
+      td {
+        border: 1px solid rgb(160 160 160);
+        padding: 8px 10px;
+      }
+    }
+  }
+}
+
+/*--------------------*/
+/*        QUERY       */
+/*--------------------*/
+
+@media screen and (min-width: 799px) {
+  main.container {
+    width: min(80%, 900px);
+    margin: 0 auto;
+    padding-top: 3rem;
+
+    .formSection {
+      flex-direction: row-reverse;
+      gap: 5%;
+      padding: 2.5rem;
+
+      .text {
+        padding: 0;
+      }
+
+      form {
+        padding: 0;
+        width: 80%;
+      }
+    }
+  }
+}

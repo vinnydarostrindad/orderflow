@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Registrar Funcionários</title>
+  </head>
+  <body>
+    <header>
+      <h1>OrderFlow</h1>
+      <button type="button" class="button" id="advance">AVANÇAR</button>
+    </header>
+    <main class="container">
+      <div class="formSection">
+        <div class="text">
+          <h2>Agora é hora de adicionar os funcionários</h2>
+          <p>Deixar para depois</p>
+        </div>
+        <form method="post">
+          <div class="inputBox">
+            <input
+              type="text"
+              name="name"
+              id="name"
+              autocomplete="off"
+              placeholder=" "
+              required
+            />
+            <label for="name" class="inputLabel">Nome</label>
+          </div>
+          <div class="inputBox">
+            <label for="role">Cargo</label>
+            <select name="role" id="role">
+              <option value="waiter">Garçom</option>
+              <option value="cashier">Caixa</option>
+              <option value="manager">Gerente</option>
+              <option value="cook">Cozinha</option>
+            </select>
+          </div>
+          <div class="roleBox">
+            <p>
+              O garçom terá acesso ao cardápio para registrar os pedidos dos
+              clientes. Antes de iniciar o pedido, ele deve informar o número da
+              mesa. Ele também pode acompanhar o andamento de cada pedido, se
+              está sendo preparado, pronto para entrega ou já foi entregue, além
+              de visualizar o tempo médio de preparo.
+            </p>
+          </div>
+          <button type="submit" class="button">Adicionar</button>
+        </form>
+      </div>
+      <div class="employees" id="employeesTable"></div>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>
