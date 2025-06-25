@@ -57,7 +57,6 @@ describe("Migrations Router", () => {
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(400);
-      console.log(httpResponse.body);
       expect(httpResponse.body).toEqual(new MissingParamError("method"));
     });
 

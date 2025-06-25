@@ -9,13 +9,26 @@ const router = async function (req, res) {
   const url = req.url;
 
   try {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS",
+    );
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+    if (method === "options") {
+      res.writeHead(204);
+      return res.end();
+    }
+
     const { route, params } = findMatchingRoute(url, method);
 
-    if (!route)
+    if (!route) {
       throw new NotFoundError({
         resource: `URL ${url}`,
         action: "Make sure the url exists.",
       });
+    }
 
     const httpRequest = await nodeRequestAdapter(req, params);
 
