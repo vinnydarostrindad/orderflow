@@ -1,0 +1,423 @@
+:root {
+  --primary-color: #d81212;
+  --background-color: #dfdfdf;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  font-size: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background-color);
+  min-height: 100dvh;
+}
+
+/*--------------------*/
+/*       HEADER       */
+/*--------------------*/
+
+header {
+  background-color: var(--primary-color);
+
+  div {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem 0;
+    height: 100%;
+  }
+
+  h1 {
+    color: #fff;
+    font-size: 2rem;
+  }
+
+  .button {
+    font-weight: bold;
+    background-color: #fff;
+    color: var(--primary-color);
+    padding: 0.6rem 1rem;
+    border: 2px #000 solid;
+    box-shadow: 0px 0px black;
+    translate: 1px 1px;
+    transition:
+      box-shadow 250ms,
+      translate 150ms;
+    outline-offset: 4px;
+  }
+
+  .button:hover {
+    box-shadow: 2px 2px black;
+    translate: 0px 0px;
+  }
+}
+
+/*--------------------*/
+/*        MAIN        */
+/*--------------------*/
+
+main.container {
+  font-size: 1.6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding: 4.6rem 0 2.5rem;
+
+  .menuFormSection {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    height: 90%;
+
+    .text {
+      text-align: center;
+      padding: 0 1.5rem;
+
+      h2 {
+        font-size: 2.8rem;
+      }
+
+      p {
+        color: #6d6d6d;
+        font-size: 1.4rem;
+        text-align: center;
+        padding-top: 1rem;
+        text-decoration: underline;
+      }
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2rem;
+      padding-top: 2rem;
+      width: 80%;
+      height: 70%;
+
+      .inputBox {
+        display: flex;
+        flex-direction: column;
+
+        input {
+          font-size: 1.6rem;
+          background-color: var(--background-color);
+          padding: 1rem 0.7rem;
+          border: none;
+          outline: 2px solid rgb(50, 50, 50);
+          border-radius: 3px;
+        }
+
+        input:placeholder-shown {
+          border-bottom: 1.5px solid black;
+          outline: none;
+          border-radius: 0px;
+        }
+
+        input:focus {
+          outline: 2px solid rgb(50, 50, 50);
+          border-radius: 3px;
+          border: none;
+        }
+
+        .inputLabel {
+          width: fit-content;
+          opacity: 1;
+          translate: 9px -49px;
+          background-color: var(--background-color);
+          padding: 0 2px;
+          margin-bottom: -2rem;
+        }
+
+        input:placeholder-shown + .inputLabel {
+          width: fit-content;
+          opacity: 0.6;
+          translate: 9px -24px;
+          transition:
+            250ms translate,
+            100ms opacity;
+        }
+
+        input:focus + .inputLabel {
+          opacity: 1;
+          translate: 9px -49px;
+          background-color: var(--background-color);
+          padding: 0 2px;
+        }
+
+        /* select {
+          font-size: 1.6rem;
+          background-color: var(--background-color);
+          padding: 0.7rem;
+          margin-top: 1rem;
+          border: none;
+          outline: 2px solid black;
+        } */
+      }
+
+      .button {
+        background-color: var(--primary-color);
+        color: #fff;
+        padding: 0.8rem 0;
+        border: 2px #000 solid;
+        box-shadow: 0px 0px black;
+        translate: 1px 1px;
+        transition:
+          box-shadow 250ms,
+          translate 150ms;
+        outline-offset: 4px;
+      }
+
+      .button:hover {
+        box-shadow: 2px 2px black;
+        translate: 0px 0px;
+      }
+    }
+  }
+
+  .menuItemFormSection {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+
+    .menuItemForm {
+      width: 80%;
+
+      .text {
+        text-align: center;
+        padding: 0 1.5rem;
+
+        h2 {
+          font-size: 2.8rem;
+        }
+
+        p {
+          color: #6d6d6d;
+          font-size: 1.4rem;
+          text-align: center;
+          padding-top: 1rem;
+          text-decoration: underline;
+        }
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2rem;
+        padding-top: 2rem;
+        width: 100%;
+        height: 70%;
+
+        .inputBox {
+          display: flex;
+          flex-direction: column;
+
+          input,
+          textarea {
+            font-size: 1.6rem;
+            background-color: var(--background-color);
+            padding: 1rem 0.7rem;
+            border: none;
+            outline: 2px solid rgb(50, 50, 50);
+            border-radius: 3px;
+          }
+
+          textarea {
+            resize: none;
+          }
+
+          input:placeholder-shown {
+            border-bottom: 1.5px solid black;
+            outline: none;
+            border-radius: 0px;
+          }
+
+          input:focus {
+            outline: 2px solid rgb(50, 50, 50);
+            border-radius: 3px;
+            border: none;
+          }
+
+          .inputLabel {
+            width: fit-content;
+            opacity: 1;
+            translate: 9px -49px;
+            background-color: var(--background-color);
+            padding: 0 2px;
+            margin-bottom: -2rem;
+          }
+
+          textarea:first-child + label {
+            translate: 9px -69px;
+          }
+
+          input:placeholder-shown + .inputLabel {
+            width: fit-content;
+            opacity: 0.6;
+            translate: 9px -24px;
+            transition:
+              250ms translate,
+              100ms opacity;
+          }
+
+          input:focus + .inputLabel {
+            opacity: 1;
+            translate: 9px -49px;
+            background-color: var(--background-color);
+            padding: 0 2px;
+          }
+        }
+
+        .inputBox.file {
+          position: relative;
+          outline: 2px solid rgb(50, 50, 50);
+          border-radius: 3px;
+
+          input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+          }
+
+          div {
+            color: rgb(77, 77, 77);
+            text-align: center;
+            font-size: 2rem;
+            padding: 2rem 0;
+
+            span {
+              font-size: 3rem;
+            }
+          }
+
+          .inputLabel {
+            translate: 9px -108px;
+          }
+        }
+
+        .button {
+          background-color: var(--primary-color);
+          color: #fff;
+          padding: 0.8rem 0;
+          border: 2px #000 solid;
+          box-shadow: 0px 0px black;
+          translate: 1px 1px;
+          transition:
+            box-shadow 250ms,
+            translate 150ms;
+          outline-offset: 4px;
+        }
+
+        .button:hover {
+          box-shadow: 2px 2px black;
+          translate: 0px 0px;
+        }
+      }
+    }
+
+    .menuPreview {
+      width: 97%;
+
+      .menuItem {
+        display: flex;
+        border: 2px solid black;
+        height: 100px;
+
+        .itemImg {
+          width: 90px;
+          height: 100%;
+
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+
+        .itemInfos {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          width: calc(100% - 75px);
+          padding: 5px;
+
+          :first-child {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          h4 {
+            font-size: 1.4rem;
+          }
+
+          .itemPrice {
+            font-size: 1.3rem;
+          }
+
+          .itemType {
+            font-size: 1.15rem;
+            background-color: #979797;
+            padding: 2px 4px;
+            border-radius: 3px;
+          }
+
+          .itemDescription {
+            font-size: 1.25rem;
+            text-align: justify;
+            line-height: 1.25rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+main.showMenuForm .menuFormSection,
+main.showMenuItemForm .menuItemFormSection {
+  display: flex;
+}
+
+/*--------------------*/
+/*        QUERY       */
+/*--------------------*/
+
+@media screen and (min-width: 799px) {
+  header div {
+    justify-content: space-between;
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  main.container {
+    width: 90%;
+    margin: 0 auto;
+    padding-top: 3rem;
+
+    .menuItemFormSection {
+      flex-direction: row;
+      gap: 5%;
+      padding: 2.5rem;
+
+      .text {
+        padding: 0;
+      }
+
+      form {
+        padding: 0;
+        width: 80%;
+      }
+    }
+  }
+}
