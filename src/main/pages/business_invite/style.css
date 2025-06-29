@@ -1,0 +1,142 @@
+:root {
+  --primary-color: #d81212;
+  --background-color: #dfdfdf;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  font-size: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background-color);
+  height: 100dvh;
+}
+
+/*--------------------*/
+/*        MAIN        */
+/*--------------------*/
+
+main.container {
+  font-size: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  h1 {
+    color: var(--primary-color);
+    font-size: 7rem;
+    padding-top: 4.6rem;
+  }
+
+  p {
+    color: #000;
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.5rem;
+    width: min(80%, 500px);
+    height: 70%;
+    padding-bottom: 4rem;
+
+    .inputBox {
+      display: flex;
+      flex-direction: column;
+
+      input {
+        font-size: 1.6rem;
+        background-color: var(--background-color);
+        padding: 1rem 0.7rem;
+        border: none;
+        outline: 2px solid rgb(50, 50, 50);
+        border-radius: 3px;
+      }
+
+      input:placeholder-shown {
+        border-bottom: 1.5px solid black;
+        outline: none;
+        border-radius: 0px;
+      }
+
+      input:focus {
+        outline: 2px solid rgb(50, 50, 50);
+        border-radius: 3px;
+        border: none;
+      }
+
+      label {
+        width: fit-content;
+        opacity: 1;
+        translate: 9px -49px;
+        background-color: var(--background-color);
+        padding: 0 2px;
+      }
+
+      input:placeholder-shown + label {
+        width: fit-content;
+        opacity: 0.6;
+        translate: 9px -24px;
+        transition:
+          250ms translate,
+          100ms opacity;
+      }
+
+      input:focus + label {
+        opacity: 1;
+        translate: 9px -49px;
+        background-color: var(--background-color);
+        padding: 0 2px;
+      }
+    }
+
+    .button {
+      background-color: var(--primary-color);
+      color: #fff;
+      margin-top: 1.5rem;
+      padding: 0.8rem 0;
+      border: 2px #000 solid;
+      box-shadow: 0px 0px black;
+      translate: 1px 1px;
+      transition:
+        box-shadow 250ms,
+        translate 150ms;
+      outline-offset: 4px;
+    }
+
+    .button:hover {
+      box-shadow: 2px 2px black;
+      translate: 0px 0px;
+    }
+  }
+}
+
+/*--------------------*/
+/*        QUERY       */
+/*--------------------*/
+
+@media screen and (min-width: 799px) {
+  main.container {
+    flex-direction: row;
+    gap: 5%;
+    padding: 25px;
+
+    h1 {
+      padding: 0;
+    }
+
+    form {
+      padding: 0;
+    }
+  }
+}

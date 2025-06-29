@@ -67,15 +67,15 @@ main.container {
   justify-content: center;
   align-items: center;
   gap: 2rem;
-  padding: 4.6rem 0 2.5rem;
+  padding: 3rem 0 1.5rem;
 
   .menuFormSection {
     display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
-    height: 90%;
+    gap: 4rem;
+    height: calc(100dvh - 51px - 37px - 40px);
 
     .text {
       text-align: center;
@@ -101,9 +101,9 @@ main.container {
       gap: 2rem;
       padding-top: 2rem;
       width: 80%;
-      height: 70%;
 
       .inputBox {
+        position: relative;
         display: flex;
         flex-direction: column;
 
@@ -129,9 +129,11 @@ main.container {
         }
 
         .inputLabel {
+          position: absolute;
+          top: -11px;
+          left: 19px;
           width: fit-content;
           opacity: 1;
-          translate: 9px -49px;
           background-color: var(--background-color);
           padding: 0 2px;
           margin-bottom: -2rem;
@@ -140,27 +142,21 @@ main.container {
         input:placeholder-shown + .inputLabel {
           width: fit-content;
           opacity: 0.6;
-          translate: 9px -24px;
+          top: 15px;
+          left: 19px;
           transition:
-            250ms translate,
+            250ms top,
+            250ms left,
             100ms opacity;
         }
 
         input:focus + .inputLabel {
           opacity: 1;
-          translate: 9px -49px;
+          top: -11px;
+          left: 19px;
           background-color: var(--background-color);
           padding: 0 2px;
         }
-
-        /* select {
-          font-size: 1.6rem;
-          background-color: var(--background-color);
-          padding: 0.7rem;
-          margin-top: 1rem;
-          border: none;
-          outline: 2px solid black;
-        } */
       }
 
       .button {
@@ -188,7 +184,7 @@ main.container {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 3rem;
 
     .menuItemForm {
       width: 80%;
@@ -220,6 +216,7 @@ main.container {
         height: 70%;
 
         .inputBox {
+          position: relative;
           display: flex;
           flex-direction: column;
 
@@ -252,28 +249,34 @@ main.container {
           .inputLabel {
             width: fit-content;
             opacity: 1;
-            translate: 9px -49px;
+            position: absolute;
+            top: -11px;
+            left: 19px;
             background-color: var(--background-color);
             padding: 0 2px;
             margin-bottom: -2rem;
           }
 
           textarea:first-child + label {
-            translate: 9px -69px;
+            top: -11px;
+            left: 19px;
           }
 
           input:placeholder-shown + .inputLabel {
             width: fit-content;
             opacity: 0.6;
-            translate: 9px -24px;
+            top: 15px;
+            left: 19px;
             transition:
-              250ms translate,
+              250ms top,
+              250ms left,
               100ms opacity;
           }
 
           input:focus + .inputLabel {
             opacity: 1;
-            translate: 9px -49px;
+            top: -11px;
+            left: 19px;
             background-color: var(--background-color);
             padding: 0 2px;
           }
@@ -291,7 +294,7 @@ main.container {
             height: 100%;
           }
 
-          div {
+          .inputFileText {
             color: rgb(77, 77, 77);
             text-align: center;
             font-size: 2rem;
@@ -303,7 +306,30 @@ main.container {
           }
 
           .inputLabel {
-            translate: 9px -108px;
+            top: -11px;
+            left: 19px;
+          }
+        }
+
+        .inputBox.file.changeImg {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+
+          .inputFileText {
+            width: 45%;
+            padding: 10px;
+            margin: 0 auto;
+          }
+
+          .formImg {
+            height: 115px;
+
+            img {
+              width: 115px;
+              height: 115px;
+            }
           }
         }
 
@@ -330,53 +356,63 @@ main.container {
     .menuPreview {
       width: 97%;
 
-      .menuItem {
-        display: flex;
+      .menuItems {
+        min-height: 100px;
         border: 2px solid black;
-        height: 100px;
 
-        .itemImg {
-          width: 90px;
-          height: 100%;
-
-          img {
-            width: 100%;
-            height: 100%;
-          }
+        > p {
+          color: rgb(77, 77, 77);
+          text-align: center;
+          font-size: 2rem;
+          padding: 2.5rem 1.5rem;
         }
 
-        .itemInfos {
+        .menuItem {
           display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          width: calc(100% - 75px);
-          padding: 5px;
+          border: 2px solid black;
+          height: 100px;
 
-          :first-child {
+          .itemImg {
+            img {
+              width: 90px;
+              height: 100%;
+            }
+          }
+
+          .itemInfos {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-          }
+            flex-direction: column;
+            gap: 0.5rem;
+            width: calc(100% - 75px);
+            padding: 5px;
 
-          h4 {
-            font-size: 1.4rem;
-          }
+            > :first-child {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
 
-          .itemPrice {
-            font-size: 1.3rem;
-          }
+            h4 {
+              font-size: 1.4rem;
+            }
 
-          .itemType {
-            font-size: 1.15rem;
-            background-color: #979797;
-            padding: 2px 4px;
-            border-radius: 3px;
-          }
+            .itemPrice {
+              font-size: 1.3rem;
+            }
 
-          .itemDescription {
-            font-size: 1.25rem;
-            text-align: justify;
-            line-height: 1.25rem;
+            .itemType {
+              font-size: 1.15rem;
+              background-color: #979797;
+              padding: 2px 4px;
+              border-radius: 3px;
+            }
+
+            .itemDescription {
+              font-size: 1.25rem;
+              text-align: justify;
+              line-height: 1.25rem;
+              line-break: anywhere;
+            }
           }
         }
       }
@@ -393,30 +429,69 @@ main.showMenuItemForm .menuItemFormSection {
 /*        QUERY       */
 /*--------------------*/
 
-@media screen and (min-width: 799px) {
-  header div {
-    justify-content: space-between;
-    width: 80%;
-    margin: 0 auto;
+@media screen and (min-width: 999px) {
+  header {
+    position: fixed;
+    width: 100%;
+
+    div {
+      justify-content: space-between;
+      width: 80%;
+      margin: 0 auto;
+    }
   }
 
   main.container {
-    width: 90%;
+    width: 100%;
     margin: 0 auto;
-    padding-top: 3rem;
+    padding-top: 1.2rem;
 
     .menuItemFormSection {
       flex-direction: row;
+      justify-content: flex-end;
       gap: 5%;
-      padding: 2.5rem;
+      padding: 2.5rem 0;
+      width: 80%;
 
-      .text {
-        padding: 0;
+      .menuItemForm {
+        position: fixed;
+        top: 77px;
+        left: 127px;
+        width: 38%;
+
+        .text {
+          padding: 0;
+        }
+
+        form {
+          padding: 0;
+          width: 100%;
+        }
       }
 
-      form {
-        padding: 0;
-        width: 80%;
+      .menuPreview {
+        align-self: flex-start;
+        width: 45%;
+        margin-top: 50px;
+
+        .menuItems {
+          .menuItem {
+            .itemInfos {
+              flex-direction: row;
+
+              > :first-child {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 25%;
+              }
+
+              .itemDescription {
+                line-height: normal;
+                width: 75%;
+              }
+            }
+          }
+        }
       }
     }
   }

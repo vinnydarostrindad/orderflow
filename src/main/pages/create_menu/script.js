@@ -1,117 +1,173 @@
-// const roleSelect = document.querySelector("#role");
-// const advanceButton = document.querySelector("#advance");
-// let params = new URLSearchParams(document.location.search);
-// let businessId = params.get("businessId"); // is the string "Jonathan"
+const advanceButton = document.querySelector("#advance");
+let params = new URLSearchParams(document.location.search);
+let businessId = params.get("businessId");
+const menuForm = document.querySelector("#menuForm");
+const menuItemForm = document.querySelector("#menuItemForm");
+const fileInput = document.querySelector("#fileInput");
 
-// const rolesExplication = {
-//   waiter:
-//     "O garçom terá acesso ao cardápio para registrar os pedidos dos clientes. Antes de iniciar o pedido, ele deve informar o número da mesa. Ele também pode acompanhar o andamento de cada pedido, se está sendo preparado, pronto para entrega ou já foi entregue, além de visualizar o tempo médio de preparo.",
-//   manager:
-//     "O gerente tem acesso total ao sistema. Ele pode cadastrar e editar produtos do cardápio, adicionar ou remover funcionários, visualizar estatísticas e relatórios de pedidos, configurar o estabelecimento e acompanhar o funcionamento geral da operação.",
-//   cook: "O cozinheiro visualiza apenas os pedidos que precisam ser preparados. Ele pode mudar o status de um pedido para 'em preparo', 'pronto' ou deixar observações internas. Ele não pode alterar pedidos ou acessar outras informações do sistema.",
-//   cashier:
-//     "O caixa é responsável por finalizar os pedidos. Ele pode visualizar os pedidos prontos para pagamento, registrar o pagamento, emitir comprovantes e acompanhar o histórico de transações. Ele também pode corrigir pedidos com autorização do gerente, caso necessário.",
-// };
+let menuId = undefined;
+menuForm.onsubmit = async (e) => {
+  e.preventDefault();
 
-// roleSelect.onchange = showRoleExplication;
+  const menu = document.querySelector("#menu");
 
-// let tableExists = false;
-// let employees = [];
-// document.forms[0].onsubmit = async (e) => {
-//   e.preventDefault();
+  const name = e.target[0].value;
 
-//   console.log("Envia");
+  const response = await fetch(
+    `http://localhost:3000/api/v1/business/${businessId}/menu`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+      }),
+    },
+  );
+  const responseBody = await response.json();
 
-//   const name = document.querySelector("#name").value;
-//   const role = roleSelect.value;
+  menuId = responseBody.id;
+  console.log(responseBody);
 
-//   employees.push([name, role]);
+  menu.firstElementChild.innerHTML = name;
 
-//   if (!tableExists) {
-//     tableExists = true;
-//     createTable();
-//   }
+  changeForms();
+};
 
-//   addToTable(name, role);
-// };
+const menuItems = [];
+menuItemForm.onsubmit = (e) => {
+  e.preventDefault();
 
-// function showRoleExplication(e) {
-//   const roleBox = document.querySelector(".roleBox");
+  const name = e.target[0].value;
+  const price = e.target[1].value;
+  const description = e.target[2].value;
+  const imgFile = e.target[3].files[0];
+  const type = e.target[4].value;
 
-//   const roleValue = e.target.value;
+  let imgBlob;
+  if (imgFile) {
+    imgBlob = URL.createObjectURL(imgFile);
+  }
 
-//   for (let role in rolesExplication) {
-//     if (role === roleValue) {
-//       roleBox.innerHTML = rolesExplication[role];
-//     }
-//   }
-// }
+  const menuItemWithFile = {
+    name,
+    price,
+    description,
+    imgFile,
+    type,
+  };
 
-// function createTable() {
-//   const employeesTableContainer = document.querySelector("#employeesTable");
+  const menuItemWithBlob = {
+    name,
+    price,
+    description,
+    imgBlob,
+    type,
+  };
 
-//   employeesTableContainer.innerHTML = `
-//     <table>
-//       <caption>
-//         Funcionários adicionados:
-//       </caption>
-//       <thead>
-//         <tr>
-//           <th scope="col">Name</th>
-//           <th scope="col">Cargo</th>
-//         </tr>
-//       </thead>
-//       <tbody>
-//       </tbody>
-//     </table>
-//   `;
-// }
+  menuItems.push(menuItemWithFile);
 
-// function addToTable(name, role) {
-//   const tableBody = document.querySelector("tbody");
-//   const roles = {
-//     manager: "Gerente",
-//     cook: "Cozinheiro(a)",
-//     waiter: "Garçom/Garçonete",
-//     cashier: "Caixa",
-//   };
+  addMenuItem(menuItemWithBlob);
+};
 
-//   tableBody.innerHTML += `
-//     <tr>
-//       <td>${name}</td>
-//       <td>${roles[role]}</td>
-//     </tr>
-//   `;
-// }
+fileInput.onchange = (e) => {
+  const fileInput = document.querySelector("#fileInput");
+  const inputFileText = document.querySelector(".inputFileText");
+  const imgPreview = document.querySelector("#imgPreview");
 
-// advanceButton.onclick = async () => {
-//   if (employees.length === 0) {
-//     alert("Adicione algum funcionário para prosseguir.");
-//     return;
-//   }
+  fileInput.classList.add("changeImg");
+  inputFileText.innerHTML = "<p>Alterar Imagem</p>";
 
-//   employees.forEach(async (employee) => {
-//     const name = employee[0];
-//     const role = employee[1];
-//     console.log(employee, role);
+  const file = e.target.files[0];
 
-//     const response = await fetch(
-//       `http://localhost:3000/api/v1/business/${businessId}/employee`,
-//       {
-//         method: "POST",
-//         headers: {
-//           "content-type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           name,
-//           role,
-//           password: "funcionario",
-//         }),
-//       },
-//     );
-//     const responseBody = await response.json();
-//     console.log(responseBody);
+  if (file) {
+    const preview = document.createElement("img");
+    preview.src = URL.createObjectURL(file);
 
-//     window.location.href = `http://localhost:5500/src/main/pages/create_menu/index.html?businessId=${businessId}`;
-//   });
-// };
+    imgPreview.replaceChildren(preview);
+  }
+};
+
+function changeForms() {
+  const main = document.querySelector("#main");
+
+  main.classList.toggle("showMenuForm");
+  main.classList.toggle("showMenuItemForm");
+}
+
+function addMenuItem(menuItem) {
+  const menuItemsBox = document.querySelector("#menuItems");
+  const { name, price, description, imgBlob, type } = menuItem;
+
+  if (menuItemsBox.firstElementChild.nodeName === "P") {
+    menuItemsBox.innerHTML = `
+    <div class="menuItem">
+      <div class="itemImg">
+            ${imgBlob ? `<img src="${imgBlob}" alt="${name}" />` : ""}
+            </div>
+            <div class="itemInfos">
+              <div>
+                <h4>${name}</h4>
+                <p class="itemPrice">R$ ${price}</p>
+                ${type ? `<p class="itemType">${type}</p>` : ""}
+              </div>
+              <p class="itemDescription">
+                ${description}
+              </p>
+            </div>
+    </div>
+  `;
+    return;
+  }
+
+  menuItemsBox.innerHTML += `
+    <div class="menuItem">
+      <div class="itemImg">
+              <img src="${imgBlob}" alt="${name}" />
+            </div>
+            <div class="itemInfos">
+              <div>
+                <h4>${name}</h4>
+                <p class="itemPrice">R$ ${price}</p>
+                ${type ? `<p class="itemType">${type}</p>` : ""}
+              </div>
+              <p class="itemDescription">
+                ${description}
+              </p>
+            </div>
+    </div>
+  `;
+}
+
+advanceButton.onclick = advaceButton;
+
+async function advaceButton() {
+  if (menuItems.length === 0) {
+    alert("Adicione algum funcionário para prosseguir.");
+    return;
+  }
+
+  menuItems.forEach(async (item) => {
+    const { name, price, description, imgFile, type } = item;
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("price", price);
+    formData.append("description", description);
+    formData.append("imgFile", imgFile);
+    formData.append("type", type);
+
+    const response = await fetch(
+      `http://localhost:3000/api/v1/business/${businessId}/menu/${menuId}/item`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
+
+    const responseBody = await response.json();
+    console.log(responseBody);
+  });
+
+  window.location.href = `http://localhost:5500/src/main/pages/business_invite/index.html?businessId=${businessId}`;
+}

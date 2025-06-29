@@ -82,7 +82,7 @@ describe("Register Menu Item UseCase", () => {
     const props = {
       menuId: "any_menu_id",
       price: "any_price",
-      imagePath: "any_img_path",
+      imgFile: "any_img_file",
       description: "any_description",
       type: "any_type",
     };
@@ -97,7 +97,7 @@ describe("Register Menu Item UseCase", () => {
     const props = {
       menuId: "any_menu_id",
       name: "any_name",
-      imagePath: "any_img_path",
+      imgFile: "any_img_file",
       description: "any_description",
       type: "any_type",
     };
@@ -112,7 +112,7 @@ describe("Register Menu Item UseCase", () => {
     const props = {
       name: "any_name",
       price: "any_price",
-      imagePath: "any_img_path",
+      imgFile: "any_img_file",
       description: "any_description",
       type: "any_type",
     };
@@ -127,7 +127,6 @@ describe("Register Menu Item UseCase", () => {
       menuId: "any_menu_id",
       name: "any_name",
       price: "any_price",
-      imagePath: "any_img_path",
       description: "any_description",
       type: "any_type",
     };
@@ -137,7 +136,7 @@ describe("Register Menu Item UseCase", () => {
     expect(menuItemRepositorySpy.menuId).toBe("any_menu_id");
     expect(menuItemRepositorySpy.name).toBe("any_name");
     expect(menuItemRepositorySpy.price).toBe("any_price");
-    expect(menuItemRepositorySpy.imagePath).toBe("any_img_path");
+    expect(menuItemRepositorySpy.imagePath).toBe(undefined);
     expect(menuItemRepositorySpy.description).toBe("any_description");
     expect(menuItemRepositorySpy.type).toBe("any_type");
   });
@@ -148,7 +147,6 @@ describe("Register Menu Item UseCase", () => {
       menuId: "any_menu_id",
       name: "any_name",
       price: "any_price",
-      imagePath: "any_img_path",
       description: "any_description",
       type: "any_type",
     };
@@ -185,7 +183,6 @@ describe("Register Menu Item UseCase", () => {
       menuId: "any_menu_id",
       name: "any_name",
       price: "any_price",
-      imagePath: "any_img_path",
       description: "any_description",
       type: "any_type",
     };
@@ -210,7 +207,7 @@ describe("Register Menu Item UseCase", () => {
       menuId: "any_menu_id",
       name: "any_name",
       price: "any_price",
-      imagePath: "any_img_path",
+      imgFile: "any_img_file",
       description: "any_description",
       type: "any_type",
     };

@@ -9,7 +9,7 @@ export default class RegisterMenuItemRouter {
   }
 
   async route(httpRequest) {
-    const { name, price, imagePath, description, type } = httpRequest.body;
+    const { name, price, imgFile, description, type } = httpRequest.body;
     const { menuId } = httpRequest.params;
 
     if (!name) {
@@ -29,7 +29,7 @@ export default class RegisterMenuItemRouter {
       menuId,
       name,
       price,
-      imagePath,
+      imgFile,
       description,
       type,
     });

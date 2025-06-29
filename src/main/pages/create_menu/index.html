@@ -13,13 +13,13 @@
         <button type="button" class="button" id="advance">AVANÇAR</button>
       </div>
     </header>
-    <main class="container showMenuItemForm">
+    <main class="container showMenuItemForm" id="main">
       <div class="menuFormSection">
         <div class="text">
           <h2>Agora vamos criar o cardápio!</h2>
           <p>Deixar para depois</p>
         </div>
-        <form method="post">
+        <form method="post" id="menuForm">
           <div class="inputBox">
             <input
               type="text"
@@ -40,7 +40,7 @@
             <h2>Adicione os itens no seu menu</h2>
             <p>Deixar para depois</p>
           </div>
-          <form method="post">
+          <form method="post" id="menuItemForm">
             <div class="inputBox">
               <input
                 type="text"
@@ -71,7 +71,7 @@
               ></textarea>
               <label for="description" class="inputLabel">Descrição</label>
             </div>
-            <div class="inputBox file">
+            <div class="inputBox file" id="fileInput">
               <input
                 type="file"
                 name="image"
@@ -80,10 +80,11 @@
                 autocomplete="off"
                 placeholder=" "
               />
-              <div>
+              <div class="inputFileText">
                 <p>Adicionar Imagem</p>
                 <span>+</span>
               </div>
+              <div class="formImg" id="imgPreview"></div>
               <label for="image" class="inputLabel">Imagem</label>
             </div>
             <div class="inputBox">
@@ -99,109 +100,10 @@
             <button type="submit" class="button">Adicionar</button>
           </form>
         </div>
-        <div class="menuPreview">
-          <h3>Nome do Menu</h3>
-          <div class="menuItem">
-            <div class="itemImg">
-              <img src="./img/macarrao-na-chapa.jpeg" alt="Macarrão na Chapa" />
-            </div>
-            <div class="itemInfos">
-              <div>
-                <h4>Macarrão na Chapa</h4>
-                <p class="itemPrice">R$ 18,90</p>
-                <p class="itemType">Massa</p>
-              </div>
-              <p class="itemDescription">
-                Macarrão na Chapa com legumes salteados e molho especial.
-                Finalizado na chapa quente, entrega sabor defumado e textura
-                perfeita: cremoso por dentro e levemente crocante por fora.
-              </p>
-            </div>
-          </div>
-          <div class="menuItem">
-            <div class="itemImg">
-              <img src="./img/macarrao-na-chapa.jpeg" alt="Macarrão na Chapa" />
-            </div>
-            <div class="itemInfos">
-              <div>
-                <h4>Macarrão na Chapa</h4>
-                <p class="itemPrice">R$ 18,90</p>
-                <p class="itemType">Massa</p>
-              </div>
-              <p class="itemDescription">
-                Macarrão na Chapa com legumes salteados e molho especial.
-                Finalizado na chapa quente, entrega sabor defumado e textura
-                perfeita: cremoso por dentro e levemente crocante por fora.
-              </p>
-            </div>
-          </div>
-          <div class="menuItem">
-            <div class="itemImg">
-              <img src="./img/macarrao-na-chapa.jpeg" alt="Macarrão na Chapa" />
-            </div>
-            <div class="itemInfos">
-              <div>
-                <h4>Macarrão na Chapa</h4>
-                <p class="itemPrice">R$ 18,90</p>
-                <p class="itemType">Massa</p>
-              </div>
-              <p class="itemDescription">
-                Macarrão na Chapa com legumes salteados e molho especial.
-                Finalizado na chapa quente, entrega sabor defumado e textura
-                perfeita: cremoso por dentro e levemente crocante por fora.
-              </p>
-            </div>
-          </div>
-          <div class="menuItem">
-            <div class="itemImg">
-              <img src="./img/macarrao-na-chapa.jpeg" alt="Macarrão na Chapa" />
-            </div>
-            <div class="itemInfos">
-              <div>
-                <h4>Macarrão na Chapa</h4>
-                <p class="itemPrice">R$ 18,90</p>
-                <p class="itemType">Massa</p>
-              </div>
-              <p class="itemDescription">
-                Macarrão na Chapa com legumes salteados e molho especial.
-                Finalizado na chapa quente, entrega sabor defumado e textura
-                perfeita: cremoso por dentro e levemente crocante por fora.
-              </p>
-            </div>
-          </div>
-          <div class="menuItem">
-            <div class="itemImg">
-              <img src="./img/macarrao-na-chapa.jpeg" alt="Macarrão na Chapa" />
-            </div>
-            <div class="itemInfos">
-              <div>
-                <h4>Macarrão na Chapa</h4>
-                <p class="itemPrice">R$ 18,90</p>
-                <p class="itemType">Massa</p>
-              </div>
-              <p class="itemDescription">
-                Macarrão na Chapa com legumes salteados e molho especial.
-                Finalizado na chapa quente, entrega sabor defumado e textura
-                perfeita: cremoso por dentro e levemente crocante por fora.
-              </p>
-            </div>
-          </div>
-          <div class="menuItem">
-            <div class="itemImg">
-              <img src="./img/macarrao-na-chapa.jpeg" alt="Macarrão na Chapa" />
-            </div>
-            <div class="itemInfos">
-              <div>
-                <h4>Macarrão na Chapa</h4>
-                <p class="itemPrice">R$ 18,90</p>
-                <p class="itemType">Massa</p>
-              </div>
-              <p class="itemDescription">
-                Macarrão na Chapa com legumes salteados e molho especial.
-                Finalizado na chapa quente, entrega sabor defumado e textura
-                perfeita: cremoso por dentro e levemente crocante por fora.
-              </p>
-            </div>
+        <div class="menuPreview" id="menu">
+          <h3></h3>
+          <div class="menuItems" id="menuItems">
+            <p>Adicione algum item ao seu menu para visualizar</p>
           </div>
         </div>
       </div>
