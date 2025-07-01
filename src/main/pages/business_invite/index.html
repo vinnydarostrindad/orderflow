@@ -4,51 +4,71 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
-    <title>OrderFlow - Registro</title>
+    <title>Business Invite</title>
   </head>
   <body>
-    <main class="container">
+    <header>
       <div>
         <h1>OrderFlow</h1>
-        <p>Faça seu registro</p>
+        <button type="button" class="button" id="advance">AVANÇAR</button>
       </div>
-      <form method="post" action="/api/v1/business" name="registerForm">
-        <div class="inputBox">
-          <input
-            type="text"
-            name="name"
-            id="name"
-            autocomplete="off"
-            placeholder=" "
-            required
-          />
-          <label for="name">Nome</label>
+    </header>
+    <main class="container">
+      <div class="text">
+        <h2>Hora de compartilhar!</h2>
+        <p>Compartilhe esse código com a sua equipe</p>
+      </div>
+      <div class="shareContainer">
+        <div class="shareBox">
+          <p id="code"></p>
+          <button class="copyBtn" id="copyCodeBtn">
+            <img src="./img/copy-icon.svg" alt="Copy" />
+          </button>
         </div>
-        <div class="inputBox">
-          <input
-            type="email"
-            name="email"
-            id="email"
-            autocomplete="email"
-            placeholder=" "
-            required
-          />
-          <label for="email">Email</label>
-        </div>
-        <div class="inputBox">
-          <input
-            type="password"
-            name="password"
-            id="password"
-            autocomplete="new-password"
-            placeholder=" "
-            required
-          />
-          <label for="password">Senha</label>
-        </div>
-        <button type="submit" class="button">Registrar</button>
-      </form>
+        <p class="copyWarn"></p>
+      </div>
+      <p style="font-weight: bold">OU</p>
+      <button class="shareBtn" id="shareBtn">Compartilhar Link</button>
     </main>
+
+    <div class="modalBackground hidden"></div>
+    <div class="shareModal hidden" id="shareModal">
+      <span id="exitModalBtn"
+        ><img src="./img/exit-icon.svg" alt="exit"
+      /></span>
+      <div class="modalHeader">
+        <h3>Link do Convite</h3>
+        <div>
+          <p>
+            http://localhost:5500/employee-login?businessId=6f3a9b2c-1d5e-4b7f-8c0d-2a1e3f4b5c6d
+          </p>
+          <button class="copyBtn" id="copyUrlBtn">
+            <img src="./img/copy-icon.svg" alt="Copy" width="20" />
+          </button>
+        </div>
+        <p class="copyWarn"></p>
+      </div>
+      <div class="modalApps">
+        <div>
+          <a id="whatsappLink">
+            <p>whatsapp</p>
+            <img src="./img/whatsapp-icon.svg" alt="whatsapp" />
+          </a>
+        </div>
+        <div>
+          <a id="emailLink">
+            <p>email</p>
+            <img src="./img/email-icon.svg" alt="email" />
+          </a>
+        </div>
+        <div>
+          <a id="telegramLink">
+            <p>telegram</p>
+            <img src="./img/telegram-icon.svg" alt="telegram" />
+          </a>
+        </div>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>
