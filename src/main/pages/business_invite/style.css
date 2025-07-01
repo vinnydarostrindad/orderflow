@@ -18,125 +18,274 @@ html {
 }
 
 /*--------------------*/
-/*        MAIN        */
+/*       HEADER       */
 /*--------------------*/
 
-main.container {
-  font-size: 1.6rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+header {
+  background-color: var(--primary-color);
+
+  div {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem 0;
+    height: 100%;
+  }
 
   h1 {
-    color: var(--primary-color);
-    font-size: 7rem;
-    padding-top: 4.6rem;
-  }
-
-  p {
-    color: #000;
+    color: #fff;
     font-size: 2rem;
-    text-align: center;
   }
 
-  form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 1.5rem;
-    width: min(80%, 500px);
-    height: 70%;
-    padding-bottom: 4rem;
+  .button {
+    font-weight: bold;
+    background-color: #fff;
+    color: var(--primary-color);
+    padding: 0.6rem 1rem;
+    border: 2px #000 solid;
+    box-shadow: 0px 0px black;
+    translate: 1px 1px;
+    transition:
+      box-shadow 250ms,
+      translate 150ms;
+    outline-offset: 4px;
+  }
 
-    .inputBox {
-      display: flex;
-      flex-direction: column;
-
-      input {
-        font-size: 1.6rem;
-        background-color: var(--background-color);
-        padding: 1rem 0.7rem;
-        border: none;
-        outline: 2px solid rgb(50, 50, 50);
-        border-radius: 3px;
-      }
-
-      input:placeholder-shown {
-        border-bottom: 1.5px solid black;
-        outline: none;
-        border-radius: 0px;
-      }
-
-      input:focus {
-        outline: 2px solid rgb(50, 50, 50);
-        border-radius: 3px;
-        border: none;
-      }
-
-      label {
-        width: fit-content;
-        opacity: 1;
-        translate: 9px -49px;
-        background-color: var(--background-color);
-        padding: 0 2px;
-      }
-
-      input:placeholder-shown + label {
-        width: fit-content;
-        opacity: 0.6;
-        translate: 9px -24px;
-        transition:
-          250ms translate,
-          100ms opacity;
-      }
-
-      input:focus + label {
-        opacity: 1;
-        translate: 9px -49px;
-        background-color: var(--background-color);
-        padding: 0 2px;
-      }
-    }
-
-    .button {
-      background-color: var(--primary-color);
-      color: #fff;
-      margin-top: 1.5rem;
-      padding: 0.8rem 0;
-      border: 2px #000 solid;
-      box-shadow: 0px 0px black;
-      translate: 1px 1px;
-      transition:
-        box-shadow 250ms,
-        translate 150ms;
-      outline-offset: 4px;
-    }
-
-    .button:hover {
-      box-shadow: 2px 2px black;
-      translate: 0px 0px;
-    }
+  .button:hover {
+    box-shadow: 2px 2px black;
+    translate: 0px 0px;
   }
 }
 
 /*--------------------*/
-/*        QUERY       */
+/*        MAIN        */
 /*--------------------*/
 
-@media screen and (min-width: 799px) {
-  main.container {
-    flex-direction: row;
-    gap: 5%;
-    padding: 25px;
+main.container {
+  margin: -3.5rem auto 0;
+  font-size: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 25px;
+  align-items: center;
+  width: min(90%, 600px);
+  height: calc(100dvh - 51px);
 
-    h1 {
-      padding: 0;
+  .text {
+    h2 {
+      font-size: 2.7rem;
+      text-align: center;
+      margin-bottom: 8px;
     }
 
-    form {
-      padding: 0;
+    p {
+      color: #474747;
+      font-size: 1.8rem;
+      text-align: center;
     }
+  }
+
+  .shareContainer {
+    .shareBox {
+      display: flex;
+      align-items: center;
+      border: 2px solid black;
+      gap: 5px;
+      margin: 0.8rem 0;
+      padding: 1rem;
+      width: fit-content;
+
+      .copyBtn {
+        border: none;
+        background-color: transparent;
+        width: 2rem;
+
+        img {
+          width: 100%;
+        }
+      }
+    }
+
+    .copyWarn {
+      font-size: 1.4rem;
+      margin-top: -5px;
+      text-align: end;
+    }
+  }
+
+  .shareBtn {
+    background-color: var(--primary-color);
+    font-size: 1.6rem;
+    color: #fff;
+    padding: 1rem 0;
+    border: 2px #000 solid;
+    box-shadow: 0px 0px black;
+    width: min(100%, 322px);
+    translate: 1px 1px;
+    transition:
+      box-shadow 250ms,
+      translate 150ms;
+    outline-offset: 4px;
+  }
+
+  .shareBtn:hover {
+    box-shadow: 2px 2px black;
+    translate: 0px 0px;
+  }
+}
+
+/*--------------------*/
+/*     SHARE MODAL    */
+/*--------------------*/
+
+.shareModal {
+  background-color: var(--background-color);
+  position: fixed;
+  bottom: 0;
+  border-radius: 2rem 2rem 0 0;
+  width: 100%;
+  z-index: 2;
+  transform: translateY(0%);
+  transition: transform 500ms ease-in-out;
+
+  span {
+    display: none;
+  }
+
+  .modalHeader {
+    padding: 1.5rem 2.5rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid rgb(168, 168, 168);
+
+    h3 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    div {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      p {
+        font-size: 1.3rem;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .copyBtn {
+        border: none;
+        background-color: transparent;
+        /* width: 2rem; */
+
+        img {
+          width: 2rem;
+        }
+      }
+    }
+
+    .copyWarn {
+      font-size: 1.2rem;
+      text-align: end;
+    }
+  }
+
+  .modalApps {
+    display: flex;
+    justify-content: space-evenly;
+    justify-items: center;
+    padding: 0 1.5rem 2rem;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      width: 10rem;
+
+      p {
+        text-align: center;
+        font-size: 1.4rem;
+      }
+
+      a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        color: #000;
+        background-color: transparent;
+        border: none;
+        text-decoration: none;
+      }
+
+      img {
+        width: 4.2rem;
+      }
+    }
+  }
+}
+
+.shareModal.hidden {
+  transform: translateY(100%);
+}
+
+.modalBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 1;
+  background-color: #00000086;
+  opacity: 1;
+  transition:
+    opacity 300ms ease,
+    background-color 300ms ease;
+}
+
+.modalBackground.hidden {
+  opacity: 0;
+  pointer-events: none;
+  background-color: transparent;
+  transition:
+    opacity 300ms ease,
+    background-color 300ms ease 0.5s;
+}
+
+/*--------------------*/
+/*       QUERY        */
+/*--------------------*/
+@media screen and (min-width: 550px) {
+  .shareModal {
+    bottom: 50%;
+    left: 50%;
+    translate: -50% 50%;
+    border-radius: 25px;
+    width: min(80%, 550px);
+    padding: 1.5rem 0 2.3rem;
+
+    span {
+      display: block;
+      position: absolute;
+      top: 15px;
+      right: 18px;
+
+      img {
+        width: 1.7rem;
+      }
+    }
+
+    .modalHeader {
+      padding: 2rem;
+    }
+
+    .modalApps {
+      padding-bottom: 3rem;
+    }
+  }
+
+  .shareModal.hidden {
+    display: none;
   }
 }
