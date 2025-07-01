@@ -20,7 +20,7 @@ describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
     const requestBody = {
       name: "any_name",
       price: 9.9,
-      imagePath: "any_img_path",
+      imageFile: null,
       description: "any_description",
       type: "any_type",
     };
@@ -45,7 +45,7 @@ describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
       menu_id: menu.id,
       name: requestBody.name,
       price: "9.90",
-      image_path: requestBody.imagePath,
+      image_path: null,
       description: requestBody.description,
       type: requestBody.type,
     });
@@ -71,7 +71,7 @@ describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
     const requestBody = {
       name: "any_name_1",
       price: 9.9,
-      imagePath: "any_img_path",
+      imageFile: null,
       description: "any_description",
       type: "any_type",
     };

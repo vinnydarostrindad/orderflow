@@ -27,13 +27,15 @@ describe("GET /api/v1/business/[businessId]/table", () => {
     expect(Array.isArray(responseBody)).toBe(true);
     expect(responseBody.length).toBeGreaterThan(0);
 
+    let i = 1;
     responseBody.forEach((table) => {
       expect(table).toMatchObject({
         id: table.id,
         businessId: business.id,
-        number: "1",
+        number: `${i}`,
         name: "any_name",
       });
+      i++;
 
       expect(typeof table.id).toBe("string");
       expect(uuidVersion(table.id)).toBe(4);

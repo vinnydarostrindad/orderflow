@@ -12,8 +12,8 @@ beforeEach(async () => {
   await runMigrations();
 });
 
-describe("GET /api/v1/business/[businessId]/table/[tableId]/table", () => {
-  test("Should return all tables with correct data", async () => {
+describe("GET /api/v1/business/[businessId]/table/[tableId]/order", () => {
+  test("Should return all orders with correct data", async () => {
     const business = await createBusiness();
     const table = await createTable(business.id);
     await createOrder(business.id, table.id, 2);
@@ -29,14 +29,16 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]/table", () => {
     expect(Array.isArray(responseBody)).toBe(true);
     expect(responseBody.length).toBeGreaterThan(0);
 
+    let i = 1;
     responseBody.forEach((order) => {
       expect(order).toMatchObject({
         id: order.id,
         businessId: business.id,
         tableId: table.id,
-        tableNumber: "1",
+        tableNumber: `${i}`,
         status: "pending",
       });
+      i++;
 
       expect(typeof order.id).toBe("string");
       expect(uuidVersion(order.id)).toBe(4);
@@ -73,7 +75,7 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]/table", () => {
 });
 
 describe("GET /api/v1/business/[businessId]/table/[tableId]/order/[orderId]", () => {
-  test("Should return correct table", async () => {
+  test("Should return correct order", async () => {
     const business = await createBusiness();
     const table = await createTable(business.id);
     const order = await createOrder(business.id, table.id);
@@ -121,7 +123,6 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]/order/[orderId]", ()
     expect(response.status).toBe(404);
 
     const responseBody = await response.json();
-
     expect(responseBody).toEqual({
       name: "NotFoundError",
       statusCode: 404,

@@ -31,10 +31,10 @@ const router = async function (req, res) {
     }
 
     const httpRequest = await nodeRequestAdapter(req, params);
-
     const httpResponse = await route.methods[method](httpRequest);
 
     if (httpResponse.body instanceof Error) {
+      console.log(httpResponse.body);
       throw httpResponse.body;
     }
 
@@ -45,6 +45,7 @@ const router = async function (req, res) {
     return res.end(JSON.stringify(httpResponse.body));
   } catch (error) {
     console.error(error);
+
     if (!(error instanceof ServerError)) {
       res.writeHead(error.statusCode);
       return res.end(JSON.stringify(error));

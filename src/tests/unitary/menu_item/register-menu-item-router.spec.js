@@ -14,11 +14,11 @@ const makeSut = () => {
 
 const makeRegisterMenuItemUseCase = () => {
   class RegisterMenuItemUseCaseSpy {
-    async execute({ menuId, name, price, imagePath, description, type }) {
+    async execute({ menuId, name, price, imgFile, description, type }) {
       this.menuId = menuId;
       this.name = name;
       this.price = price;
-      this.imagePath = imagePath;
+      this.imgFile = imgFile;
       this.description = description;
       this.type = type;
       return this.menuItem;
@@ -31,7 +31,7 @@ const makeRegisterMenuItemUseCase = () => {
     menuId: "any_menu_id",
     name: "any_name",
     price: "any_price",
-    imagePath: "any_img_path",
+    imgFile: "any_img_file",
     description: "any_description",
     type: "any_type",
   };
@@ -84,7 +84,7 @@ describe("Register MenuItem Router", () => {
       body: {
         name: "any_name",
         price: "any_price",
-        imagePath: "any_img_path",
+        imgFile: "any_img_file",
         description: "any_description",
         type: "any_type",
       },
@@ -102,7 +102,7 @@ describe("Register MenuItem Router", () => {
       body: {
         name: "any_name",
         price: "any_price",
-        imagePath: "any_img_path",
+        imgFile: "any_img_file",
         description: "any_description",
         type: "any_type",
       },
@@ -122,7 +122,7 @@ describe("Register MenuItem Router", () => {
       params: { menuId: "any_menu_id" },
       body: {
         price: "any_price",
-        imagePath: "any_img_path",
+        imgFile: "any_img_file",
         description: "any_description",
         type: "any_type",
       },
@@ -138,7 +138,7 @@ describe("Register MenuItem Router", () => {
       params: { menuId: "any_menu_id" },
       body: {
         name: "any_name",
-        imagePath: "any_img_path",
+        imgFile: "any_img_file",
         description: "any_description",
         type: "any_type",
       },
@@ -167,7 +167,7 @@ describe("Register MenuItem Router", () => {
     const httpRequest = {
       body: {
         price: "any_price",
-        imagePath: "any_img_path",
+        imgFile: "any_img_file",
         description: "any_description",
         type: "any_type",
       },
@@ -183,7 +183,7 @@ describe("Register MenuItem Router", () => {
       body: {
         name: "any_name",
         price: "any_price",
-        imagePath: "any_img_path",
+        imgFile: "any_img_file",
         description: "any_description",
         type: "any_type",
       },
@@ -192,7 +192,7 @@ describe("Register MenuItem Router", () => {
     expect(registerMenuItemUseCaseSpy.menuId).toBe("any_menu_id");
     expect(registerMenuItemUseCaseSpy.name).toBe("any_name");
     expect(registerMenuItemUseCaseSpy.price).toBe("any_price");
-    expect(registerMenuItemUseCaseSpy.imagePath).toBe("any_img_path");
+    expect(registerMenuItemUseCaseSpy.imgFile).toBe("any_img_file");
     expect(registerMenuItemUseCaseSpy.description).toBe("any_description");
     expect(registerMenuItemUseCaseSpy.type).toBe("any_type");
   });
@@ -204,7 +204,7 @@ describe("Register MenuItem Router", () => {
       body: {
         name: "any_name",
         price: "any_price",
-        imagePath: "any_img_path",
+        imgFile: "any_img_file",
         description: "any_description",
         type: "any_type",
       },
@@ -216,7 +216,7 @@ describe("Register MenuItem Router", () => {
       menuId: "any_menu_id",
       name: "any_name",
       price: "any_price",
-      imagePath: "any_img_path",
+      imgFile: "any_img_file",
       description: "any_description",
       type: "any_type",
     });
@@ -239,7 +239,7 @@ describe("Register MenuItem Router", () => {
       body: {
         name: "any_name",
         price: "any_price",
-        imagePath: "any_img_path",
+        imgFile: "any_img_file",
         description: "any_description",
         type: "any_type",
       },
@@ -265,7 +265,7 @@ describe("Register MenuItem Router", () => {
       body: {
         name: "any_name",
         price: "any_price",
-        imagePath: "any_img_path",
+        imgFile: "any_img_file",
         description: "any_description",
         type: "any_type",
       },

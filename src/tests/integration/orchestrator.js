@@ -80,7 +80,7 @@ async function createMenuItem(businessId, menuId, quantity = 1, props = {}) {
         body: JSON.stringify({
           name: props.name || `any_name_${i + 1}`,
           price: props.price || 9.9,
-          imagePath: props.imagePath || "any_img_path",
+          imageFile: props.imagFile || null,
           description: props.description || "any_description",
           type: props.type || "any_type",
         }),
@@ -102,7 +102,7 @@ async function createTable(businessId, quantity = 1, props = {}) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          number: props.number || 1,
+          number: props.number || i + 1,
           name: props.name || "any_name",
         }),
       },
@@ -123,7 +123,7 @@ async function createOrder(businessId, tableId, quantity = 1, props = {}) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          tableNumber: props.tableNumber || 1,
+          tableNumber: props.tableNumber || i + 1,
         }),
       },
     );

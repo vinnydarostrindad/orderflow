@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Criar Cardápio</title>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>OrderFlow</h1>
+        <button type="button" class="button" id="advance">AVANÇAR</button>
+      </div>
+    </header>
+    <main class="container showMenuItemForm" id="main">
+      <div class="menuFormSection">
+        <div class="text">
+          <h2>Agora vamos criar o cardápio!</h2>
+          <p>Deixar para depois</p>
+        </div>
+        <form method="post" id="menuForm">
+          <div class="inputBox">
+            <input
+              type="text"
+              name="name"
+              id="name"
+              autocomplete="off"
+              placeholder=" "
+              required
+            />
+            <label for="name" class="inputLabel">Nome</label>
+          </div>
+          <button type="submit" class="button">Criar</button>
+        </form>
+      </div>
+      <div class="menuItemFormSection">
+        <div class="menuItemForm">
+          <div class="text">
+            <h2>Adicione os itens no seu menu</h2>
+            <p>Deixar para depois</p>
+          </div>
+          <form method="post" id="menuItemForm">
+            <div class="inputBox">
+              <input
+                type="text"
+                name="name"
+                id="name"
+                autocomplete="off"
+                placeholder=" "
+                required
+              />
+              <label for="name" class="inputLabel">Nome</label>
+            </div>
+            <div class="inputBox">
+              <input
+                type="text"
+                name="price"
+                id="price"
+                autocomplete="off"
+                placeholder=" "
+                required
+              />
+              <label for="price" class="inputLabel">Preço</label>
+            </div>
+            <div class="inputBox">
+              <textarea
+                name="description"
+                id="description"
+                placeholder=" "
+              ></textarea>
+              <label for="description" class="inputLabel">Descrição</label>
+            </div>
+            <div class="inputBox file" id="fileInput">
+              <input
+                type="file"
+                name="image"
+                id="image"
+                accept="image/*"
+                autocomplete="off"
+                placeholder=" "
+              />
+              <div class="inputFileText">
+                <p>Adicionar Imagem</p>
+                <span>+</span>
+              </div>
+              <div class="formImg" id="imgPreview"></div>
+              <label for="image" class="inputLabel">Imagem</label>
+            </div>
+            <div class="inputBox">
+              <input
+                type="text"
+                name="type"
+                id="type"
+                autocomplete="off"
+                placeholder=" "
+              />
+              <label for="type" class="inputLabel">Tipo</label>
+            </div>
+            <button type="submit" class="button">Adicionar</button>
+          </form>
+        </div>
+        <div class="menuPreview" id="menu">
+          <h3></h3>
+          <div class="menuItems" id="menuItems">
+            <p>Adicione algum item ao seu menu para visualizar</p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>

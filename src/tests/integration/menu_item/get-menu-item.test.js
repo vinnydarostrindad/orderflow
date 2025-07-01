@@ -36,7 +36,7 @@ describe("GET /api/v1/business/[businessId]/menu/[menuId]/item", () => {
         menuId: menu.id,
         name: `any_name_${i}`,
         price: "9.90",
-        imagePath: "any_img_path",
+        imagePath: null,
         description: "any_description",
         type: "any_type",
       });
@@ -89,7 +89,7 @@ describe("GET /api/v1/business/[businessId]/menu/[menuId]/item/[menuItemId]", ()
       menuId: menu.id,
       name: "any_name_1",
       price: "9.90",
-      imagePath: "any_img_path",
+      imagePath: null,
       description: "any_description",
       type: "any_type",
     });
