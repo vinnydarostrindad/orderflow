@@ -13,7 +13,6 @@ export default class RegisterMenuItemUseCase {
     if (!price) throw new MissingParamError("price");
     if (!menuId) throw new MissingParamError("menuId");
 
-    console.log(imgFile);
     let imagePath;
     if (imgFile) {
       const timestamp = Date.now();

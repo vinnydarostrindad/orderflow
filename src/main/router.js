@@ -1,4 +1,3 @@
-import BaseError from "../utils/errors/base-error.js";
 import MethodNotAllowedError from "../utils/errors/method-not-allowed-error.js";
 import NotFoundError from "../utils/errors/not-found-error.js";
 import ServerError from "../utils/errors/server-error.js";
@@ -35,7 +34,8 @@ const router = async function (req, res) {
     const httpResponse = await route.methods[method](httpRequest);
 
     if (httpResponse.body instanceof Error) {
-      throw httpResponse;
+      console.log(httpResponse.body);
+      throw httpResponse.body;
     }
 
     res.writeHead(httpResponse.statusCode, {
@@ -46,8 +46,7 @@ const router = async function (req, res) {
   } catch (error) {
     console.error(error);
 
-    // console.log(typeof error);
-    if (!(error instanceof ServerError) && error instanceof BaseError) {
+    if (!(error instanceof ServerError)) {
       res.writeHead(error.statusCode);
       return res.end(JSON.stringify(error));
     }

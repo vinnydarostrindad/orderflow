@@ -15,7 +15,7 @@ beforeAll(async () => {
 });
 
 describe("POST /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/item", () => {
-  test("should register a table and return 201", async () => {
+  test("should register a order item and return 201", async () => {
     const business = await createBusiness();
     const menu = await createMenu(business.id);
     const menuItem = await createMenuItem(business.id, menu.id);
