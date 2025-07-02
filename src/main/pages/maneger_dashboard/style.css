@@ -1,0 +1,220 @@
+:root {
+  --primary-color: #d81212;
+  --background-color: #dfdfdf;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  font-size: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background-color);
+}
+
+/*--------------------*/
+/*       HEADER       */
+/*--------------------*/
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--primary-color);
+  padding: 1rem 0;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+
+  div {
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  h1 {
+    color: #fff;
+    font-size: 2rem;
+  }
+
+  .button {
+    background-color: transparent;
+    /* font-size: 3rem; */
+    color: #fff;
+    border: none;
+    transform: rotate(90deg);
+  }
+}
+
+/*--------------------*/
+/*         NAV        */
+/*--------------------*/
+
+nav.container {
+  position: fixed;
+  top: 43px;
+  left: 0;
+  bottom: 0;
+  font-size: 1.5rem;
+  background-color: #ebebeb;
+  padding: 0.7rem 0;
+  width: 150px;
+  border-right: 1px solid rgb(109, 0, 0);
+  box-shadow: 1px 0 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+
+    li {
+      padding: 0.8rem 1.5rem;
+      transition: 200ms ease;
+
+      a {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        color: #000;
+        text-decoration: none;
+      }
+
+      img {
+        width: 18px;
+      }
+    }
+
+    li:hover {
+      transform: scale(1.05);
+      font-weight: bold;
+    }
+
+    .selected {
+      transform: scale(1.1);
+      margin: 5px 0 5px 6px;
+      background-color: #c2c2c2;
+      font-weight: bold;
+    }
+  }
+}
+
+/*--------------------*/
+/*        MAIN        */
+/*--------------------*/
+
+main.container {
+  font-size: 1.6rem;
+  margin: 43px 0 0 150px;
+  padding: 2rem 5rem 3rem;
+  height: calc(100vh - 43px);
+
+  .businessStatsBox {
+    display: grid;
+    grid-template: 25px 50px repeat(2, 1fr) 180px / repeat(4, 1fr);
+    gap: 5px;
+    height: 100%;
+
+    select {
+      grid-area: 2 / 1 / 3 / 2;
+      align-self: flex-end;
+      background-color: transparent;
+      font-size: 1.6rem;
+      border: none;
+      border-bottom: 1px solid black;
+      height: 30px;
+    }
+
+    .textStats {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 1.8rem;
+      grid-area: 3 / 1 / 5 / 3;
+      align-self: center;
+      padding: 1.5rem 0;
+      background-color: #fff6f6;
+      border: 2px solid rgba(0, 0, 0, 0.301);
+      border-radius: 10px;
+      box-shadow: 1px 1px 25px rgba(0, 0, 0, 0.1);
+      width: 95%;
+
+      p {
+        padding: 0 1rem 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.305);
+      }
+
+      :last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+    }
+
+    .graphicStats {
+      grid-area: 1 / 3 / 5 / 5;
+      justify-self: center;
+      margin-right: 5%;
+
+      img {
+        height: 100%;
+      }
+    }
+
+    .lastsOrders {
+      grid-area: 5 / 1 / 6 / 5;
+      border-top: 1px solid rgba(100, 100, 100, 0.644);
+      padding-top: 13px;
+
+      .ordersBox {
+        display: flex;
+        gap: 5px;
+        height: calc(100% - 18px);
+
+        .order {
+          display: flex;
+          flex-direction: column;
+          border: 2px solid black;
+          height: 100%;
+          width: 25%;
+
+          :first-child {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgb(0, 0, 0);
+
+            img {
+              width: 25%;
+              align-self: flex-start;
+            }
+
+            h3 {
+              text-align: center;
+              font-size: 1.6rem;
+              padding: 0.5rem;
+              width: 75%;
+            }
+          }
+
+          .info {
+            p {
+              padding: 0.5rem 1rem;
+              border-bottom: 1px solid black;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/*--------------------*/
+/*        QUERY       */
+/*--------------------*/
+
+/* @media screen and (min-width: 799px) {
+
+} */

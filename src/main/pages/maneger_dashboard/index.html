@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Maneger DashBoard</title>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>OrderFlow</h1>
+      </div>
+    </header>
+    <nav class="container">
+      <ul>
+        <li class="selected">
+          <a href=""
+            ><img
+              src="./img/dashboard-icon.svg"
+              alt="dashboard-icon"
+            />DashBoard</a
+          >
+        </li>
+        <li>
+          <a href=""
+            ><img
+              src="./img/employees-icon.svg"
+              alt="employees-icon"
+            />Funcionários</a
+          >
+        </li>
+        <li>
+          <a href=""
+            ><img src="./img/menu-icon.svg" alt="menu-icon" />Cardápio</a
+          >
+        </li>
+        <li>
+          <a href=""
+            ><img src="./img/sales-icon.svg" alt="sales-icon" />Vendas</a
+          >
+        </li>
+        <li>
+          <a href=""
+            ><img src="./img/stock-icon.svg" alt="stock-icon" />Estoque</a
+          >
+        </li>
+        <li>
+          <a href=""
+            ><img src="./img/orders-icon.svg" alt="orders-icon" />Pedidos</a
+          >
+        </li>
+        <li>
+          <a href=""
+            ><img
+              src="./img/config-icon.svg"
+              alt="config-icon"
+            />Configuração</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <main class="container">
+      <div class="businessStatsBox" id="businessStatsBox">
+        <h2>Nome da Empresa</h2>
+        <select name="timeSpace" id="timeSpace">
+          <option value="day">Hoje</option>
+          <option value="week">Essa Semana</option>
+          <option value="month">Esse Mês</option>
+          <option value="months">Últimos 6 Meses</option>
+          <option value="year">Esse Ano</option>
+        </select>
+        <div class="textStats">
+          <p>Faturamento: R$ <span id="money">2.300,00</span></p>
+          <p>
+            Faturamento/<span id="period">Hora</span>: R$
+            <span id="moneyPerHour">2.300,00</span>
+          </p>
+          <p>Pedidos: <span id="orders">25</span></p>
+          <p>Pedidos concluídos: <span id="completedOrder">24</span></p>
+          <p>Pedidos cancelados: <span id="canceledOrders">1</span></p>
+        </div>
+        <div class="graphicStats">
+          <img src="./img/grafico-de-exemplo.png" alt="" />
+        </div>
+        <div class="lastsOrders">
+          <p style="font-weight: bold">Últimos pedidos feitos:</p>
+          <div class="ordersBox">
+            <div class="order">
+              <div>
+                <img src="./img/macarrao-na-chapa.jpeg" alt="" />
+                <h3>Macarrão na Chapa</h3>
+              </div>
+              <div class="info">
+                <p class="status">Status: Pendente</p>
+                <p class="tableNumber">Mesa: 21</p>
+                <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+              </div>
+            </div>
+            <div class="order">
+              <div>
+                <img src="./img/macarrao-na-chapa.jpeg" alt="" />
+                <h3>Macarrão na Chapa</h3>
+              </div>
+              <div class="info">
+                <p class="status">Status: Pendente</p>
+                <p class="tableNumber">Mesa: 21</p>
+                <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+              </div>
+            </div>
+            <div class="order">
+              <div>
+                <img src="./img/macarrao-na-chapa.jpeg" alt="" />
+                <h3>Macarrão na Chapa</h3>
+              </div>
+              <div class="info">
+                <p class="status">Status: Pendente</p>
+                <p class="tableNumber">Mesa: 21</p>
+                <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+              </div>
+            </div>
+            <div class="order">
+              <div>
+                <img src="./img/macarrao-na-chapa.jpeg" alt="" />
+                <h3>Macarrão na Chapa</h3>
+              </div>
+              <div class="info">
+                <p class="status">Status: Pendente</p>
+                <p class="tableNumber">Mesa: 21</p>
+                <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
