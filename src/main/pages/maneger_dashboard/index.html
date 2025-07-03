@@ -10,9 +10,12 @@
     <header>
       <div>
         <h1>OrderFlow</h1>
+        <button class="button" id="menuBtn">
+          <img src="./img/menu-icon.svg" alt="Menu" />
+        </button>
       </div>
     </header>
-    <nav class="container">
+    <nav class="container hidden" id="menuBar">
       <ul>
         <li class="selected">
           <a href=""
@@ -32,7 +35,7 @@
         </li>
         <li>
           <a href=""
-            ><img src="./img/menu-icon.svg" alt="menu-icon" />Cardápio</a
+            ><img src="./img/food-menu-icon.svg" alt="menu-icon" />Cardápio</a
           >
         </li>
         <li>
@@ -81,60 +84,97 @@
           <p>Pedidos cancelados: <span id="canceledOrders">1</span></p>
         </div>
         <div class="graphicStats">
-          <img src="./img/grafico-de-exemplo.png" alt="" />
+          <canvas id="salesChart" width="325" height="325"></canvas>
+          <div class="graphicInfo">
+            <p class="porcentage"></p>
+            <p class="quantity"></p>
+          </div>
         </div>
-        <div class="lastsOrders">
-          <p style="font-weight: bold">Últimos pedidos feitos:</p>
-          <div class="ordersBox">
-            <div class="order">
-              <div>
-                <img src="./img/macarrao-na-chapa.jpeg" alt="" />
-                <h3>Macarrão na Chapa</h3>
+      </div>
+      <div class="lastsOrders">
+        <h3>Últimos pedidos feitos:</h3>
+        <div class="ordersContainer">
+          <button id="leftBtn">
+            <img src="./img/left-arrow-icon.svg" alt="" />
+          </button>
+          <div class="ordersCarousel">
+            <div class="orders">
+              <div class="order">
+                <div>
+                  <img src="./img/macarrao-na-chapa.jpeg" alt="" />
+                  <h4>Macarrão na Chapa</h4>
+                </div>
+                <div class="info">
+                  <p class="status">Status: Pendente</p>
+                  <p class="tableNumber">Mesa: 21</p>
+                  <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+                </div>
               </div>
-              <div class="info">
-                <p class="status">Status: Pendente</p>
-                <p class="tableNumber">Mesa: 21</p>
-                <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+              <div class="order">
+                <div>
+                  <img src="./img/macarrao-na-chapa.jpeg" alt="" />
+                  <h4>Macarrão na Chapa</h4>
+                </div>
+                <div class="info">
+                  <p class="status">Status: Pendente</p>
+                  <p class="tableNumber">Mesa: 21</p>
+                  <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+                </div>
               </div>
-            </div>
-            <div class="order">
-              <div>
-                <img src="./img/macarrao-na-chapa.jpeg" alt="" />
-                <h3>Macarrão na Chapa</h3>
+              <div class="order">
+                <div>
+                  <img src="./img/macarrao-na-chapa.jpeg" alt="" />
+                  <h4>Macarrão na Chapa</h4>
+                </div>
+                <div class="info">
+                  <p class="status">Status: Pendente</p>
+                  <p class="tableNumber">Mesa: 21</p>
+                  <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+                </div>
               </div>
-              <div class="info">
-                <p class="status">Status: Pendente</p>
-                <p class="tableNumber">Mesa: 21</p>
-                <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+              <div class="order">
+                <div>
+                  <img src="./img/macarrao-na-chapa.jpeg" alt="" />
+                  <h4>Macarrão na Chapa</h4>
+                </div>
+                <div class="info">
+                  <p class="status">Status: Pendente</p>
+                  <p class="tableNumber">Mesa: 21</p>
+                  <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+                </div>
               </div>
-            </div>
-            <div class="order">
-              <div>
-                <img src="./img/macarrao-na-chapa.jpeg" alt="" />
-                <h3>Macarrão na Chapa</h3>
+              <div class="order">
+                <div>
+                  <img src="./img/macarrao-na-chapa.jpeg" alt="" />
+                  <h4>Macarrão na Chapa</h4>
+                </div>
+                <div class="info">
+                  <p class="status">Status: Pendente</p>
+                  <p class="tableNumber">Mesa: 21</p>
+                  <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+                </div>
               </div>
-              <div class="info">
-                <p class="status">Status: Pendente</p>
-                <p class="tableNumber">Mesa: 21</p>
-                <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
-              </div>
-            </div>
-            <div class="order">
-              <div>
-                <img src="./img/macarrao-na-chapa.jpeg" alt="" />
-                <h3>Macarrão na Chapa</h3>
-              </div>
-              <div class="info">
-                <p class="status">Status: Pendente</p>
-                <p class="tableNumber">Mesa: 21</p>
-                <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+              <div class="order">
+                <div>
+                  <img src="./img/macarrao-na-chapa.jpeg" alt="" />
+                  <h4>Macarrão na Chapa</h4>
+                </div>
+                <div class="info">
+                  <p class="status">Status: Pendente</p>
+                  <p class="tableNumber">Mesa: 21</p>
+                  <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
+                </div>
               </div>
             </div>
           </div>
+          <button id="rightBtn">
+            <img src="./img/right-arrow-icon.svg" alt="" />
+          </button>
         </div>
       </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
