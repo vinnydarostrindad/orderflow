@@ -6,6 +6,10 @@ const orderItemRoute = {
     const getOrderItemRouter = getOrderItemRouterComposer.execute();
     return await getOrderItemRouter.route(httpRequest);
   },
+  getAllByBusinessId: async (httpRequest) => {
+    const getOrderItemRouter = getOrderItemRouterComposer.execute();
+    return await getOrderItemRouter.route(httpRequest);
+  },
   getOne: async (httpRequest) => {
     const getOrderItemRouter = getOrderItemRouterComposer.execute();
     return await getOrderItemRouter.route(httpRequest);

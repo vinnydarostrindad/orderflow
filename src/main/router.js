@@ -34,7 +34,6 @@ const router = async function (req, res) {
     const httpResponse = await route.methods[method](httpRequest);
 
     if (httpResponse.body instanceof Error) {
-      console.log(httpResponse.body);
       throw httpResponse.body;
     }
 

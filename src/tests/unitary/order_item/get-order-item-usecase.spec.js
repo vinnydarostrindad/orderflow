@@ -1,4 +1,3 @@
-import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import GetOrderItemUseCase from "../../../domain/usecase/order_item/get-order-item-usecase.js";
 
 const makeSut = () => {
@@ -71,14 +70,14 @@ describe("Get Order Item Usecase", () => {
       const { sut, orderItemRepositorySpy } = makeSut();
       orderItemRepositorySpy.orderItems = null;
 
-      const orderItem = await sut.execute("order_id");
+      const orderItem = await sut.execute({ orderId: "order_id" });
       expect(orderItem).toBeNull();
     });
 
     test("Should call orderItemRepository.findAll with correct value", async () => {
       const { sut, orderItemRepositorySpy } = makeSut();
 
-      await sut.execute("order_id");
+      await sut.execute({ orderId: "order_id" });
       expect(orderItemRepositorySpy.orderId).toBe("order_id");
       expect(orderItemRepositorySpy.orderItemId).toBeUndefined();
     });
@@ -86,7 +85,7 @@ describe("Get Order Item Usecase", () => {
     test("Should return an array of orderItems", async () => {
       const { sut } = makeSut();
 
-      const orderItems = await sut.execute("order_id");
+      const orderItems = await sut.execute({ orderId: "order_id" });
       expect(Array.isArray(orderItems)).toBe(true);
       expect(orderItems[0]).toEqual({
         id: "any_order_item_id",
@@ -106,14 +105,20 @@ describe("Get Order Item Usecase", () => {
       const { sut, orderItemRepositorySpy } = makeSut();
       orderItemRepositorySpy.orderItem = null;
 
-      const orderItem = await sut.execute("order_id", "any_order_item_id");
+      const orderItem = await sut.execute({
+        orderId: "order_id",
+        orderItemId: "any_order_item_id",
+      });
       expect(orderItem).toBeNull();
     });
 
     test("Should call orderItemRepository.findById with correct value", async () => {
       const { sut, orderItemRepositorySpy } = makeSut();
 
-      await sut.execute("order_id", "any_order_item_id");
+      await sut.execute({
+        orderId: "order_id",
+        orderItemId: "any_order_item_id",
+      });
       expect(orderItemRepositorySpy.orderId).toBe("order_id");
       expect(orderItemRepositorySpy.orderItemId).toBe("any_order_item_id");
     });
@@ -121,7 +126,10 @@ describe("Get Order Item Usecase", () => {
     test("Should return orderItem correctly", async () => {
       const { sut } = makeSut();
 
-      const orderItem = await sut.execute("order_id", "any_order_item_id");
+      const orderItem = await sut.execute({
+        orderId: "order_id",
+        orderItemId: "any_order_item_id",
+      });
       expect(orderItem).toEqual({
         id: "any_order_item_id",
         order_id: "any_order_id",
@@ -135,14 +143,6 @@ describe("Get Order Item Usecase", () => {
     });
   });
 
-  test("Should throw if no orderId is provided", async () => {
-    const { sut } = makeSut();
-
-    await expect(sut.execute(undefined, "any_order_item_id")).rejects.toThrow(
-      new MissingParamError("orderId"),
-    );
-  });
-
   test("Should throw if invalid dependency is provided", async () => {
     const suts = [
       new GetOrderItemUseCase(),
@@ -154,9 +154,11 @@ describe("Get Order Item Usecase", () => {
 
     for (const sut of suts) {
       await expect(
-        sut.execute("order_id", "any_order_item_id"),
+        sut.execute({ orderId: "order_id", orderItemId: "any_order_item_id" }),
       ).rejects.toThrow(TypeError);
-      await expect(sut.execute("order_id")).rejects.toThrow(TypeError);
+      await expect(sut.execute({ orderId: "order_id" })).rejects.toThrow(
+        TypeError,
+      );
     }
   });
 
@@ -169,9 +171,11 @@ describe("Get Order Item Usecase", () => {
 
     for (const sut of suts) {
       await expect(
-        sut.execute("order_id", "any_order_item_id"),
+        sut.execute({ orderId: "order_id", orderItemId: "any_order_item_id" }),
       ).rejects.toThrow(new Error());
-      await expect(sut.execute("order_id")).rejects.toThrow(new Error());
+      await expect(sut.execute({ orderId: "order_id" })).rejects.toThrow(
+        new Error(),
+      );
     }
   });
 });

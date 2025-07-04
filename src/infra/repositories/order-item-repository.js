@@ -56,6 +56,35 @@ export default class OrderItemRepository {
     return result.rows;
   }
 
+  async findAllByBusinessId(businessId) {
+    if (!businessId) throw new MissingParamError("businessId");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT 
+          order_items.menu_item_id,
+          order_items.quantity,
+          order_items.total_price,
+          order_items.status,
+          order_items.created_at AS order_item_created_at,
+          orders.table_number
+        FROM
+          order_items
+        JOIN
+          orders ON order_items.order_id = orders.id
+        WHERE
+          orders.business_id = $1
+        ORDER BY
+          order_items.created_at DESC
+        LIMIT
+         10
+      ;`,
+      values: [businessId],
+    });
+
+    return result.rows;
+  }
+
   async findById(orderId, orderItemId) {
     if (!orderId) throw new MissingParamError("orderId");
     if (!orderItemId) throw new MissingParamError("orderItemId");

@@ -15,6 +15,60 @@ beforeEach(async () => {
   await runMigrations();
 });
 
+describe("GET /api/v1/business/[businessId]/ordered-items", () => {
+  test("Should return all menu items with correct data", async () => {
+    const business = await createBusiness();
+    const menu = await createMenu(business.id);
+    const menuItem = await createMenuItem(business.id, menu.id);
+    const table = await createTable(business.id);
+    const order = await createOrder(business.id, table.id);
+    await createOrderItem(business.id, table.id, order.id, menuItem.id, 2);
+
+    const response = await fetch(
+      `http://localhost:3000/api/v1/business/${business.id}/ordered-items`,
+    );
+
+    expect(response.status).toBe(200);
+
+    const responseBody = await response.json();
+
+    expect(Array.isArray(responseBody)).toBe(true);
+    expect(responseBody.length).toBeGreaterThan(0);
+
+    responseBody.forEach((orderItem) => {
+      expect(orderItem).toMatchObject({
+        menuItemId: menuItem.id,
+        quantity: "2",
+        totalPrice: "40.00",
+        status: "pending",
+        tableNumber: "1",
+      });
+
+      expect(typeof orderItem.menuItemId).toBe("string");
+      expect(uuidVersion(orderItem.menuItemId)).toBe(4);
+
+      expect(typeof orderItem.createdAt).toBe("string");
+      expect(Date.parse(orderItem.createdAt)).not.toBeNaN();
+    });
+  });
+
+  test("Should return an empty array", async () => {
+    const business = await createBusiness();
+    const menu = await createMenu(business.id);
+    await createMenuItem(business.id, menu.id);
+
+    const response = await fetch(
+      `http://localhost:3000/api/v1/business/${business.id}/ordered-items`,
+    );
+
+    expect(response.status).toBe(200);
+
+    const responseBody = await response.json();
+    expect(Array.isArray(responseBody)).toBe(true);
+    expect(responseBody.length).toBe(0);
+  });
+});
+
 describe("GET /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/item", () => {
   test("Should return all menu items with correct data", async () => {
     const business = await createBusiness();
@@ -43,6 +97,7 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/item
         quantity: "2",
         unitPrice: "20.00",
         totalPrice: "40.00",
+        status: "pending",
         notes: "any_notes",
       });
 
@@ -108,6 +163,7 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/item
       quantity: "2",
       unitPrice: "20.00",
       totalPrice: "40.00",
+      status: "pending",
       notes: "any_notes",
     });
 

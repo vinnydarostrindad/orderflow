@@ -1,4 +1,3 @@
-import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import GetOrderItemRouter from "../../../presentation/routers/order_item/get-order-item-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
 import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
@@ -15,7 +14,7 @@ const makeSut = () => {
 
 const makeGetOrderItemUseCase = () => {
   class GetOrderItemUseCaseSpy {
-    async execute(orderId, orderItemId) {
+    async execute({ orderId, orderItemId }) {
       this.orderId = orderId;
       if (!orderItemId) {
         return this.orderItems;
@@ -200,20 +199,6 @@ describe("Get Order Item Router", () => {
         notes: "any_notes",
       });
     });
-  });
-
-  test("Should return 400 if no orderId is provided", async () => {
-    const { sut } = makeSut();
-    const httpRequest = {
-      params: {
-        orderItemId: "any_order_item_id",
-      },
-    };
-
-    const httpResponse = await sut.route(httpRequest);
-
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError("orderId"));
   });
 
   test("Should return 400 if orderId is invalid", async () => {
