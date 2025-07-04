@@ -50,8 +50,25 @@ export default class MenuItemRepository {
   }
 
   async findById(menuId, menuItemId) {
-    if (!menuId) throw new MissingParamError("menuId");
     if (!menuItemId) throw new MissingParamError("menuItemId");
+
+    if (!menuId) {
+      const result = await this.postgresAdapter.query({
+        text: `
+          SELECT
+            *
+          FROM
+            menu_items
+          WHERE
+            id = $1
+          LIMIT
+            1
+          ;`,
+        values: [menuItemId],
+      });
+
+      return result.rows[0];
+    }
 
     const result = await this.postgresAdapter.query({
       text: `

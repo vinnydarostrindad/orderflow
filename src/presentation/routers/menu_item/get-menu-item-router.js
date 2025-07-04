@@ -1,4 +1,3 @@
-import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 import httpResponse from "../../http-response.js";
 
@@ -12,14 +11,43 @@ export default class GetMenuItemRouter {
     const { menuId, menuItemId } = httpRequest.params;
 
     if (!menuId) {
-      return httpResponse.badRequest(new MissingParamError("menuId"));
+      const menuItem = await this.getMenuItemUseCase.execute({ menuItemId });
+
+      if (!menuItem) {
+        return httpResponse.notFound("MenuItem", "Make sure menu item exists.");
+      }
+
+      const {
+        id,
+        menu_id,
+        name,
+        price,
+        image_path,
+        description,
+        type,
+        created_at,
+        updated_at,
+      } = menuItem;
+
+      return httpResponse.ok({
+        id,
+        menuId: menu_id,
+        name,
+        price,
+        imagePath: image_path,
+        description,
+        type,
+        createdAt: created_at,
+        updatedAt: updated_at,
+      });
     }
+
     if (!this.validators.uuid(menuId)) {
       return httpResponse.badRequest(new InvalidParamError("menuId"));
     }
 
     if (!menuItemId) {
-      const menuItems = await this.getMenuItemUseCase.execute(menuId);
+      const menuItems = await this.getMenuItemUseCase.execute({ menuId });
 
       const editedMenuItems = menuItems.map(
         ({
@@ -51,7 +79,10 @@ export default class GetMenuItemRouter {
       return httpResponse.badRequest(new InvalidParamError("menuItemId"));
     }
 
-    const menuItem = await this.getMenuItemUseCase.execute(menuId, menuItemId);
+    const menuItem = await this.getMenuItemUseCase.execute({
+      menuId,
+      menuItemId,
+    });
 
     if (!menuItem) {
       return httpResponse.notFound("MenuItem", "Make sure menu item exists.");

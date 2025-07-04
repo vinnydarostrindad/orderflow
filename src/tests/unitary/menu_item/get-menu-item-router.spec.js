@@ -1,4 +1,3 @@
-import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import GetMenuItemRouter from "../../../presentation/routers/menu_item/get-menu-item-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
 import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
@@ -15,7 +14,7 @@ const makeSut = () => {
 
 const makeGetMenuItemUseCase = () => {
   class GetMenuItemUseCaseSpy {
-    async execute(menuId, menuItemId) {
+    async execute({ menuId, menuItemId }) {
       this.menuId = menuId;
       if (!menuItemId) {
         return this.menuItems;
@@ -193,20 +192,6 @@ describe("Get Menu Item Router", () => {
         type: "any_type",
       });
     });
-  });
-
-  test("Should return 400 if no menuId is provided", async () => {
-    const { sut } = makeSut();
-    const httpRequest = {
-      params: {
-        menuItemId: "any_menu_item_id",
-      },
-    };
-
-    const httpResponse = await sut.route(httpRequest);
-
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError("menuId"));
   });
 
   test("Should return 400 if menuId is invalid", async () => {

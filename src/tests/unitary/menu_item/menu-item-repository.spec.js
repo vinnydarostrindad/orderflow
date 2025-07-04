@@ -227,14 +227,6 @@ describe("MenuItem Repository", () => {
   });
 
   describe("findById Method", () => {
-    test("Should throw if no menuId is provided", async () => {
-      const { sut } = makeSut();
-
-      await expect(sut.findById(undefined, "any_menu_id")).rejects.toThrow(
-        new MissingParamError("menuId"),
-      );
-    });
-
     test("Should throw if no menuItemId is provided", async () => {
       const { sut } = makeSut();
 
