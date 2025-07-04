@@ -75,7 +75,7 @@ export default class OrderItemRepository {
         WHERE
           orders.business_id = $1
         ORDER BY
-          order_items.created_at DESC
+          order_items.created_at ASC
         LIMIT
          10
       ;`,
