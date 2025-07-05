@@ -5,14 +5,20 @@ export default class GetMenuItemUseCase {
     this.orderItemRepository = orderItemRepository;
   }
 
-  async execute(orderId, orderItemId) {
-    if (!orderId) throw new MissingParamError("orderId");
+  async execute({ businessId, orderId, orderItemId }) {
+    if (!orderId) {
+      if (!businessId) throw new MissingParamError("businessId");
+
+      const orderedItems =
+        await this.orderItemRepository.findAllByBusinessId(businessId);
+
+      return orderedItems;
+    }
 
     if (!orderItemId) {
       const orderItems = await this.orderItemRepository.findAll(orderId);
-      if (!orderItems) {
-        return null;
-      }
+
+      if (!orderItems) return null;
 
       return orderItems;
     }
@@ -21,9 +27,9 @@ export default class GetMenuItemUseCase {
       orderId,
       orderItemId,
     );
-    if (!orderItem) {
-      return null;
-    }
+
+    if (!orderItem) return null;
+
     return orderItem;
   }
 }

@@ -1,4 +1,3 @@
-import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import GetMenuItemUseCase from "../../../domain/usecase/menu_item/get-menu-item-usecase.js";
 
 const makeSut = () => {
@@ -69,14 +68,14 @@ describe("Get Menu Item Usecase", () => {
       const { sut, menuItemRepositorySpy } = makeSut();
       menuItemRepositorySpy.menuItems = null;
 
-      const menuItem = await sut.execute("menu_id");
+      const menuItem = await sut.execute({ menuId: "menu_id" });
       expect(menuItem).toBeNull();
     });
 
     test("Should call menuItemRepository.findAll with correct value", async () => {
       const { sut, menuItemRepositorySpy } = makeSut();
 
-      await sut.execute("menu_id");
+      await sut.execute({ menuId: "menu_id" });
       expect(menuItemRepositorySpy.menuId).toBe("menu_id");
       expect(menuItemRepositorySpy.menuItemId).toBeUndefined();
     });
@@ -84,7 +83,7 @@ describe("Get Menu Item Usecase", () => {
     test("Should return an array of menuItems", async () => {
       const { sut } = makeSut();
 
-      const menuItems = await sut.execute("menu_id");
+      const menuItems = await sut.execute({ menuId: "menu_id" });
       expect(Array.isArray(menuItems)).toBe(true);
       expect(menuItems[0]).toEqual({
         id: "any_menu_item_id",
@@ -103,14 +102,17 @@ describe("Get Menu Item Usecase", () => {
       const { sut, menuItemRepositorySpy } = makeSut();
       menuItemRepositorySpy.menuItem = null;
 
-      const menuItem = await sut.execute("menu_id", "any_menu_item_id");
+      const menuItem = await sut.execute({
+        menuId: "menu_id",
+        menuItemId: "any_menu_item_id",
+      });
       expect(menuItem).toBeNull();
     });
 
     test("Should call menuItemRepository.findById with correct value", async () => {
       const { sut, menuItemRepositorySpy } = makeSut();
 
-      await sut.execute("menu_id", "any_menu_item_id");
+      await sut.execute({ menuId: "menu_id", menuItemId: "any_menu_item_id" });
       expect(menuItemRepositorySpy.menuId).toBe("menu_id");
       expect(menuItemRepositorySpy.menuItemId).toBe("any_menu_item_id");
     });
@@ -118,7 +120,10 @@ describe("Get Menu Item Usecase", () => {
     test("Should return menuItem correctly", async () => {
       const { sut } = makeSut();
 
-      const menuItem = await sut.execute("menu_id", "any_menu_item_id");
+      const menuItem = await sut.execute({
+        menuId: "menu_id",
+        menuItemId: "any_menu_item_id",
+      });
       expect(menuItem).toEqual({
         id: "any_menu_item_id",
         menuId: "any_menu_id",
@@ -131,14 +136,6 @@ describe("Get Menu Item Usecase", () => {
     });
   });
 
-  test("Should throw if no menuId is provided", async () => {
-    const { sut } = makeSut();
-
-    await expect(sut.execute(undefined, "any_menu_item_id")).rejects.toThrow(
-      new MissingParamError("menuId"),
-    );
-  });
-
   test("Should throw if invalid dependency is provided", async () => {
     const suts = [
       new GetMenuItemUseCase(),
@@ -149,10 +146,12 @@ describe("Get Menu Item Usecase", () => {
     ];
 
     for (const sut of suts) {
-      await expect(sut.execute("menu_id", "any_menu_item_id")).rejects.toThrow(
+      await expect(
+        sut.execute({ menuId: "menu_id", menuItemId: "any_menu_item_id" }),
+      ).rejects.toThrow(TypeError);
+      await expect(sut.execute({ menuId: "menu_id" })).rejects.toThrow(
         TypeError,
       );
-      await expect(sut.execute("menu_id")).rejects.toThrow(TypeError);
     }
   });
 
@@ -164,10 +163,12 @@ describe("Get Menu Item Usecase", () => {
     ];
 
     for (const sut of suts) {
-      await expect(sut.execute("menu_id", "any_menu_item_id")).rejects.toThrow(
+      await expect(
+        sut.execute({ menuId: "menu_id", menuItemId: "any_menu_item_id" }),
+      ).rejects.toThrow(new Error());
+      await expect(sut.execute({ menuId: "menu_id" })).rejects.toThrow(
         new Error(),
       );
-      await expect(sut.execute("menu_id")).rejects.toThrow(new Error());
     }
   });
 });

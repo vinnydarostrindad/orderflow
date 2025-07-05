@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Maneger DashBoard</title>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>OrderFlow</h1>
+        <button class="button" id="menuBtn">
+          <img src="./img/menu-icon.svg" alt="Menu" />
+        </button>
+      </div>
+    </header>
+    <nav class="container hidden" id="menuBar">
+      <ul>
+        <li class="selected">
+          <a href=""
+            ><img
+              src="./img/dashboard-icon.svg"
+              alt="dashboard-icon"
+            />DashBoard</a
+          >
+        </li>
+        <li>
+          <a href=""
+            ><img
+              src="./img/employees-icon.svg"
+              alt="employees-icon"
+            />Funcionários</a
+          >
+        </li>
+        <li>
+          <a href=""
+            ><img src="./img/food-menu-icon.svg" alt="menu-icon" />Cardápio</a
+          >
+        </li>
+        <li>
+          <a href=""
+            ><img src="./img/sales-icon.svg" alt="sales-icon" />Vendas</a
+          >
+        </li>
+        <li>
+          <a href=""
+            ><img src="./img/stock-icon.svg" alt="stock-icon" />Estoque</a
+          >
+        </li>
+        <li>
+          <a href=""
+            ><img src="./img/orders-icon.svg" alt="orders-icon" />Pedidos</a
+          >
+        </li>
+        <li>
+          <a href=""
+            ><img
+              src="./img/config-icon.svg"
+              alt="config-icon"
+            />Configuração</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <main class="container">
+      <div class="businessStatsBox" id="businessStatsBox">
+        <h2>Nome da Empresa</h2>
+        <select name="timeSpace" id="timeSpace">
+          <option value="day">Hoje</option>
+          <option value="week">Essa Semana</option>
+          <option value="month">Esse Mês</option>
+          <option value="months">Últimos 6 Meses</option>
+          <option value="year">Esse Ano</option>
+        </select>
+        <div class="textStats">
+          <p>Faturamento: R$ <span id="money">00,00</span></p>
+          <p>
+            Faturamento/<span id="period">Hora</span>: R$
+            <span id="moneyPerHour">00,00</span>
+          </p>
+          <p>Pedidos: <span id="ordersAmount">4</span></p>
+          <p>Pedidos concluídos: <span id="completedOrder">0</span></p>
+          <p>Pedidos cancelados: <span id="canceledOrders">0</span></p>
+        </div>
+        <div class="graphicStats">
+          <canvas id="salesChart" width="325" height="325"></canvas>
+          <div class="graphicInfo">
+            <p class="porcentage"></p>
+            <p class="quantity"></p>
+          </div>
+        </div>
+      </div>
+      <div class="lastOrders">
+        <h3>Últimos pedidos feitos:</h3>
+        <div class="ordersContainer">
+          <button id="leftBtn">
+            <img src="./img/left-arrow-icon.svg" alt="" />
+          </button>
+          <div class="ordersCarousel">
+            <div class="orders" id="lastOrders"></div>
+          </div>
+          <button id="rightBtn">
+            <img src="./img/right-arrow-icon.svg" alt="" />
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
