@@ -104,5 +104,5 @@ function toggleShareModal() {
 generateLink();
 
 advanceButton.onclick = () => {
-  window.location.href = `http://localhost:5500/src/main/pages/maneger/index.html?businessId=${businessId}`;
+  window.location.href = `http://localhost:5500/src/main/pages/maneger_dashboard/index.html?businessId=${businessId}`;
 };

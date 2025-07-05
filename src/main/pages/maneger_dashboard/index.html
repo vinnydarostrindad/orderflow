@@ -74,14 +74,14 @@
           <option value="year">Esse Ano</option>
         </select>
         <div class="textStats">
-          <p>Faturamento: R$ <span id="money">2.300,00</span></p>
+          <p>Faturamento: R$ <span id="money">00,00</span></p>
           <p>
             Faturamento/<span id="period">Hora</span>: R$
-            <span id="moneyPerHour">2.300,00</span>
+            <span id="moneyPerHour">00,00</span>
           </p>
-          <p>Pedidos: <span id="orders">25</span></p>
-          <p>Pedidos concluídos: <span id="completedOrder">24</span></p>
-          <p>Pedidos cancelados: <span id="canceledOrders">1</span></p>
+          <p>Pedidos: <span id="ordersAmount">4</span></p>
+          <p>Pedidos concluídos: <span id="completedOrder">0</span></p>
+          <p>Pedidos cancelados: <span id="canceledOrders">0</span></p>
         </div>
         <div class="graphicStats">
           <canvas id="salesChart" width="325" height="325"></canvas>
@@ -91,81 +91,14 @@
           </div>
         </div>
       </div>
-      <div class="lastsOrders">
+      <div class="lastOrders">
         <h3>Últimos pedidos feitos:</h3>
         <div class="ordersContainer">
           <button id="leftBtn">
             <img src="./img/left-arrow-icon.svg" alt="" />
           </button>
           <div class="ordersCarousel">
-            <div class="orders">
-              <div class="order">
-                <div>
-                  <img src="./img/macarrao-na-chapa.jpeg" alt="" />
-                  <h4>Macarrão na Chapa</h4>
-                </div>
-                <div class="info">
-                  <p class="status">Status: Pendente</p>
-                  <p class="tableNumber">Mesa: 21</p>
-                  <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
-                </div>
-              </div>
-              <div class="order">
-                <div>
-                  <img src="./img/macarrao-na-chapa.jpeg" alt="" />
-                  <h4>Macarrão na Chapa</h4>
-                </div>
-                <div class="info">
-                  <p class="status">Status: Pendente</p>
-                  <p class="tableNumber">Mesa: 21</p>
-                  <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
-                </div>
-              </div>
-              <div class="order">
-                <div>
-                  <img src="./img/macarrao-na-chapa.jpeg" alt="" />
-                  <h4>Macarrão na Chapa</h4>
-                </div>
-                <div class="info">
-                  <p class="status">Status: Pendente</p>
-                  <p class="tableNumber">Mesa: 21</p>
-                  <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
-                </div>
-              </div>
-              <div class="order">
-                <div>
-                  <img src="./img/macarrao-na-chapa.jpeg" alt="" />
-                  <h4>Macarrão na Chapa</h4>
-                </div>
-                <div class="info">
-                  <p class="status">Status: Pendente</p>
-                  <p class="tableNumber">Mesa: 21</p>
-                  <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
-                </div>
-              </div>
-              <div class="order">
-                <div>
-                  <img src="./img/macarrao-na-chapa.jpeg" alt="" />
-                  <h4>Macarrão na Chapa</h4>
-                </div>
-                <div class="info">
-                  <p class="status">Status: Pendente</p>
-                  <p class="tableNumber">Mesa: 21</p>
-                  <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
-                </div>
-              </div>
-              <div class="order">
-                <div>
-                  <img src="./img/macarrao-na-chapa.jpeg" alt="" />
-                  <h4>Macarrão na Chapa</h4>
-                </div>
-                <div class="info">
-                  <p class="status">Status: Pendente</p>
-                  <p class="tableNumber">Mesa: 21</p>
-                  <p class="timeSinceOrder">Tempo: 23:40 minutos</p>
-                </div>
-              </div>
-            </div>
+            <div class="orders" id="lastOrders"></div>
           </div>
           <button id="rightBtn">
             <img src="./img/right-arrow-icon.svg" alt="" />

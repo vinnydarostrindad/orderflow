@@ -158,11 +158,16 @@ main.container {
         text-align: center;
         font-size: 2.4rem;
         font-weight: bold;
+
+        p {
+          width: 270px;
+          margin: 0 auto;
+        }
       }
     }
   }
 
-  .lastsOrders {
+  .lastOrders {
     border-top: 1px solid rgba(100, 100, 100, 0.644);
     padding: 1.2rem 2rem 2rem;
 
@@ -186,6 +191,14 @@ main.container {
           gap: 15px;
           translate: 0px 0px;
           transition: translate 100ms ease-out;
+
+          > p {
+            display: flex;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            height: 110px;
+          }
 
           .order {
             display: flex;
@@ -265,7 +278,7 @@ main.container {
 
 @media screen and (min-width: 680px) {
   main.container {
-    .lastsOrders {
+    .lastOrders {
       .ordersContainer {
         .ordersCarousel {
           width: 455px;
@@ -368,7 +381,7 @@ main.container {
       }
     }
 
-    .lastsOrders {
+    .lastOrders {
       grid-area: 5 / 1 / 6 / 5;
 
       .ordersContainer {
@@ -380,13 +393,13 @@ main.container {
   }
 }
 
-@media screen and (min-width: 1270px) {
+@media screen and (min-width: 1350px) {
   main.container {
     .businessStatsBox {
       padding: 2rem 13rem 0;
     }
 
-    .lastsOrders {
+    .lastOrders {
       padding: 2rem 5rem 0;
 
       .ordersContainer {

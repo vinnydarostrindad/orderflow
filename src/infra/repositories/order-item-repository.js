@@ -76,8 +76,6 @@ export default class OrderItemRepository {
           orders.business_id = $1
         ORDER BY
           order_items.created_at ASC
-        LIMIT
-         10
       ;`,
       values: [businessId],
     });
