@@ -3,22 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Registre facilmente seus funcionários ao seu restaurante no OrderFlow."
+    />
     <link rel="stylesheet" href="style.css" />
     <title>Registrar Funcionários</title>
   </head>
   <body>
-    <header>
-      <h1>OrderFlow</h1>
-      <button type="button" class="button" id="advance">AVANÇAR</button>
+    <header class="header-container">
+      <div>
+        <h1>OrderFlow</h1>
+        <button type="button" class="header-container__button" id="advanceBtn">
+          avançar
+        </button>
+      </div>
     </header>
-    <main class="container">
-      <div class="formSection">
-        <div class="text">
+    <main class="main-container">
+      <div class="main-container__form-section">
+        <div class="form-section__text">
           <h2>Agora é hora de adicionar os funcionários</h2>
-          <p>Deixar para depois</p>
+          <button id="skipBtn">Deixar para depois</button>
         </div>
-        <form method="post">
-          <div class="inputBox">
+        <form
+          method="post"
+          action="#"
+          name="registerForm"
+          class="form-section__register-form"
+        >
+          <div class="form-section__input-box">
             <input
               type="text"
               name="name"
@@ -27,9 +40,10 @@
               placeholder=" "
               required
             />
-            <label for="name" class="inputLabel">Nome</label>
+            <label for="name">Nome</label>
+            <p class="input-box__warn" aria-live="polite"></p>
           </div>
-          <div class="inputBox">
+          <div class="form-section__input-box">
             <label for="role">Cargo</label>
             <select name="role" id="role">
               <option value="waiter">Garçom</option>
@@ -38,7 +52,7 @@
               <option value="cook">Cozinha</option>
             </select>
           </div>
-          <div class="roleBox">
+          <div class="form-section__role-box" id="roleBox">
             <p>
               O garçom terá acesso ao cardápio para registrar os pedidos dos
               clientes. Antes de iniciar o pedido, ele deve informar o número da
@@ -47,11 +61,28 @@
               de visualizar o tempo médio de preparo.
             </p>
           </div>
-          <button type="submit" class="button">Adicionar</button>
+          <button type="submit" class="form-section__button">Adicionar</button>
         </form>
       </div>
-      <div class="employees" id="employeesTable"></div>
+      <div class="main-container__employees" id="employeesTable"></div>
     </main>
+    <div class="modal-background modal-background--hidden"></div>
+    <div class="modal modal--hidden" role="dialog" aria-modal="true">
+      <p class="modal__message">
+        Tudo que foi adicionado será perdido. Deseja continuar?
+      </p>
+      <div class="modal__buttons">
+        <button class="modal__cancel-button" id="cancelBtn">Cancelar</button>
+        <button class="modal__continue-button" id="continueBtn">
+          Continuar
+        </button>
+      </div>
+    </div>
+    <div
+      class="snackbar snackbar--hidden"
+      aria-hidden="true"
+      aria-live="polite"
+    ></div>
     <script src="script.js"></script>
   </body>
 </html>
