@@ -3,56 +3,72 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Crie seu cardápio de forma eficiênte no OrderFlow"
+    />
     <link rel="stylesheet" href="style.css" />
     <title>Criar Cardápio</title>
   </head>
   <body>
-    <header>
-      <div>
-        <h1>OrderFlow</h1>
-        <button type="button" class="button" id="advance">AVANÇAR</button>
+    <header class="header">
+      <div class="header__content">
+        <h1 class="header__title">OrderFlow</h1>
+        <button type="button" class="header__button" id="advanceBtn">
+          Avançar
+        </button>
       </div>
     </header>
-    <main class="container showMenuForm" id="main">
-      <div class="menuFormSection">
-        <div class="text">
-          <h2>Agora vamos criar o cardápio!</h2>
-          <p>Deixar para depois</p>
+    <main class="main main--show-menu-item-form" id="main">
+      <section class="menu-form">
+        <div class="menu-form__text">
+          <h2 class="menu-form__title">Agora vamos criar o cardápio!</h2>
+          <button type="button" class="skip-button" id="skipBtn">
+            Deixar para depois
+          </button>
         </div>
-        <form method="post" id="menuForm">
-          <div class="inputBox">
+        <form method="post" id="menuForm" class="form menu-form__form">
+          <div class="form__input-group">
             <input
               type="text"
               name="name"
-              id="name"
+              id="menuName"
               autocomplete="off"
               placeholder=" "
               required
+              class="form__input"
             />
-            <label for="name" class="inputLabel">Nome</label>
+            <label for="menuName" class="form__label">Nome</label>
           </div>
-          <button type="submit" class="button">Criar</button>
+          <button type="submit" class="form__btn" id="menuFormBtn">
+            Criar
+          </button>
         </form>
-      </div>
-      <div class="menuItemFormSection">
-        <div class="menuItemForm">
-          <div class="text">
-            <h2>Adicione os itens no seu menu</h2>
-            <p>Deixar para depois</p>
+      </section>
+      <section class="menu-item-form">
+        <div>
+          <div class="menu-item-form__text">
+            <h2 class="menu-item-form__title">Adicione os itens no seu menu</h2>
+            <button class="skip-button">Deixar para depois</button>
           </div>
-          <form method="post" id="menuItemForm">
-            <div class="inputBox">
+          <form
+            method="post"
+            id="menuItemForm"
+            class="form menu-item-form__form"
+          >
+            <div class="form__input-group">
               <input
                 type="text"
                 name="name"
-                id="name"
+                id="menuItemName"
                 autocomplete="off"
                 placeholder=" "
                 required
+                class="form__input"
               />
-              <label for="name" class="inputLabel">Nome</label>
+              <label for="menuItemName" class="form__label">Nome</label>
             </div>
-            <div class="inputBox">
+            <div class="form__input-group">
               <input
                 type="text"
                 name="price"
@@ -60,53 +76,70 @@
                 autocomplete="off"
                 placeholder=" "
                 required
+                class="form__input"
               />
-              <label for="price" class="inputLabel">Preço</label>
+              <label for="price" class="form__label">Preço</label>
             </div>
-            <div class="inputBox">
+            <div class="form__input-group">
               <textarea
                 name="description"
                 id="description"
-                placeholder=" "
+                class="form__textarea"
               ></textarea>
-              <label for="description" class="inputLabel">Descrição</label>
+              <label for="description" class="form__label">Descrição</label>
             </div>
-            <div class="inputBox file" id="fileInput">
-              <input
-                type="file"
-                name="image"
-                id="image"
-                accept="image/*"
-                autocomplete="off"
-                placeholder=" "
-              />
-              <div class="inputFileText">
-                <p>Adicionar Imagem</p>
-                <span>+</span>
+            <div class="menu-item-form__image-type-checkbox-group">
+              <div class="form__file-input-group" id="fileInput">
+                <input
+                  type="file"
+                  name="image"
+                  id="image"
+                  accept="image/*"
+                  autocomplete="off"
+                  placeholder=" "
+                  class="form__file-input"
+                />
+                <div class="form__file-input-text">
+                  <p>Adicionar Imagem</p>
+                  <span>+</span>
+                </div>
+                <div class="file-input__image" id="imgPreview"></div>
+                <label for="image" class="form__label">Imagem</label>
               </div>
-              <div class="formImg" id="imgPreview"></div>
-              <label for="image" class="inputLabel">Imagem</label>
+              <div class="menu-item-form__type-checkbox-group">
+                <div class="form__input-group">
+                  <input
+                    type="text"
+                    name="type"
+                    id="type"
+                    autocomplete="off"
+                    placeholder=" "
+                    class="form__input"
+                  />
+                  <div class="type-select-box"></div>
+                  <label for="type" class="form__label">Tipo</label>
+                </div>
+                <div class="form__checkbox-input-group">
+                  <input
+                    type="checkbox"
+                    name="save"
+                    id="checkbox"
+                    class="form__checkbox"
+                  />
+                  <label for="checkbox">Manter os dados</label>
+                </div>
+              </div>
             </div>
-            <div class="inputBox">
-              <input
-                type="text"
-                name="type"
-                id="type"
-                autocomplete="off"
-                placeholder=" "
-              />
-              <label for="type" class="inputLabel">Tipo</label>
-            </div>
-            <button type="submit" class="button">Adicionar</button>
+            <button type="submit" class="form__btn">Adicionar</button>
           </form>
         </div>
-        <div class="menuPreview" id="menu">
-          <h3></h3>
-          <div class="menuItems" id="menuItems">
+        <div class="menu-preview" id="menu">
+          <h3 class="menu-preview__title">Cardápio</h3>
+          <div class="menu-preview__items" id="menuItems">
             <p>Adicione algum item ao seu menu para visualizar</p>
           </div>
         </div>
-      </div>
+      </section>
     </main>
     <script src="script.js"></script>
   </body>
