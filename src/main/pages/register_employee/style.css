@@ -1,4 +1,4 @@
-@import url("../base.css");
+@import url("../styles/base.css");
 
 body,
 html {
@@ -141,7 +141,7 @@ html {
 /*       HEADER       */
 /*--------------------*/
 
-.header-container {
+.header {
   background-color: var(--primary-color);
   height: 7.5%;
 
@@ -159,7 +159,7 @@ html {
       font-size: 1.5rem;
     }
 
-    .header-container__button {
+    .header__button {
       background: #fff;
       border: 2px solid #000;
       box-shadow: 0 0 #000;
@@ -199,7 +199,7 @@ html {
         }
       }
 
-      &.header-container__button--loading {
+      &.header__button--loading {
         border: none;
         position: relative;
 
@@ -237,7 +237,7 @@ html {
 /*        MAIN        */
 /*--------------------*/
 
-.main-container {
+.main {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -245,7 +245,7 @@ html {
   justify-content: center;
   padding-bottom: 0.75rem;
 
-  .main-container__form-section {
+  .main__form-section {
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -394,7 +394,7 @@ html {
   /*        TABLE        */
   /*---------------------*/
 
-  .main-container__employees {
+  .main__employees {
     width: 80%;
 
     table {
@@ -475,8 +475,8 @@ html {
 /*--------------------*/
 
 @media screen and (width <= 600px) {
-  .main-container {
-    .main-container__employees {
+  .main {
+    .main__employees {
       table {
         tr {
           td:last-child div {
@@ -495,19 +495,19 @@ html {
     }
   }
 
-  .header-container {
+  .header {
     div {
       width: min(90%, 1000px);
     }
   }
 
-  .main-container {
+  .main {
     margin: 0 auto;
     min-height: 92.5%;
     padding-top: 1rem;
     width: min(90%, 1000px);
 
-    .main-container__form-section {
+    .main__form-section {
       flex-direction: row-reverse;
       gap: 5rem;
       height: 80dvh;

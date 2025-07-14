@@ -4,6 +4,18 @@
   --text-color: #000;
   --link-color: #5f5f5f;
   --button-shadow: 0 2px #181818;
+  --scroll-bar-color: #aaa #f0f0f0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #e50914;
+    --background-color: #201e1e;
+    --text-color: #dadada;
+    --link-color: #a5a5a5;
+    --button-shadow: 0 2px #afafaf;
+    --scroll-bar-color: #555 #222;
+  }
 }
 
 * {
@@ -17,14 +29,5 @@ body {
   background-color: var(--background-color);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary-color: #e50914;
-    --background-color: #201e1e;
-    --text-color: #dadada;
-    --link-color: #a5a5a5;
-    --button-shadow: 0 2px #afafaf;
-  }
+  scrollbar-color: var(--scroll-bar-color);
 }

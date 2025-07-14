@@ -1,4 +1,4 @@
-@import url("./base.css");
+@import url("./styles/base.css");
 
 body,
 html {
@@ -51,7 +51,7 @@ html {
 /*        MAIN        */
 /*--------------------*/
 
-.main-container {
+.main {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -59,7 +59,7 @@ html {
   justify-content: center;
   min-height: 100dvh;
 
-  .main-container__title {
+  .main__title {
     margin-bottom: 2rem;
 
     h1 {
@@ -197,7 +197,7 @@ html {
     }
   }
 
-  .main-container {
+  .main {
     flex-direction: row;
     gap: 3rem;
     padding: 1.5rem;
