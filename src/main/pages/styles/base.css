@@ -5,6 +5,7 @@
   --link-color: #5f5f5f;
   --button-shadow: 0 2px #181818;
   --scroll-bar-color: #aaa #f0f0f0;
+  --bg-light: #fff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,6 +16,7 @@
     --link-color: #a5a5a5;
     --button-shadow: 0 2px #afafaf;
     --scroll-bar-color: #555 #222;
+    --bg-light: #333;
   }
 }
 
