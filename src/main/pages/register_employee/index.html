@@ -12,8 +12,8 @@
   </head>
   <body>
     <header class="header">
-      <div>
-        <h1>OrderFlow</h1>
+      <div class="header__content">
+        <h1 class="header__title">OrderFlow</h1>
         <button type="button" class="header__button" id="advanceBtn">
           avançar
         </button>
@@ -25,27 +25,22 @@
           <h2>Agora é hora de adicionar os funcionários</h2>
           <button id="skipBtn">Deixar para depois</button>
         </div>
-        <form
-          method="post"
-          action="#"
-          name="registerForm"
-          class="form-section__register-form"
-        >
-          <div class="form-section__input-box">
+        <form method="post" action="#" name="registerForm" class="form">
+          <div class="form__input-group">
             <input
               type="text"
               name="name"
+              class="form__input"
               id="name"
               autocomplete="off"
               placeholder=" "
               required
             />
-            <label for="name">Nome</label>
-            <p class="input-box__warn" aria-live="polite"></p>
+            <label for="name" class="form__label">Nome</label>
           </div>
-          <div class="form-section__input-box">
+          <div class="form__input-group">
             <label for="role">Cargo</label>
-            <select name="role" id="role">
+            <select name="role" id="role" class="form__select">
               <option value="waiter">Garçom</option>
               <option value="cashier">Caixa</option>
               <option value="manager">Gerente</option>
@@ -66,23 +61,6 @@
       </div>
       <div class="main__employees" id="employeesTable"></div>
     </main>
-    <div class="modal-background modal-background--hidden"></div>
-    <div class="modal modal--hidden" role="dialog" aria-modal="true">
-      <p class="modal__message">
-        Tudo que foi adicionado será perdido. Deseja continuar?
-      </p>
-      <div class="modal__buttons">
-        <button class="modal__cancel-button" id="cancelBtn">Cancelar</button>
-        <button class="modal__continue-button" id="continueBtn">
-          Continuar
-        </button>
-      </div>
-    </div>
-    <div
-      class="snackbar snackbar--hidden"
-      aria-hidden="true"
-      aria-live="polite"
-    ></div>
-    <script src="script.js"></script>
+    <script src="script.js" type="module"></script>
   </body>
 </html>

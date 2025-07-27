@@ -55,6 +55,15 @@
       resize: none;
     }
 
+    .form__select {
+      background-color: var(--bg-light);
+      border: 2px solid var(--text-color);
+      color: var(--text-color);
+      font-size: 1rem;
+      margin-top: 0.4rem;
+      padding: 0.5rem;
+    }
+
     .form__label {
       .form__input:placeholder-shown + & {
         left: 19px;

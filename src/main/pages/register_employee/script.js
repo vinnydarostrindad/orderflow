@@ -1,15 +1,12 @@
+import { createSnackBar, showSnackBar } from "../scripts/snackbar.js";
+import showConfirmModal from "../scripts/confirm-modal.js";
+
 const registerEmployeeForm = document.forms[0];
 const roleSelect = document.querySelector("#role");
 const advanceBtn = document.querySelector("#advanceBtn");
 const nameInput = document.querySelector("#name");
-const warn = document.querySelector(".input-box__warn");
 const skipBtn = document.querySelector("#skipBtn");
 const employeesTableContainer = document.querySelector("#employeesTable");
-const snackbar = document.querySelector(".snackbar");
-const modalBg = document.querySelector(".modal-background");
-const modal = document.querySelector(".modal");
-const modalCancelBtn = document.querySelector("#cancelBtn");
-const modalContinueBtn = document.querySelector("#continueBtn");
 const roleBox = document.querySelector("#roleBox");
 
 const params = new URLSearchParams(document.location.search);
@@ -17,7 +14,6 @@ const businessId = params.get("b");
 
 let employees = [];
 let tableExists = false;
-let snackbarTimeoutId;
 
 const rolesExplanation = {
   waiter:
@@ -42,25 +38,8 @@ function saveEmployeesDraft() {
   }
 }
 
-function showSnackBar(type, html) {
-  if (snackbarTimeoutId) clearTimeout(snackbarTimeoutId);
-
-  snackbar.innerHTML = html;
-  snackbar.classList.remove("snackbar--hidden");
-  snackbar.classList.add(`snackbar--${type}`);
-  snackbar.setAttribute("aria-hidden", "false");
-
-  snackbarTimeoutId = setTimeout(() => {
-    snackbar.classList.add("snackbar--hidden");
-    snackbar.addEventListener(
-      "transitionend",
-      () => {
-        snackbar.classList.remove(`snackbar--${type}`);
-        snackbar.setAttribute("aria-hidden", "true");
-      },
-      { once: true },
-    );
-  }, 5000);
+function redirectToNextPage() {
+  window.location.href = `http://localhost:5500/src/main/pages/create_menu/index.html?b=${businessId}`;
 }
 
 function handleSkip(e) {
@@ -71,33 +50,19 @@ function handleSkip(e) {
     return;
   }
 
-  document.documentElement.style.overflow = "hidden";
-  modalBg.classList.remove("modal-background--hidden");
-  modal.classList.remove("modal--hidden");
-
-  modalCancelBtn.addEventListener(
-    "click",
-    () => {
-      modalBg.classList.add("modal-background--hidden");
-      modal.classList.add("modal--hidden");
+  showConfirmModal({
+    message: "Tudo que foi adicionado será perdido. Deseja continuar?",
+    onCancel: (modalBg, modal) => {
+      modalBg.remove();
+      modal.remove();
       document.documentElement.style.overflow = "";
     },
-    { once: true },
-  );
-
-  modalContinueBtn.addEventListener(
-    "click",
-    () => {
+    onContinue: () => {
       window.removeEventListener("beforeunload", saveEmployeesDraft);
       sessionStorage.removeItem("employeesDraft");
       redirectToNextPage();
     },
-    { once: true },
-  );
-}
-
-function redirectToNextPage() {
-  window.location.href = `http://localhost:5500/src/main/pages/create_menu/index.html?b=${businessId}`;
+  });
 }
 
 function updateRoleExplanation(e) {
@@ -178,13 +143,15 @@ async function addEmployee(e) {
   );
 
   if (alreadyExists) {
+    showSnackBar(
+      "warn",
+      "<p>Já existe um funcionário com <br> esse nome nesse cargo.</p>",
+    );
     nameInput.style.backgroundColor = "rgba(255, 255, 0, 0.3)";
     nameInput.value = "";
     nameInput.focus();
-    warn.textContent = "Nome já adicionado!";
 
     const clearWarning = () => {
-      warn.textContent = "";
       nameInput.style.backgroundColor = "";
       nameInput.removeEventListener("input", clearWarning);
       nameInput.removeEventListener("blur", clearWarning);
@@ -214,7 +181,7 @@ async function postEmployees(e) {
   if (employees.length === 0) {
     showSnackBar(
       "warn",
-      "<p>Adicione ao menos um funcionário para avançar.</p>",
+      "<p>Adicione ao menos um funcionário <br> para avançar.</p>",
     );
 
     btn.disabled = false;
@@ -251,7 +218,7 @@ async function postEmployees(e) {
     console.error(error);
     showSnackBar(
       "error",
-      "<p>Erro ao adicionar funcionários. <br /> Tente novamente.</p>",
+      "<p>Erro ao adicionar funcionários. <br> Tente novamente.</p>",
     );
     btn.disabled = false;
     btn.textContent = "avançar";
@@ -267,3 +234,5 @@ if (employeesDraft) {
   createTableIfNeeded();
   employeesDraft.forEach(renderTableRow);
 }
+
+createSnackBar();
