@@ -11,6 +11,7 @@
     "selector-class-pattern": null,
     "comment-empty-line-before": null,
     "comment-whitespace-inside": null,
-    "color-named": "never"
+    "color-named": "never",
+    "selector-id-pattern": null
   }
 }
