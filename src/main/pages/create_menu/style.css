@@ -1,32 +1,18 @@
 @import url("../styles/base.css");
 @import url("../styles/header.css");
 @import url("../styles/form.css");
+@import url("../styles/snackbar.css");
+@import url("../styles/confirm-modal.css");
 
 body,
 html {
   color: var(--text-color);
 }
 
-@property --angle {
-  inherits: false;
-  initial-value: 0deg;
-  syntax: "<angle>";
-}
-
-@keyframes spin {
-  from {
-    --angle: 0deg;
-  }
-
-  to {
-    --angle: 360deg;
-  }
-}
-
 .loading {
   animation-duration: 500ms;
   animation-iteration-count: infinite;
-  animation-name: loading;
+  animation-name: rotate-loading;
   animation-timing-function: linear;
   background-color: transparent;
   border: 3px solid #ffffffa2;
@@ -36,7 +22,7 @@ html {
   width: 20px;
 }
 
-@keyframes loading {
+@keyframes rotate-loading {
   from {
     transform: rotate(0deg);
   }
@@ -101,6 +87,7 @@ html {
     flex-direction: column;
     gap: 1.8rem;
     justify-content: center;
+    width: max(60%, 500px);
 
     & > :first-child {
       width: min(80%, 500px);
@@ -170,21 +157,20 @@ html {
           height: 40%;
 
           .form__input {
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
             position: relative;
             width: 100%;
           }
 
           .type-select-box {
-            background-color: #393939;
+            background-color: var(--bg-light);
             left: -2px;
-            max-height: 3.6rem;
+            max-height: 7.4rem;
             overflow-y: auto;
             position: absolute;
             right: -2px;
             scrollbar-width: thin;
             top: calc(100% + 2px);
+            z-index: 100;
 
             button {
               background-color: transparent;
@@ -212,7 +198,7 @@ html {
           display: flex;
           font-size: 1rem;
           gap: 0.4rem;
-          height: 60%;
+          height: 50%;
 
           .form__checkbox {
             height: 0.9rem;
@@ -222,109 +208,6 @@ html {
       }
     }
 
-    /* .menu-preview {
-      width: min(97%, 600px);
-
-      .menu-preview__item--no-img {
-        align-items: center;
-        border-right: 1px solid var(--link-color);
-        color: var(--link-color);
-        display: flex;
-        height: 100%;
-        justify-content: center;
-        text-align: center;
-        width: 100%;
-      }
-
-      .menu-preview__item--no-desc {
-        align-items: center;
-        color: var(--link-color);
-        display: flex;
-        justify-content: center;
-        width: 100%;
-      }
-
-      .menu-preview__items {
-        border: 2px solid var(--text-color);
-        min-height: 100px;
-
-        > p {
-          color: var(--link-color);
-          font-size: 1.25rem;
-          padding: 1.5rem 1rem;
-          text-align: center;
-        }
-
-        .menu-preview__item {
-          border: 2px solid var(--text-color);
-          display: grid;
-          grid-template: 26px 1fr 1fr / 96px 60px repeat(2, 1fr);
-          height: 100px;
-
-          .menu-preview__item-img {
-            grid-area: 1 / 1 / -1 / 2;
-
-            img {
-              height: 100%;
-              width: 100%;
-            }
-          }
-
-          .menu-preview__item-name {
-            align-items: center;
-            border-bottom: 1px solid var(--link-color);
-            display: flex;
-            font-size: 1rem;
-            grid-area: 1 / 2 / 2 / -1;
-
-            h4 {
-              overflow: hidden;
-              padding: 0.2rem 0.5rem;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-            }
-          }
-
-          .menu-preview__item-price {
-            align-items: center;
-            display: flex;
-            font-size: 0.9rem;
-            grid-area: 2 / 2 / 3 / 3;
-            justify-content: center;
-          }
-
-          .menu-preview__item-type {
-            align-items: center;
-            color: #fff;
-            display: flex;
-            font-size: 0.8rem;
-            grid-area: 3 / 2 / 3 / 3;
-            justify-content: center;
-
-            p {
-              background-color: #ff000082;
-              border-radius: 3px;
-              overflow: hidden;
-              padding: 0.125rem 0.25rem;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              width: 55px;
-            }
-          }
-
-          .menu-preview__item-description {
-            font-size: 1rem;
-            grid-area: 2 / 3 / -1 / -1;
-            line-height: 1rem;
-            overflow: hidden;
-            padding: 0.125rem 0.25rem;
-            text-align: justify;
-            text-overflow: ellipsis;
-          }
-        }
-      }
-    } */
-
     .menu-preview {
       color: var(--text-color);
       width: min(97%, 600px);
@@ -332,7 +215,7 @@ html {
       .menu-preview__items {
         border: 2px solid var(--link-color);
         margin-top: 0.6rem;
-        max-height: 412px;
+        max-height: 457px;
         min-height: 100px;
         overflow-y: auto;
 
@@ -352,6 +235,7 @@ html {
           display: flex;
           gap: 0.75rem;
           padding: 0.5rem;
+          position: relative;
         }
       }
 
@@ -366,7 +250,7 @@ html {
       .menu-preview__item-img {
         align-items: center;
         align-self: center;
-        background: #333;
+        background: var(--bg-light);
         color: var(--link-color);
         display: flex;
         flex-shrink: 0;
@@ -374,13 +258,13 @@ html {
         height: 80px;
         justify-content: center;
         width: 80px;
-      }
 
-      /* stylelint-disable-next-line no-descending-specificity */
-      .menu-preview__item-img img {
-        height: 100%;
-        object-fit: cover;
-        width: 100%;
+        /* stylelint-disable-next-line no-descending-specificity */
+        img {
+          height: 100%;
+          object-fit: cover;
+          width: 100%;
+        }
       }
 
       .menu-preview__item-infos {
@@ -423,6 +307,23 @@ html {
         line-clamp: 3;
         line-height: 1.2;
         overflow: hidden;
+      }
+
+      .menu-preview__remove-btn {
+        background-color: #720000;
+        border: 1px solid #fff;
+        bottom: 7px;
+        color: #fff;
+        cursor: pointer;
+        outline: 3px solid #620000;
+        padding: 0.2rem 0.3rem;
+        position: absolute;
+        right: 7px;
+        z-index: 100;
+
+        &:hover {
+          background-color: #620000;
+        }
       }
     }
   }

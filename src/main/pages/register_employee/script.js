@@ -88,6 +88,7 @@ function handleSkip(e) {
   modalContinueBtn.addEventListener(
     "click",
     () => {
+      window.removeEventListener("beforeunload", saveEmployeesDraft);
       sessionStorage.removeItem("employeesDraft");
       redirectToNextPage();
     },
@@ -208,7 +209,7 @@ async function postEmployees(e) {
   const btn = e.target;
   btn.disabled = true;
   btn.innerHTML = "avançando";
-  btn.classList.add("header-container__button--loading");
+  btn.classList.add("header__button--loading");
 
   if (employees.length === 0) {
     showSnackBar(
@@ -218,7 +219,7 @@ async function postEmployees(e) {
 
     btn.disabled = false;
     btn.textContent = "avançar";
-    btn.classList.remove("header-container__button--loading");
+    btn.classList.remove("header__button--loading");
 
     return;
   }
@@ -243,6 +244,7 @@ async function postEmployees(e) {
       console.log(responseBody);
     }
 
+    window.removeEventListener("beforeunload", saveEmployeesDraft);
     sessionStorage.removeItem("employeesDraft");
     redirectToNextPage();
   } catch (error) {
@@ -253,7 +255,7 @@ async function postEmployees(e) {
     );
     btn.disabled = false;
     btn.textContent = "avançar";
-    btn.classList.remove("header-container__button--loading");
+    btn.classList.remove("header__button--loading");
   }
 }
 

@@ -1,18 +1,24 @@
+import showConfirmModal from "../scripts/confirm-modal.js";
+import { createSnackBar, showSnackBar } from "../scripts/snackbar.js";
+
+const advanceButton = document.querySelector("#advanceBtn");
 const main = document.querySelector("#main");
 const menuForm = document.querySelector("#menuForm");
 const menuFormBtn = document.querySelector("#menuFormBtn");
 const menuItemForm = document.querySelector("#menuItemForm");
+const skipBtns = document.querySelectorAll(".skip-button");
 const nameInput = document.querySelector("#menuItemName");
 const priceInput = document.querySelector("#price");
 const descriptionInput = document.querySelector("#description");
 const fileInput = document.querySelector("#fileInput");
 const imgFileInput = document.querySelector("#image");
 const imgPreview = document.querySelector("#imgPreview");
+const inputFileText = document.querySelector(".form__file-input-text");
 const typeInput = document.querySelector("#type");
 const typeSelectBox = document.querySelector(".type-select-box");
 const checkboxInput = document.querySelector("#checkbox");
 const menu = document.querySelector("#menu");
-const advanceButton = document.querySelector("#advanceBtn");
+const menuItemsBox = document.querySelector("#menuItems");
 
 let params = new URLSearchParams(document.location.search);
 let businessId = params.get("b");
@@ -22,11 +28,41 @@ let menuItems = [];
 let types = new Set();
 
 menuForm.addEventListener("submit", createMenu);
+priceInput.addEventListener("input", formatPriceInput);
 fileInput.addEventListener("change", changeImgPreview);
+typeInput.addEventListener("focus", searchTypes);
+typeInput.addEventListener("input", searchTypes);
+typeSelectBox.addEventListener("mousedown", selectType);
 menuItemForm.addEventListener("submit", addMenuItem);
-advanceButton.addEventListener("click", advaceButton);
-typeInput.addEventListener("input", searchTypes);
-typeInput.addEventListener("input", searchTypes);
+menuItemForm.addEventListener("reset", clearFileInputImg);
+advanceButton.addEventListener("click", handleAdvance);
+menu.addEventListener("click", selectItem);
+skipBtns.forEach((btn) => btn.addEventListener("click", handleSkip));
+
+function redirectToNextPage() {
+  window.location.href = `http://localhost:5500/src/main/pages/business_invite/index.html?b=${businessId}`;
+}
+
+function handleSkip() {
+  if (menuItems.length === 0) {
+    redirectToNextPage();
+    return;
+  }
+
+  showConfirmModal({
+    message: "Tudo que foi adicionado será perdido. Deseja continuar?",
+    onCancel: (modalBg, modal) => {
+      modalBg.remove();
+      modal.remove();
+      document.documentElement.style.overflow = "";
+    },
+    onContinue: () => {
+      window.removeEventListener("beforeunload", saveMenuItemsDraft);
+      sessionStorage.removeItem("menuItemsDraft");
+      redirectToNextPage();
+    },
+  });
+}
 
 function changeForms() {
   main.classList.toggle("main--show-menu-form");
@@ -40,33 +76,131 @@ async function createMenu(e) {
 
   const name = e.target[0].value;
 
-  const response = await fetch(
-    `http://localhost:3000/api/v1/business/${businessId}/menu`,
-    {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/v1/business/${businessId}/menu`,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+        }),
       },
-      body: JSON.stringify({
-        name,
-      }),
-    },
-  );
+    );
 
-  console.log(response.ok);
-  const responseBody = await response.json();
-  menuId = responseBody.id;
-  console.log(responseBody);
+    console.log(response.ok);
+    if (!response.ok) {
+      menuFormBtn.innerHTML = "Criar";
+      return;
+    }
 
-  if (!response.ok) {
+    const responseBody = await response.json();
+    menuId = responseBody.id;
+    console.log(responseBody);
+
+    menu.firstElementChild.textContent = name;
+
     menuFormBtn.innerHTML = "Criar";
+    changeForms();
+  } catch (error) {
+    console.error(error);
+    menuFormBtn.textContent = "Criar";
+    showSnackBar(
+      "error",
+      "<p>Erro ao criar o menu. <br /> Tente novamente.</p>",
+    );
+  }
+}
+
+function formatPriceInput(e) {
+  const value = e.target.value;
+
+  if (value === "" || value === "0,0") {
+    e.target.value = "0,00";
     return;
   }
 
-  menu.firstElementChild.textContent = name;
+  const number = value
+    .split(".")
+    .join("")
+    .split(",")
+    .join("")
+    .replace(/\D/g, "");
+  const cents = number.slice(-2);
+  const int = number.slice(0, -2);
+  const formatedNumber = Number(int + "." + cents)
+    .toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    })
+    .replace("R$", "")
+    .trim();
 
-  menuFormBtn.innerHTML = "Criar";
-  changeForms();
+  e.target.value = formatedNumber;
+}
+
+function selectType(e) {
+  const opt = e.target.closest("button[role='option']");
+  if (!opt) return;
+  typeInput.value = opt.textContent;
+}
+
+function searchTypes(e) {
+  if (types.size === 0) return;
+
+  typeSelectBox.innerHTML = "";
+  typeSelectBox.hidden = false;
+
+  let word = e.target.value;
+
+  const startsWithFilterTypes = Array.from(types).filter((type) =>
+    type.startsWith(word),
+  );
+  const includesFilterTypes = Array.from(types).filter((type) =>
+    type.includes(word),
+  );
+  const filteredTypes = new Set([
+    ...startsWithFilterTypes.sort(),
+    ...includesFilterTypes.sort(),
+  ]);
+
+  for (let type of filteredTypes) {
+    typeSelectBox.innerHTML += `
+      <button type="button" role="option">${type}</button>
+    `;
+  }
+
+  typeInput.addEventListener("blur", () => {
+    typeSelectBox.hidden = true;
+  });
+}
+
+function changeImgPreview(e) {
+  inputFileText.innerHTML = "<p>Alterar Imagem</p>";
+
+  const imgFile = e.target.files[0];
+
+  if (imgFile) {
+    const preview = document.createElement("img");
+    preview.src = URL.createObjectURL(imgFile);
+
+    imgPreview.replaceChildren(preview);
+  } else {
+    imgPreview.firstChild.remove();
+    inputFileText.innerHTML = `<p>Adicionar Imagem</p> <span>+</span>`;
+  }
+}
+
+function clearFileInputImg() {
+  if (!imgPreview.children[0]) return;
+
+  inputFileText.innerHTML = `
+    <p>Adicionar Imagem</p>
+    <span>+</span>
+  `;
+  imgPreview.removeChild(imgPreview.children[0]);
 }
 
 function escapeHTML(str) {
@@ -135,13 +269,12 @@ function buildItemHTML(menuItem) {
 
   item.appendChild(imgBox);
   item.appendChild(infos);
+  item.setAttribute("data-name", name);
 
   return item;
 }
 
 function addItemToMenu(menuItem) {
-  const menuItemsBox = document.querySelector("#menuItems");
-
   const item = buildItemHTML(menuItem);
 
   if (menuItemsBox.firstElementChild.nodeName === "P") {
@@ -154,11 +287,51 @@ function addItemToMenu(menuItem) {
 function addMenuItem(e) {
   e.preventDefault();
 
-  const name = nameInput.value;
-  const price = priceInput.value;
-  const description = descriptionInput.value;
+  const name = nameInput.value.trim();
+  const price = priceInput.value.trim();
+  const description = descriptionInput.value.trim();
   const imgFile = imgFileInput.files[0];
-  const type = typeInput.value;
+  const type = typeInput.value.trim();
+
+  const nameAlreadyExists = menuItems.some(
+    (item) => item.name.toLowerCase() === name.toLowerCase(),
+  );
+
+  if (nameAlreadyExists) {
+    nameInput.style.backgroundColor = "rgba(147, 147, 0, 1)";
+    nameInput.value = "";
+    nameInput.focus();
+    showSnackBar("warn", "<p>Nome já adicionado no menu!</p>");
+
+    const clearWarning = () => {
+      nameInput.style.backgroundColor = "";
+      nameInput.removeEventListener("input", clearWarning);
+      nameInput.removeEventListener("blur", clearWarning);
+    };
+
+    nameInput.addEventListener("input", clearWarning);
+    nameInput.addEventListener("blur", clearWarning);
+
+    return;
+  }
+
+  if (price === "0,00") {
+    const priceWrapper = priceInput.parentElement;
+    priceWrapper.style.backgroundColor = "rgba(147, 147, 0, 1)";
+    priceWrapper.focus();
+    showSnackBar("warn", "<p>O preço precisa ser maior <br> que R$ 0,00.</p>");
+
+    const clearWarning = () => {
+      priceWrapper.style.backgroundColor = "";
+      priceInput.removeEventListener("input", clearWarning);
+      priceInput.removeEventListener("blur", clearWarning);
+    };
+
+    priceInput.addEventListener("input", clearWarning);
+    priceInput.addEventListener("blur", clearWarning);
+
+    return;
+  }
 
   let imgBlob;
 
@@ -166,89 +339,134 @@ function addMenuItem(e) {
     imgBlob = URL.createObjectURL(imgFile);
   }
 
-  const menuItemWithFile = {
+  const menuItem = {
     name,
     price,
     description,
     imgFile,
-    type,
-  };
-
-  const menuItemWithBlob = {
-    name,
-    price,
-    description,
     imgBlob,
     type,
   };
 
-  menuItems.push(menuItemWithFile);
-  types.add(type);
+  menuItems.push(menuItem);
+  if (type.trim()) types.add(type);
 
-  addItemToMenu(menuItemWithBlob);
+  addItemToMenu(menuItem);
+
+  if (checkboxInput.checked) return;
+
+  e.target.reset();
 }
 
-function changeImgPreview(e) {
-  const inputFileText = document.querySelector(".form__file-input-text");
+function selectItem(e) {
+  const btn = menu.querySelector("button");
+  if (btn) btn.remove();
 
-  inputFileText.innerHTML = "<p>Alterar Imagem</p>";
+  const menuItem = e.target.closest(".menu-preview__item");
+  if (!menuItem) return;
 
-  const imgFile = e.target.files[0];
+  const removeBtn = document.createElement("button");
+  removeBtn.className = "menu-preview__remove-btn";
+  removeBtn.onclick = removeItem;
+  removeBtn.textContent = "Remover";
 
-  if (imgFile) {
-    const preview = document.createElement("img");
-    preview.src = URL.createObjectURL(imgFile);
+  menuItem.append(removeBtn);
 
-    imgPreview.replaceChildren(preview);
-  }
-}
-
-async function advaceButton() {
-  if (menuItems.length === 0) {
-    alert("Adicione algum funcionário para prosseguir.");
-    return;
-  }
-
-  menuItems.forEach(async (item) => {
-    const { name, price, description, imgFile, type } = item;
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("price", price);
-    formData.append("description", description);
-    formData.append("imgFile", imgFile);
-    formData.append("type", type);
-
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${businessId}/menu/${menuId}/item`,
-      {
-        method: "POST",
-        body: formData,
-      },
-    );
-
-    const responseBody = await response.json();
-    console.log(responseBody);
-  });
-
-  window.location.href = `http://localhost:5500/src/main/pages/business_invite/index.html?businessId=${businessId}`;
-}
-
-function searchTypes() {
-  if (types.size === 0) return;
-  typeSelectBox.innerHTML = "";
-  typeSelectBox.hidden = false;
-
-  for (let type of types) {
-    typeSelectBox.innerHTML += `
-      <button type="button" role="option">${type}</button>
-    `;
-  }
-
-  typeInput.addEventListener(
-    "blur",
-    () => {
-      typeSelectBox.hidden = true;
+  document.addEventListener(
+    "mousedown",
+    (e) => {
+      if (!menu.contains(e.target)) {
+        menu.querySelector("button").remove();
+      }
     },
     { once: true },
   );
+
+  function removeItem(e) {
+    e.target.parentElement.remove();
+    const itemIndex = menuItems.findIndex(
+      (item) => item.name === menuItem.dataset.name,
+    );
+
+    menuItems.splice(itemIndex, 1);
+    if (menuItems.length === 0) {
+      menuItemsBox.innerHTML =
+        "<p>Adicione algum item ao seu menu para visualizar</p>";
+    }
+  }
 }
+
+function saveMenuItemsDraft() {
+  if (menuItems.length > 0) {
+    sessionStorage.setItem("menuItemsDraft", JSON.stringify(menuItems));
+  } else {
+    sessionStorage.removeItem("menuItemsDraft");
+  }
+}
+
+async function handleAdvance(e) {
+  const btn = e.target;
+
+  if (menuItems.length === 0) {
+    showSnackBar(
+      "warn",
+      "<p>Adicione algum item no menu <br> para prosseguir.</p>",
+    );
+    return;
+  }
+
+  btn.textContent = "avançando";
+  btn.classList.add("header__button--loading");
+
+  try {
+    for (let item of menuItems) {
+      const { name, price, description, imgFile, type } = item;
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("price", price);
+      formData.append("description", description);
+      formData.append("imgFile", imgFile);
+      formData.append("type", type);
+
+      // Talvez retornar todos como promises pra ir todas de uma vez seja melhor. Testar isso depois.
+      const response = await fetch(
+        `http://localhost:3000/api/v1/business/${businessId}/menu/${menuId}/item`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      console.log("OK: ", response.ok);
+      const responseBody = await response.json();
+      console.log(responseBody);
+    }
+
+    window.addEventListener("beforeunload", saveMenuItemsDraft);
+    sessionStorage.removeItem("menuItemsDraft");
+    redirectToNextPage();
+  } catch (error) {
+    btn.textContent = "avançar";
+    btn.classList.remove("header__button--loading");
+
+    showSnackBar(
+      "error",
+      "<p>Erro ao adicionar funcionários. <br /> Tente novamente.</p>",
+    );
+    console.error(error);
+  }
+}
+
+window.addEventListener("beforeunload", saveMenuItemsDraft);
+
+const menuItemsDraft = JSON.parse(sessionStorage.getItem("menuItemsDraft"));
+if (menuItemsDraft) {
+  menuItems = menuItemsDraft;
+  menuItems.forEach((item) => {
+    if (item.type.trim()) types.add(item.type);
+  });
+
+  menuItems.forEach(addItemToMenu);
+}
+
+createSnackBar();
