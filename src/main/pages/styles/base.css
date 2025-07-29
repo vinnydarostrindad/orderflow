@@ -8,7 +8,7 @@
   --bg-light: #fff;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --primary-color: #e50914;
     --background-color: #201e1e;
@@ -18,7 +18,7 @@
     --scroll-bar-color: #555 #222;
     --bg-light: #333;
   }
-}
+} */
 
 * {
   box-sizing: border-box;

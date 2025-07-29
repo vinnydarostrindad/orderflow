@@ -1,5 +1,6 @@
 .header {
   background-color: var(--primary-color);
+  box-shadow: 0 0 20px #0000004d;
   height: 10.5%;
 
   .header__content {
