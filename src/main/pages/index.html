@@ -3,17 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Cadastre sua empresa no OrderFlow para gerenciar pedidos e analisar estatísticas de forma simples e rápida."
+    />
     <link rel="stylesheet" href="style.css" />
     <title>OrderFlow - Registro</title>
   </head>
   <body>
-    <main class="container">
-      <div>
+    <main class="main-container">
+      <div class="main-container__title">
         <h1>OrderFlow</h1>
         <p>Faça seu registro</p>
       </div>
-      <form method="post" action="/api/v1/business" name="registerForm">
-        <div class="inputBox">
+      <form method="post" action="#" name="registerForm" class="register-form">
+        <div class="register-form__input-box">
           <input
             type="text"
             name="name"
@@ -24,7 +28,7 @@
           />
           <label for="name">Nome</label>
         </div>
-        <div class="inputBox">
+        <div class="register-form__input-box">
           <input
             type="email"
             name="email"
@@ -35,7 +39,7 @@
           />
           <label for="email">Email</label>
         </div>
-        <div class="inputBox">
+        <div class="register-form__input-box">
           <input
             type="password"
             name="password"
@@ -46,9 +50,22 @@
           />
           <label for="password">Senha</label>
         </div>
-        <button type="submit" class="button">Registrar</button>
+        <button
+          type="submit"
+          class="register-form__button"
+          id="submitBtn"
+          aria-label="Registrar empresa"
+          aria-live="polite"
+        >
+          Registrar
+        </button>
       </form>
     </main>
+    <div
+      class="snackbar snackbar--hidden"
+      aria-hidden="true"
+      aria-live="polite"
+    ></div>
 
     <script src="script.js"></script>
   </body>

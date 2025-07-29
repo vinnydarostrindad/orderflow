@@ -3,66 +3,79 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Compartilhe o código do seu negócio com a sua equipe! Assim eles terão acesso ao programa."
+    />
     <link rel="stylesheet" href="style.css" />
     <title>Business Invite</title>
   </head>
   <body>
-    <header>
-      <div>
-        <h1>OrderFlow</h1>
-        <button type="button" class="button" id="advance">AVANÇAR</button>
+    <header class="header">
+      <div class="header__content">
+        <h1 class="header__title">OrderFlow</h1>
+        <button type="button" class="header__button" id="advanceBtn">
+          AVANÇAR
+        </button>
       </div>
     </header>
-    <main class="container">
-      <div class="text">
+    <main class="invite">
+      <div class="invite__intro">
         <h2>Hora de compartilhar!</h2>
         <p>Compartilhe esse código com a sua equipe</p>
       </div>
-      <div class="shareContainer">
-        <div class="shareBox">
-          <p id="code"></p>
-          <button class="copyBtn" id="copyCodeBtn">
+      <div class="invite__code">
+        <div class="code-box">
+          <p class="code-box__value" id="code"></p>
+          <button class="code-box__copy-button" id="copyCodeBtn">
             <img src="./img/copy-icon.svg" alt="Copy" />
           </button>
         </div>
-        <p class="copyWarn"></p>
+        <p class="code-box__message copy-warn"></p>
       </div>
-      <p style="font-weight: bold">OU</p>
-      <button class="shareBtn" id="shareBtn">Compartilhar Link</button>
+      <p class="invite__separator">OU</p>
+      <button class="invite__share-button" id="shareBtn">
+        Compartilhar Link
+      </button>
     </main>
 
-    <div class="modalBackground hidden"></div>
-    <div class="shareModal hidden" id="shareModal">
-      <span id="exitModalBtn"
-        ><img src="./img/exit-icon.svg" alt="exit"
-      /></span>
-      <div class="modalHeader">
-        <h3>Link do Convite</h3>
-        <div>
-          <p>
+    <div class="modal-bg modal-bg--hidden"></div>
+    <div
+      class="modal modal--hidden"
+      id="shareModal"
+      aria-modal="true"
+      role="dialog"
+    >
+      <button type="button" class="modal__close-button" id="exitModalBtn">
+        <img src="./img/exit-icon.svg" alt="exit" />
+      </button>
+      <div class="modal__header">
+        <h3 class="modal__title">Link do Convite</h3>
+        <div class="modal__link-box">
+          <p class="modal__link">
             http://localhost:5500/employee-login?businessId=6f3a9b2c-1d5e-4b7f-8c0d-2a1e3f4b5c6d
           </p>
-          <button class="copyBtn" id="copyUrlBtn">
+          <button class="modal__copy-button" id="copyUrlBtn">
             <img src="./img/copy-icon.svg" alt="Copy" width="20" />
           </button>
         </div>
-        <p class="copyWarn"></p>
+        <p class="modal__message copy-warn"></p>
       </div>
-      <div class="modalApps">
-        <div>
-          <a id="whatsappLink">
+      <div class="modal__apps">
+        <div class="modal__app">
+          <a href="#" class="modal__app-link" id="whatsappLink">
             <p>whatsapp</p>
             <img src="./img/whatsapp-icon.svg" alt="whatsapp" />
           </a>
         </div>
-        <div>
-          <a id="emailLink">
+        <div class="modal__app">
+          <a href="#" class="modal__app-link" id="emailLink">
             <p>email</p>
             <img src="./img/email-icon.svg" alt="email" />
           </a>
         </div>
-        <div>
-          <a id="telegramLink">
+        <div class="modal__app">
+          <a href="#" class="modal__app-link" id="telegramLink">
             <p>telegram</p>
             <img src="./img/telegram-icon.svg" alt="telegram" />
           </a>

@@ -3,69 +3,70 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Não sei o que colocar" />
     <link rel="stylesheet" href="style.css" />
     <title>Maneger DashBoard</title>
   </head>
   <body>
-    <header>
-      <div>
-        <h1>OrderFlow</h1>
-        <button class="button" id="menuBtn">
+    <header class="header">
+      <div class="header__content">
+        <h1 class="header__title">OrderFlow</h1>
+        <button class="header__menu-button" id="menuBtn">
           <img src="./img/menu-icon.svg" alt="Menu" />
         </button>
       </div>
     </header>
-    <nav class="container hidden" id="menuBar">
+
+    <nav class="navbar navbar--hidden" id="menuBar">
       <ul>
         <li class="selected">
-          <a href=""
-            ><img
-              src="./img/dashboard-icon.svg"
-              alt="dashboard-icon"
-            />DashBoard</a
-          >
+          <a href="#">
+            <img src="./img/dashboard-icon.svg" alt="dashboard-icon" />
+            DashBoard
+          </a>
         </li>
         <li>
-          <a href=""
-            ><img
-              src="./img/employees-icon.svg"
-              alt="employees-icon"
-            />Funcionários</a
-          >
+          <a href="#">
+            <img src="./img/employees-icon.svg" alt="employees-icon" />
+            Funcionários
+          </a>
         </li>
         <li>
-          <a href=""
-            ><img src="./img/food-menu-icon.svg" alt="menu-icon" />Cardápio</a
-          >
+          <a href="#">
+            <img src="./img/food-menu-icon.svg" alt="menu-icon" />
+            Cardápio
+          </a>
         </li>
         <li>
-          <a href=""
-            ><img src="./img/sales-icon.svg" alt="sales-icon" />Vendas</a
-          >
+          <a href="#">
+            <img src="./img/sales-icon.svg" alt="sales-icon" />
+            Vendas
+          </a>
         </li>
         <li>
-          <a href=""
-            ><img src="./img/stock-icon.svg" alt="stock-icon" />Estoque</a
-          >
+          <a href="#">
+            <img src="./img/stock-icon.svg" alt="stock-icon" />
+            Estoque
+          </a>
         </li>
         <li>
-          <a href=""
-            ><img src="./img/orders-icon.svg" alt="orders-icon" />Pedidos</a
-          >
+          <a href="#">
+            <img src="./img/orders-icon.svg" alt="orders-icon" />
+            Pedidos
+          </a>
         </li>
         <li>
-          <a href=""
-            ><img
-              src="./img/config-icon.svg"
-              alt="config-icon"
-            />Configuração</a
-          >
+          <a href="#">
+            <img src="./img/config-icon.svg" alt="config-icon" />
+            Configuração
+          </a>
         </li>
       </ul>
     </nav>
-    <main class="container">
-      <div class="businessStatsBox" id="businessStatsBox">
-        <h2>Nome da Empresa</h2>
+
+    <main class="main">
+      <div class="business-stats" id="businessStatsBox">
+        <h2 class="business-stats__name">Nome da Empresa</h2>
         <select name="timeSpace" id="timeSpace">
           <option value="day">Hoje</option>
           <option value="week">Essa Semana</option>
@@ -73,32 +74,32 @@
           <option value="months">Últimos 6 Meses</option>
           <option value="year">Esse Ano</option>
         </select>
-        <div class="textStats">
+        <div class="business-stats__text">
           <p>Faturamento: R$ <span id="money">00,00</span></p>
           <p>
             Faturamento/<span id="period">Hora</span>: R$
             <span id="moneyPerHour">00,00</span>
           </p>
-          <p>Pedidos: <span id="ordersAmount">4</span></p>
+          <p>Pedidos: <span id="ordersAmount">0</span></p>
           <p>Pedidos concluídos: <span id="completedOrder">0</span></p>
           <p>Pedidos cancelados: <span id="canceledOrders">0</span></p>
         </div>
-        <div class="graphicStats">
+        <div class="business-stats__graphic">
           <canvas id="salesChart" width="325" height="325"></canvas>
-          <div class="graphicInfo">
-            <p class="porcentage"></p>
-            <p class="quantity"></p>
+          <div class="graphic-info">
+            <p id="graphicPorcentage"></p>
+            <p id="graphicQuantity"></p>
           </div>
         </div>
       </div>
-      <div class="lastOrders">
+      <div class="last-orders">
         <h3>Últimos pedidos feitos:</h3>
-        <div class="ordersContainer">
+        <div class="last-orders__carousel">
           <button id="leftBtn">
             <img src="./img/left-arrow-icon.svg" alt="" />
           </button>
-          <div class="ordersCarousel">
-            <div class="orders" id="lastOrders"></div>
+          <div class="last-orders__box">
+            <div class="last-orders__orders" id="lastOrders"></div>
           </div>
           <button id="rightBtn">
             <img src="./img/right-arrow-icon.svg" alt="" />
@@ -108,6 +109,6 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js" type="module"></script>
   </body>
 </html>
