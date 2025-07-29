@@ -10,22 +10,6 @@ html {
   min-height: 100dvh;
 }
 
-@property --angle {
-  inherits: false;
-  initial-value: 0deg;
-  syntax: "<angle>";
-}
-
-@keyframes spin {
-  from {
-    --angle: 0deg;
-  }
-
-  to {
-    --angle: 360deg;
-  }
-}
-
 /*--------------------*/
 /*        MAIN        */
 /*--------------------*/

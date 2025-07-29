@@ -6,6 +6,8 @@
   --button-shadow: 0 2px #181818;
   --scroll-bar-color: #aaa #f0f0f0;
   --bg-light: #fff;
+  --skeleton-bg: #ededed;
+  --skeleton-shine: #fff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,6 +19,12 @@
     --button-shadow: 0 2px #afafaf;
     --scroll-bar-color: #555 #222;
     --bg-light: #333;
+    --skeleton-shine: #505050;
+    --skeleton-bg: #333;
+  }
+
+  .invert {
+    filter: invert(1);
   }
 }
 

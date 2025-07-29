@@ -51,7 +51,7 @@ html {
 /*        MAIN        */
 /*--------------------*/
 
-.main {
+.main-container {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -59,7 +59,7 @@ html {
   justify-content: center;
   min-height: 100dvh;
 
-  .main__title {
+  .main-container__title {
     margin-bottom: 2rem;
 
     h1 {

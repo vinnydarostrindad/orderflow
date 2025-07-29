@@ -341,7 +341,7 @@ function addMenuItem(e) {
 
   const menuItem = {
     name,
-    price,
+    price: Number(price.replace(",", ".")),
     description,
     imgFile,
     imgBlob,

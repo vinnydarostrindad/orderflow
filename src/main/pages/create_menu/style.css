@@ -9,29 +9,6 @@ html {
   color: var(--text-color);
 }
 
-.loading {
-  animation-duration: 500ms;
-  animation-iteration-count: infinite;
-  animation-name: rotate-loading;
-  animation-timing-function: linear;
-  background-color: transparent;
-  border: 3px solid #ffffffa2;
-  border-left-color: #ffffff38;
-  border-radius: 50%;
-  height: 20px;
-  width: 20px;
-}
-
-@keyframes rotate-loading {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /*--------------------*/
 /*        MAIN        */
 /*--------------------*/
@@ -176,14 +153,14 @@ html {
               background-color: transparent;
               border: none;
               border-bottom: 1px solid var(--link-color);
-              color: var(--stext-color);
+              color: var(--text-color);
               cursor: pointer;
               display: block;
               padding: 0.4rem 0;
               width: 100%;
 
               &:hover {
-                background-color: #2b2b2b;
+                background-color: var(--background-color);
               }
             }
           }

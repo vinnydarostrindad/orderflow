@@ -1,5 +1,22 @@
+@property --angle {
+  inherits: false;
+  initial-value: 0deg;
+  syntax: "<angle>";
+}
+
+@keyframes spin {
+  from {
+    --angle: 0deg;
+  }
+
+  to {
+    --angle: 360deg;
+  }
+}
+
 .header {
   background-color: var(--primary-color);
+  box-shadow: 0 0 20px #0000004d;
   height: 10.5%;
 
   .header__content {
