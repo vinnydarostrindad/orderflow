@@ -1,3 +1,13 @@
+@keyframes loading {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -43,6 +53,11 @@
         border-radius: 3px;
         outline: 2px solid var(--text-color);
       }
+
+      &:-webkit-autofill {
+        box-shadow: 0 0 0 30px var(--background-color) inset !important;
+        -webkit-text-fill-color: var(--text-color) !important;
+      }
     }
 
     .form__textarea {
@@ -80,7 +95,6 @@
         background-color: var(--background-color);
         left: 19px;
         opacity: 1;
-        padding: 0 0.125rem;
         top: -11px;
       }
     }
@@ -165,6 +179,19 @@
     &:active {
       box-shadow: 0 0;
       transform: translateY(0);
+    }
+
+    .loading {
+      animation-duration: 500ms;
+      animation-iteration-count: infinite;
+      animation-name: loading;
+      animation-timing-function: linear;
+      background-color: transparent;
+      border: 3px solid #ffffffa2;
+      border-left-color: #ffffff38;
+      border-radius: 50%;
+      height: 20px;
+      width: 20px;
     }
   }
 }

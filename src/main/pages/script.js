@@ -1,31 +1,9 @@
-const registerForm = document.querySelector(".register-form");
-const submitBtn = document.querySelector("#submitBtn");
-const snackbar = document.querySelector(".snackbar");
+import { createSnackBar, showSnackBar } from "./scripts/snackbar.js";
 
-let timeoutId;
+const registerForm = document.querySelector(".form");
+const submitBtn = document.querySelector("#submitBtn");
 
 registerForm.addEventListener("submit", submitForm);
-
-function showErrorSnackBar() {
-  if (timeoutId) clearTimeout(timeoutId);
-
-  snackbar.innerHTML =
-    "<p>Erro ao fazer o registro. <br /> Tente novamente.</p>";
-  snackbar.classList.remove("snackbar--hidden");
-  snackbar.setAttribute("aria-hidden", "false");
-
-  timeoutId = setTimeout(() => {
-    snackbar.classList.add("snackbar--hidden");
-    snackbar.setAttribute("aria-hidden", "true");
-    snackbar.addEventListener(
-      "transitionend",
-      () => {
-        snackbar.innerHTML = "";
-      },
-      { once: true },
-    );
-  }, 5000);
-}
 
 async function submitForm(e) {
   e.preventDefault();
@@ -51,14 +29,22 @@ async function submitForm(e) {
     });
 
     console.log(response.ok);
+    if (!response.ok) {
+      throw 400;
+    }
     const responseBody = await response.json();
     console.log(responseBody);
 
     window.location.href = `http://localhost:5500/src/main/pages/register_employee/index.html?b=${responseBody.business.id}`;
   } catch (err) {
     console.error(err);
-    showErrorSnackBar();
+    showSnackBar(
+      "error",
+      "<p>Erro ao fazer o registro. <br /> Tente novamente.</p>",
+    );
     submitBtn.textContent = "Registrar";
     submitBtn.disabled = false;
   }
 }
+
+createSnackBar();

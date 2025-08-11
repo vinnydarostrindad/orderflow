@@ -16,8 +16,8 @@
         <h1>OrderFlow</h1>
         <p>Faça seu registro</p>
       </div>
-      <form method="post" action="#" name="registerForm" class="register-form">
-        <div class="register-form__input-box">
+      <form method="post" action="#" name="registerForm" class="form">
+        <div class="form__input-group">
           <input
             type="text"
             name="name"
@@ -25,10 +25,11 @@
             autocomplete="off"
             placeholder=" "
             required
+            class="form__input"
           />
-          <label for="name">Nome</label>
+          <label class="form__label" for="name">Nome</label>
         </div>
-        <div class="register-form__input-box">
+        <div class="form__input-group">
           <input
             type="email"
             name="email"
@@ -36,10 +37,11 @@
             autocomplete="email"
             placeholder=" "
             required
+            class="form__input"
           />
-          <label for="email">Email</label>
+          <label class="form__label" for="email">Email</label>
         </div>
-        <div class="register-form__input-box">
+        <div class="form__input-group">
           <input
             type="password"
             name="password"
@@ -47,12 +49,13 @@
             autocomplete="new-password"
             placeholder=" "
             required
+            class="form__input"
           />
-          <label for="password">Senha</label>
+          <label class="form__label" for="password">Senha</label>
         </div>
         <button
           type="submit"
-          class="register-form__button"
+          class="form__btn"
           id="submitBtn"
           aria-label="Registrar empresa"
           aria-live="polite"
@@ -61,12 +64,7 @@
         </button>
       </form>
     </main>
-    <div
-      class="snackbar snackbar--hidden"
-      aria-hidden="true"
-      aria-live="polite"
-    ></div>
 
-    <script src="script.js"></script>
+    <script src="script.js" type="module"></script>
   </body>
 </html>

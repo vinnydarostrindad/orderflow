@@ -134,7 +134,7 @@ function getInfosToMakeChart() {
 
     return {
       quantity: orderedItem.quantity,
-      type: menuItem.type ? menuItem.type : "Não Definido",
+      type: menuItem.type ? menuItem.type : "(Sem tipo)",
     };
   });
 
@@ -224,7 +224,7 @@ function getInfosToUpdateChart() {
           if (Date.parse(orderedItem.createdAt) < lastFetchTime) continue;
           return {
             quantity: orderedItem.quantity,
-            type: menuItem.type ? menuItem.type : "Não Definido",
+            type: menuItem.type ? menuItem.type : "(Sem tipo)",
           };
         }
       }
