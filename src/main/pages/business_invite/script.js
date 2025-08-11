@@ -1,108 +1,101 @@
-const advanceButton = document.querySelector("#advance");
-const params = new URLSearchParams(document.location.search);
-const businessId = params.get("businessId");
+const advanceButton = document.querySelector("#advanceBtn");
 const codeBox = document.querySelector("#code");
 const copyCodeBtn = document.querySelector("#copyCodeBtn");
-const copyUrlBtn = document.querySelector("#copyUrlBtn");
 const shareBtn = document.querySelector("#shareBtn");
+const copyUrlBtn = document.querySelector("#copyUrlBtn");
 
-copyCodeBtn.addEventListener("click", copyToClipBoard);
-copyUrlBtn.addEventListener("click", copyToClipBoard);
+const params = new URLSearchParams(document.location.search);
+const businessId = params.get("b");
+
+const codeUrl = new URL(
+  `/employee-login?b=${businessId}`,
+  "http://localhost:5500/",
+);
+
+advanceButton.addEventListener("click", () => {
+  advanceButton.classList.add("header__button--loading");
+  window.location.href = `http://localhost:5500/src/main/pages/maneger_dashboard/index.html?b=${businessId}`;
+});
+copyCodeBtn.addEventListener("click", (e) => copyToClipBoard(e, businessId));
 shareBtn.addEventListener("click", share);
+copyUrlBtn.addEventListener("click", (e) => copyToClipBoard(e, codeUrl));
 
-codeBox.innerHTML = businessId;
-
-async function copyToClipBoard(e) {
+async function copyToClipBoard(e, textToCopy) {
   try {
-    await navigator.clipboard.writeText(businessId);
+    await navigator.clipboard.writeText(textToCopy);
     const copyWarn = e.target.closest("div").nextElementSibling;
 
-    copyWarn.innerHTML = "Código copiado!";
-    setTimeout(() => {
-      copyWarn.innerHTML = "";
-    }, 2000);
-
-    console.log("copiou");
+    copyWarn.textContent = "Código copiado!";
+    setTimeout(() => (copyWarn.textContent = ""), 2000);
   } catch (error) {
     alert(error);
   }
 }
 
-let codeUrl;
-function generateLink() {
-  codeUrl = new URL("/employee-login", "http://localhost:5500/");
-  codeUrl.search = `?businessId=${businessId}`;
+function toggleShareModal(shareModalBg, shareModal) {
+  if (!shareModalBg.className.includes("modal-bg--hidden")) {
+    shareModal.classList.toggle("modal--hidden");
+    setTimeout(() => shareModalBg.classList.toggle("modal-bg--hidden"), 250);
+    return;
+  }
+
+  shareModal.classList.toggle("modal--hidden");
+  shareModalBg.classList.toggle("modal-bg--hidden");
+}
+
+function shareWithWhatsapp(e) {
+  e.preventDefault();
+
+  const message = encodeURIComponent(
+    "Acesse o OrderFlow por este link: " + codeUrl,
+  );
+  window.open(`https://wa.me/?text=${message}`, "_blank");
+}
+
+function shareWithEmail(e) {
+  e.preventDefault();
+
+  const subject = encodeURIComponent("Acesse o OrderFlow");
+  const body = encodeURIComponent(
+    "Segue o link para acesso ao OrderFlow: " + codeUrl,
+  );
+  window.open(`mailto:?subject=${subject}&body=${body}`, "_blank");
+}
+
+function shareWithTelegram(e) {
+  e.preventDefault();
+
+  const msg = encodeURIComponent("Acesse o OrderFlow: " + codeUrl);
+  const telegramUrl = `https://t.me/share/url?url=${msg}`;
+  window.open(telegramUrl, "_blank");
 }
 
 async function share() {
-  if (navigator.share) {
+  if (!navigator.share) {
     try {
       await navigator.share({
         url: codeUrl,
       });
-      console.log("Tamo aí");
     } catch (error) {
-      console.log(error);
+      alert(error);
     }
   } else {
-    toggleShareModal();
-
-    const modalBg = document.querySelector(".modalBackground");
-    const exitBtn = document.querySelector("#exitModalBtn");
+    const shareModalBg = document.querySelector(".modal-bg");
+    const shareModal = document.querySelector("#shareModal");
+    const exitModalBtn = document.querySelector("#exitModalBtn");
     const whatsappLink = document.querySelector("#whatsappLink");
     const emailLink = document.querySelector("#emailLink");
     const telegramLink = document.querySelector("#telegramLink");
 
-    modalBg.addEventListener("click", toggleShareModal);
-    exitBtn.addEventListener("click", toggleShareModal);
+    toggleShareModal(shareModalBg, shareModal);
 
-    const url = `http://localhost:5500/employee-login?businessId=${businessId}`;
+    exitModalBtn.onclick = shareModalBg.onclick = () =>
+      toggleShareModal(shareModalBg, shareModal);
 
-    whatsappLink.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      const message = encodeURIComponent(
-        "Acesse o OrderFlow por este link: " + url,
-      );
-      window.open(`https://wa.me/?text=${message}`, "_blank");
-    });
-
-    emailLink.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      const subject = encodeURIComponent("Acesse o OrderFlow");
-      const body = encodeURIComponent(
-        "Segue o link para acesso ao OrderFlow: " + url,
-      );
-      window.open(`mailto:?subject=${subject}&body=${body}`, "_blank");
-    });
-
-    telegramLink.addEventListener("click", () => {
-      const msg = encodeURIComponent("Acesse o OrderFlow: " + url);
-      const telegramUrl = `https://t.me/share/url?url=${msg}`;
-      window.open(telegramUrl, "_blank");
-    });
+    whatsappLink.onclick = shareWithWhatsapp;
+    emailLink.onclick = shareWithEmail;
+    telegramLink.onclick = shareWithTelegram;
   }
 }
 
-function toggleShareModal() {
-  const modal = document.querySelector("#shareModal");
-  const modalBg = document.querySelector(".modalBackground");
-
-  if (!modalBg.className.includes("hidden")) {
-    modal.classList.toggle("hidden");
-    setTimeout(() => {
-      modalBg.classList.toggle("hidden");
-    }, 250);
-    return;
-  }
-
-  modal.classList.toggle("hidden");
-  modalBg.classList.toggle("hidden");
-}
-
-generateLink();
-
-advanceButton.onclick = () => {
-  window.location.href = `http://localhost:5500/src/main/pages/maneger_dashboard/index.html?businessId=${businessId}`;
-};
+codeBox.textContent = businessId;

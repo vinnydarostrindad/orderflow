@@ -3,17 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Cadastre sua empresa no OrderFlow para gerenciar pedidos e analisar estatísticas de forma simples e rápida."
+    />
     <link rel="stylesheet" href="style.css" />
     <title>OrderFlow - Registro</title>
   </head>
   <body>
-    <main class="container">
-      <div>
+    <main class="main-container">
+      <div class="main-container__title">
         <h1>OrderFlow</h1>
         <p>Faça seu registro</p>
       </div>
-      <form method="post" action="/api/v1/business" name="registerForm">
-        <div class="inputBox">
+      <form method="post" action="#" name="registerForm" class="form">
+        <div class="form__input-group">
           <input
             type="text"
             name="name"
@@ -21,10 +25,11 @@
             autocomplete="off"
             placeholder=" "
             required
+            class="form__input"
           />
-          <label for="name">Nome</label>
+          <label class="form__label" for="name">Nome</label>
         </div>
-        <div class="inputBox">
+        <div class="form__input-group">
           <input
             type="email"
             name="email"
@@ -32,10 +37,11 @@
             autocomplete="email"
             placeholder=" "
             required
+            class="form__input"
           />
-          <label for="email">Email</label>
+          <label class="form__label" for="email">Email</label>
         </div>
-        <div class="inputBox">
+        <div class="form__input-group">
           <input
             type="password"
             name="password"
@@ -43,13 +49,22 @@
             autocomplete="new-password"
             placeholder=" "
             required
+            class="form__input"
           />
-          <label for="password">Senha</label>
+          <label class="form__label" for="password">Senha</label>
         </div>
-        <button type="submit" class="button">Registrar</button>
+        <button
+          type="submit"
+          class="form__btn"
+          id="submitBtn"
+          aria-label="Registrar empresa"
+          aria-live="polite"
+        >
+          Registrar
+        </button>
       </form>
     </main>
 
-    <script src="script.js"></script>
+    <script src="script.js" type="module"></script>
   </body>
 </html>

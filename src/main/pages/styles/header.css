@@ -1,0 +1,116 @@
+@property --angle {
+  inherits: false;
+  initial-value: 0deg;
+  syntax: "<angle>";
+}
+
+@keyframes spin {
+  from {
+    --angle: 0deg;
+  }
+
+  to {
+    --angle: 360deg;
+  }
+}
+
+.header {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 20px #0000004d;
+  height: 10.5%;
+
+  .header__content {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: space-between;
+    margin: 0 auto;
+    padding: 1rem 0;
+    width: 90%;
+
+    .header__title {
+      color: #fff;
+      font-size: 1.5rem;
+    }
+
+    .header__button {
+      background: #fff;
+      border: 2px solid #000;
+      box-shadow: 0 0 #000;
+      color: var(--primary-color);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      outline-offset: 4px;
+      padding: 0.375rem 0.625rem;
+      text-transform: uppercase;
+      transform: translate(0, 0);
+      transition:
+        box-shadow 150ms,
+        transform 150ms;
+
+      &:hover {
+        box-shadow: 2px 2px #000;
+        transform: translate(-1px, -1px);
+      }
+
+      &:active {
+        box-shadow: 0 0 #000;
+        transform: translate(0, 0);
+      }
+
+      &:disabled {
+        cursor: default;
+
+        &:hover {
+          box-shadow: 0 0;
+          transform: translate(0, 0);
+        }
+
+        &:active {
+          box-shadow: 0 0;
+        }
+      }
+
+      &.header__button--loading {
+        border: none;
+        position: relative;
+
+        &::before {
+          background: #dbdbdb;
+          content: "";
+          height: 100%;
+          left: 50%;
+          position: absolute;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: 100%;
+          z-index: -1;
+        }
+
+        &::after {
+          animation: 2s spin linear infinite;
+          background-image: conic-gradient(from var(--angle), #000 70%, #fff);
+          content: "";
+          height: 100%;
+          left: 50%;
+          padding: 0.1rem;
+          position: absolute;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: 100%;
+          z-index: -2;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (width >= 980px) {
+  .header {
+    .header__content {
+      width: min(90%, 1000px);
+    }
+  }
+}

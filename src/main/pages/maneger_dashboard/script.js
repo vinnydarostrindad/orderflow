@@ -1,179 +1,168 @@
+import { createSnackBar, showSnackBar } from "../scripts/snackbar.js";
+
+const headerMenuBtn = document.querySelector("#headerMenuBtn");
+const navBar = document.querySelector("#navBar");
+const timeFilterSelect = document.querySelector(".business-stats__select");
+// const revenue = document.querySelector("#revenue");
+// const hourlyRevenue = document.querySelector("#hourlyRevenue");
+const ordersAmount = document.querySelector("#ordersAmount");
+const completedOrder = document.querySelector("#completedOrders");
+const canceledOrder = document.querySelector("#canceledOrders");
+const chartPorcentage = document.querySelector("#chartPorcentage");
+const chartQuantity = document.querySelector("#chartQuantity");
+const ctx = document.getElementById("salesChart").getContext("2d");
+const carouselLeftBtn = document.querySelector("#carouselLeftBtn");
+const carouselRightBtn = document.querySelector("#carouselRightBtn");
+const ordersBox = document.querySelector("#lastOrders");
+
 const params = new URLSearchParams(window.location.search);
-const businessId = params.get("businessId");
-const menuBtn = document.querySelector("#menuBtn");
-const leftBtn = document.querySelector("#leftBtn");
-const rightBtn = document.querySelector("#rightBtn");
+const businessId = params.get("b");
 
-menuBtn.addEventListener("click", toggleMenuBar);
-leftBtn.addEventListener("click", moveLastOrders);
-rightBtn.addEventListener("click", moveLastOrders);
+let orderedItems;
+let orderedMenuItems;
+let salesChart;
+let lastFetchTime;
+let orderTimeIntervalId;
+let currentTraslateX = 0;
 
-function moveLastOrders(e) {
-  const btn = e?.target.closest("button");
-  const ordersBox = document.querySelector(".orders");
-  const allOrders = document.querySelectorAll(".order");
+headerMenuBtn.addEventListener("click", togglenavBar);
+timeFilterSelect.addEventListener("change", fetchFilteredOrderedItems);
+carouselLeftBtn.addEventListener("click", moveLastOrders);
+carouselRightBtn.addEventListener("click", moveLastOrders);
 
-  const ordersShown = Math.floor(
-    ordersBox.parentElement.clientWidth / allOrders[0].offsetWidth,
-  );
-
-  let translateValue = getComputedStyle(ordersBox).translate;
-  if ((allOrders.length - ordersShown) * 235 === 0) {
-    document.querySelector("#rightBtn").style.opacity = 0;
-  }
-  if (btn.id == "rightBtn") {
-    if (
-      parseInt(translateValue) - 235 ===
-      -((allOrders.length - ordersShown) * 235)
-    ) {
-      btn.style.opacity = 0;
-    }
-    if (parseInt(translateValue) === -((allOrders.length - ordersShown) * 235))
-      return;
-
-    leftBtn.style.opacity = 1;
-    const newTraslateValue = parseInt(translateValue) - 235;
-    ordersBox.style.translate = newTraslateValue + "px";
-  } else {
-    if (parseInt(translateValue) + 235 === 0) btn.style.opacity = 0;
-    if (parseInt(translateValue) === 0) return;
-
-    rightBtn.style.opacity = 1;
-    const newTraslateValue = parseInt(translateValue) + 235;
-    ordersBox.style.translate = newTraslateValue + "px";
-  }
-}
-
-function toggleMenuBar() {
-  const menuBar = document.querySelector("#menuBar");
-
-  document.body.style.overflow = menuBar.classList.contains("hidden")
+function togglenavBar() {
+  window.scrollTo(0, 0);
+  document.body.style.overflow = navBar.classList.contains("navbar--hidden")
     ? "hidden"
     : "";
-  menuBar.classList.toggle("hidden");
+  navBar.classList.toggle("navbar--hidden");
 }
 
 async function fetchOrderedItems() {
-  const response = await fetch(
-    `http://localhost:3000/api/v1/business/${businessId}/ordered-items`,
-  );
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/v1/business/${businessId}/ordered-items`,
+    );
 
-  const orderedItems = await response.json();
-  return orderedItems;
+    console.log(response.ok);
+    return await response.json();
+  } catch (error) {
+    showSnackBar(
+      "error",
+      "<p>Erro ao tentar obter os pedidos. <br> Tente novamente.</p>",
+    );
+    console.error(error);
+    return [];
+  }
 }
 
-async function fetchOrderedMenuItems(orderedItems) {
+async function fetchOrderedMenuItems() {
   const orderedMenuItems = await Promise.all(
     orderedItems.map(async (orderedItem) => {
-      const response = await fetch(
-        `http://localhost:3000/api/v1/business/${businessId}/menu-item/${orderedItem.menuItemId}`,
-      );
-      return await response.json();
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/v1/business/${businessId}/menu-item/${orderedItem.menuItemId}`,
+        );
+        console.log(response.ok);
+        return await response.json();
+      } catch (error) {
+        console.error(error);
+      }
     }),
   );
 
   return orderedMenuItems;
 }
 
+async function fetchFilteredOrderedItems(e) {
+  console.log("Filter:", e.target.value);
+  // Terminar de fazer essa função quando fizer esse filter no backend
+  // const filteredOrderedItems = await fetch("http:///localhost:3000/api/v1/business/id/orders?time=week")
+}
+
 // TextStats funcitons
 
-async function showAmountOfOrders() {
-  const ordersAmount = document.querySelector("#ordersAmount");
+// async function showRevenue() {
+// Quando fizer a API dos pagamentos, finalizar essa função
+// const revenue = await fetch("http://localhost:3000/api/v1/business/id/payments")
+// Fazer os calculos necessários
+// revenue.textContent = revenueCalculated
+//
+// showHourlyRevenue(revenueCalclated)
+// }
 
-  const orderedItems = await fetchOrderedItems();
+// function showHourlyRevenue(revenue) {
+// Quando fizer a API dos pagamentos, finalizar essa função
+// hourlyRevenue.textContent = revenue / 24; Talvez;
+// }
 
-  let ordersAmountValue = 0;
-  orderedItems.forEach((item) => {
-    ordersAmountValue = +ordersAmountValue + +item.quantity;
-  });
+function showAmountOfOrders() {
+  const amountOfOrders = orderedItems.reduce((acc, item) => {
+    return acc + +item.quantity;
+  }, 0);
 
-  ordersAmount.innerHTML = ordersAmountValue;
+  ordersAmount.textContent = amountOfOrders;
 }
 
-// Show last orders funciton
+function showAmountOfOrdersCompleted() {
+  const ordersCompleted = orderedItems.reduce((acc, item) => {
+    if (item.status === "delivered") return acc++;
+    return acc;
+  }, 0);
 
-async function showLastOrders() {
-  const orderedItems = await fetchOrderedItems();
-
-  const orderedMenuItems = await fetchOrderedMenuItems(orderedItems);
-
-  const orderedItemsInfos = getLastOrdersInfo(orderedItems, orderedMenuItems);
-
-  const orders = document.querySelector("#lastOrders");
-  if (orderedItemsInfos.length === 0) {
-    orders.innerHTML = `<p>Nenhum pedido foi feito hoje</p>`;
-    return;
-  }
-
-  let amountOflastOrders = 0;
-  orders.innerHTML = "";
-  orderedItemsInfos.forEach((item) => {
-    if (amountOflastOrders === 10) return;
-    for (let i = 0; i < +item.quantity; i++) {
-      orders.insertAdjacentHTML(
-        "beforeend",
-        `
-      <div class="order">
-        <div>
-          <img src="../${item.imagePath}" alt="${item.name}" />
-          <h4>${item.name}</h4>
-        </div>
-        <div class="info">
-          <p class="status">Status: ${item.status}</p>
-          <p class="tableNumber">Mesa: ${item.tableNumber}</p>
-          <p class="timeSinceOrder">Tempo: ${((Date.now() - Date.parse(item.createdAt)) / (1000 * 60)).toFixed(2)}</p>
-        </div>
-      </div>  
-    `,
-      );
-      amountOflastOrders++;
-    }
-  });
-  console.log(amountOflastOrders);
+  completedOrder.textContent = ordersCompleted;
 }
 
-function getLastOrdersInfo(orderedItems, orderedMenuItems) {
+function showAmountOfOrdersCanceled() {
+  const ordersCanceled = orderedItems.reduce((acc, item) => {
+    if (item.status === "canceled") return acc++;
+    return acc;
+  }, 0);
+
+  canceledOrder.textContent = ordersCanceled;
+}
+
+// Make chart functions
+
+function getInfosToMakeChart() {
+  const menuItemsMap = new Map(orderedMenuItems.map((item) => [item.id, item]));
+
   const orderedItemsInfos = orderedItems.map((orderedItem) => {
-    for (let orderedMenuItem of orderedMenuItems) {
-      if (orderedItem.menuItemId === orderedMenuItem.id) {
-        return {
-          name: orderedMenuItem.name,
-          quantity: orderedItem.quantity,
-          imagePath: orderedMenuItem.imagePath,
-          status: orderedItem.status,
-          tableNumber: orderedItem.tableNumber,
-          createdAt: orderedItem.createdAt,
-        };
-      }
-    }
+    const menuItem = menuItemsMap.get(orderedItem.menuItemId);
+
+    if (!menuItem) return;
+
+    return {
+      quantity: orderedItem.quantity,
+      type: menuItem.type ? menuItem.type : "(Sem tipo)",
+    };
   });
 
-  return orderedItemsInfos.reverse();
+  let formatedOrderedItems = {};
+
+  for (let item of orderedItemsInfos) {
+    if (formatedOrderedItems[item.type]) {
+      formatedOrderedItems[item.type] = String(
+        Number(formatedOrderedItems[item.type]) + Number(item.quantity),
+      );
+      continue;
+    }
+    formatedOrderedItems[item.type] = item.quantity;
+  }
+  return formatedOrderedItems;
 }
 
-// Make graphic functions
-
-let salesChart;
-let lastFetchTime;
-async function makeGraphic() {
-  const orderedItems = await fetchOrderedItems();
-
-  const orderedMenuItems = await fetchOrderedMenuItems(orderedItems);
-  lastFetchTime = Date.now();
+function makeChart() {
+  document.querySelector(".chart-skeleton")?.remove();
 
   if (orderedItems.length === 0) {
-    document.querySelector(".porcentage").innerText =
-      "Nada foi vendido durante esse período";
-    document.querySelector(".quantity").innerText = "";
+    chartPorcentage.textContent = "Nada foi vendido durante esse período";
+    chartQuantity.textContent = "";
     return;
   }
 
-  const formatedOrderedItems = getInfosToMakeGraphic(
-    orderedItems,
-    orderedMenuItems,
-  );
+  const formatedOrderedItems = getInfosToMakeChart();
 
-  const ctx = document.getElementById("salesChart").getContext("2d");
   // eslint-disable-next-line no-undef
   salesChart = new Chart(ctx, {
     type: "doughnut",
@@ -207,11 +196,11 @@ async function makeGraphic() {
             100
           ).toFixed(1);
 
-          document.querySelector(".porcentage").innerText = `${percentage}%`;
-          document.querySelector(".quantity").innerText = `(${value})`;
+          chartPorcentage.innerText = `${percentage}%`;
+          chartQuantity.innerText = `(${value})`;
         } else {
-          document.querySelector(".porcentage").innerText = "";
-          document.querySelector(".quantity").innerText = "";
+          chartPorcentage.innerText = "";
+          chartQuantity.innerText = "";
         }
       },
       animation: {
@@ -222,65 +211,12 @@ async function makeGraphic() {
   });
 
   document.querySelector("canvas").onmouseleave = () => {
-    document.querySelector(".porcentage").innerText = "";
-    document.querySelector(".quantity").innerText = "";
+    chartPorcentage.innerText = "";
+    chartQuantity.innerText = "";
   };
 }
 
-function getInfosToMakeGraphic(orderedItems, orderedMenuItems) {
-  const orderedItemsInfos = orderedItems.map((orderedItem) => {
-    for (let menuItem of orderedMenuItems) {
-      if (menuItem.id === orderedItem.menuItemId) {
-        return {
-          quantity: orderedItem.quantity,
-          type: menuItem.type,
-        };
-      }
-    }
-  });
-
-  let formatedOrderedItems = {};
-  for (let item of orderedItemsInfos) {
-    if (formatedOrderedItems[item.type]) {
-      formatedOrderedItems[item.type] = String(
-        Number(formatedOrderedItems[item.type]) + Number(item.quantity),
-      );
-      continue;
-    }
-    formatedOrderedItems[item.type] = item.quantity;
-  }
-  return formatedOrderedItems;
-}
-
-async function updateGraphic() {
-  const orderedItems = await fetchOrderedItems();
-  const orderedMenuItems = await fetchOrderedMenuItems(orderedItems);
-
-  const addedOrders = getInfosToUpdateGraphic(orderedItems, orderedMenuItems);
-  lastFetchTime = Date.now();
-
-  for (let order in addedOrders) {
-    if (salesChart.data.labels.includes(order)) {
-      const indexOfOrder = salesChart.data.labels.indexOf(order);
-
-      const currentValue = Number(
-        salesChart.data.datasets[0].data[indexOfOrder],
-      );
-      const addedValue = Number(addedOrders[order]);
-
-      salesChart.data.datasets[0].data[indexOfOrder] =
-        currentValue + addedValue;
-    } else {
-      salesChart.data.label.push(order);
-
-      salesChart.data.datasets[0].data.push(addedOrders.order);
-    }
-
-    salesChart.update();
-  }
-}
-
-function getInfosToUpdateGraphic(orderedItems, orderedMenuItems) {
+function getInfosToUpdateChart() {
   const orderedItemsInfos = orderedItems
     .map((orderedItem) => {
       for (let menuItem of orderedMenuItems) {
@@ -288,7 +224,7 @@ function getInfosToUpdateGraphic(orderedItems, orderedMenuItems) {
           if (Date.parse(orderedItem.createdAt) < lastFetchTime) continue;
           return {
             quantity: orderedItem.quantity,
-            type: menuItem.type,
+            type: menuItem.type ? menuItem.type : "(Sem tipo)",
           };
         }
       }
@@ -309,13 +245,183 @@ function getInfosToUpdateGraphic(orderedItems, orderedMenuItems) {
   return formatedOrderedItems;
 }
 
+function updateChart() {
+  const addedOrders = getInfosToUpdateChart();
+  lastFetchTime = Date.now();
+
+  for (let order in addedOrders) {
+    if (salesChart.data.labels.includes(order)) {
+      const indexOfOrder = salesChart.data.labels.indexOf(order);
+
+      const currentValue = Number(
+        salesChart.data.datasets[0].data[indexOfOrder],
+      );
+      const addedValue = Number(addedOrders[order]);
+
+      salesChart.data.datasets[0].data[indexOfOrder] =
+        currentValue + addedValue;
+    } else {
+      salesChart.data.labels.push(order);
+
+      salesChart.data.datasets[0].data.push(addedOrders.order);
+    }
+
+    salesChart.update();
+  }
+}
+
+// Last Orders Funcitons
+
+function calculateTimePassed(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const pad = (n) => String(n).padStart(2, "0");
+
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
+function getLastOrdersInfo() {
+  const orderedItemsInfos = orderedItems.map((orderedItem) => {
+    for (let orderedMenuItem of orderedMenuItems) {
+      if (orderedItem.menuItemId === orderedMenuItem.id) {
+        return {
+          name: orderedMenuItem.name,
+          quantity: orderedItem.quantity,
+          imagePath: orderedMenuItem.imagePath,
+          status: orderedItem.status,
+          tableNumber: orderedItem.tableNumber,
+          createdAt: orderedItem.createdAt,
+        };
+      }
+    }
+  });
+
+  return orderedItemsInfos.reverse();
+}
+
+async function showLastOrders() {
+  const orderedItemsInfos = getLastOrdersInfo(orderedItems, orderedMenuItems);
+
+  document.querySelector(".last-orders__skeletons")?.remove();
+
+  if (orderedItemsInfos.length === 0) {
+    ordersBox.parentElement.innerHTML = `<p>Nenhum pedido foi feito hoje</p>`;
+    carouselLeftBtn.style.opacity = 0;
+    carouselLeftBtn.disabled = true;
+    carouselRightBtn.style.opacity = 0;
+    carouselRightBtn.disabled = true;
+    return;
+  }
+
+  carouselLeftBtn.style.opacity = "";
+  carouselRightBtn.style.opacity = "";
+  if (carouselLeftBtn.disabled) {
+    carouselRightBtn.disabled = false;
+  }
+
+  let amountOfLastOrders = 0;
+  ordersBox.innerHTML = "";
+  orderedItemsInfos.forEach((item) => {
+    for (let i = 0; i < +item.quantity; i++) {
+      if (amountOfLastOrders === 10) return;
+      const createdAt = Date.parse(item.createdAt);
+
+      ordersBox.insertAdjacentHTML(
+        "beforeend",
+        `
+      <div class="last-orders__order">
+        <div>
+          ${item.imagePath ? `<img src="../${item.imagePath}" alt="${item.name}" />` : ""}
+          
+          <h4>${item.name}</h4>
+        </div>
+        <div class="last-orders__info">
+          <p class="last-orders__status">Status: ${item.status}</p>
+          <p class="last-orders__table-number">Mesa: ${item.tableNumber}</p>
+          <p class="last-orders__time">Tempo: <span class="order-time" data-created-at="${createdAt}">${calculateTimePassed(Date.now() - createdAt)}</span></p>
+        </div>
+      </div>  
+    `,
+      );
+      amountOfLastOrders++;
+    }
+  });
+
+  const lastOrders = document.querySelectorAll(".order-time");
+
+  if (orderTimeIntervalId) clearInterval(orderTimeIntervalId);
+
+  orderTimeIntervalId = setInterval(() => {
+    lastOrders.forEach((timer) => {
+      timer.textContent = calculateTimePassed(
+        Date.now() - timer.dataset.createdAt,
+      );
+    });
+  }, 1000);
+}
+
+function moveLastOrders(e) {
+  const allOrders = document.querySelectorAll(".last-orders__order");
+
+  const step = 236;
+  const btn = e.target.closest("button");
+
+  const ordersShown = Math.floor(
+    ordersBox.parentElement.clientWidth / allOrders[0].offsetWidth,
+  );
+
+  if (allOrders.length - ordersShown === 0) {
+    carouselRightBtn.style.opacity = 0;
+    carouselRightBtn.disabled = true;
+    carouselLeftBtn.style.opacity = 0;
+    carouselLeftBtn.disabled = true;
+    return;
+  }
+
+  if (btn.id === "carouselRightBtn") {
+    currentTraslateX -= step;
+
+    if (currentTraslateX <= -((allOrders.length - ordersShown) * step)) {
+      carouselRightBtn.disabled = true;
+    }
+
+    carouselLeftBtn.disabled = false;
+  } else if (btn.id === "carouselLeftBtn") {
+    currentTraslateX += step;
+
+    if (currentTraslateX === 0) {
+      carouselLeftBtn.disabled = true;
+    }
+
+    carouselRightBtn.disabled = false;
+  }
+
+  ordersBox.style.translate = currentTraslateX + "px";
+}
+
+createSnackBar();
+
+orderedItems = await fetchOrderedItems();
+orderedMenuItems = orderedItems.length > 0 ? await fetchOrderedMenuItems() : [];
+lastFetchTime = Date.now();
+
 showAmountOfOrders();
-makeGraphic();
+showAmountOfOrdersCompleted();
+showAmountOfOrdersCanceled();
+makeChart();
 showLastOrders();
 
-setInterval(() => {
-  console.log("Buscou");
-  updateGraphic();
-  showLastOrders();
+setInterval(async () => {
+  orderedItems = await fetchOrderedItems();
+  orderedMenuItems =
+    orderedItems.length > 0 ? await fetchOrderedMenuItems() : [];
+
   showAmountOfOrders();
+  showAmountOfOrdersCompleted();
+  showAmountOfOrdersCanceled();
+  updateChart();
+  showLastOrders();
 }, 30000);

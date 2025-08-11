@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-alphabetical-order"
+  ],
+  "rules": {
+    "declaration-property-unit-allowed-list": {
+      "/^border$/": ["px"],
+      "/^padding|^gap|^margin/": ["rem"]
+    },
+    "selector-class-pattern": null,
+    "comment-empty-line-before": null,
+    "comment-whitespace-inside": null,
+    "color-named": "never",
+    "selector-id-pattern": null
+  }
+}

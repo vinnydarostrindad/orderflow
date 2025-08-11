@@ -1,0 +1,197 @@
+@keyframes loading {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  justify-content: center;
+  padding-top: 1.25rem;
+  width: 100%;
+
+  .form__label {
+    background-color: var(--background-color);
+    left: 19px;
+    margin-bottom: -2rem;
+    opacity: 1;
+    padding: 0 0.2rem;
+    position: absolute;
+    top: -11px;
+    width: fit-content;
+  }
+
+  .form__input-group {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    .form__input {
+      background-color: var(--background-color);
+      border: none;
+      border-bottom: 1px solid transparent;
+      border-radius: 3px;
+      color: var(--text-color);
+      font-size: 1rem;
+      outline: 2px solid var(--text-color);
+      padding: 0.625rem 0.5rem;
+
+      &:placeholder-shown {
+        border-bottom: 1px solid var(--text-color);
+        border-radius: 0;
+        outline: none;
+      }
+
+      &:focus {
+        border-bottom-color: transparent;
+        border-radius: 3px;
+        outline: 2px solid var(--text-color);
+      }
+
+      &:-webkit-autofill {
+        box-shadow: 0 0 0 30px var(--background-color) inset !important;
+        -webkit-text-fill-color: var(--text-color) !important;
+      }
+    }
+
+    .form__textarea {
+      background-color: var(--background-color);
+      border: 2px solid var(--text-color);
+      border-radius: 3px;
+      color: var(--text-color);
+      font-size: 1rem;
+      padding: 0.625rem 0.5rem;
+      resize: none;
+    }
+
+    .form__select {
+      background-color: var(--bg-light);
+      border: 2px solid var(--text-color);
+      color: var(--text-color);
+      font-size: 1rem;
+      margin-top: 0.4rem;
+      padding: 0.5rem;
+    }
+
+    .form__label {
+      .form__input:placeholder-shown + & {
+        left: 19px;
+        opacity: 0.6;
+        top: 15px;
+        transition:
+          250ms top,
+          250ms left,
+          100ms opacity;
+        width: fit-content;
+      }
+
+      .form__input:focus + & {
+        background-color: var(--background-color);
+        left: 19px;
+        opacity: 1;
+        top: -11px;
+      }
+    }
+  }
+
+  .form__price-input-group .form__price-wrapper {
+    align-items: center;
+    border: 2px solid var(--text-color);
+    border-radius: 3px;
+    display: flex;
+
+    .form__price-prefix {
+      padding-left: 0.5rem;
+    }
+
+    .form__input {
+      background-color: transparent;
+      border-radius: 0;
+      outline: none;
+      width: 100%;
+    }
+  }
+
+  .form__file-input-group {
+    border: 2px solid var(--text-color);
+    border-radius: 3px;
+    position: relative;
+
+    .form__file-input {
+      cursor: pointer;
+      height: 100%;
+      opacity: 0;
+      position: absolute;
+      width: 100%;
+    }
+
+    .form__file-input-text {
+      color: var(--text-color);
+      font-size: 1.25rem;
+      padding: 1.25rem 0.2rem;
+      text-align: center;
+
+      span {
+        font-size: 3rem;
+      }
+    }
+
+    .file-input__image {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      img {
+        height: 115px;
+        width: 115px;
+      }
+    }
+  }
+
+  .form__btn {
+    align-items: center;
+    background-color: var(--primary-color);
+    border: 2px solid var(--text-color);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    font-weight: bold;
+    gap: 0.5rem;
+    justify-content: center;
+    outline-offset: 4px;
+    padding: 0.5rem 0;
+    transition:
+      box-shadow 150ms,
+      transform 150ms;
+
+    &:hover {
+      box-shadow: var(--button-shadow);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      box-shadow: 0 0;
+      transform: translateY(0);
+    }
+
+    .loading {
+      animation-duration: 500ms;
+      animation-iteration-count: infinite;
+      animation-name: loading;
+      animation-timing-function: linear;
+      background-color: transparent;
+      border: 3px solid #ffffffa2;
+      border-left-color: #ffffff38;
+      border-radius: 50%;
+      height: 20px;
+      width: 20px;
+    }
+  }
+}

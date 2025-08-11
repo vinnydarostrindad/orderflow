@@ -14,7 +14,7 @@ export default class RegisterMenuItemUseCase {
     if (!menuId) throw new MissingParamError("menuId");
 
     let imagePath;
-    if (imgFile) {
+    if (imgFile?.fileName && imgFile?.content) {
       const timestamp = Date.now();
       imagePath = `assets/${timestamp}_${imgFile?.fileName}`;
       await writeFile(`./src/main/pages/${imagePath}`, imgFile?.content);

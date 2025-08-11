@@ -1,173 +1,472 @@
-const advanceButton = document.querySelector("#advance");
-let params = new URLSearchParams(document.location.search);
-let businessId = params.get("businessId");
+import showConfirmModal from "../scripts/confirm-modal.js";
+import { createSnackBar, showSnackBar } from "../scripts/snackbar.js";
+
+const advanceButton = document.querySelector("#advanceBtn");
+const main = document.querySelector("#main");
 const menuForm = document.querySelector("#menuForm");
+const menuFormBtn = document.querySelector("#menuFormBtn");
 const menuItemForm = document.querySelector("#menuItemForm");
+const skipBtns = document.querySelectorAll(".skip-button");
+const nameInput = document.querySelector("#menuItemName");
+const priceInput = document.querySelector("#price");
+const descriptionInput = document.querySelector("#description");
 const fileInput = document.querySelector("#fileInput");
+const imgFileInput = document.querySelector("#image");
+const imgPreview = document.querySelector("#imgPreview");
+const inputFileText = document.querySelector(".form__file-input-text");
+const typeInput = document.querySelector("#type");
+const typeSelectBox = document.querySelector(".type-select-box");
+const checkboxInput = document.querySelector("#checkbox");
+const menu = document.querySelector("#menu");
+const menuItemsBox = document.querySelector("#menuItems");
 
-let menuId = undefined;
-menuForm.onsubmit = async (e) => {
-  e.preventDefault();
+let params = new URLSearchParams(document.location.search);
+let businessId = params.get("b");
 
-  const menu = document.querySelector("#menu");
+let menuId;
+let menuItems = [];
+let types = new Set();
 
-  const name = e.target[0].value;
+menuForm.addEventListener("submit", createMenu);
+priceInput.addEventListener("input", formatPriceInput);
+fileInput.addEventListener("change", changeImgPreview);
+typeInput.addEventListener("focus", searchTypes);
+typeInput.addEventListener("input", searchTypes);
+typeSelectBox.addEventListener("mousedown", selectType);
+menuItemForm.addEventListener("submit", addMenuItem);
+menuItemForm.addEventListener("reset", clearFileInputImg);
+advanceButton.addEventListener("click", handleAdvance);
+menu.addEventListener("click", selectItem);
+skipBtns.forEach((btn) => btn.addEventListener("click", handleSkip));
 
-  const response = await fetch(
-    `http://localhost:3000/api/v1/business/${businessId}/menu`,
-    {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-      }),
+function redirectToNextPage() {
+  window.location.href = `http://localhost:5500/src/main/pages/business_invite/index.html?b=${businessId}`;
+}
+
+function handleSkip() {
+  if (menuItems.length === 0) {
+    redirectToNextPage();
+    return;
+  }
+
+  showConfirmModal({
+    message: "Tudo que foi adicionado será perdido. Deseja continuar?",
+    onCancel: (modalBg, modal) => {
+      modalBg.remove();
+      modal.remove();
+      document.documentElement.style.overflow = "";
     },
-  );
-  const responseBody = await response.json();
+    onContinue: () => {
+      window.removeEventListener("beforeunload", saveMenuItemsDraft);
+      sessionStorage.removeItem("menuItemsDraft");
+      redirectToNextPage();
+    },
+  });
+}
 
-  menuId = responseBody.id;
-  console.log(responseBody);
+function changeForms() {
+  main.classList.toggle("main--show-menu-form");
+  main.classList.toggle("main--show-menu-item-form");
+}
 
-  menu.firstElementChild.innerHTML = name;
-
-  changeForms();
-};
-
-const menuItems = [];
-menuItemForm.onsubmit = (e) => {
+async function createMenu(e) {
   e.preventDefault();
 
+  menuFormBtn.innerHTML = "Criando <div class='loading'></div>";
+
   const name = e.target[0].value;
-  const price = e.target[1].value;
-  const description = e.target[2].value;
-  const imgFile = e.target[3].files[0];
-  const type = e.target[4].value;
+
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/v1/business/${businessId}/menu`,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+        }),
+      },
+    );
+
+    console.log(response.ok);
+    if (!response.ok) {
+      menuFormBtn.innerHTML = "Criar";
+      return;
+    }
+
+    const responseBody = await response.json();
+    menuId = responseBody.id;
+    console.log(responseBody);
+
+    menu.firstElementChild.textContent = name;
+
+    menuFormBtn.innerHTML = "Criar";
+    changeForms();
+  } catch (error) {
+    console.error(error);
+    menuFormBtn.textContent = "Criar";
+    showSnackBar(
+      "error",
+      "<p>Erro ao criar o menu. <br /> Tente novamente.</p>",
+    );
+  }
+}
+
+function formatPriceInput(e) {
+  const value = e.target.value;
+
+  if (value === "" || value === "0,0") {
+    e.target.value = "0,00";
+    return;
+  }
+
+  const number = value
+    .split(".")
+    .join("")
+    .split(",")
+    .join("")
+    .replace(/\D/g, "");
+  const cents = number.slice(-2);
+  const int = number.slice(0, -2);
+  const formatedNumber = Number(int + "." + cents)
+    .toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    })
+    .replace("R$", "")
+    .trim();
+
+  e.target.value = formatedNumber;
+}
+
+function selectType(e) {
+  const opt = e.target.closest("button[role='option']");
+  if (!opt) return;
+  typeInput.value = opt.textContent;
+}
+
+function searchTypes(e) {
+  if (types.size === 0) return;
+
+  typeSelectBox.innerHTML = "";
+  typeSelectBox.hidden = false;
+
+  let word = e.target.value;
+
+  const startsWithFilterTypes = Array.from(types).filter((type) =>
+    type.startsWith(word),
+  );
+  const includesFilterTypes = Array.from(types).filter((type) =>
+    type.includes(word),
+  );
+  const filteredTypes = new Set([
+    ...startsWithFilterTypes.sort(),
+    ...includesFilterTypes.sort(),
+  ]);
+
+  for (let type of filteredTypes) {
+    typeSelectBox.innerHTML += `
+      <button type="button" role="option">${type}</button>
+    `;
+  }
+
+  typeInput.addEventListener("blur", () => {
+    typeSelectBox.hidden = true;
+  });
+}
+
+function changeImgPreview(e) {
+  inputFileText.innerHTML = "<p>Alterar Imagem</p>";
+
+  const imgFile = e.target.files[0];
+
+  if (imgFile) {
+    const preview = document.createElement("img");
+    preview.src = URL.createObjectURL(imgFile);
+
+    imgPreview.replaceChildren(preview);
+  } else {
+    imgPreview.firstChild.remove();
+    inputFileText.innerHTML = `<p>Adicionar Imagem</p> <span>+</span>`;
+  }
+}
+
+function clearFileInputImg() {
+  if (!imgPreview.children[0]) return;
+
+  inputFileText.innerHTML = `
+    <p>Adicionar Imagem</p>
+    <span>+</span>
+  `;
+  imgPreview.removeChild(imgPreview.children[0]);
+}
+
+function escapeHTML(str) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function buildItemHTML(menuItem) {
+  const { name, price, description, imgBlob, type } = menuItem;
+
+  const item = document.createElement("div");
+  item.className = "menu-preview__item";
+
+  const imgBox = document.createElement("div");
+  imgBox.className = "menu-preview__item-img";
+  if (imgBlob) {
+    const img = document.createElement("img");
+    img.src = imgBlob;
+    img.alt = name;
+    imgBox.appendChild(img);
+  } else {
+    const span = document.createElement("span");
+    span.textContent = "Sem imagem";
+    imgBox.appendChild(span);
+  }
+
+  const infos = document.createElement("div");
+  infos.className = "menu-preview__item-infos";
+
+  const header = document.createElement("div");
+  header.className = "menu-preview__item-header";
+
+  const nameElem = document.createElement("h4");
+  nameElem.className = "menu-preview__item-name";
+  nameElem.textContent = name;
+
+  const priceElem = document.createElement("p");
+  priceElem.className = "menu-preview__item-price";
+  priceElem.textContent = `R$ ${price}`;
+
+  header.appendChild(nameElem);
+  header.appendChild(priceElem);
+  infos.appendChild(header);
+
+  if (type) {
+    const typeElem = document.createElement("p");
+    typeElem.className = "menu-preview__item-type";
+    typeElem.textContent = type;
+    infos.appendChild(typeElem);
+  }
+
+  const descElem = document.createElement("p");
+  descElem.className = "menu-preview__item-description";
+  if (description) {
+    const safeDescription = escapeHTML(description).replace(/\n/g, "<br>");
+    descElem.innerHTML = safeDescription;
+  } else {
+    descElem.innerHTML = "Sem descrição";
+  }
+
+  infos.appendChild(descElem);
+
+  item.appendChild(imgBox);
+  item.appendChild(infos);
+  item.setAttribute("data-name", name);
+
+  return item;
+}
+
+function addItemToMenu(menuItem) {
+  const item = buildItemHTML(menuItem);
+
+  if (menuItemsBox.firstElementChild.nodeName === "P") {
+    menuItemsBox.innerHTML = "";
+  }
+
+  menuItemsBox.appendChild(item);
+}
+
+function addMenuItem(e) {
+  e.preventDefault();
+
+  const name = nameInput.value.trim();
+  const price = priceInput.value.trim();
+  const description = descriptionInput.value.trim();
+  const imgFile = imgFileInput.files[0];
+  const type = typeInput.value.trim();
+
+  const nameAlreadyExists = menuItems.some(
+    (item) => item.name.toLowerCase() === name.toLowerCase(),
+  );
+
+  if (nameAlreadyExists) {
+    nameInput.style.backgroundColor = "rgba(147, 147, 0, 1)";
+    nameInput.value = "";
+    nameInput.focus();
+    showSnackBar("warn", "<p>Nome já adicionado no menu!</p>");
+
+    const clearWarning = () => {
+      nameInput.style.backgroundColor = "";
+      nameInput.removeEventListener("input", clearWarning);
+      nameInput.removeEventListener("blur", clearWarning);
+    };
+
+    nameInput.addEventListener("input", clearWarning);
+    nameInput.addEventListener("blur", clearWarning);
+
+    return;
+  }
+
+  if (price === "0,00") {
+    const priceWrapper = priceInput.parentElement;
+    priceWrapper.style.backgroundColor = "rgba(147, 147, 0, 1)";
+    priceWrapper.focus();
+    showSnackBar("warn", "<p>O preço precisa ser maior <br> que R$ 0,00.</p>");
+
+    const clearWarning = () => {
+      priceWrapper.style.backgroundColor = "";
+      priceInput.removeEventListener("input", clearWarning);
+      priceInput.removeEventListener("blur", clearWarning);
+    };
+
+    priceInput.addEventListener("input", clearWarning);
+    priceInput.addEventListener("blur", clearWarning);
+
+    return;
+  }
 
   let imgBlob;
+
   if (imgFile) {
     imgBlob = URL.createObjectURL(imgFile);
   }
 
-  const menuItemWithFile = {
+  const menuItem = {
     name,
-    price,
+    price: Number(price.replace(",", ".")),
     description,
     imgFile,
-    type,
-  };
-
-  const menuItemWithBlob = {
-    name,
-    price,
-    description,
     imgBlob,
     type,
   };
 
-  menuItems.push(menuItemWithFile);
+  menuItems.push(menuItem);
+  if (type.trim()) types.add(type);
 
-  addMenuItem(menuItemWithBlob);
-};
+  addItemToMenu(menuItem);
 
-fileInput.onchange = (e) => {
-  const fileInput = document.querySelector("#fileInput");
-  const inputFileText = document.querySelector(".inputFileText");
-  const imgPreview = document.querySelector("#imgPreview");
+  if (checkboxInput.checked) return;
 
-  fileInput.classList.add("changeImg");
-  inputFileText.innerHTML = "<p>Alterar Imagem</p>";
-
-  const file = e.target.files[0];
-
-  if (file) {
-    const preview = document.createElement("img");
-    preview.src = URL.createObjectURL(file);
-
-    imgPreview.replaceChildren(preview);
-  }
-};
-
-function changeForms() {
-  const main = document.querySelector("#main");
-
-  main.classList.toggle("showMenuForm");
-  main.classList.toggle("showMenuItemForm");
+  e.target.reset();
 }
 
-function addMenuItem(menuItem) {
-  const menuItemsBox = document.querySelector("#menuItems");
-  const { name, price, description, imgBlob, type } = menuItem;
+function selectItem(e) {
+  const btn = menu.querySelector("button");
+  if (btn) btn.remove();
 
-  if (menuItemsBox.firstElementChild.nodeName === "P") {
-    menuItemsBox.innerHTML = `
-    <div class="menuItem">
-      <div class="itemImg">
-            ${imgBlob ? `<img src="${imgBlob}" alt="${name}" />` : ""}
-            </div>
-            <div class="itemInfos">
-              <div>
-                <h4>${name}</h4>
-                <p class="itemPrice">R$ ${price}</p>
-                ${type ? `<p class="itemType">${type}</p>` : ""}
-              </div>
-              <p class="itemDescription">
-                ${description}
-              </p>
-            </div>
-    </div>
-  `;
-    return;
-  }
+  const menuItem = e.target.closest(".menu-preview__item");
+  if (!menuItem) return;
 
-  menuItemsBox.innerHTML += `
-    <div class="menuItem">
-      <div class="itemImg">
-              <img src="${imgBlob}" alt="${name}" />
-            </div>
-            <div class="itemInfos">
-              <div>
-                <h4>${name}</h4>
-                <p class="itemPrice">R$ ${price}</p>
-                ${type ? `<p class="itemType">${type}</p>` : ""}
-              </div>
-              <p class="itemDescription">
-                ${description}
-              </p>
-            </div>
-    </div>
-  `;
-}
+  const removeBtn = document.createElement("button");
+  removeBtn.className = "menu-preview__remove-btn";
+  removeBtn.onclick = removeItem;
+  removeBtn.textContent = "Remover";
 
-advanceButton.onclick = advaceButton;
+  menuItem.append(removeBtn);
 
-async function advaceButton() {
-  if (menuItems.length === 0) {
-    alert("Adicione algum funcionário para prosseguir.");
-    return;
-  }
+  document.addEventListener(
+    "mousedown",
+    (e) => {
+      if (!menu.contains(e.target)) {
+        menu.querySelector("button").remove();
+      }
+    },
+    { once: true },
+  );
 
-  menuItems.forEach(async (item) => {
-    const { name, price, description, imgFile, type } = item;
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("price", price);
-    formData.append("description", description);
-    formData.append("imgFile", imgFile);
-    formData.append("type", type);
-
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${businessId}/menu/${menuId}/item`,
-      {
-        method: "POST",
-        body: formData,
-      },
+  function removeItem(e) {
+    e.target.parentElement.remove();
+    const itemIndex = menuItems.findIndex(
+      (item) => item.name === menuItem.dataset.name,
     );
 
-    const responseBody = await response.json();
-    console.log(responseBody);
+    menuItems.splice(itemIndex, 1);
+    if (menuItems.length === 0) {
+      menuItemsBox.innerHTML =
+        "<p>Adicione algum item ao seu menu para visualizar</p>";
+    }
+  }
+}
+
+function saveMenuItemsDraft() {
+  if (menuItems.length > 0) {
+    sessionStorage.setItem("menuItemsDraft", JSON.stringify(menuItems));
+  } else {
+    sessionStorage.removeItem("menuItemsDraft");
+  }
+}
+
+async function handleAdvance(e) {
+  const btn = e.target;
+
+  if (menuItems.length === 0) {
+    showSnackBar(
+      "warn",
+      "<p>Adicione algum item no menu <br> para prosseguir.</p>",
+    );
+    return;
+  }
+
+  btn.textContent = "avançando";
+  btn.classList.add("header__button--loading");
+
+  try {
+    for (let item of menuItems) {
+      const { name, price, description, imgFile, type } = item;
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("price", price);
+      formData.append("description", description);
+      formData.append("imgFile", imgFile);
+      formData.append("type", type);
+
+      // Talvez retornar todos como promises pra ir todas de uma vez seja melhor. Testar isso depois.
+      const response = await fetch(
+        `http://localhost:3000/api/v1/business/${businessId}/menu/${menuId}/item`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      console.log("OK: ", response.ok);
+      const responseBody = await response.json();
+      console.log(responseBody);
+    }
+
+    window.addEventListener("beforeunload", saveMenuItemsDraft);
+    sessionStorage.removeItem("menuItemsDraft");
+    redirectToNextPage();
+  } catch (error) {
+    btn.textContent = "avançar";
+    btn.classList.remove("header__button--loading");
+
+    showSnackBar(
+      "error",
+      "<p>Erro ao adicionar funcionários. <br /> Tente novamente.</p>",
+    );
+    console.error(error);
+  }
+}
+
+window.addEventListener("beforeunload", saveMenuItemsDraft);
+
+const menuItemsDraft = JSON.parse(sessionStorage.getItem("menuItemsDraft"));
+if (menuItemsDraft) {
+  menuItems = menuItemsDraft;
+  menuItems.forEach((item) => {
+    if (item.type.trim()) types.add(item.type);
   });
 
-  window.location.href = `http://localhost:5500/src/main/pages/business_invite/index.html?businessId=${businessId}`;
+  menuItems.forEach(addItemToMenu);
 }
+
+createSnackBar();

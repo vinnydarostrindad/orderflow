@@ -3,111 +3,164 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Gerencie seu negócio de forma eficiente com o painel OrderFlow: visualize pedidos, faturamento, vendas e muito mais em tempo real."
+    />
     <link rel="stylesheet" href="style.css" />
-    <title>Maneger DashBoard</title>
+    <title>Dashboard do Gerente</title>
   </head>
   <body>
-    <header>
-      <div>
-        <h1>OrderFlow</h1>
-        <button class="button" id="menuBtn">
-          <img src="./img/menu-icon.svg" alt="Menu" />
+    <header class="header">
+      <div class="header__content">
+        <h1 class="header__title">OrderFlow</h1>
+        <button
+          class="header__menu-button"
+          id="headerMenuBtn"
+          aria-label="Abrir/Fechar menu"
+        >
+          <img src="./img/menu-icon.svg" alt="ícone de menu" />
         </button>
       </div>
     </header>
-    <nav class="container hidden" id="menuBar">
+
+    <nav class="navbar navbar--hidden" id="navBar">
       <ul>
-        <li class="selected">
-          <a href=""
-            ><img
+        <li class="navbar__item navbar__item--selected">
+          <a href="#">
+            <img
               src="./img/dashboard-icon.svg"
               alt="dashboard-icon"
-            />DashBoard</a
-          >
+              class="navbar__icon invert"
+            />
+            DashBoard
+          </a>
         </li>
-        <li>
-          <a href=""
-            ><img
+        <li class="navbar__item">
+          <a href="#">
+            <img
               src="./img/employees-icon.svg"
               alt="employees-icon"
-            />Funcionários</a
-          >
+              class="navbar__icon invert"
+            />
+            Funcionários
+          </a>
         </li>
-        <li>
-          <a href=""
-            ><img src="./img/food-menu-icon.svg" alt="menu-icon" />Cardápio</a
-          >
+        <li class="navbar__item">
+          <a href="#">
+            <img
+              src="./img/food-menu-icon.svg"
+              alt="menu-icon"
+              class="navbar__icon invert"
+            />
+            Cardápio
+          </a>
         </li>
-        <li>
-          <a href=""
-            ><img src="./img/sales-icon.svg" alt="sales-icon" />Vendas</a
-          >
+        <li class="navbar__item">
+          <a href="#">
+            <img
+              src="./img/sales-icon.svg"
+              alt="sales-icon"
+              class="navbar__icon invert"
+            />
+            Vendas
+          </a>
         </li>
-        <li>
-          <a href=""
-            ><img src="./img/stock-icon.svg" alt="stock-icon" />Estoque</a
-          >
+        <li class="navbar__item">
+          <a href="#">
+            <img
+              src="./img/stock-icon.svg"
+              alt="stock-icon"
+              class="navbar__icon invert"
+            />
+            Estoque
+          </a>
         </li>
-        <li>
-          <a href=""
-            ><img src="./img/orders-icon.svg" alt="orders-icon" />Pedidos</a
-          >
+        <li class="navbar__item">
+          <a href="#">
+            <img
+              src="./img/orders-icon.svg"
+              alt="orders-icon"
+              class="navbar__icon invert"
+            />
+            Pedidos
+          </a>
         </li>
-        <li>
-          <a href=""
-            ><img
+        <li class="navbar__item">
+          <a href="#">
+            <img
               src="./img/config-icon.svg"
               alt="config-icon"
-            />Configuração</a
-          >
+              class="navbar__icon invert"
+            />
+            Configuração
+          </a>
         </li>
       </ul>
     </nav>
-    <main class="container">
-      <div class="businessStatsBox" id="businessStatsBox">
-        <h2>Nome da Empresa</h2>
-        <select name="timeSpace" id="timeSpace">
+
+    <main class="main">
+      <div class="business-stats">
+        <h2 class="business-stats__title">Nome da Empresa</h2>
+        <select name="timeFilter" class="business-stats__select">
           <option value="day">Hoje</option>
           <option value="week">Essa Semana</option>
           <option value="month">Esse Mês</option>
-          <option value="months">Últimos 6 Meses</option>
+          <option value="six-months">Últimos 6 Meses</option>
           <option value="year">Esse Ano</option>
         </select>
-        <div class="textStats">
-          <p>Faturamento: R$ <span id="money">00,00</span></p>
+        <div class="business-stats__info">
+          <p>Faturamento: R$ <span id="revenue">00,00</span></p>
           <p>
             Faturamento/<span id="period">Hora</span>: R$
-            <span id="moneyPerHour">00,00</span>
+            <span id="hourlyRevenue">00,00</span>
           </p>
-          <p>Pedidos: <span id="ordersAmount">4</span></p>
-          <p>Pedidos concluídos: <span id="completedOrder">0</span></p>
+          <p>Pedidos: <span id="ordersAmount">0</span></p>
+          <p>Pedidos concluídos: <span id="completedOrders">0</span></p>
           <p>Pedidos cancelados: <span id="canceledOrders">0</span></p>
         </div>
-        <div class="graphicStats">
+        <div class="business-stats__chart">
+          <div class="chart-skeleton skeleton">
+            <div class="chart-hole"></div>
+          </div>
           <canvas id="salesChart" width="325" height="325"></canvas>
-          <div class="graphicInfo">
-            <p class="porcentage"></p>
-            <p class="quantity"></p>
+          <div class="chart-info">
+            <p id="chartPorcentage"></p>
+            <p id="chartQuantity"></p>
           </div>
         </div>
       </div>
-      <div class="lastOrders">
+      <div class="last-orders">
         <h3>Últimos pedidos feitos:</h3>
-        <div class="ordersContainer">
-          <button id="leftBtn">
-            <img src="./img/left-arrow-icon.svg" alt="" />
+        <div class="last-orders__carousel">
+          <button
+            id="carouselLeftBtn"
+            disabled
+            aria-label="Deslizar carrossel para a direita"
+          >
+            <img src="./img/left-arrow-icon.svg" alt="seta para a esquerda" />
           </button>
-          <div class="ordersCarousel">
-            <div class="orders" id="lastOrders"></div>
+          <div class="last-orders__box">
+            <div class="last-orders__orders" id="lastOrders"></div>
+            <div class="last-orders__skeletons">
+              <div class="last-orders__order-skeleton skeleton"></div>
+              <div class="last-orders__order-skeleton skeleton"></div>
+              <div class="last-orders__order-skeleton skeleton"></div>
+              <div class="last-orders__order-skeleton skeleton"></div>
+            </div>
           </div>
-          <button id="rightBtn">
-            <img src="./img/right-arrow-icon.svg" alt="" />
+          <button
+            id="carouselRightBtn"
+            disabled
+            aria-label="Deslizar carrossel para a direita"
+          >
+            <img src="./img/right-arrow-icon.svg" alt="seta para a direita" />
           </button>
         </div>
       </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js" type="module"></script>
   </body>
 </html>
