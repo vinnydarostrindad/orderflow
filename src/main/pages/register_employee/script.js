@@ -39,7 +39,7 @@ function saveEmployeesDraft() {
 }
 
 function redirectToNextPage() {
-  window.location.href = `http://localhost:5500/src/main/pages/create_menu/index.html?b=${businessId}`;
+  // window.location.href = `http://localhost:5500/src/main/pages/create_menu/index.html?b=${businessId}`;
 }
 
 function handleSkip(e) {

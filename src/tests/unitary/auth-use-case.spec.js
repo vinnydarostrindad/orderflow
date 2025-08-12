@@ -12,8 +12,8 @@ const makeSut = () => {
 
 const makeJwt = () => {
   const jwtSpy = {
-    sign(id, secret) {
-      this.id = id;
+    sign(obj, secret) {
+      this.obj = obj;
       this.secret = secret;
       return this.token;
     },
@@ -33,23 +33,52 @@ const makeJwtWithError = () => {
   return jwtWithErrorSpy;
 };
 
+const obj = {
+  employeeId: "any_employee_id",
+  role: "any_role",
+  businessId: "any_business_id",
+};
+
 describe("Auth Usecase", () => {
   describe("generateToken method", () => {
-    test("Should throw if no id is provided", () => {
+    test("Should throw if no emmployeeId is provided", () => {
       const { sut } = makeSut();
-      expect(() => sut.generateToken()).toThrow(new MissingParamError("id"));
+      expect(() =>
+        sut.generateToken({
+          role: "any_role",
+          businessId: "any_business_id",
+        }),
+      ).toThrow(new MissingParamError("employeeId"));
+    });
+    test("Should throw if no role is provided", () => {
+      const { sut } = makeSut();
+      expect(() =>
+        sut.generateToken({
+          employeeId: "any_employee_id",
+          businessId: "any_business_id",
+        }),
+      ).toThrow(new MissingParamError("role"));
+    });
+    test("Should throw if no businessId is provided", () => {
+      const { sut } = makeSut();
+      expect(() =>
+        sut.generateToken({
+          employeeId: "any_employee_id",
+          role: "any_role",
+        }),
+      ).toThrow(new MissingParamError("businessId"));
     });
 
     test("Should call jwt.sign with the correct values", () => {
       const { sut, jwtSpy } = makeSut();
-      sut.generateToken("any_id");
-      expect(jwtSpy.id).toBe("any_id");
+      sut.generateToken(obj);
+      expect(jwtSpy.obj).toMatchObject(obj);
       expect(jwtSpy.secret).toBe("secret");
     });
 
     test("Should return token correctly", () => {
       const { sut } = makeSut();
-      const token = sut.generateToken("any_id");
+      const token = sut.generateToken(obj);
       expect(token).toBe("any_token");
     });
 
@@ -63,7 +92,7 @@ describe("Auth Usecase", () => {
       ];
 
       for (const sut of suts) {
-        expect(() => sut.generateToken("any_id")).toThrow(TypeError);
+        expect(() => sut.generateToken(obj)).toThrow(TypeError);
       }
     });
 
@@ -75,7 +104,7 @@ describe("Auth Usecase", () => {
       ];
 
       for (const sut of suts) {
-        expect(() => sut.generateToken("any_id")).toThrow();
+        expect(() => sut.generateToken(obj)).toThrow();
       }
     });
   });

@@ -3,9 +3,8 @@ import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 import httpResponse from "../../http-response.js";
 
 export default class RegisterEmployeeRouter {
-  constructor({ registerEmployeeUseCase, authUseCase, validators } = {}) {
+  constructor({ registerEmployeeUseCase, validators } = {}) {
     this.registerEmployeeUseCase = registerEmployeeUseCase;
-    this.authUseCase = authUseCase;
     this.validators = validators;
   }
 
@@ -35,12 +34,6 @@ export default class RegisterEmployeeRouter {
       password,
     });
 
-    const token = this.authUseCase.generateToken(employee.id);
-    const createdEmployee = {
-      employee,
-      token,
-    };
-
-    return httpResponse.created(createdEmployee);
+    return httpResponse.created(employee);
   }
 }

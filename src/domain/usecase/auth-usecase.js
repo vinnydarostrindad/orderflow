@@ -8,9 +8,11 @@ export default class AuthUseCase {
     this.jwt = jwt;
   }
 
-  generateToken(id) {
-    if (!id) throw new MissingParamError("id");
+  generateToken({ employeeId, role, businessId }) {
+    if (!employeeId) throw new MissingParamError("employeeId");
+    if (!role) throw new MissingParamError("role");
+    if (!businessId) throw new MissingParamError("businessId");
 
-    return this.jwt.sign(id, process.env.SECRET);
+    return this.jwt.sign({ employeeId, role, businessId }, process.env.SECRET);
   }
 }

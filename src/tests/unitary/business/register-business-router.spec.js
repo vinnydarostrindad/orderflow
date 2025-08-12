@@ -5,18 +5,15 @@ import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 const makeSut = () => {
   const registerBusinessUseCaseSpy = makeRegisterBusinessUseCase();
   const validatorsSpy = makeValidators();
-  const authUseCaseSpy = makeAuthUseCase();
   const sut = new RegisterBusinessRouter({
     registerBusinessUseCase: registerBusinessUseCaseSpy,
     validators: validatorsSpy,
-    authUseCase: authUseCaseSpy,
   });
 
   return {
     sut,
     registerBusinessUseCaseSpy,
     validatorsSpy,
-    authUseCaseSpy,
   };
 };
 
@@ -71,30 +68,6 @@ const makeValidatorsWithError = () => {
   };
 
   return validatorsSpy;
-};
-
-const makeAuthUseCase = () => {
-  class AuthUseCaseSpy {
-    generateToken(id) {
-      this.id = id;
-      return this.token;
-    }
-  }
-
-  const authUseCaseSpy = new AuthUseCaseSpy();
-  authUseCaseSpy.token = "any_token";
-  return authUseCaseSpy;
-};
-
-const makeAuthUseCaseWithError = () => {
-  class AuthUseCaseSpy {
-    generateToken() {
-      throw new Error();
-    }
-  }
-
-  const authUseCaseSpy = new AuthUseCaseSpy();
-  return authUseCaseSpy;
 };
 
 describe("Register Business Router", () => {
@@ -199,22 +172,8 @@ describe("Register Business Router", () => {
     expect(registerBusinessUseCaseSpy.password).toBe("any_password");
   });
 
-  test("Should call authuseCase with correct params", async () => {
-    const { sut, authUseCaseSpy } = makeSut();
-    const httpRequest = {
-      body: {
-        name: "any_name",
-        email: "any_email@mail.com",
-        password: "any_password",
-      },
-    };
-
-    await sut.route(httpRequest);
-    expect(authUseCaseSpy.id).toBe("any_id");
-  });
-
   test("Should return 201 with created business when input is valid", async () => {
-    const { sut, registerBusinessUseCaseSpy, authUseCaseSpy } = makeSut();
+    const { sut, registerBusinessUseCaseSpy } = makeSut();
     const httpRequest = {
       body: {
         name: "any_name",
@@ -225,15 +184,11 @@ describe("Register Business Router", () => {
 
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(201);
-    expect(httpResponse.body).toEqual({
-      business: registerBusinessUseCaseSpy.business,
-      token: authUseCaseSpy.token,
-    });
+    expect(httpResponse.body).toEqual(registerBusinessUseCaseSpy.business);
   });
 
   test("Should throw if invalid dependency is provided", async () => {
     const registerBusinessUseCase = makeRegisterBusinessUseCase();
-    const validators = makeValidators();
     const suts = [
       new RegisterBusinessRouter(),
       new RegisterBusinessRouter({}),
@@ -246,11 +201,6 @@ describe("Register Business Router", () => {
       new RegisterBusinessRouter({
         registerBusinessUseCase,
         validators: {},
-      }),
-      new RegisterBusinessRouter({
-        registerBusinessUseCase,
-        validators,
-        authUseCase: {},
       }),
     ];
 
@@ -269,7 +219,6 @@ describe("Register Business Router", () => {
 
   test("Should throw if any dependency throws", async () => {
     const registerBusinessUseCase = makeRegisterBusinessUseCase();
-    const validators = makeValidators();
     const suts = [
       new RegisterBusinessRouter({
         registerBusinessUseCase: makeRegisterBusinessUseCaseWithError(),
@@ -277,11 +226,6 @@ describe("Register Business Router", () => {
       new RegisterBusinessRouter({
         registerBusinessUseCase,
         validators: makeValidatorsWithError(),
-      }),
-      new RegisterBusinessRouter({
-        registerBusinessUseCase,
-        validators,
-        authUseCase: makeAuthUseCaseWithError(),
       }),
     ];
 
