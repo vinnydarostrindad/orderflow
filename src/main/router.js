@@ -1,3 +1,4 @@
+import BaseError from "../utils/errors/base-error.js";
 import MethodNotAllowedError from "../utils/errors/method-not-allowed-error.js";
 import NotFoundError from "../utils/errors/not-found-error.js";
 import ServerError from "../utils/errors/server-error.js";
@@ -45,9 +46,9 @@ const router = async function (req, res) {
           if (error.code === "ENOENT") {
             res.writeHead(404, { "content-type": "text/plain" });
             return res.end("Arquivo não encontrado");
-          } else {
-            throw new ServerError({ cause: error });
           }
+
+          throw error;
         }
       }
     }
@@ -76,15 +77,14 @@ const router = async function (req, res) {
   } catch (error) {
     console.error(error);
 
-    if (!(error instanceof ServerError)) {
-      res.writeHead(error.statusCode);
-      return res.end(JSON.stringify(error));
+    let finalError = error;
+
+    if (!(error instanceof BaseError)) {
+      finalError = new ServerError({ cause: error });
     }
 
-    const serverError = new ServerError({ cause: error });
-
-    res.writeHead(serverError.statusCode);
-    return res.end(JSON.stringify(serverError));
+    res.writeHead(finalError.statusCode);
+    return res.end(JSON.stringify(finalError));
   }
 };
 
