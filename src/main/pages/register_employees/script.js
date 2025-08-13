@@ -1,5 +1,5 @@
-import { createSnackBar, showSnackBar } from "../scripts/snackbar.js";
-import showConfirmModal from "../scripts/confirm-modal.js";
+import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
+import showConfirmModal from "/scripts/confirm-modal.js";
 
 const registerEmployeeForm = document.forms[0];
 const roleSelect = document.querySelector("#role");
@@ -124,7 +124,7 @@ function renderTableRow({ name, role }) {
         <div>
           ${roles[role]}
           <button class="remove-button" data-name="${name}" data-role="${role}" aria-label="Remover ${name}">
-          <img src="./img/remove-icon.svg" alt="Remover">
+          <img src="/register_employees/img/remove-icon.svg" alt="Remover">
           </button>
         </div>
       </td>

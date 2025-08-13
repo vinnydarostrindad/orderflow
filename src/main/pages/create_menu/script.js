@@ -1,5 +1,5 @@
-import showConfirmModal from "../scripts/confirm-modal.js";
-import { createSnackBar, showSnackBar } from "../scripts/snackbar.js";
+import showConfirmModal from "/scripts/confirm-modal.js";
+import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
 
 const advanceButton = document.querySelector("#advanceBtn");
 const main = document.querySelector("#main");
@@ -40,7 +40,7 @@ menu.addEventListener("click", selectItem);
 skipBtns.forEach((btn) => btn.addEventListener("click", handleSkip));
 
 function redirectToNextPage() {
-  window.location.href = `http://localhost:5500/src/main/pages/business_invite/index.html?b=${businessId}`;
+  window.location.href = `http://localhost:3000/invite-employees`;
 }
 
 function handleSkip() {

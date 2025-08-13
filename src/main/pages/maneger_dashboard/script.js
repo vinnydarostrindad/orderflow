@@ -1,4 +1,4 @@
-import { createSnackBar, showSnackBar } from "../scripts/snackbar.js";
+import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
 
 const headerMenuBtn = document.querySelector("#headerMenuBtn");
 const navBar = document.querySelector("#navBar");

@@ -7,7 +7,7 @@
       name="description"
       content="Gerencie seu negócio de forma eficiente com o painel OrderFlow: visualize pedidos, faturamento, vendas e muito mais em tempo real."
     />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="/maneger_dashboard/style.css" />
     <title>Dashboard do Gerente</title>
   </head>
   <body>
@@ -19,7 +19,7 @@
           id="headerMenuBtn"
           aria-label="Abrir/Fechar menu"
         >
-          <img src="./img/menu-icon.svg" alt="ícone de menu" />
+          <img src="/maneger_dashboard/img/menu-icon.svg" alt="ícone de menu" />
         </button>
       </div>
     </header>
@@ -29,7 +29,7 @@
         <li class="navbar__item navbar__item--selected">
           <a href="#">
             <img
-              src="./img/dashboard-icon.svg"
+              src="/maneger_dashboard/img/dashboard-icon.svg"
               alt="dashboard-icon"
               class="navbar__icon invert"
             />
@@ -39,7 +39,7 @@
         <li class="navbar__item">
           <a href="#">
             <img
-              src="./img/employees-icon.svg"
+              src="/maneger_dashboard/img/employees-icon.svg"
               alt="employees-icon"
               class="navbar__icon invert"
             />
@@ -49,7 +49,7 @@
         <li class="navbar__item">
           <a href="#">
             <img
-              src="./img/food-menu-icon.svg"
+              src="/maneger_dashboard/img/food-menu-icon.svg"
               alt="menu-icon"
               class="navbar__icon invert"
             />
@@ -59,7 +59,7 @@
         <li class="navbar__item">
           <a href="#">
             <img
-              src="./img/sales-icon.svg"
+              src="/maneger_dashboard/img/sales-icon.svg"
               alt="sales-icon"
               class="navbar__icon invert"
             />
@@ -69,7 +69,7 @@
         <li class="navbar__item">
           <a href="#">
             <img
-              src="./img/stock-icon.svg"
+              src="/maneger_dashboard/img/stock-icon.svg"
               alt="stock-icon"
               class="navbar__icon invert"
             />
@@ -79,7 +79,7 @@
         <li class="navbar__item">
           <a href="#">
             <img
-              src="./img/orders-icon.svg"
+              src="/maneger_dashboard/img/orders-icon.svg"
               alt="orders-icon"
               class="navbar__icon invert"
             />
@@ -89,7 +89,7 @@
         <li class="navbar__item">
           <a href="#">
             <img
-              src="./img/config-icon.svg"
+              src="/maneger_dashboard/img/config-icon.svg"
               alt="config-icon"
               class="navbar__icon invert"
             />
@@ -138,7 +138,10 @@
             disabled
             aria-label="Deslizar carrossel para a direita"
           >
-            <img src="./img/left-arrow-icon.svg" alt="seta para a esquerda" />
+            <img
+              src="/maneger_dashboard/img/left-arrow-icon.svg"
+              alt="seta para a esquerda"
+            />
           </button>
           <div class="last-orders__box">
             <div class="last-orders__orders" id="lastOrders"></div>
@@ -154,13 +157,16 @@
             disabled
             aria-label="Deslizar carrossel para a direita"
           >
-            <img src="./img/right-arrow-icon.svg" alt="seta para a direita" />
+            <img
+              src="/maneger_dashboard/img/right-arrow-icon.svg"
+              alt="seta para a direita"
+            />
           </button>
         </div>
       </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js" type="module"></script>
+    <script src="/maneger_dashboard/script.js" type="module"></script>
   </body>
 </html>

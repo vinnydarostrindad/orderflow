@@ -14,7 +14,7 @@ const codeUrl = new URL(
 
 advanceButton.addEventListener("click", () => {
   advanceButton.classList.add("header__button--loading");
-  window.location.href = `http://localhost:5500/src/main/pages/maneger_dashboard/index.html?b=${businessId}`;
+  window.location.href = `http://localhost:3000/dashboard`;
 });
 copyCodeBtn.addEventListener("click", (e) => copyToClipBoard(e, businessId));
 shareBtn.addEventListener("click", share);

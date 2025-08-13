@@ -1,4 +1,4 @@
-import { createSnackBar, showSnackBar } from "./scripts/snackbar.js";
+import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
 
 const registerForm = document.querySelector(".form");
 const submitBtn = document.querySelector("#submitBtn");
@@ -35,7 +35,7 @@ async function submitForm(e) {
     const responseBody = await response.json();
     console.log(responseBody);
 
-    window.location.href = `http://localhost:5500/src/main/pages/register_employee/index.html?b=${responseBody.business.id}`;
+    window.location.href = `http://localhost:3000/register-employees`;
   } catch (err) {
     console.error(err);
     showSnackBar(
