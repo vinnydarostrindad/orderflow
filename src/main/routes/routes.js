@@ -129,4 +129,27 @@ const apiRoutes = [
   },
 ];
 
-export default apiRoutes;
+const pagesRoutes = [
+  {
+    pattern: /^\/$/,
+    filePath: "/index.html",
+  },
+  {
+    pattern: /^\/register-employees\/?(?:\?.*)?$/,
+    filePath: "/register_employees/index.html",
+  },
+  {
+    pattern: /^\/create-menu$/,
+    filePath: "/create_menu/index.html",
+  },
+  {
+    pattern: /^\/invite-employees$/,
+    filePath: "/invite_employees/index.html",
+  },
+  {
+    pattern: /^\/dashboard$/,
+    filePath: "/maneger_dashboard/index.html",
+  },
+];
+
+export { apiRoutes, pagesRoutes };

@@ -2,26 +2,57 @@ import MethodNotAllowedError from "../utils/errors/method-not-allowed-error.js";
 import NotFoundError from "../utils/errors/not-found-error.js";
 import ServerError from "../utils/errors/server-error.js";
 import nodeRequestAdapter from "./adapters/node-request-adapter.js";
-import apiRoutes from "./routes/routes.js";
+import { apiRoutes, pagesRoutes } from "./routes/routes.js";
+
+import fsPromises from "node:fs/promises";
+import path from "node:path";
 
 const router = async function (req, res) {
   const method = req.method.toLowerCase();
-  const url = req.url;
+  const url = decodeURIComponent(req.url);
+
+  const mimeTypes = {
+    ".css": "text/css",
+    ".js": "application/javascript",
+    ".html": "text/html",
+    ".jpeg": "image/jpeg",
+    ".jpg": "image/jpeg",
+    ".svg": "image/svg+xml",
+    ".ico": "image/x-icon",
+    ".json": "application/json",
+  };
 
   try {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader(
-      "Access-Control-Allow-Methods",
-      "GET, POST, PUT, DELETE, OPTIONS",
-    );
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    const pageInfoObj = findMatchingPageRoute(url);
+    const urlExt = pageInfoObj ? ".html" : path.extname(url);
 
-    if (method === "options") {
-      res.writeHead(204);
-      return res.end();
+    if (urlExt) {
+      const filePath = pageInfoObj ? pageInfoObj.filePath : url;
+      const encoding = mimeTypes[urlExt].startsWith("image")
+        ? undefined
+        : { encoding: "utf-8" };
+
+      if (Object.keys(mimeTypes).includes(urlExt)) {
+        try {
+          const fileContent = await fsPromises.readFile(
+            path.join("src/main/pages", filePath),
+            encoding,
+          );
+
+          res.writeHead(200, { "content-type": mimeTypes[urlExt] });
+          return res.end(fileContent);
+        } catch (error) {
+          if (error.code === "ENOENT") {
+            res.writeHead(404, { "content-type": "text/plain" });
+            return res.end("Arquivo não encontrado");
+          } else {
+            throw new ServerError({ cause: error });
+          }
+        }
+      }
     }
 
-    const { route, params } = findMatchingRoute(url, method);
+    const { route, params } = findMatchingApiRoute(url, method);
 
     if (!route) {
       throw new NotFoundError({
@@ -58,13 +89,22 @@ const router = async function (req, res) {
 };
 
 function verifyIfMethodIsAllowed(route, method) {
-  if (method in route.methods) {
-    return;
+  if (!route.methods.hasOwnProperty(method)) {
+    throw new MethodNotAllowedError(method);
   }
-  throw new MethodNotAllowedError(method);
 }
 
-function findMatchingRoute(url, method) {
+function findMatchingPageRoute(url) {
+  for (const route of pagesRoutes) {
+    const match = url.match(route.pattern);
+    if (match) {
+      return { filePath: route.filePath, params: match.groups };
+    }
+  }
+  return null;
+}
+
+function findMatchingApiRoute(url, method) {
   for (const route of apiRoutes) {
     const match = url.match(route.pattern);
     if (match) {
@@ -73,7 +113,7 @@ function findMatchingRoute(url, method) {
       return { route, params: match.groups };
     }
   }
-  return {};
+  return null;
 }
 
 export default router;
