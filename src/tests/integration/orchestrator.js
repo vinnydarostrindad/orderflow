@@ -25,7 +25,7 @@ async function createBusiness(props = {}) {
     }),
   });
 
-  return await response.json().then((obj) => obj.business);
+  return await response.json();
 }
 
 async function createEmployee(businessId, quantity = 1, props = {}) {
@@ -44,7 +44,7 @@ async function createEmployee(businessId, quantity = 1, props = {}) {
       },
     );
 
-    employees.push(await response.json().then((obj) => obj.employee));
+    employees.push(await response.json());
   }
   return quantity === 1 ? employees[0] : employees;
 }

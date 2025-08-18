@@ -175,7 +175,7 @@ describe("Register Employee Router", () => {
     await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should call registerEmployeeBusiness with correct params", async () => {
+  test("Should call registerEmployeeUsecase with correct params", async () => {
     const { sut, registerEmployeeUseCaseSpy } = makeSut();
     const httpRequest = {
       params: { businessId: "any_business_id" },

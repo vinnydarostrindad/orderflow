@@ -1,3 +1,4 @@
+import InvalidParamError from "../../utils/errors/invalid-param-error.js";
 import MissingParamError from "../../utils/errors/missing-param-error.js";
 import dotenv from "dotenv";
 
@@ -8,11 +9,15 @@ export default class AuthUseCase {
     this.jwt = jwt;
   }
 
-  generateToken({ employeeId, role, businessId }) {
-    if (!employeeId) throw new MissingParamError("employeeId");
-    if (!role) throw new MissingParamError("role");
-    if (!businessId) throw new MissingParamError("businessId");
+  generateToken(payload) {
+    if (!payload) throw new MissingParamError("payload");
+    if (typeof payload !== "object" || Array.isArray(payload)) {
+      throw new InvalidParamError("payload");
+    }
+    if (Object.keys(payload).length === 0) {
+      throw new InvalidParamError("payload");
+    }
 
-    return this.jwt.sign({ employeeId, role, businessId }, process.env.SECRET);
+    return this.jwt.sign(payload, process.env.SECRET);
   }
 }

@@ -1,5 +1,6 @@
 import EmployeeRepository from "../../../infra/repositories/employee-repository.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
+import ValidationError from "../../../utils/errors/validation-error.js";
 
 const makeSut = () => {
   const postgresAdapterSpy = makePostgresAdapter();
@@ -16,20 +17,28 @@ const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
-      return this.employee;
+
+      if (queryObject.values[1] === "any_name") {
+        return this.validateUniqueNameInBusinessQueryResult;
+      }
+
+      return this.queryResult;
     },
   };
 
-  postgresAdapterSpy.employee = {
+  postgresAdapterSpy.queryResult = {
     rows: [
       {
         id: "any_id",
         business_id: "any_business_id",
         name: "any_name",
         role: "any_role",
-        hashedPassword: "any_hash",
+        hashed_password: "any_hash",
       },
     ],
+  };
+  postgresAdapterSpy.validateUniqueNameInBusinessQueryResult = {
+    rows: [],
   };
   return postgresAdapterSpy;
 };
@@ -135,7 +144,7 @@ describe("Employee Repository", () => {
         INSERT INTO
           employees (id, business_id, name, role, password)
         VALUES
-          ($1, $2, $3, $4, $5)
+          ($1, $2, LOWER($3), $4, $5)
         RETURNING
           *
       ;`,
@@ -146,6 +155,26 @@ describe("Employee Repository", () => {
           "any_role",
           "any_hash",
         ],
+      });
+    });
+
+    test("Should return employee if everything is right", async () => {
+      const { sut } = makeSut();
+      const props = {
+        id: "any_id",
+        businessId: "any_business_id",
+        name: "any_name",
+        role: "any_role",
+        hashedPassword: "any_hash",
+      };
+
+      const employee = await sut.create(props);
+      expect(employee).toEqual({
+        business_id: "any_business_id",
+        id: "any_id",
+        name: "any_name",
+        role: "any_role",
+        hashed_password: "any_hash",
       });
     });
   });
@@ -206,13 +235,13 @@ describe("Employee Repository", () => {
       await sut.findById("any_business_id", "any_employee_id");
       expect(postgresAdapterSpy.queryObject).toEqual({
         text: `
-        SELECT 
-          * 
-        FROM 
+        SELECT
+          *
+        FROM
           employees
-        WHERE 
+        WHERE
           id = $1 AND business_id = $2
-        LIMIT 
+        LIMIT
           1
       ;`,
         values: ["any_employee_id", "any_business_id"],
@@ -228,8 +257,101 @@ describe("Employee Repository", () => {
         business_id: "any_business_id",
         name: "any_name",
         role: "any_role",
-        hashedPassword: "any_hash",
+        hashed_password: "any_hash",
       });
+    });
+  });
+
+  describe("findByNameAndRole method", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+      await expect(sut.findByNameAndRole()).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+
+    test("Should throw if no name is provided", async () => {
+      const { sut } = makeSut();
+      await expect(sut.findByNameAndRole("any_business_id")).rejects.toThrow(
+        new MissingParamError("name"),
+      );
+    });
+
+    test("Should throw if no role is provided", async () => {
+      const { sut } = makeSut();
+      await expect(
+        sut.findByNameAndRole("any_business_id", "any_name"),
+      ).rejects.toThrow(new MissingParamError("role"));
+    });
+
+    test("Should call postgresAdapter with correct object ", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+
+      await sut.findByNameAndRole("any_business_id", "any_name", "any_role");
+      expect(postgresAdapterSpy.queryObject).toEqual({
+        text: `
+        SELECT
+          *
+        FROM
+          employees
+        WHERE
+          business_id = $1 AND name = LOWER($2) AND role = $3
+        LIMIT
+          1
+      ;`,
+        values: ["any_business_id", "any_name", "any_role"],
+      });
+    });
+
+    test("Should return employee correctly", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+
+      postgresAdapterSpy.validateUniqueNameInBusinessQueryResult =
+        postgresAdapterSpy.queryResult;
+
+      const employee = await sut.findByNameAndRole(
+        "any_business_id",
+        "any_name",
+        "any_role",
+      );
+      expect(employee).toEqual({
+        id: "any_id",
+        business_id: "any_business_id",
+        name: "any_name",
+        role: "any_role",
+        hashed_password: "any_hash",
+      });
+    });
+  });
+
+  describe("validateNameInBusiness", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.validateUniqueNameInBusiness()).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+
+    test("Should throw if no name is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(
+        sut.validateUniqueNameInBusiness("any_business_id"),
+      ).rejects.toThrow(new MissingParamError("name"));
+    });
+
+    test("Should throw if rows length is bigger than 0", async () => {
+      const { sut } = makeSut();
+
+      await expect(
+        sut.validateUniqueNameInBusiness("any_business_id", "repeated_name"),
+      ).rejects.toThrow(
+        new ValidationError({
+          message: "An employee with this name already exists.",
+          action: "Use another name to perform this operation.",
+        }),
+      );
     });
   });
 
@@ -255,6 +377,9 @@ describe("Employee Repository", () => {
       await expect(sut.findById(props.businessId, props.id)).rejects.toThrow(
         TypeError,
       );
+      await expect(
+        sut.findByNameAndRole(props.businessId, props.name, props.role),
+      ).rejects.toThrow(TypeError);
     }
   });
 
@@ -273,9 +398,16 @@ describe("Employee Repository", () => {
     };
 
     for (const sut of suts) {
-      await expect(sut.create(props)).rejects.toThrow();
-      await expect(sut.findAll(props.businessId)).rejects.toThrow();
-      await expect(sut.findById(props.businessId, props.id)).rejects.toThrow();
+      await expect(sut.create(props)).rejects.toMatchObject({ name: "Error" });
+      await expect(sut.findAll(props.businessId)).rejects.toMatchObject({
+        name: "Error",
+      });
+      await expect(
+        sut.findById(props.businessId, props.id),
+      ).rejects.toMatchObject({ name: "Error" });
+      await expect(
+        sut.findByNameAndRole(props.businessId, props.name, props.role),
+      ).rejects.toMatchObject({ name: "Error" });
     }
   });
 });
