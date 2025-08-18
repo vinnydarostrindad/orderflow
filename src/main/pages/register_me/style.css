@@ -44,3 +44,13 @@ html {
     padding-bottom: 2.5rem;
   }
 }
+
+/*--------------------*/
+/*       QUERY        */
+/*--------------------*/
+
+@media screen and (width >= 799px) {
+  .snackbar {
+    top: 15px;
+  }
+}

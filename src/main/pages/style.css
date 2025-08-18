@@ -48,15 +48,7 @@ html {
 
 @media screen and (width >= 799px) {
   .snackbar {
-    bottom: unset;
-    left: unset;
-    right: 15px;
     top: 15px;
-    transform: translateX(0);
-
-    &.hidden {
-      transform: translate(250px, 0);
-    }
   }
 
   .main-container {

@@ -1,10 +1,11 @@
 .snackbar {
+  bottom: 15px;
   color: #fff;
+  left: 50%;
   opacity: 1;
   padding: 0.5rem 0.8rem;
   position: fixed;
-  right: 25px;
-  top: 85px;
+  transform: translateX(-50%);
   transition: 500ms ease;
   width: max-content;
 
@@ -21,5 +22,19 @@
   &.snackbar--hidden {
     opacity: 0;
     transform: translate(250px, 0);
+  }
+}
+
+@media screen and (width >= 799px) {
+  .snackbar {
+    bottom: unset;
+    left: unset;
+    right: 15px;
+    top: 80px;
+    transform: translateX(0);
+
+    &.hidden {
+      transform: translate(250px, 0);
+    }
   }
 }
