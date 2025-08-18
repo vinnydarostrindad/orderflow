@@ -9,7 +9,8 @@ export default class GetTableRouter {
   }
 
   async route(httpRequest) {
-    const { businessId, tableId } = httpRequest.params;
+    const { tableId } = httpRequest.params;
+    const { businessId } = httpRequest.auth;
 
     if (!businessId) {
       return httpResponse.badRequest(new MissingParamError("businessId"));

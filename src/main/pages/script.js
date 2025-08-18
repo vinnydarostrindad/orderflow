@@ -35,7 +35,8 @@ async function submitForm(e) {
     const responseBody = await response.json();
     console.log(responseBody);
 
-    window.location.href = `http://localhost:3000/register-employees`;
+    localStorage.setItem("b", responseBody.id);
+    window.location.href = `http://localhost:3000/register-me`;
   } catch (err) {
     console.error(err);
     showSnackBar(

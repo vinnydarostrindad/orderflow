@@ -9,7 +9,7 @@ export default class GetBusinessRouter {
   }
 
   async route(httpRequest) {
-    const { businessId } = httpRequest.params;
+    const { businessId } = httpRequest.auth;
     if (!businessId) {
       return httpResponse.badRequest(new MissingParamError("businessId"));
     }

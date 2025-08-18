@@ -4,13 +4,9 @@ const copyCodeBtn = document.querySelector("#copyCodeBtn");
 const shareBtn = document.querySelector("#shareBtn");
 const copyUrlBtn = document.querySelector("#copyUrlBtn");
 
-const params = new URLSearchParams(document.location.search);
-const businessId = params.get("b");
+const businessId = localStorage.getItem("b");
 
-const codeUrl = new URL(
-  `/employee-login?b=${businessId}`,
-  "http://localhost:5500/",
-);
+const codeUrl = new URL(`/login?b=${businessId}`, "http://localhost:3000/");
 
 advanceButton.addEventListener("click", () => {
   advanceButton.classList.add("header__button--loading");
@@ -33,6 +29,15 @@ async function copyToClipBoard(e, textToCopy) {
 }
 
 function toggleShareModal(shareModalBg, shareModal) {
+  if (navigator.share) {
+    navigator.share({
+      title: "OrderFlow",
+      text: "Registre-se na sua empresa para começar a ter mais lucro no trabalho",
+      url: codeUrl,
+    });
+    return;
+  }
+
   if (!shareModalBg.className.includes("modal-bg--hidden")) {
     shareModal.classList.toggle("modal--hidden");
     setTimeout(() => shareModalBg.classList.toggle("modal-bg--hidden"), 250);

@@ -9,7 +9,8 @@ export default class GetEmployeeRouter {
   }
 
   async route(httpRequest) {
-    const { businessId, employeeId } = httpRequest.params;
+    const { employeeId } = httpRequest.params;
+    const { businessId } = httpRequest.auth;
 
     if (!businessId) {
       return httpResponse.badRequest(new MissingParamError("businessId"));

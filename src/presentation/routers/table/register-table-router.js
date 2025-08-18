@@ -10,7 +10,7 @@ export default class RegisterTableRouter {
 
   async route(httpRequest) {
     const { number, name } = httpRequest.body;
-    const { businessId } = httpRequest.params;
+    const { businessId } = httpRequest.auth;
 
     if (!number) {
       return httpResponse.badRequest(new MissingParamError("number"));

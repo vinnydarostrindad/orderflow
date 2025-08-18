@@ -10,7 +10,8 @@ export default class RegisterOrderRouter {
 
   async route(httpRequest) {
     const { tableNumber } = httpRequest.body;
-    const { tableId, businessId } = httpRequest.params;
+    const { tableId } = httpRequest.params;
+    const { businessId } = httpRequest.auth;
 
     if (!businessId) {
       return httpResponse.badRequest(new MissingParamError("businessId"));

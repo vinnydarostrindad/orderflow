@@ -1,18 +1,15 @@
+import httpResponse from "../../http-response.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
-import httpResponse from "../../http-response.js";
 
-export default class RegisterEmployeeRouter {
-  constructor({ registerEmployeeUseCase, validators } = {}) {
-    this.registerEmployeeUseCase = registerEmployeeUseCase;
+class LoginEmployeeRouter {
+  constructor({ loginEmployeeUseCase, validators } = {}) {
+    this.loginEmployeeUseCase = loginEmployeeUseCase;
     this.validators = validators;
   }
 
   async route(httpRequest) {
-    const { name, role, password } = httpRequest.body;
-    const businessId =
-      httpRequest.auth?.businessId || httpRequest.body.businessId;
-
+    const { name, role, businessId } = httpRequest.body;
     if (!businessId) {
       return httpResponse.badRequest(new MissingParamError("businessId"));
     }
@@ -25,17 +22,17 @@ export default class RegisterEmployeeRouter {
     if (!role) {
       return httpResponse.badRequest(new MissingParamError("role"));
     }
-    if (!password) {
-      return httpResponse.badRequest(new MissingParamError("password"));
-    }
 
-    const employee = await this.registerEmployeeUseCase.execute({
-      businessId,
+    const token = await this.loginEmployeeUseCase.execute({
       name,
       role,
-      password,
+      businessId,
     });
 
-    return httpResponse.created(employee);
+    return httpResponse.ok(token, {
+      "Set-Cookie": `token=${token}; path=/; max-age=57600`,
+    });
   }
 }
+
+export default LoginEmployeeRouter;

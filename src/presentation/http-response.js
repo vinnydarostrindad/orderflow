@@ -10,10 +10,11 @@ const httpResponse = {
     };
   },
 
-  ok(data) {
+  ok(data, headers = {}) {
     return {
       statusCode: 200,
       body: data,
+      headers,
     };
   },
 

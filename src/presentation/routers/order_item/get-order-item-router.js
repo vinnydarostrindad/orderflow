@@ -9,7 +9,8 @@ export default class GetOrderItemRouter {
   }
 
   async route(httpRequest) {
-    const { businessId, orderId, orderItemId } = httpRequest.params;
+    const { orderId, orderItemId } = httpRequest.params;
+    const { businessId } = httpRequest.auth;
 
     if (!orderId) {
       if (!businessId) {

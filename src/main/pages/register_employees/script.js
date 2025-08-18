@@ -9,9 +9,6 @@ const skipBtn = document.querySelector("#skipBtn");
 const employeesTableContainer = document.querySelector("#employeesTable");
 const roleBox = document.querySelector("#roleBox");
 
-const params = new URLSearchParams(document.location.search);
-const businessId = params.get("b");
-
 let employees = [];
 let tableExists = false;
 
@@ -193,20 +190,17 @@ async function postEmployees(e) {
 
   try {
     for (let { name, role } of employees) {
-      const response = await fetch(
-        `http://localhost:3000/api/v1/business/${businessId}/employee`,
-        {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            role,
-            password: "funcionario",
-          }),
+      const response = await fetch(`http://localhost:3000/api/v1/employee`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          name,
+          role,
+          password: "funcionario",
+        }),
+      });
       const responseBody = await response.json();
       console.log(responseBody);
     }
