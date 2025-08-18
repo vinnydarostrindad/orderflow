@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Faça seu registro para continuar na criação do seu negócio no OrderFlow."
+    />
+    <link rel="stylesheet" href="/register_me/style.css" />
+    <title>OrderFlow - Se Identifique</title>
+  </head>
+  <body>
+    <main class="main-container">
+      <div class="main-container__title">
+        <h1>Identifique-se</h1>
+        <div class="role-warn">
+          <p>Você será automaticamente colocado no cargo de gerente</p>
+          <p>🛈 Pode ser alterado depois</p>
+        </div>
+      </div>
+      <form method="post" action="#" name="registerForm" class="form">
+        <div class="form__input-group">
+          <input
+            type="text"
+            name="name"
+            id="name"
+            autocomplete="off"
+            placeholder=" "
+            required
+            class="form__input"
+          />
+          <label class="form__label" for="name">Nome</label>
+        </div>
+        <button
+          type="submit"
+          class="form__btn"
+          id="submitBtn"
+          aria-label="Se registrar"
+          aria-live="polite"
+        >
+          Continuar
+        </button>
+      </form>
+    </main>
+
+    <script src="/register_me/script.js" type="module"></script>
+  </body>
+</html>

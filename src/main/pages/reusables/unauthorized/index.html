@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acesso Restrito</title>
+    <!-- FEITO POR IA -->
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #111;
+        --panel: #161616;
+        --text: #fff;
+        --muted: #bdbdbd;
+        --accent: #e50914;
+        --accent-dark: #b20710;
+        --stroke: #2a2a2a;
+      }
+
+      body {
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Helvetica,
+          Arial,
+          "Apple Color Emoji",
+          "Segoe UI Emoji";
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background-image:
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.02) 1px,
+            transparent 1px
+          ),
+          linear-gradient(0deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        background-size:
+          24px 24px,
+          24px 24px;
+      }
+
+      .card {
+        width: 100%;
+        max-width: 520px;
+        background: var(--panel);
+        border: 1px solid var(--stroke);
+        border-radius: 14px;
+        padding: 28px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 12px;
+      }
+
+      .icon {
+        width: 56px;
+        height: 56px;
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: rgba(229, 9, 20, 0.1);
+        border: 1px solid var(--stroke);
+      }
+      .icon svg {
+        width: 28px;
+        height: 28px;
+        display: block;
+      }
+
+      .title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        margin-top: 4px;
+        line-height: 1.5;
+      }
+
+      .notice {
+        margin: 18px 0 22px;
+        padding: 12px 14px;
+        background: #1b1b1b;
+        border: 1px dashed var(--stroke);
+        border-radius: 10px;
+        color: #d8d8d8;
+        font-size: 0.95rem;
+        line-height: 1.45;
+      }
+
+      .badges {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+
+      .badge {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+        border: 1px solid var(--stroke);
+        border-radius: 999px;
+        background: #1b1b1b;
+        color: #e6e6e6;
+      }
+      .badge--danger {
+        border-color: rgba(229, 9, 20, 0.3);
+        background: rgba(229, 9, 20, 0.08);
+        color: #ffb3b7;
+      }
+
+      .actions {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 1fr;
+        margin-top: 10px;
+      }
+
+      .btn {
+        appearance: none;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 14px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        text-align: center;
+        transition:
+          transform 0.04s ease,
+          background-color 0.15s ease,
+          opacity 0.15s ease;
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--accent-dark);
+      }
+
+      .btn-ghost {
+        background: #1b1b1b;
+        color: #fff;
+        border: 1px solid var(--stroke);
+      }
+      .btn-ghost:hover {
+        opacity: 0.9;
+      }
+
+      .footer {
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 0.9rem;
+        text-align: center;
+      }
+
+      /* responsividade leve */
+      @media (min-width: 560px) {
+        .actions {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card" role="alert" aria-live="polite">
+      <div class="header">
+        <div class="icon" aria-hidden="true" title="Acesso restrito">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#e50914"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M3 17h18" />
+            <path d="M4 17a8 8 0 0 1 16 0" />
+            <path d="M12 9V7" />
+            <circle cx="12" cy="5.5" r="1" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="title">Acesso restrito</h1>
+          <p class="subtitle">
+            Esta área é exclusiva para colaboradores autorizados. Você não está
+            autenticado ou seu cargo não possui permissão para este “setor” do
+            cardápio interno.
+          </p>
+        </div>
+      </div>
+
+      <div class="notice">
+        <strong>Por que você está vendo isto?</strong><br />
+        • Não autenticado, sessão expirada ou cookie ausente.<br />
+        • Seu cargo não tem acesso a esta página.<br />
+        • Você tentou chegar aqui por um atalho/URL direta.
+      </div>
+
+      <div class="badges" aria-label="Contexto de acesso">
+        <span class="badge"
+          >Recurso: <strong id="resource-name">/manager_dashboard</strong></span
+        >
+        <span class="badge"
+          >Exigido: <strong id="required-role">gerente</strong></span
+        >
+        <span class="badge badge--danger"
+          >Seu cargo: <strong id="current-role">não autenticado</strong></span
+        >
+      </div>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="/register-me">Fazer Login</a>
+        <a class="btn btn-ghost" href="/">Registrar Empresa</a>
+      </div>
+
+      <p class="footer">
+        Dica do chef: verifique se o seu perfil tem as permissões certas para
+        este “prato” do sistema.
+      </p>
+    </main>
+
+    <script>
+      const requiredRole = new URLSearchParams(location.search).get(
+        "requiredRole",
+      );
+      const currentRole = new URLSearchParams(location.search).get("role");
+      const resource = new URLSearchParams(location.search).get("res");
+
+      if (requiredRole)
+        document.getElementById("required-role").textContent = requiredRole;
+      if (currentRole)
+        document.getElementById("current-role").textContent = currentRole;
+      if (resource)
+        document.getElementById("resource-name").textContent = resource;
+    </script>
+  </body>
+</html>
