@@ -18,15 +18,9 @@ const makePostgresAdapter = () => {
     async query(queryObject) {
       this.queryObject = queryObject;
 
-      if (
-        this.queryObject.values[0] === "any_name" ||
-        this.queryObject.values[0] === "repeated_name"
-      ) {
+      if (this.queryObject.values[0] === "any_name") {
         return this.validateUniqueNameQueryResult;
-      } else if (
-        this.queryObject.values[0] === "any_email@mail.com" ||
-        this.queryObject.values[0] === "repeated_email@mail.com"
-      ) {
+      } else if (this.queryObject.values[0] === "any_email@mail.com") {
         return this.validateUniqueEmailQueryResult;
       }
 
@@ -208,8 +202,7 @@ describe("Business Repository", () => {
     });
 
     test("Should throw if rows length is bigger than 0", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.validateUniqueNameQueryResult.rows = [{}];
+      const { sut } = makeSut();
 
       await expect(sut.validateUniqueName("repeated_name")).rejects.toThrow(
         new ValidationError({
@@ -230,8 +223,7 @@ describe("Business Repository", () => {
     });
 
     test("Should throw if rows length is bigger than 0", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.validateUniqueEmailQueryResult.rows = [{}];
+      const { sut } = makeSut();
 
       await expect(
         sut.validateUniqueEmail("repeated_email@mail.com"),

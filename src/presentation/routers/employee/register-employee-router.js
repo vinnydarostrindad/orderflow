@@ -3,15 +3,16 @@ import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 import httpResponse from "../../http-response.js";
 
 export default class RegisterEmployeeRouter {
-  constructor({ registerEmployeeUseCase, authUseCase, validators } = {}) {
+  constructor({ registerEmployeeUseCase, validators } = {}) {
     this.registerEmployeeUseCase = registerEmployeeUseCase;
-    this.authUseCase = authUseCase;
     this.validators = validators;
   }
 
   async route(httpRequest) {
     const { name, role, password } = httpRequest.body;
-    const { businessId } = httpRequest.params;
+    const businessId =
+      httpRequest.auth?.businessId || httpRequest.body.businessId;
+
     if (!businessId) {
       return httpResponse.badRequest(new MissingParamError("businessId"));
     }
@@ -35,12 +36,6 @@ export default class RegisterEmployeeRouter {
       password,
     });
 
-    const token = this.authUseCase.generateToken(employee.id);
-    const createdEmployee = {
-      employee,
-      token,
-    };
-
-    return httpResponse.created(createdEmployee);
+    return httpResponse.created(employee);
   }
 }

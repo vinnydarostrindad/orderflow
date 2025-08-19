@@ -8,6 +8,8 @@ import {
   createMenu,
   createMenuItem,
   createOrderItem,
+  createEmployee,
+  generateAuthCookie,
 } from "../orchestrator.js";
 
 beforeEach(async () => {
@@ -15,71 +17,40 @@ beforeEach(async () => {
   await runMigrations();
 });
 
-describe("GET /api/v1/business/[businessId]/ordered-items", () => {
-  test("Should return all menu items with correct data", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
-    const menuItem = await createMenuItem(business.id, menu.id);
-    const table = await createTable(business.id);
-    const order = await createOrder(business.id, table.id);
-    await createOrderItem(business.id, table.id, order.id, menuItem.id, 2);
-
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/ordered-items`,
-    );
-
-    expect(response.status).toBe(200);
-
-    const responseBody = await response.json();
-
-    expect(Array.isArray(responseBody)).toBe(true);
-    expect(responseBody.length).toBeGreaterThan(0);
-
-    responseBody.forEach((orderItem) => {
-      expect(orderItem).toMatchObject({
-        menuItemId: menuItem.id,
-        quantity: "2",
-        totalPrice: "40.00",
-        status: "pending",
-        tableNumber: "1",
-      });
-
-      expect(typeof orderItem.menuItemId).toBe("string");
-      expect(uuidVersion(orderItem.menuItemId)).toBe(4);
-
-      expect(typeof orderItem.createdAt).toBe("string");
-      expect(Date.parse(orderItem.createdAt)).not.toBeNaN();
-    });
+async function makeOrderItemTestContext(numberOfOrderItems = 1) {
+  const business = await createBusiness();
+  const { business_id, role, id } = await createEmployee(business.id);
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
   });
+  const menu = await createMenu(business.id);
+  const menuItem = await createMenuItem(business.id, menu.id);
+  const table = await createTable(business.id);
+  const order = await createOrder(business.id, table.id);
+  const orderItem = await createOrderItem(
+    business.id,
+    table.id,
+    order.id,
+    menuItem.id,
+    numberOfOrderItems,
+  );
 
-  test("Should return an empty array", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
-    await createMenuItem(business.id, menu.id);
-
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/ordered-items`,
-    );
-
-    expect(response.status).toBe(200);
-
-    const responseBody = await response.json();
-    expect(Array.isArray(responseBody)).toBe(true);
-    expect(responseBody.length).toBe(0);
-  });
-});
+  return { business, menuItem, order, orderItem, table, token };
+}
 
 describe("GET /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/item", () => {
   test("Should return all menu items with correct data", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
-    const menuItem = await createMenuItem(business.id, menu.id);
-    const table = await createTable(business.id);
-    const order = await createOrder(business.id, table.id);
-    await createOrderItem(business.id, table.id, order.id, menuItem.id, 2);
+    const { token, menuItem, table, order } = await makeOrderItemTestContext(2);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/${table.id}/order/${order.id}/item`,
+      `http://localhost:3000/api/v1/table/${table.id}/order/${order.id}/item`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(200);
@@ -119,14 +90,15 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/item
   });
 
   test("Should return an empty array", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
-    await createMenuItem(business.id, menu.id);
-    const table = await createTable(business.id);
-    const order = await createOrder(business.id, table.id);
+    const { token, table, order } = await makeOrderItemTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/${table.id}/order/${order.id}/item`,
+      `http://localhost:3000/api/v1/table/${table.id}/order/${order.id}/item`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(200);
@@ -139,20 +111,16 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/item
 
 describe("GET /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/item/[orderItemId]", () => {
   test("Should return correct menu item", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
-    const menuItem = await createMenuItem(business.id, menu.id);
-    const table = await createTable(business.id);
-    const order = await createOrder(business.id, table.id);
-    const orderItem = await createOrderItem(
-      business.id,
-      table.id,
-      order.id,
-      menuItem.id,
-    );
+    const { orderItem, order, table, menuItem, token } =
+      await makeOrderItemTestContext(1);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/${table.id}/order/${order.id}/item/${orderItem.id}`,
+      `http://localhost:3000/api/v1/table/${table.id}/order/${order.id}/item/${orderItem.id}`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
     expect(response.status).toBe(200);
     const responseBody = await response.json();
@@ -184,12 +152,15 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/item
   });
 
   test("Should return NotFoundError if order item does not exists", async () => {
-    const business = await createBusiness();
-    const table = await createTable(business.id);
-    const order = await createOrder(business.id, table.id);
+    const { table, order, token } = await makeOrderItemTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/${table.id}/order/${order.id}/item/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/table/${table.id}/order/${order.id}/item/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(404);

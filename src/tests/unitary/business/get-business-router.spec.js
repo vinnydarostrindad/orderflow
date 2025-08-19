@@ -69,7 +69,7 @@ const makeValidatorsWithError = () => {
 describe("Get Business Router", () => {
   test("Should return 400 if no businessId is provided", async () => {
     const { sut } = makeSut();
-    const httpRequest = { params: {} };
+    const httpRequest = { auth: {} };
 
     const httpResponse = await sut.route(httpRequest);
 
@@ -79,7 +79,7 @@ describe("Get Business Router", () => {
 
   test("Should return 400 if businessId is invalid", async () => {
     const { sut, validatorsSpy } = makeSut();
-    const httpRequest = { params: { businessId: "invalid_business_id" } };
+    const httpRequest = { auth: { businessId: "invalid_business_id" } };
 
     validatorsSpy.isValid = false;
 
@@ -92,7 +92,7 @@ describe("Get Business Router", () => {
   test("Should return 404 if no business is found", async () => {
     const { sut, getBusinessUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: {
+      auth: {
         businessId: "any_id",
       },
     };
@@ -111,7 +111,7 @@ describe("Get Business Router", () => {
     await expect(sut.route()).rejects.toThrow();
   });
 
-  test("Should throw if no httpRequest has no params", async () => {
+  test("Should throw if no httpRequest has no auth", async () => {
     const { sut } = makeSut();
     const httpRequest = {};
 
@@ -121,7 +121,7 @@ describe("Get Business Router", () => {
   test("Should call getBusinessUseCase with correct value", async () => {
     const { sut, getBusinessUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: {
+      auth: {
         businessId: "any_id",
       },
     };
@@ -133,7 +133,7 @@ describe("Get Business Router", () => {
   test("Should return 200 with business correctly", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: {
+      auth: {
         businessId: "any_id",
       },
     };
@@ -161,7 +161,7 @@ describe("Get Business Router", () => {
     ];
 
     const httpRequest = {
-      body: {
+      auth: {
         businessId: "any_id",
       },
     };
@@ -183,7 +183,7 @@ describe("Get Business Router", () => {
     ];
 
     const httpRequest = {
-      body: {
+      auth: {
         businessId: "any_id",
       },
     };

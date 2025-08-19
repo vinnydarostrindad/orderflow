@@ -4,6 +4,8 @@ import {
   runMigrations,
   createBusiness,
   createMenu,
+  createEmployee,
+  generateAuthCookie,
 } from "../orchestrator.js";
 
 beforeEach(async () => {
@@ -11,14 +13,28 @@ beforeEach(async () => {
   await runMigrations();
 });
 
-describe("GET /api/v1/business/[businessId]/menu", () => {
-  test("Should return all menus with correct data", async () => {
-    const business = await createBusiness();
-    await createMenu(business.id, 2);
+async function makeMenuTestContext(numberOfMenus = 1) {
+  const business = await createBusiness();
+  const { business_id, role, id } = await createEmployee(business.id);
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
+  });
+  const menu = await createMenu(business.id, numberOfMenus);
 
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu`,
-    );
+  return { business, menu, token };
+}
+
+describe("GET /api/v1/menu", () => {
+  test("Should return all menus with correct data", async () => {
+    const { business, token } = await makeMenuTestContext(2);
+
+    const response = await fetch(`http://localhost:3000/api/v1/menu`, {
+      headers: {
+        cookie: `token=${token}`,
+      },
+    });
 
     expect(response.status).toBe(200);
 
@@ -51,12 +67,13 @@ describe("GET /api/v1/business/[businessId]/menu", () => {
   });
 
   test("Should return an empty array", async () => {
-    const business = await createBusiness();
-    await createMenu(business.id, 0);
+    const { token } = await makeMenuTestContext(0);
 
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu`,
-    );
+    const response = await fetch(`http://localhost:3000/api/v1/menu`, {
+      headers: {
+        cookie: `token=${token}`,
+      },
+    });
 
     expect(response.status).toBe(200);
 
@@ -66,13 +83,17 @@ describe("GET /api/v1/business/[businessId]/menu", () => {
   });
 });
 
-describe("GET /api/v1/business/[businessId]/menu/[menuId]", () => {
+describe("GET /api/v1/menu/[menuId]", () => {
   test("Should return correct menu", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
+    const { business, menu, token } = await makeMenuTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu/${menu.id}`,
+      `http://localhost:3000/api/v1/menu/${menu.id}`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(200);
@@ -99,10 +120,15 @@ describe("GET /api/v1/business/[businessId]/menu/[menuId]", () => {
   });
 
   test("Should return NotFoundError if menu does not exists", async () => {
-    const business = await createBusiness();
+    const { token } = await makeMenuTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/menu/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(404);

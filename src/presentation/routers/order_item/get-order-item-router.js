@@ -9,7 +9,8 @@ export default class GetOrderItemRouter {
   }
 
   async route(httpRequest) {
-    const { businessId, orderId, orderItemId } = httpRequest.params;
+    const { orderId, orderItemId } = httpRequest.params;
+    const { businessId } = httpRequest.auth;
 
     if (!orderId) {
       if (!businessId) {
@@ -30,14 +31,12 @@ export default class GetOrderItemRouter {
           total_price,
           status,
           order_item_created_at,
-          table_number,
         }) => ({
           menuItemId: menu_item_id,
           quantity: quantity.toString(),
           totalPrice: total_price,
           status,
           createdAt: order_item_created_at,
-          tableNumber: table_number.toString(),
         }),
       );
 

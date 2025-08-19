@@ -14,6 +14,9 @@ export default defineConfig([
     languageOptions: {
       globals: { ...globals.browser, ...globals.node, ...globals.jest },
     },
+    rules: {
+      "no-prototype-builtins": "off",
+    },
   },
   eslintConfigPrettier,
 ]);

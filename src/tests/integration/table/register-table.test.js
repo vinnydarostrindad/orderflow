@@ -2,7 +2,9 @@ import { version as uuidVersion } from "uuid";
 import {
   cleanDatabase,
   createBusiness,
+  createEmployee,
   createTable,
+  generateAuthCookie,
   runMigrations,
 } from "../orchestrator.js";
 
@@ -11,23 +13,33 @@ beforeEach(async () => {
   await runMigrations();
 });
 
+async function makeTableTestContext(numberOfTables = 1, props) {
+  const business = await createBusiness();
+  const { business_id, role, id } = await createEmployee(business.id);
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
+  });
+  const table = await createTable(business.id, numberOfTables, props);
+
+  return { business, token, table };
+}
+
 describe("POST /api/v1/business/[businessId]/table", () => {
-  test("should register a table and return 201", async () => {
-    const business = await createBusiness();
+  test("Should register a table and return 201", async () => {
+    const { business, token } = await makeTableTestContext(0);
 
     const requestBody = {
       number: 1,
       name: "any_name",
     };
 
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      },
-    );
+    const response = await fetch(`http://localhost:3000/api/v1/table`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", cookie: `token=${token}` },
+      body: JSON.stringify(requestBody),
+    });
 
     expect(response.status).toBe(201);
 
@@ -54,22 +66,21 @@ describe("POST /api/v1/business/[businessId]/table", () => {
     expect(Date.parse(menu.updated_at)).not.toBeNaN();
   });
 
-  test("should return ValidationError if number already exists in business", async () => {
-    const business = await createBusiness();
-    await createTable(business.id, 1, { number: 1 });
+  test("Should return ValidationError if number already exists in business", async () => {
+    const { token } = await makeTableTestContext(1, { nuber: 1 });
 
     const requestBody = {
       number: 1,
     };
 
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
+    const response = await fetch(`http://localhost:3000/api/v1/table`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: `token=${token}`,
       },
-    );
+      body: JSON.stringify(requestBody),
+    });
 
     const responseBody = await response.json();
     expect(response.status).toBe(400);

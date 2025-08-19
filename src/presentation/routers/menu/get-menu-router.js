@@ -10,7 +10,8 @@ export default class GetMenuRouter {
   }
 
   async route(httpRequest) {
-    const { businessId, menuId } = httpRequest.params;
+    const { menuId } = httpRequest.params;
+    const { businessId } = httpRequest.auth;
 
     if (!businessId) {
       return httpResponse.badRequest(new MissingParamError("businessId"));

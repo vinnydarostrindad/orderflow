@@ -240,6 +240,55 @@ describe("OrderItem Repository", () => {
     });
   });
 
+  describe("findAllByBusinessId Method", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+      await expect(sut.findAllByBusinessId()).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+
+    test("Should call postgresAdapter with correct object", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      await sut.findAllByBusinessId("any_order_id");
+      expect(postgresAdapterSpy.queryObject).toEqual({
+        text: `
+        SELECT 
+          order_items.menu_item_id,
+          order_items.quantity,
+          order_items.total_price,
+          order_items.status,
+          order_items.created_at AS order_item_created_at,
+          orders.table_number
+        FROM
+          order_items
+        JOIN
+          orders ON order_items.order_id = orders.id
+        WHERE
+          orders.business_id = $1
+        ORDER BY
+          order_items.created_at ASC
+      ;`,
+        values: ["any_order_id"],
+      });
+    });
+
+    test("Should return order items if everything is right", async () => {
+      const { sut } = makeSut();
+      const result = await sut.findAllByBusinessId("any_order_id");
+      expect(Array.isArray(result)).toBe(true);
+      expect(result[0]).toEqual({
+        id: "any_order_item_id",
+        order_id: "any_order_id",
+        menu_item_id: "any_menu_item_id",
+        quantity: 2,
+        unit_price: 20,
+        total_price: 40,
+        notes: "any_notes",
+      });
+    });
+  });
+
   describe("findById Method", () => {
     test("Should throw if no orderId is provided", async () => {
       const { sut } = makeSut();

@@ -7,6 +7,9 @@ import {
   createOrder,
   createMenu,
   createMenuItem,
+  createOrderItem,
+  generateAuthCookie,
+  createEmployee,
 } from "../orchestrator.js";
 
 beforeAll(async () => {
@@ -14,13 +17,32 @@ beforeAll(async () => {
   await runMigrations();
 });
 
+async function makeOrderItemTestContext(numberOfOrderItems = 1) {
+  const business = await createBusiness();
+  const { business_id, role, id } = await createEmployee(business.id);
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
+  });
+  const menu = await createMenu(business.id);
+  const menuItem = await createMenuItem(business.id, menu.id);
+  const table = await createTable(business.id);
+  const order = await createOrder(business.id, table.id);
+  const orderItem = await createOrderItem(
+    business.id,
+    table.id,
+    order.id,
+    menuItem.id,
+    numberOfOrderItems,
+  );
+
+  return { business, menuItem, order, orderItem, table, token };
+}
+
 describe("POST /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/item", () => {
-  test("should register a order item and return 201", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
-    const menuItem = await createMenuItem(business.id, menu.id);
-    const table = await createTable(business.id);
-    const order = await createOrder(business.id, table.id);
+  test("Should register a order item and return 201", async () => {
+    const { table, order, menuItem, token } = await makeOrderItemTestContext(0);
 
     const requestBody = {
       menuItemId: menuItem.id,
@@ -31,10 +53,13 @@ describe("POST /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/ite
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/${table.id}/order/${order.id}/item`,
+      `http://localhost:3000/api/v1/table/${table.id}/order/${order.id}/item`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          cookie: `token=${token}`,
+        },
         body: JSON.stringify(requestBody),
       },
     );

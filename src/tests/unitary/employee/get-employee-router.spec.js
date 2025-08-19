@@ -87,7 +87,8 @@ describe("Get Employee Router", () => {
     test("Should call getEmployeeUseCase with correct value", async () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
-        params: {
+        params: {},
+        auth: {
           businessId: "any_business_id",
         },
       };
@@ -100,7 +101,8 @@ describe("Get Employee Router", () => {
     test("Should return 200 and a array of employees", async () => {
       const { sut } = makeSut();
       const httpRequest = {
-        params: {
+        params: {},
+        auth: {
           businessId: "any_business_id",
         },
       };
@@ -112,12 +114,14 @@ describe("Get Employee Router", () => {
   });
 
   describe("With employeeId", () => {
-    test("Should return 400 if businessId is invalid", async () => {
+    test("Should return 400 if employeeId is invalid", async () => {
       const { sut, validatorsSpy } = makeSut();
       const httpRequest = {
         params: {
-          businessId: "valid_business_id",
           employeeId: "invalid_employee_id",
+        },
+        auth: {
+          businessId: "valid_business_id",
         },
       };
 
@@ -133,8 +137,10 @@ describe("Get Employee Router", () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
-          businessId: "any_business_id",
           employeeId: "any_employee_id",
+        },
+        auth: {
+          businessId: "any_business_id",
         },
       };
       getEmployeeUseCaseSpy.employee = null;
@@ -150,8 +156,10 @@ describe("Get Employee Router", () => {
       const { sut, getEmployeeUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
-          businessId: "any_business_id",
           employeeId: "any_employee_id",
+        },
+        auth: {
+          businessId: "any_business_id",
         },
       };
 
@@ -164,8 +172,10 @@ describe("Get Employee Router", () => {
       const { sut } = makeSut();
       const httpRequest = {
         params: {
-          businessId: "any_business_id",
           employeeId: "any_employee_id",
+        },
+        auth: {
+          businessId: "any_business_id",
         },
       };
 
@@ -186,6 +196,7 @@ describe("Get Employee Router", () => {
       params: {
         employeeId: "any_employee_id",
       },
+      auth: {},
     };
 
     const httpResponse = await sut.route(httpRequest);
@@ -198,6 +209,9 @@ describe("Get Employee Router", () => {
     const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
       params: {
+        employeeId: "any_employee_id",
+      },
+      auth: {
         businessId: "invalid_business_id",
       },
     };
@@ -237,8 +251,10 @@ describe("Get Employee Router", () => {
     ];
     const httpRequest = {
       params: {
-        businessId: "any_business_id",
         employeeId: "any_employee_id",
+      },
+      auth: {
+        businessId: "any_business_id",
       },
     };
 
@@ -259,8 +275,10 @@ describe("Get Employee Router", () => {
     ];
     const httpRequest = {
       params: {
-        businessId: "any_business_id",
         employeeId: "any_employee_id",
+      },
+      auth: {
+        businessId: "any_business_id",
       },
     };
 

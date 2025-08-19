@@ -85,9 +85,8 @@ describe("Get Table Router", () => {
     test("Should call getTableUseCase with correct value", async () => {
       const { sut, getTableUseCaseSpy } = makeSut();
       const httpRequest = {
-        params: {
-          businessId: "any_business_id",
-        },
+        params: {},
+        auth: { businessId: "any_business_id" },
       };
 
       await sut.route(httpRequest);
@@ -98,9 +97,8 @@ describe("Get Table Router", () => {
     test("Should return 200 and a array of tables", async () => {
       const { sut } = makeSut();
       const httpRequest = {
-        params: {
-          businessId: "any_business_id",
-        },
+        params: {},
+        auth: { businessId: "any_business_id" },
       };
 
       const httpResponse = await sut.route(httpRequest);
@@ -119,10 +117,8 @@ describe("Get Table Router", () => {
     test("Should return 400 if tableId is invalid", async () => {
       const { sut, validatorsSpy } = makeSut();
       const httpRequest = {
-        params: {
-          businessId: "valid_business_id",
-          tableId: "invalid_order_id",
-        },
+        params: { tableId: "invalid_order_id" },
+        auth: { businessId: "valid_business_id" },
       };
 
       validatorsSpy.isValid = false;
@@ -136,10 +132,8 @@ describe("Get Table Router", () => {
     test("Should return 404 if no table is found", async () => {
       const { sut, getTableUseCaseSpy } = makeSut();
       const httpRequest = {
-        params: {
-          businessId: "any_business_id",
-          tableId: "any_table_id",
-        },
+        params: { tableId: "any_table_id" },
+        auth: { businessId: "any_business_id" },
       };
       getTableUseCaseSpy.table = null;
 
@@ -153,10 +147,8 @@ describe("Get Table Router", () => {
     test("Should call getTableUseCase with correct values", async () => {
       const { sut, getTableUseCaseSpy } = makeSut();
       const httpRequest = {
-        params: {
-          businessId: "any_business_id",
-          tableId: "any_table_id",
-        },
+        params: { tableId: "any_table_id" },
+        auth: { businessId: "any_business_id" },
       };
 
       await sut.route(httpRequest);
@@ -167,10 +159,8 @@ describe("Get Table Router", () => {
     test("Should return 200 with table correctly", async () => {
       const { sut } = makeSut();
       const httpRequest = {
-        params: {
-          businessId: "any_business_id",
-          tableId: "any_table_id",
-        },
+        params: { tableId: "any_table_id" },
+        auth: { businessId: "any_business_id" },
       };
 
       const httpResponse = await sut.route(httpRequest);
@@ -187,9 +177,8 @@ describe("Get Table Router", () => {
   test("Should return 400 if no businessId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: {
-        tableId: "any_table_id",
-      },
+      params: { tableId: "any_table_id" },
+      auth: {},
     };
 
     const httpResponse = await sut.route(httpRequest);
@@ -200,7 +189,8 @@ describe("Get Table Router", () => {
   test("Should return 400 if businessId is invalid", async () => {
     const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
-      params: { businessId: "invalid_business_id" },
+      params: {},
+      auth: { businessId: "invalid_business_id" },
     };
 
     validatorsSpy.isValid = false;
@@ -235,10 +225,8 @@ describe("Get Table Router", () => {
       }),
     ];
     const httpRequest = {
-      params: {
-        businessId: "any_business_id",
-        tableId: "any_table_id",
-      },
+      params: { tableId: "any_table_id" },
+      auth: { businessId: "any_business_id" },
     };
 
     for (const sut of suts) {
@@ -257,10 +245,8 @@ describe("Get Table Router", () => {
       }),
     ];
     const httpRequest = {
-      params: {
-        businessId: "any_business_id",
-        tableId: "any_table_id",
-      },
+      params: { tableId: "any_table_id" },
+      auth: { businessId: "any_business_id" },
     };
 
     for (const sut of suts) {

@@ -2,7 +2,9 @@ import { version as uuidVersion } from "uuid";
 import {
   cleanDatabase,
   createBusiness,
+  createEmployee,
   createMenu,
+  generateAuthCookie,
   runMigrations,
 } from "../orchestrator.js";
 
@@ -11,22 +13,35 @@ beforeEach(async () => {
   await runMigrations();
 });
 
-describe("POST /api/v1/business/[businessId]/menu", () => {
-  test("should register a menu and return 201", async () => {
-    const business = await createBusiness();
+async function makeMenuTestContext(numberOfMenus = 1, menuProps) {
+  const business = await createBusiness();
+  const { business_id, role, id } = await createEmployee(business.id);
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
+  });
+  const menu = await createMenu(business.id, numberOfMenus, menuProps);
+
+  return { business, menu, token };
+}
+
+describe("POST /api/v1/menu", () => {
+  test("Should register a menu and return 201", async () => {
+    const { business, token } = await makeMenuTestContext(0);
 
     const requestBody = {
       name: "any_name",
     };
 
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
+    const response = await fetch(`http://localhost:3000/api/v1/menu`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: `token=${token}`,
       },
-    );
+      body: JSON.stringify(requestBody),
+    });
 
     expect(response.status).toBe(201);
 
@@ -53,22 +68,23 @@ describe("POST /api/v1/business/[businessId]/menu", () => {
     expect(Date.parse(menu.updated_at)).not.toBeNaN();
   });
 
-  test("should return ValidationError if name already exists on business", async () => {
-    const business = await createBusiness();
-    await createMenu(business.id, 1, { name: "any_name" });
+  test("Should return ValidationError if name already exists on business", async () => {
+    const { token } = await makeMenuTestContext(1, {
+      name: "any_name",
+    });
 
     const requestBody = {
       name: "any_name",
     };
 
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
+    const response = await fetch(`http://localhost:3000/api/v1/menu`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: `token=${token}`,
       },
-    );
+      body: JSON.stringify(requestBody),
+    });
 
     expect(response.status).toBe(400);
 

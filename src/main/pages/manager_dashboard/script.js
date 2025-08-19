@@ -1,4 +1,4 @@
-import { createSnackBar, showSnackBar } from "../scripts/snackbar.js";
+import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
 
 const headerMenuBtn = document.querySelector("#headerMenuBtn");
 const navBar = document.querySelector("#navBar");
@@ -14,9 +14,6 @@ const ctx = document.getElementById("salesChart").getContext("2d");
 const carouselLeftBtn = document.querySelector("#carouselLeftBtn");
 const carouselRightBtn = document.querySelector("#carouselRightBtn");
 const ordersBox = document.querySelector("#lastOrders");
-
-const params = new URLSearchParams(window.location.search);
-const businessId = params.get("b");
 
 let orderedItems;
 let orderedMenuItems;
@@ -40,9 +37,7 @@ function togglenavBar() {
 
 async function fetchOrderedItems() {
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${businessId}/ordered-items`,
-    );
+    const response = await fetch(`http://localhost:3000/api/v1/ordered-items`);
 
     console.log(response.ok);
     return await response.json();
@@ -61,7 +56,7 @@ async function fetchOrderedMenuItems() {
     orderedItems.map(async (orderedItem) => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/business/${businessId}/menu-item/${orderedItem.menuItemId}`,
+          `http://localhost:3000/api/v1/menu-item/${orderedItem.menuItemId}`,
         );
         console.log(response.ok);
         return await response.json();

@@ -2,40 +2,54 @@ import {
   cleanDatabase,
   createBusiness,
   createEmployee,
+  generateAuthCookie,
   runMigrations,
 } from "../orchestrator.js";
 import { version as uuidVersion } from "uuid";
-import validator from "validator";
 
 beforeEach(async () => {
   await cleanDatabase();
   await runMigrations();
 });
 
-describe("POST /api/v1/business/[businessId]/employee", () => {
+async function makeEmployeeTestContext(numberOfEmployees = 1, props) {
+  const business = await createBusiness();
+  const employee = await createEmployee(business.id, numberOfEmployees, props);
+  const { business_id, role, id } = employee[0] || employee;
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
+  });
+
+  return { business, employee, token };
+}
+
+describe("POST /api/v1/employee", () => {
   test("Should register a employee correctly via api", async () => {
-    const business = await createBusiness();
+    const { business, token } = await makeEmployeeTestContext(0);
 
     const requestBody = {
       role: "waiter",
       name: "any_name",
       password: "any_password",
+      businessId: business.id,
     };
 
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/employee`,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(requestBody),
+    const response = await fetch(`http://localhost:3000/api/v1/employee`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        cookie: `token=${token}`,
       },
-    );
+      body: JSON.stringify(requestBody),
+    });
 
     const responseBody = await response.json();
 
     expect(response.status).toBe(201);
 
-    const { employee, token } = responseBody;
+    const employee = responseBody;
 
     expect(employee).toMatchObject({
       id: employee.id,
@@ -58,14 +72,38 @@ describe("POST /api/v1/business/[businessId]/employee", () => {
 
     expect(typeof employee.updated_at).toBe("string");
     expect(Date.parse(employee.updated_at)).not.toBeNull();
-
-    expect(validator.isJWT(token)).toBe(true);
   });
 
-  test("should return different hashes for same password but different employees", async () => {
-    const business = await createBusiness();
-    const employees = await createEmployee(business.id, 2);
+  test("Should return ValidationError if name with same role already exists on business", async () => {
+    const { business, token } = await makeEmployeeTestContext(1, {
+      name: "any_name",
+    });
 
-    expect(employees[0].password).not.toBe(employees[1].password);
+    const requestBody = {
+      role: "waiter",
+      name: "any_name",
+      password: "any_password",
+      businessId: business.id,
+    };
+
+    const response = await fetch(`http://localhost:3000/api/v1/employee`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: `token=${token}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    expect(response.status).toBe(400);
+
+    const responseBody = await response.json();
+
+    expect(responseBody).toEqual({
+      name: "ValidationError",
+      statusCode: 400,
+      action: "Use another name to perform this operation.",
+      message: "An employee with this name already exists.",
+    });
   });
 });

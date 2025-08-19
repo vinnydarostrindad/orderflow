@@ -1,18 +1,37 @@
 import { version as uuidVersion } from "uuid";
 import validator from "validator";
-import { cleanDatabase, runMigrations, createBusiness } from "../orchestrator";
+import {
+  cleanDatabase,
+  runMigrations,
+  generateAuthCookie,
+  createBusiness,
+  createEmployee,
+} from "../orchestrator";
 
 beforeEach(async () => {
   await cleanDatabase();
   await runMigrations();
 });
 
-describe("GET /api/v1/business/[businessId]", () => {
+async function makeBusinessTestContext() {
+  const business = await createBusiness();
+  const { business_id, id, role } = await createEmployee(business.id);
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
+  });
+  return { business, token };
+}
+
+describe("GET /api/v1/business", () => {
   test("Should return business correctly", async () => {
-    const business = await createBusiness();
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}`,
-    );
+    const { business, token } = await makeBusinessTestContext();
+    const response = await fetch(`http://localhost:3000/api/v1/business`, {
+      headers: {
+        cookie: `token=${token}`,
+      },
+    });
 
     expect(response.status).toBe(200);
 
@@ -36,22 +55,5 @@ describe("GET /api/v1/business/[businessId]", () => {
 
     expect(typeof responseBody.updatedAt).toBe("string");
     expect(Date.parse(responseBody.updatedAt)).not.toBeNaN();
-  });
-
-  test("Should return NotFoundError if business does not exists", async () => {
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
-    );
-
-    expect(response.status).toBe(404);
-
-    const responseBody = await response.json();
-
-    expect(responseBody).toEqual({
-      name: "NotFoundError",
-      statusCode: 404,
-      action: "Make sure the business exists.",
-      message: "Business was not found.",
-    });
   });
 });

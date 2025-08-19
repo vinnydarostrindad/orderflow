@@ -10,7 +10,7 @@ export default class RegisterMenuRouter {
 
   async route(httpRequest) {
     const { name } = httpRequest.body;
-    const { businessId } = httpRequest.params;
+    const { businessId } = httpRequest.auth;
 
     if (!name) {
       return httpResponse.badRequest(new MissingParamError("name"));

@@ -227,10 +227,31 @@ describe("MenuItem Repository", () => {
   });
 
   describe("findById Method", () => {
+    describe("With menuItemId", () => {
+      test("Should call postgresAdapter with correct object", async () => {
+        const { sut, postgresAdapterSpy } = makeSut();
+
+        await sut.findById("any_menu_item_id");
+        expect(postgresAdapterSpy.queryObject).toEqual({
+          text: `
+          SELECT
+            *
+          FROM
+            menu_items
+          WHERE
+            id = $1
+          LIMIT
+            1
+          ;`,
+          values: ["any_menu_item_id"],
+        });
+      });
+    });
+
     test("Should throw if no menuItemId is provided", async () => {
       const { sut } = makeSut();
 
-      await expect(sut.findById("any_menu_id")).rejects.toThrow(
+      await expect(sut.findById()).rejects.toThrow(
         new MissingParamError("menuItemId"),
       );
     });
@@ -238,7 +259,7 @@ describe("MenuItem Repository", () => {
     test("Should call postgresAdapter with correct object ", async () => {
       const { sut, postgresAdapterSpy } = makeSut();
 
-      await sut.findById("any_menu_id", "any_menu_item_id");
+      await sut.findById("any_menu_item_id", "any_menu_id");
       expect(postgresAdapterSpy.queryObject).toEqual({
         text: `
         SELECT
@@ -257,7 +278,7 @@ describe("MenuItem Repository", () => {
     test("Should return menu item if everything is right", async () => {
       const { sut } = makeSut();
 
-      const menuItem = await sut.findById("any_menu_id", "any_menu_item_id");
+      const menuItem = await sut.findById("any_menu_item_id", "any_menu_id");
       expect(menuItem).toEqual({
         id: "any_menu_item_id",
         menu_id: "any_menu_id",

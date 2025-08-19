@@ -4,6 +4,8 @@ import {
   runMigrations,
   createBusiness,
   createTable,
+  generateAuthCookie,
+  createEmployee,
 } from "../orchestrator.js";
 
 beforeEach(async () => {
@@ -11,14 +13,27 @@ beforeEach(async () => {
   await runMigrations();
 });
 
+async function makeTableTestContext(numberOfTables = 1) {
+  const business = await createBusiness();
+  const { business_id, role, id } = await createEmployee(business.id);
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
+  });
+  const table = await createTable(business.id, numberOfTables);
+
+  return { business, token, table };
+}
+
 describe("GET /api/v1/business/[businessId]/table", () => {
   test("Should return all tables with correct data", async () => {
-    const business = await createBusiness();
-    await createTable(business.id, 2);
-
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table`,
-    );
+    const { business, token } = await makeTableTestContext(2);
+    const response = await fetch(`http://localhost:3000/api/v1/table`, {
+      headers: {
+        cookie: `token=${token}`,
+      },
+    });
 
     expect(response.status).toBe(200);
 
@@ -52,12 +67,12 @@ describe("GET /api/v1/business/[businessId]/table", () => {
   });
 
   test("Should return an empty array", async () => {
-    const business = await createBusiness();
-    await createTable(business.id, 0);
-
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table`,
-    );
+    const { token } = await makeTableTestContext(0);
+    const response = await fetch(`http://localhost:3000/api/v1/table`, {
+      headers: {
+        cookie: `token=${token}`,
+      },
+    });
 
     expect(response.status).toBe(200);
 
@@ -69,11 +84,15 @@ describe("GET /api/v1/business/[businessId]/table", () => {
 
 describe("GET /api/v1/business/[businessId]/table/[tableId]", () => {
   test("Should return correct table", async () => {
-    const business = await createBusiness();
-    const table = await createTable(business.id);
+    const { business, table, token } = await makeTableTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/${table.id}`,
+      `http://localhost:3000/api/v1/table/${table.id}`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(200);
@@ -101,10 +120,15 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]", () => {
   });
 
   test("Should return NotFoundError if table does not exists", async () => {
-    const business = await createBusiness();
+    const { token } = await makeTableTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/table/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(404);

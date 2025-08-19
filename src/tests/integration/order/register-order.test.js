@@ -5,6 +5,8 @@ import {
   createBusiness,
   createTable,
   createOrder,
+  createEmployee,
+  generateAuthCookie,
 } from "../orchestrator.js";
 
 beforeEach(async () => {
@@ -12,20 +14,35 @@ beforeEach(async () => {
   await runMigrations();
 });
 
-describe("POST /api/v1/business/[businessId]/table/[tableId]/order", () => {
-  test("should register a table and return 201", async () => {
-    const business = await createBusiness();
-    const table = await createTable(business.id);
+async function makeOrderTestContext(numberOfOrders = 1) {
+  const business = await createBusiness();
+  const { business_id, role, id } = await createEmployee(business.id);
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
+  });
+  const table = await createTable(business.id);
+  const order = await createOrder(business.id, table.id, numberOfOrders);
 
+  return { business, order, token, table };
+}
+
+describe("POST /api/v1/business/[businessId]/table/[tableId]/order", () => {
+  test("Should register a order and return 201", async () => {
+    const { business, table, token } = await makeOrderTestContext(0);
     const requestBody = {
       tableNumber: 1,
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/${table.id}/order`,
+      `http://localhost:3000/api/v1/table/${table.id}/order`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          cookie: `token=${token}`,
+        },
         body: JSON.stringify(requestBody),
       },
     );
@@ -59,20 +76,21 @@ describe("POST /api/v1/business/[businessId]/table/[tableId]/order", () => {
     expect(Date.parse(order.updated_at)).not.toBeNaN();
   });
 
-  test("should return ValidationError if number already exists in business", async () => {
-    const business = await createBusiness();
-    const table = await createTable(business.id);
-    await createOrder(business.id, table.id, 1);
+  test("Should return ValidationError if number already exists in business", async () => {
+    const { table, token } = await makeOrderTestContext();
 
     const requestBody = {
       tableNumber: 1,
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/${table.id}/order`,
+      `http://localhost:3000/api/v1/table/${table.id}/order`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          cookie: `token=${token}`,
+        },
         body: JSON.stringify(requestBody),
       },
     );

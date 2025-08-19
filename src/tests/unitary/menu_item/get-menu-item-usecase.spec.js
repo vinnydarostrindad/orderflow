@@ -18,7 +18,7 @@ const makeMenuItemRepository = () => {
       return this.menuItems;
     }
 
-    async findById(menuId, menuItemId) {
+    async findById(menuItemId, menuId) {
       this.menuId = menuId;
       this.menuItemId = menuItemId;
       return this.menuItem;

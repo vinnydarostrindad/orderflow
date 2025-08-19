@@ -1,5 +1,5 @@
-import { createSnackBar, showSnackBar } from "../scripts/snackbar.js";
-import showConfirmModal from "../scripts/confirm-modal.js";
+import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
+import showConfirmModal from "/scripts/confirm-modal.js";
 
 const registerEmployeeForm = document.forms[0];
 const roleSelect = document.querySelector("#role");
@@ -8,9 +8,6 @@ const nameInput = document.querySelector("#name");
 const skipBtn = document.querySelector("#skipBtn");
 const employeesTableContainer = document.querySelector("#employeesTable");
 const roleBox = document.querySelector("#roleBox");
-
-const params = new URLSearchParams(document.location.search);
-const businessId = params.get("b");
 
 let employees = [];
 let tableExists = false;
@@ -39,7 +36,7 @@ function saveEmployeesDraft() {
 }
 
 function redirectToNextPage() {
-  window.location.href = `http://localhost:5500/src/main/pages/create_menu/index.html?b=${businessId}`;
+  window.location.href = `http://localhost:3000/create-menu`;
 }
 
 function handleSkip(e) {
@@ -124,7 +121,7 @@ function renderTableRow({ name, role }) {
         <div>
           ${roles[role]}
           <button class="remove-button" data-name="${name}" data-role="${role}" aria-label="Remover ${name}">
-          <img src="./img/remove-icon.svg" alt="Remover">
+          <img src="/register_employees/img/remove-icon.svg" alt="Remover">
           </button>
         </div>
       </td>
@@ -193,20 +190,17 @@ async function postEmployees(e) {
 
   try {
     for (let { name, role } of employees) {
-      const response = await fetch(
-        `http://localhost:3000/api/v1/business/${businessId}/employee`,
-        {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            role,
-            password: "funcionario",
-          }),
+      const response = await fetch(`http://localhost:375000/api/v1/employee`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          name,
+          role,
+          password: "funcionario",
+        }),
+      });
       const responseBody = await response.json();
       console.log(responseBody);
     }

@@ -1,5 +1,19 @@
-import RegisterMenuItemUseCase from "../../../domain/usecase/menu_item/register-menu-item-usecase.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
+import { jest } from "@jest/globals";
+
+jest.unstable_mockModule("node:fs/promises", () => ({
+  writeFile(path, content) {
+    writeFile.path = path;
+    writeFile.content = content;
+  },
+}));
+
+const RegisterMenuItemUseCase = (
+  await import(
+    "../../../domain/usecase/menu_item/register-menu-item-usecase.js"
+  )
+).default;
+const { writeFile } = await import("node:fs/promises");
 
 const makeSut = () => {
   const idGeneratorSpy = makeIdGenerator();
@@ -139,6 +153,27 @@ describe("Register Menu Item UseCase", () => {
     expect(menuItemRepositorySpy.imagePath).toBe(undefined);
     expect(menuItemRepositorySpy.description).toBe("any_description");
     expect(menuItemRepositorySpy.type).toBe("any_type");
+  });
+
+  test("Should call writeFile with correct values", async () => {
+    const { sut } = makeSut();
+    const props = {
+      menuId: "any_menu_id",
+      name: "any_name",
+      price: "any_price",
+      description: "any_description",
+      imgFile: {
+        fileName: "any_file_name",
+        content: "any_content",
+      },
+      type: "any_type",
+    };
+
+    await sut.execute(props);
+    expect(writeFile.path).toMatch(
+      /\.\/src\/main\/pages\/assets\/\d*_any_file_name/,
+    );
+    expect(writeFile.content).toBe("any_content");
   });
 
   test("Should return menu item if everything is right", async () => {

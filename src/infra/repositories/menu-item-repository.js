@@ -49,7 +49,7 @@ export default class MenuItemRepository {
     return result.rows;
   }
 
-  async findById(menuId, menuItemId) {
+  async findById(menuItemId, menuId) {
     if (!menuItemId) throw new MissingParamError("menuItemId");
 
     if (!menuId) {

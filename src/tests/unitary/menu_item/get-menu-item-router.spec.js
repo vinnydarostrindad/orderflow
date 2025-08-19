@@ -88,7 +88,7 @@ const makeValidatorsWithError = () => {
 };
 
 describe("Get Menu Item Router", () => {
-  describe("Without menuItemId", () => {
+  describe("With menuId", () => {
     test("Should call getMenuItemUseCase with correct value", async () => {
       const { sut, getMenuItemUseCaseSpy } = makeSut();
       const httpRequest = {
@@ -126,6 +126,61 @@ describe("Get Menu Item Router", () => {
   });
 
   describe("With menuItemId", () => {
+    test("Should call getMenuItemUseCase with correct value", async () => {
+      const { sut, getMenuItemUseCaseSpy } = makeSut();
+      const httpRequest = {
+        params: {
+          menuItemId: "any_menu_item_id",
+        },
+      };
+
+      await sut.route(httpRequest);
+      expect(getMenuItemUseCaseSpy.menuItemId).toBe("any_menu_item_id");
+      expect(getMenuItemUseCaseSpy.menuId).toBeUndefined();
+    });
+
+    test("Should return 200 and a array of menu items", async () => {
+      const { sut } = makeSut();
+      const httpRequest = {
+        params: {
+          menuItemId: "any_menu_item_id",
+        },
+      };
+
+      const httpResponse = await sut.route(httpRequest);
+      expect(httpResponse.statusCode).toBe(200);
+      expect(httpResponse.body).toEqual({
+        id: "any_menu_item_id",
+        menuId: "any_menu_id",
+        name: "any_name",
+        price: "any_price",
+        imagePath: "any_img_path",
+        description: "any_description",
+        type: "any_type",
+      });
+    });
+
+    test("Should return 404 if no menuItem is found", async () => {
+      const { sut, getMenuItemUseCaseSpy } = makeSut();
+      const httpRequest = {
+        params: {
+          menuItemId: "any_menu_item_id",
+        },
+      };
+      getMenuItemUseCaseSpy.menuItem = null;
+
+      const httpResponse = await sut.route(httpRequest);
+      expect(httpResponse.statusCode).toBe(404);
+      expect(httpResponse.body).toEqual(
+        new NotFoundError({
+          resource: "MenuItem",
+          action: "Make sure enu itemm exists",
+        }),
+      );
+    });
+  });
+
+  describe("With menuId and menuItemId", () => {
     test("Should return 400 if menuItemId is invalid", async () => {
       const { sut, validatorsSpy } = makeSut();
       const httpRequest = {

@@ -5,6 +5,8 @@ import {
   createBusiness,
   createMenu,
   createMenuItem,
+  createEmployee,
+  generateAuthCookie,
 } from "../orchestrator.js";
 
 beforeEach(async () => {
@@ -12,14 +14,35 @@ beforeEach(async () => {
   await runMigrations();
 });
 
-describe("GET /api/v1/business/[businessId]/menu-item/[menuItemId]", () => {
+async function makeMenuItemTestContext(numberOfMenuItems = 1) {
+  const business = await createBusiness();
+  const { business_id, role, id } = await createEmployee(business.id);
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
+  });
+  const menu = await createMenu(business.id);
+  const menuItem = await createMenuItem(
+    business.id,
+    menu.id,
+    numberOfMenuItems,
+  );
+
+  return { business, menu, menuItem, token };
+}
+
+describe("GET /api/v1/menu-item/[menuItemId]", () => {
   test("Should return menu item with correct data", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
-    const menuItem = await createMenuItem(business.id, menu.id);
+    const { menu, menuItem, token } = await makeMenuItemTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu-item/${menuItem.id}`,
+      `http://localhost:3000/api/v1/menu-item/${menuItem.id}`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(200);
@@ -50,10 +73,15 @@ describe("GET /api/v1/business/[businessId]/menu-item/[menuItemId]", () => {
   });
 
   test("Should return NotFoundError if menu item does not exists", async () => {
-    const business = await createBusiness();
+    const { token } = await makeMenuItemTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu-item/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/menu-item/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(404);
@@ -69,14 +97,17 @@ describe("GET /api/v1/business/[businessId]/menu-item/[menuItemId]", () => {
   });
 });
 
-describe("GET /api/v1/business/[businessId]/menu/[menuId]/item", () => {
+describe("GET /api/v1/menu/[menuId]/item", () => {
   test("Should return all menu items with correct data", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
-    await createMenuItem(business.id, menu.id, 2);
+    const { menu, token } = await makeMenuItemTestContext(2);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu/${menu.id}/item`,
+      `http://localhost:3000/api/v1/menu/${menu.id}/item`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(200);
@@ -114,12 +145,15 @@ describe("GET /api/v1/business/[businessId]/menu/[menuId]/item", () => {
   });
 
   test("Should return an empty array", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
-    await createMenuItem(business.id, menu.id, 0);
+    const { menu, token } = await makeMenuItemTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu/${menu.id}/item`,
+      `http://localhost:3000/api/v1/menu/${menu.id}/item`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(200);
@@ -130,14 +164,17 @@ describe("GET /api/v1/business/[businessId]/menu/[menuId]/item", () => {
   });
 });
 
-describe("GET /api/v1/business/[businessId]/menu/[menuId]/item/[menuItemId]", () => {
+describe("GET /api/v1/menu/[menuId]/item/[menuItemId]", () => {
   test("Should return correct menu item", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
-    const menuItem = await createMenuItem(business.id, menu.id);
+    const { menu, menuItem, token } = await makeMenuItemTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu/${menu.id}/item/${menuItem.id}`,
+      `http://localhost:3000/api/v1/menu/${menu.id}/item/${menuItem.id}`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
     expect(response.status).toBe(200);
     const responseBody = await response.json();
@@ -165,11 +202,15 @@ describe("GET /api/v1/business/[businessId]/menu/[menuId]/item/[menuItemId]", ()
   });
 
   test("Should return NotFoundError if menu item does not exists", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
+    const { menu, token } = await makeMenuItemTestContext(1);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu/${menu.id}/item/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/menu/${menu.id}/item/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(404);
