@@ -1,4 +1,5 @@
 import GetOrderItemUseCase from "../../../domain/usecase/order_item/get-order-item-usecase.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
   const orderItemRepositorySpy = makeOrderItemRepository();
@@ -22,6 +23,11 @@ const makeOrderItemRepository = () => {
       this.orderId = orderId;
       this.orderItemId = orderItemId;
       return this.orderItem;
+    }
+
+    async findAllByBusinessId(businessId) {
+      this.businessId = businessId;
+      return this.orderItems;
     }
   }
 
@@ -65,15 +71,7 @@ const makeOrderItemRepositoryWithError = () => {
 };
 
 describe("Get Order Item Usecase", () => {
-  describe("Without orderItemId", () => {
-    test("Should return null if orderItems is invalid", async () => {
-      const { sut, orderItemRepositorySpy } = makeSut();
-      orderItemRepositorySpy.orderItems = null;
-
-      const orderItem = await sut.execute({ orderId: "order_id" });
-      expect(orderItem).toBeNull();
-    });
-
+  describe("With orderId", () => {
     test("Should call orderItemRepository.findAll with correct value", async () => {
       const { sut, orderItemRepositorySpy } = makeSut();
 
@@ -140,6 +138,45 @@ describe("Get Order Item Usecase", () => {
         total_price: "40.00",
         notes: "any_notes",
       });
+    });
+  });
+
+  describe("With businessId", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.execute({})).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+
+    test("Should call orderItemRepository.findAllByBusinessId with correct value", async () => {
+      const { sut, orderItemRepositorySpy } = makeSut();
+
+      await sut.execute({
+        businessId: "business_id",
+      });
+      expect(orderItemRepositorySpy.businessId).toBe("business_id");
+    });
+
+    test("Should return orderItems correctly", async () => {
+      const { sut } = makeSut();
+
+      const orderItem = await sut.execute({
+        businessId: "business_id",
+      });
+      expect(orderItem).toEqual([
+        {
+          id: "any_order_item_id",
+          order_id: "any_order_id",
+          menu_item_id: "any_menu_item_id",
+          quantity: 2,
+          status: "pending",
+          unit_price: "20.00",
+          total_price: "40.00",
+          notes: "any_notes",
+        },
+      ]);
     });
   });
 

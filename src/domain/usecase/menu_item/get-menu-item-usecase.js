@@ -10,7 +10,7 @@ export default class GetMenuItemUseCase {
       return menuItems;
     }
 
-    const menuItem = await this.menuItemRepository.findById(menuId, menuItemId);
+    const menuItem = await this.menuItemRepository.findById(menuItemId, menuId);
 
     return menuItem;
   }

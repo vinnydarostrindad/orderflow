@@ -18,13 +18,8 @@ const apiRoutes = [
   {
     pattern: /^\/api\/v1\/business$/,
     methods: {
-      post: businessRoute.post,
-    },
-  },
-  {
-    pattern: /^\/api\/v1\/business$/,
-    methods: {
       get: businessRoute.getOne,
+      post: businessRoute.post,
     },
   },
   {
@@ -48,7 +43,7 @@ const apiRoutes = [
     },
   },
   {
-    pattern: /^\/api\/v1\/business\/menu\/(?<menuId>[^/]+)$/,
+    pattern: /^\/api\/v1\/menu\/(?<menuId>[^/]+)$/,
     methods: {
       get: menuRoute.getOne,
     },

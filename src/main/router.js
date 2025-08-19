@@ -16,7 +16,6 @@ const router = async function (req, res) {
   try {
     const pageInfoObj = findMatchingPageRoute(url);
     const apiRouteInfo = findMatchingApiRoute(url, method);
-
     let authObj = authMiddleware(req, pageInfoObj || apiRouteInfo);
     if (authObj && !authObj.auth) {
       const fileContent = await fsPromises.readFile(
@@ -33,11 +32,15 @@ const router = async function (req, res) {
     response = await staticFiles(res, url);
     if (response) return response;
 
-    response = await pageRoute(res, pageInfoObj);
-    if (response) return response;
+    if (pageInfoObj) {
+      response = await pageRoute(res, pageInfoObj);
+      if (response) return response;
+    }
 
-    response = await apiRoute(req, res, method, apiRouteInfo, authObj);
-    if (response) return response;
+    if (apiRouteInfo) {
+      response = await apiRoute(req, res, method, apiRouteInfo, authObj);
+      if (response) return response;
+    }
 
     throw new NotFoundError({
       resource: `URL ${url}`,

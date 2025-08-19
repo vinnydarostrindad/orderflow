@@ -4,6 +4,7 @@ import {
   runMigrations,
   createBusiness,
   createEmployee,
+  generateAuthCookie,
 } from "../orchestrator.js";
 
 beforeEach(async () => {
@@ -11,14 +12,28 @@ beforeEach(async () => {
   await runMigrations();
 });
 
-describe("GET /api/v1/business/[businessId]/employee", () => {
-  test("Should return all employees with correct data", async () => {
-    const business = await createBusiness();
-    await createEmployee(business.id, 2);
+async function makeEmployeeTestContext(numberOfEmployees = 1) {
+  const business = await createBusiness();
+  const employee = await createEmployee(business.id, numberOfEmployees);
+  const { business_id, role, id } = employee[0] || employee;
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
+  });
 
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/employee`,
-    );
+  return { business, employee, token };
+}
+
+describe("GET /api/v1/employee", () => {
+  test("Should return all employees with correct data", async () => {
+    const { business, token } = await makeEmployeeTestContext(2);
+
+    const response = await fetch(`http://localhost:3000/api/v1/employee`, {
+      headers: {
+        cookie: `token=${token}`,
+      },
+    });
 
     expect(response.status).toBe(200);
 
@@ -26,52 +41,41 @@ describe("GET /api/v1/business/[businessId]/employee", () => {
     expect(Array.isArray(responseBody)).toBe(true);
     expect(responseBody.length).toBeGreaterThan(0);
 
-    responseBody.forEach((employee) => {
-      expect(employee).toMatchObject({
+    for (let i = 0; i < responseBody.length; i++) {
+      expect(responseBody[i]).toMatchObject({
         businessId: business.id,
-        name: "any_name",
+        name: `any_name_${i + 1}`,
         role: "waiter",
       });
 
-      expect(typeof employee.id).toBe("string");
-      expect(uuidVersion(employee.id)).toBe(4);
+      expect(typeof responseBody[i].id).toBe("string");
+      expect(uuidVersion(responseBody[i].id)).toBe(4);
 
-      expect(typeof employee.businessId).toBe("string");
-      expect(uuidVersion(employee.businessId)).toBe(4);
+      expect(typeof responseBody[i].businessId).toBe("string");
+      expect(uuidVersion(responseBody[i].businessId)).toBe(4);
 
-      expect(typeof employee.createdAt).toBe("string");
-      expect(Date.parse(employee.createdAt)).not.toBeNaN();
+      expect(typeof responseBody[i].createdAt).toBe("string");
+      expect(Date.parse(responseBody[i].createdAt)).not.toBeNaN();
 
-      expect(employee.password).toBeUndefined();
+      expect(responseBody[i].password).toBeUndefined();
 
-      expect(typeof employee.updatedAt).toBe("string");
-      expect(Date.parse(employee.updatedAt)).not.toBeNaN();
-    });
-  });
-
-  test("Should return an empty array", async () => {
-    const business = await createBusiness();
-    await createEmployee(business.id, 0);
-
-    const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/employee`,
-    );
-
-    expect(response.status).toBe(200);
-
-    const responseBody = await response.json();
-    expect(Array.isArray(responseBody)).toBe(true);
-    expect(responseBody.length).toBe(0);
+      expect(typeof responseBody[i].updatedAt).toBe("string");
+      expect(Date.parse(responseBody[i].updatedAt)).not.toBeNaN();
+    }
   });
 });
 
-describe("GET /api/v1/business/[businessId]/employee/[employeeId]", () => {
+describe("GET /api/v1/employee/[employeeId]", () => {
   test("Should return correct employee", async () => {
-    const business = await createBusiness();
-    const employee = await createEmployee(business.id);
+    const { business, employee, token } = await makeEmployeeTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/employee/${employee.id}`,
+      `http://localhost:3000/api/v1/employee/${employee.id}`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(200);
@@ -80,7 +84,7 @@ describe("GET /api/v1/business/[businessId]/employee/[employeeId]", () => {
 
     expect(responseBody).toMatchObject({
       businessId: business.id,
-      name: "any_name",
+      name: "any_name_1",
       role: "waiter",
     });
 
@@ -100,10 +104,15 @@ describe("GET /api/v1/business/[businessId]/employee/[employeeId]", () => {
   });
 
   test("Should return NotFoundError if employee does not exists", async () => {
-    const business = await createBusiness();
+    const { token } = await makeEmployeeTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/employee/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/employee/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(404);

@@ -72,8 +72,8 @@ describe("Register Menu Router", () => {
   test("Should return 400 if no name is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
       body: {},
+      auth: { businessId: "any_business_id" },
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
@@ -83,8 +83,8 @@ describe("Register Menu Router", () => {
   test("Should return 400 if no businessId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: {},
       body: { name: "any_name" },
+      auth: {},
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
@@ -94,7 +94,7 @@ describe("Register Menu Router", () => {
   test("Should return 400 if businessId is invalid", async () => {
     const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
-      params: { businessId: "invalid_business_id" },
+      auth: { businessId: "invalid_business_id" },
       body: { name: "any_name" },
     };
 
@@ -115,13 +115,13 @@ describe("Register Menu Router", () => {
   test("Should throw if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
     };
 
     await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should throw if httpRequest has no params", async () => {
+  test("Should throw if httpRequest has no auth", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -135,7 +135,7 @@ describe("Register Menu Router", () => {
   test("Should call registerMenuUseCase with correct params", async () => {
     const { sut, registerMenuUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: {
         name: "any_name",
       },
@@ -148,7 +148,7 @@ describe("Register Menu Router", () => {
   test("Should return 201 with created menu if inputs are valid", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: {
         name: "any_name",
       },
@@ -175,7 +175,7 @@ describe("Register Menu Router", () => {
       }),
     ];
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: { name: "any_name" },
     };
 
@@ -195,7 +195,7 @@ describe("Register Menu Router", () => {
       }),
     ];
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: { name: "any_name" },
     };
 

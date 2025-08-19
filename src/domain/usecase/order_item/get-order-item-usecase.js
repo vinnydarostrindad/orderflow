@@ -1,6 +1,6 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
-export default class GetMenuItemUseCase {
+export default class GetOrderItemUseCase {
   constructor({ orderItemRepository } = {}) {
     this.orderItemRepository = orderItemRepository;
   }
@@ -17,8 +17,6 @@ export default class GetMenuItemUseCase {
 
     if (!orderItemId) {
       const orderItems = await this.orderItemRepository.findAll(orderId);
-
-      if (!orderItems) return null;
 
       return orderItems;
     }

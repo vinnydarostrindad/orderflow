@@ -72,7 +72,7 @@ describe("Register Employee Router", () => {
   test("Should return 400 if no businessId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: {},
+      auth: {},
       body: {
         name: "any_name",
         role: "any_role",
@@ -88,7 +88,7 @@ describe("Register Employee Router", () => {
   test("Should return 400 if businessId is invalid", async () => {
     const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
-      params: { businessId: "invalid_business_id" },
+      auth: { businessId: "invalid_business_id" },
       body: {
         name: "any_name",
         role: "any_role",
@@ -107,7 +107,7 @@ describe("Register Employee Router", () => {
   test("Should return 400 if no name is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: {
         role: "any_role",
         password: "any_password",
@@ -122,7 +122,7 @@ describe("Register Employee Router", () => {
   test("Should return 400 if no role is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: {
         name: "any_name",
         password: "any_password",
@@ -137,7 +137,7 @@ describe("Register Employee Router", () => {
   test("Should return 400 if no password is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: {
         name: "any_name",
         role: "any_role",
@@ -163,22 +163,10 @@ describe("Register Employee Router", () => {
     await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should throw if httpRequest has no params", async () => {
-    const { sut } = makeSut();
-    const httpRequest = {
-      body: {
-        name: "any_name",
-        role: "any_role",
-        password: "any_password",
-      },
-    };
-    await expect(sut.route(httpRequest)).rejects.toThrow();
-  });
-
   test("Should call registerEmployeeUsecase with correct params", async () => {
     const { sut, registerEmployeeUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: {
         name: "any_name",
         role: "any_role",
@@ -195,7 +183,7 @@ describe("Register Employee Router", () => {
   test("Should return 201 with created employee if inputs are valid", async () => {
     const { sut, registerEmployeeUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: {
         name: "any_name",
         role: "any_role",
@@ -221,17 +209,17 @@ describe("Register Employee Router", () => {
       }),
     ];
 
-    for (const sut of suts) {
-      const httpRequest = {
-        params: { businessId: "any_business_id" },
-        body: {
-          name: "any_name",
-          role: "any_role",
-          password: "any_password",
-        },
-      };
+    const httpRequest = {
+      auth: { businessId: "any_business_id" },
+      body: {
+        name: "any_name",
+        role: "any_role",
+        password: "any_password",
+      },
+    };
 
-      expect(sut.route(httpRequest)).rejects.toThrow();
+    for (const sut of suts) {
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 
@@ -248,7 +236,7 @@ describe("Register Employee Router", () => {
     ];
 
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: {
         name: "any_name",
         role: "any_role",
@@ -257,7 +245,7 @@ describe("Register Employee Router", () => {
     };
 
     for (const sut of suts) {
-      expect(sut.route(httpRequest)).rejects.toThrow();
+      await expect(sut.route(httpRequest)).rejects.toThrow();
     }
   });
 });

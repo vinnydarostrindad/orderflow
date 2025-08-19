@@ -12,7 +12,7 @@ beforeEach(async () => {
 });
 
 describe("POST /api/v1/session", () => {
-  test("should return 401 if invalid name is provided", async () => {
+  test("Should return 401 if invalid name is provided", async () => {
     const business = await createBusiness();
 
     const response = await fetch(`http://localhost:3000/api/v1/session`, {
@@ -38,7 +38,7 @@ describe("POST /api/v1/session", () => {
     });
   });
 
-  test("should return 401 if invalid businessId is provided", async () => {
+  test("Should return 401 if invalid businessId is provided", async () => {
     const business = await createBusiness();
     const { name, role } = await createEmployee(business.id);
 
@@ -65,10 +65,10 @@ describe("POST /api/v1/session", () => {
     });
   });
 
-  test("should return 401 if invalid role is provided", async () => {
+  test("Should return 401 if invalid role is provided", async () => {
     const business = await createBusiness();
-    const { name, role } = await createEmployee(business.id);
-    console.log("ROLE:", role);
+    const { name } = await createEmployee(business.id);
+
     const response = await fetch(`http://localhost:3000/api/v1/session`, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -92,7 +92,7 @@ describe("POST /api/v1/session", () => {
     });
   });
 
-  test("should return jwt token correctly", async () => {
+  test("Should return jwt token correctly", async () => {
     const business = await createBusiness();
     const { name, role } = await createEmployee(business.id);
 

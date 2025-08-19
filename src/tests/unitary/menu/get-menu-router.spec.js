@@ -85,7 +85,8 @@ describe("Get Menu Router", () => {
     test("Should call getMenuUseCase with correct value", async () => {
       const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
-        params: {
+        params: {},
+        auth: {
           businessId: "any_business_id",
         },
       };
@@ -98,9 +99,8 @@ describe("Get Menu Router", () => {
     test("Should return 200 and a array of menus", async () => {
       const { sut } = makeSut();
       const httpRequest = {
-        params: {
-          businessId: "any_business_id",
-        },
+        params: {},
+        auth: { businessId: "any_business_id" },
       };
 
       const httpResponse = await sut.route(httpRequest);
@@ -118,7 +118,8 @@ describe("Get Menu Router", () => {
     test("Should return 400 if menuId is invalid", async () => {
       const { sut, validatorsSpy } = makeSut();
       const httpRequest = {
-        params: { businessId: "valid_business_id", menuId: "invalid_menu_id" },
+        params: { menuId: "invalid_menu_id" },
+        auth: { businessId: "valid_business_id" },
       };
 
       validatorsSpy.isValid = false;
@@ -133,9 +134,9 @@ describe("Get Menu Router", () => {
       const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
-          businessId: "any_business_id",
           menuId: "any_menu_id",
         },
+        auth: { businessId: "any_business_id" },
       };
       getMenuUseCaseSpy.menu = null;
 
@@ -150,9 +151,9 @@ describe("Get Menu Router", () => {
       const { sut, getMenuUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
-          businessId: "any_business_id",
           menuId: "any_menu_id",
         },
+        auth: { businessId: "any_business_id" },
       };
 
       await sut.route(httpRequest);
@@ -164,9 +165,9 @@ describe("Get Menu Router", () => {
       const { sut } = makeSut();
       const httpRequest = {
         params: {
-          businessId: "any_business_id",
           menuId: "any_menu_id",
         },
+        auth: { businessId: "any_business_id" },
       };
 
       const httpResponse = await sut.route(httpRequest);
@@ -185,6 +186,7 @@ describe("Get Menu Router", () => {
       params: {
         menuId: "any_menu_id",
       },
+      auth: {},
     };
 
     const httpResponse = await sut.route(httpRequest);
@@ -195,7 +197,10 @@ describe("Get Menu Router", () => {
 
   test("Should return 400 if businessId is invalid", async () => {
     const { sut, validatorsSpy } = makeSut();
-    const httpRequest = { params: { businessId: "invalid_business_id" } };
+    const httpRequest = {
+      params: {},
+      auth: { businessId: "invalid_business_id" },
+    };
 
     validatorsSpy.isValid = false;
 
@@ -232,9 +237,9 @@ describe("Get Menu Router", () => {
     ];
     const httpRequest = {
       params: {
-        businessId: "any_business_id",
         menuId: "any_menu_id",
       },
+      auth: { businessId: "any_business_id" },
     };
 
     for (const sut of suts) {
@@ -254,9 +259,9 @@ describe("Get Menu Router", () => {
     ];
     const httpRequest = {
       params: {
-        businessId: "any_business_id",
         menuId: "any_menu_id",
       },
+      auth: { businessId: "any_business_id" },
     };
 
     for (const sut of suts) {

@@ -78,6 +78,7 @@ describe("RegisterOrderRouter", () => {
     const httpRequest = {
       params: { tableId: "any_table_id" },
       body: { tableNumber: "any_table_number" },
+      auth: {},
     };
 
     const httpResponse = await sut.route(httpRequest);
@@ -88,8 +89,9 @@ describe("RegisterOrderRouter", () => {
   test("Should return 400 if businessId is invalid", async () => {
     const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
-      params: { businessId: "invalid_business_id", tableId: "valid_table_id" },
+      params: { tableId: "valid_table_id" },
       body: { number: "any_number" },
+      auth: { businessId: "invalid_business_id" },
     };
 
     validatorsSpy.isValid = false;
@@ -103,8 +105,9 @@ describe("RegisterOrderRouter", () => {
   test("Should return 400 if no tableId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      params: {},
       body: { tableNumber: "any_table_number" },
+      auth: { businessId: "any_business_id" },
     };
 
     const httpResponse = await sut.route(httpRequest);
@@ -115,8 +118,9 @@ describe("RegisterOrderRouter", () => {
   test("Should return 400 if tableId is invalid", async () => {
     const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
-      params: { businessId: "valid_business_id", tableId: "invalid_table_id" },
+      params: { tableId: "invalid_table_id" },
       body: { number: "any_number" },
+      auth: { businessId: "valid_business_id" },
     };
 
     validatorsSpy.isValid = false;
@@ -130,8 +134,9 @@ describe("RegisterOrderRouter", () => {
   test("Should return 400 if no tableNumber is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { tableId: "any_table_id", businessId: "any_business_id" },
+      params: { tableId: "any_table_id" },
       body: {},
+      auth: { businessId: "any_business_id" },
     };
 
     const httpResponse = await sut.route(httpRequest);
@@ -147,7 +152,8 @@ describe("RegisterOrderRouter", () => {
   test("Should throw if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { tableId: "any_table_id", businessId: "any_business_id" },
+      params: { tableId: "any_table_id" },
+      auth: { businessId: "any_business_id" },
     };
     await expect(sut.route(httpRequest)).rejects.toThrow();
   });
@@ -156,6 +162,7 @@ describe("RegisterOrderRouter", () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: { tableNumber: "any_table_number" },
+      auth: { businessId: "any_business_id" },
     };
     await expect(sut.route(httpRequest)).rejects.toThrow();
   });
@@ -163,8 +170,9 @@ describe("RegisterOrderRouter", () => {
   test("Should call registerOrderUseCase with correct params", async () => {
     const { sut, registerOrderUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: { tableId: "any_table_id", businessId: "any_business_id" },
+      params: { tableId: "any_table_id" },
       body: { tableNumber: "any_table_number" },
+      auth: { businessId: "any_business_id" },
     };
 
     await sut.route(httpRequest);
@@ -176,8 +184,9 @@ describe("RegisterOrderRouter", () => {
   test("Should return 201 with created order if inputs are valid", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { tableId: "any_table_id", businessId: "any_business_id" },
+      params: { tableId: "any_table_id" },
       body: { tableNumber: "any_table_number" },
+      auth: { businessId: "any_business_id" },
     };
 
     const httpResponse = await sut.route(httpRequest);
@@ -204,8 +213,9 @@ describe("RegisterOrderRouter", () => {
     ];
 
     const httpRequest = {
-      params: { tableId: "any_table_id", businessId: "any_business_id" },
+      params: { tableId: "any_table_id" },
       body: { tableNumber: "any_table_number" },
+      auth: { businessId: "any_business_id" },
     };
 
     for (const sut of suts) {
@@ -224,8 +234,9 @@ describe("RegisterOrderRouter", () => {
       }),
     ];
     const httpRequest = {
-      params: { tableId: "any_table_id", businessId: "any_business_id" },
+      params: { tableId: "any_table_id" },
       body: { tableNumber: "any_table_number" },
+      auth: { businessId: "any_business_id" },
     };
 
     for (const sut of suts) {

@@ -1,4 +1,5 @@
 import LoginEmployeeUseCase from "../../../domain/usecase/employee/login-employee-usecase.js";
+import InvalidCredentialsError from "../../../utils/errors/invalid-credentials-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
@@ -17,9 +18,9 @@ const makeSut = () => {
 
 const makeEmployeeRepository = () => {
   class EmployeeRepository {
-    findByNameAndRole(name, businessId) {
-      this.name = name;
+    findByNameAndRole(businessId, name) {
       this.businessId = businessId;
+      this.name = name;
       return this.employee;
     }
   }
@@ -68,7 +69,7 @@ const makeAuthUseCaseWithError = () => {
 };
 
 describe("LoginEmployeeUseCase", () => {
-  test("should throw if no name is provided", async () => {
+  test("Should throw if no name is provided", async () => {
     const { sut } = makeSut();
     const props = {
       role: "any_role",
@@ -80,7 +81,7 @@ describe("LoginEmployeeUseCase", () => {
     );
   });
 
-  test("should throw if no role is provided", async () => {
+  test("Should throw if no role is provided", async () => {
     const { sut } = makeSut();
     const props = {
       name: "any_name",
@@ -92,7 +93,7 @@ describe("LoginEmployeeUseCase", () => {
     );
   });
 
-  test("should throw if no businessId is provided", async () => {
+  test("Should throw if no businessId is provided", async () => {
     const { sut } = makeSut();
     const props = {
       name: "any_name",
@@ -104,7 +105,7 @@ describe("LoginEmployeeUseCase", () => {
     );
   });
 
-  test("should return token if everithing is right", async () => {
+  test("Should return token if everithing is right", async () => {
     const { sut } = makeSut();
     const props = {
       name: "valid_name",
@@ -116,20 +117,21 @@ describe("LoginEmployeeUseCase", () => {
     expect(token).toBe("any_token");
   });
 
-  test("should return null if employeeRepository returns invalid employee", async () => {
+  test("Should throw if employeeRepository returns invalid employee", async () => {
     const { sut, employeeRepositorySpy } = makeSut();
     const props = {
-      name: "valid_name",
-      role: "valid_role",
-      businessId: "valid_business_id",
+      name: "any_name",
+      role: "any_role",
+      businessId: "any_business_id",
     };
     employeeRepositorySpy.employee = null;
 
-    const token = await sut.execute(props);
-    expect(token).toBeNull();
+    await expect(sut.execute(props)).rejects.toThrow(
+      new InvalidCredentialsError(),
+    );
   });
 
-  test("should return null if authUseCase returns invalid employee", async () => {
+  test("Should return null if authUseCase returns invalid token", async () => {
     const { sut, authUseCaseSpy } = makeSut();
     const props = {
       name: "valid_name",
@@ -142,12 +144,12 @@ describe("LoginEmployeeUseCase", () => {
     expect(token).toBeNull();
   });
 
-  test("should throw if no props is provided", async () => {
+  test("Should throw if no props is provided", async () => {
     const { sut } = makeSut();
     await expect(sut.execute()).rejects.toThrow();
   });
 
-  test("should call employeeRepository.findByNameAndRole with correct values", async () => {
+  test("Should call employeeRepository.findByNameAndRole with correct values", async () => {
     const { sut, employeeRepositorySpy } = makeSut();
     const props = {
       name: "any_name",
@@ -160,7 +162,7 @@ describe("LoginEmployeeUseCase", () => {
     expect(employeeRepositorySpy.businessId).toBe("any_business_id");
   });
 
-  test("should call authUseCase.generateToken with correct values", async () => {
+  test("Should call authUseCase.generateToken with correct values", async () => {
     const { sut, authUseCaseSpy } = makeSut();
     const props = {
       name: "any_name",

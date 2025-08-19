@@ -1,6 +1,7 @@
 import GetOrderItemRouter from "../../../presentation/routers/order_item/get-order-item-router.js";
 import NotFoundError from "../../../utils/errors/not-found-error.js";
 import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makeSut = () => {
   const getOrderItemUseCaseSpy = makeGetOrderItemUseCase();
@@ -14,8 +15,9 @@ const makeSut = () => {
 
 const makeGetOrderItemUseCase = () => {
   class GetOrderItemUseCaseSpy {
-    async execute({ orderId, orderItemId }) {
+    async execute({ orderId, orderItemId, businessId }) {
       this.orderId = orderId;
+      this.businessId = businessId;
       if (!orderItemId) {
         return this.orderItems;
       }
@@ -90,12 +92,71 @@ const makeValidatorsWithError = () => {
 };
 
 describe("Get Order Item Router", () => {
-  describe("Without orderItemId", () => {
+  describe("With businessId", () => {
+    test("Should return 400 if no businessId is provided", async () => {
+      const { sut } = makeSut();
+      const httpRequest = {
+        params: {},
+        auth: {},
+      };
+
+      const httpResponse = await sut.route(httpRequest);
+      expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
+    });
+
+    test("Should return 400 if invalid businessId is provided", async () => {
+      const { sut, validatorsSpy } = makeSut();
+      const httpRequest = {
+        params: {},
+        auth: { businessId: "invalid_business_id" },
+      };
+
+      validatorsSpy.isValid = false;
+
+      const httpResponse = await sut.route(httpRequest);
+      expect(httpResponse.body).toEqual(new InvalidParamError("businessId"));
+    });
+
+    test("Should call getOrderItemUseCase with correct value", async () => {
+      const { sut, getOrderItemUseCaseSpy } = makeSut();
+      const httpRequest = {
+        params: {},
+        auth: { businessId: "any_business_id" },
+      };
+
+      await sut.route(httpRequest);
+      expect(getOrderItemUseCaseSpy.businessId).toBe("any_business_id");
+      expect(getOrderItemUseCaseSpy.orderItemId).toBeUndefined();
+    });
+
+    test("Should return 200 and order item", async () => {
+      const { sut } = makeSut();
+      const httpRequest = {
+        params: {},
+        auth: { businessId: "any_business_id" },
+      };
+
+      const httpResponse = await sut.route(httpRequest);
+      expect(httpResponse.statusCode).toBe(200);
+      expect(Array.isArray(httpResponse.body)).toBeTruthy();
+      expect(httpResponse.body[0]).toEqual({
+        menuItemId: "any_menu_item_id",
+        quantity: "2",
+        status: "pending",
+        totalPrice: "40.00",
+      });
+    });
+  });
+
+  describe("With orderId", () => {
     test("Should call getOrderItemUseCase with correct value", async () => {
       const { sut, getOrderItemUseCaseSpy } = makeSut();
       const httpRequest = {
         params: {
           orderId: "any_order_id",
+        },
+        auth: {
+          businessId: "any_business_id",
         },
       };
 
@@ -109,6 +170,9 @@ describe("Get Order Item Router", () => {
       const httpRequest = {
         params: {
           orderId: "any_order_id",
+        },
+        auth: {
+          businessId: "any_business_id",
         },
       };
 
@@ -128,13 +192,16 @@ describe("Get Order Item Router", () => {
     });
   });
 
-  describe("With orderItemId", () => {
+  describe("With orderId and orderItemId", () => {
     test("Should return 400 if orderItemId is invalid", async () => {
       const { sut, validatorsSpy } = makeSut();
       const httpRequest = {
         params: {
           orderId: "valid_order_id",
           orderItemId: "invalid_order_item_id",
+        },
+        auth: {
+          businessId: "any_business_id",
         },
       };
 
@@ -153,6 +220,9 @@ describe("Get Order Item Router", () => {
           orderId: "any_order_id",
           orderItemId: "any_order_item_id",
         },
+        auth: {
+          businessId: "any_business_id",
+        },
       };
       getOrderItemUseCaseSpy.orderItem = null;
 
@@ -170,6 +240,9 @@ describe("Get Order Item Router", () => {
           orderId: "any_order_id",
           orderItemId: "any_order_item_id",
         },
+        auth: {
+          businessId: "any_business_id",
+        },
       };
 
       await sut.route(httpRequest);
@@ -183,6 +256,9 @@ describe("Get Order Item Router", () => {
         params: {
           orderId: "any_order_id",
           orderItemId: "any_order_item_id",
+        },
+        auth: {
+          businessId: "any_business_id",
         },
       };
 
@@ -207,6 +283,9 @@ describe("Get Order Item Router", () => {
       params: {
         orderId: "invalid_order_id",
         orderItemId: "valid_order_item_id",
+      },
+      auth: {
+        businessId: "any_business_id",
       },
     };
 
@@ -249,6 +328,9 @@ describe("Get Order Item Router", () => {
         orderId: "any_order_id",
         orderItemId: "any_order_item_id",
       },
+      auth: {
+        businessId: "any_business_id",
+      },
     };
 
     for (const sut of suts) {
@@ -271,6 +353,9 @@ describe("Get Order Item Router", () => {
       params: {
         orderId: "any_order_id",
         orderItemId: "any_order_item_id",
+      },
+      auth: {
+        businessId: "any_business_id",
       },
     };
 

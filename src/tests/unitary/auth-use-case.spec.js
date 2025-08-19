@@ -1,5 +1,6 @@
 import MissingParamError from "../../utils/errors/missing-param-error.js";
 import AuthUseCase from "../../domain/usecase/auth-usecase.js";
+import InvalidParamError from "../../utils/errors/invalid-param-error.js";
 
 const makeSut = () => {
   const jwtSpy = makeJwt();
@@ -41,32 +42,25 @@ const obj = {
 
 describe("Auth Usecase", () => {
   describe("generateToken method", () => {
-    test("Should throw if no emmployeeId is provided", () => {
+    test("Should throw if no payload is provided", () => {
       const { sut } = makeSut();
-      expect(() =>
-        sut.generateToken({
-          role: "any_role",
-          businessId: "any_business_id",
-        }),
-      ).toThrow(new MissingParamError("employeeId"));
+      expect(() => sut.generateToken()).toThrow(
+        new MissingParamError("payload"),
+      );
     });
-    test("Should throw if no role is provided", () => {
+
+    test("Should throw if payload not an plain object", () => {
       const { sut } = makeSut();
-      expect(() =>
-        sut.generateToken({
-          employeeId: "any_employee_id",
-          businessId: "any_business_id",
-        }),
-      ).toThrow(new MissingParamError("role"));
+      expect(() => sut.generateToken(["invalid", "payload"])).toThrow(
+        new InvalidParamError("payload"),
+      );
     });
-    test("Should throw if no businessId is provided", () => {
+
+    test("Should throw if payload is empty", () => {
       const { sut } = makeSut();
-      expect(() =>
-        sut.generateToken({
-          employeeId: "any_employee_id",
-          role: "any_role",
-        }),
-      ).toThrow(new MissingParamError("businessId"));
+      expect(() => sut.generateToken({})).toThrow(
+        new InvalidParamError("payload"),
+      );
     });
 
     test("Should call jwt.sign with the correct values", () => {

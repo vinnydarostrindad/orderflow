@@ -74,7 +74,7 @@ describe("Register Table Router", () => {
   test("Should return 400 if no number is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: { name: "any_name" },
     };
     const httpResponse = await sut.route(httpRequest);
@@ -85,7 +85,7 @@ describe("Register Table Router", () => {
   test("Should return 400 if no businessId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: {},
+      auth: {},
       body: { number: "any_number", name: "any_name" },
     };
     const httpResponse = await sut.route(httpRequest);
@@ -96,7 +96,7 @@ describe("Register Table Router", () => {
   test("Should return 400 if businessid is invalid", async () => {
     const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
-      params: { businessId: "invalid_business_id" },
+      auth: { businessId: "invalid_business_id" },
       body: {
         number: "any_number",
         name: "any_name",
@@ -119,7 +119,7 @@ describe("Register Table Router", () => {
   test("Should throw if httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
     };
     await expect(sut.route(httpRequest)).rejects.toThrow();
   });
@@ -135,7 +135,7 @@ describe("Register Table Router", () => {
   test("Should call registerTableUseCase with correct params", async () => {
     const { sut, registerTableUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: {
         number: "any_number",
         name: "any_name",
@@ -150,7 +150,7 @@ describe("Register Table Router", () => {
   test("Should return 201 with created table if inputs are valid", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: {
         number: "any_number",
         name: "any_name",
@@ -179,7 +179,7 @@ describe("Register Table Router", () => {
       }),
     ];
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: { number: "any_number", name: "any_name" },
     };
 
@@ -200,7 +200,7 @@ describe("Register Table Router", () => {
     ];
 
     const httpRequest = {
-      params: { businessId: "any_business_id" },
+      auth: { businessId: "any_business_id" },
       body: { number: "any_number", name: "any_name" },
     };
 

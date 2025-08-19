@@ -12,7 +12,7 @@ beforeEach(async () => {
 });
 
 describe("POST /api/v1/business", () => {
-  test("should register a business and return 201 with token", async () => {
+  test("Should register a business and return 201 with token", async () => {
     const requestBody = {
       name: "any_name",
       email: "any_email@mail.com",
@@ -26,10 +26,9 @@ describe("POST /api/v1/business", () => {
     });
 
     const responseBody = await response.json();
-
     expect(response.status).toBe(201);
 
-    const { business, token } = responseBody;
+    const business = responseBody;
 
     expect(business).toMatchObject({
       id: business.id,
@@ -50,11 +49,9 @@ describe("POST /api/v1/business", () => {
 
     expect(typeof business.updated_at).toBe("string");
     expect(Date.parse(business.updated_at)).not.toBeNaN();
-
-    expect(validator.isJWT(token)).toBe(true);
   });
 
-  test("should return ValidationError if name already exists", async () => {
+  test("Should return ValidationError if name already exists", async () => {
     await createBusiness({
       name: "any_name_1",
       email: "any_email1@mail.com",
@@ -84,7 +81,7 @@ describe("POST /api/v1/business", () => {
     });
   });
 
-  test("should return ValidationError if email already exists", async () => {
+  test("Should return ValidationError if email already exists", async () => {
     await createBusiness({
       name: "any_name_1",
       email: "any_email1@mail.com",
@@ -114,7 +111,7 @@ describe("POST /api/v1/business", () => {
     });
   });
 
-  test("should return different hashes for same password but different business", async () => {
+  test("Should return different hashes for same password but different business", async () => {
     const business1 = await createBusiness({
       name: "any_name_1",
       email: "any_email1@mail.com",

@@ -64,7 +64,7 @@ const makeValidatorsWithError = () => {
 };
 
 describe("LoginEmployeeRouter", () => {
-  test("should return 400 if no name is provided", async () => {
+  test("Should return 400 if no name is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -78,7 +78,7 @@ describe("LoginEmployeeRouter", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("name"));
   });
 
-  test("should return 400 if no role is provided", async () => {
+  test("Should return 400 if no role is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -92,7 +92,7 @@ describe("LoginEmployeeRouter", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("role"));
   });
 
-  test("should return 400 if no businessId is provided", async () => {
+  test("Should return 400 if no businessId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
@@ -106,7 +106,7 @@ describe("LoginEmployeeRouter", () => {
     expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
   });
 
-  test("should return 400 if businessId is invalid", async () => {
+  test("Should return 400 if businessId is invalid", async () => {
     const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
       body: {
@@ -122,7 +122,7 @@ describe("LoginEmployeeRouter", () => {
     expect(httpResponse.body).toEqual(new InvalidParamError("businessId"));
   });
 
-  test("should return 200 if inputs are valid", async () => {
+  test("Should return 200 if inputs are valid", async () => {
     const { sut, loginEmployeeUseCaseSpy } = makeSut();
     const httpRequest = {
       body: {
@@ -140,12 +140,12 @@ describe("LoginEmployeeRouter", () => {
     expect(httpResponse.body).toEqual(loginEmployeeUseCaseSpy.token);
   });
 
-  test("should throw if no httpRequest is provided", async () => {
+  test("Should throw if no httpRequest is provided", async () => {
     const { sut } = makeSut();
     await expect(sut.route()).rejects.toThrow();
   });
 
-  test("should call loginEmployeeUseCase with correct values", async () => {
+  test("Should call loginEmployeeUseCase with correct values", async () => {
     const { sut, loginEmployeeUseCaseSpy } = makeSut();
     const httpRequest = {
       body: {
@@ -162,7 +162,7 @@ describe("LoginEmployeeRouter", () => {
     expect(businessId).toBe("any_business_id");
   });
 
-  test("should call validators with correct values", async () => {
+  test("Should call validators with correct values", async () => {
     const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
       body: {

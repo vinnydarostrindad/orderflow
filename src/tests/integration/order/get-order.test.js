@@ -5,6 +5,8 @@ import {
   createBusiness,
   createTable,
   createOrder,
+  createEmployee,
+  generateAuthCookie,
 } from "../orchestrator.js";
 
 beforeEach(async () => {
@@ -12,14 +14,31 @@ beforeEach(async () => {
   await runMigrations();
 });
 
-describe("GET /api/v1/business/[businessId]/table/[tableId]/order", () => {
+async function makeOrderTestContext(numberOfOrders = 1) {
+  const business = await createBusiness();
+  const { business_id, role, id } = await createEmployee(business.id);
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
+  });
+  const table = await createTable(business.id);
+  const order = await createOrder(business.id, table.id, numberOfOrders);
+
+  return { business, order, token, table };
+}
+
+describe("GET /api/v1/table/[tableId]/order", () => {
   test("Should return all orders with correct data", async () => {
-    const business = await createBusiness();
-    const table = await createTable(business.id);
-    await createOrder(business.id, table.id, 2);
+    const { business, table, token } = await makeOrderTestContext(2);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/${table.id}/order`,
+      `http://localhost:3000/api/v1/table/${table.id}/order`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(200);
@@ -58,12 +77,15 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]/order", () => {
   });
 
   test("Should return an empty array", async () => {
-    const business = await createBusiness();
-    const table = await createTable(business.id);
-    await createOrder(business.id, table.id, 0);
+    const { table, token } = await makeOrderTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/${table.id}/order`,
+      `http://localhost:3000/api/v1/table/${table.id}/order`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(200);
@@ -74,14 +96,17 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]/order", () => {
   });
 });
 
-describe("GET /api/v1/business/[businessId]/table/[tableId]/order/[orderId]", () => {
+describe("GET /api/v1/table/[tableId]/order/[orderId]", () => {
   test("Should return correct order", async () => {
-    const business = await createBusiness();
-    const table = await createTable(business.id);
-    const order = await createOrder(business.id, table.id);
+    const { business, table, order, token } = await makeOrderTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/${table.id}/order/${order.id}`,
+      `http://localhost:3000/api/v1/table/${table.id}/order/${order.id}`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(200);
@@ -113,11 +138,15 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]/order/[orderId]", ()
   });
 
   test("Should return NotFoundError if order does not exists", async () => {
-    const business = await createBusiness();
-    const table = await createTable(business.id);
+    const { table, token } = await makeOrderTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/table/${table.id}/order/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/table/${table.id}/order/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
     );
 
     expect(response.status).toBe(404);

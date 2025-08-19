@@ -2,8 +2,10 @@ import { version as uuidVersion } from "uuid";
 import {
   cleanDatabase,
   createBusiness,
+  createEmployee,
   createMenu,
   createMenuItem,
+  generateAuthCookie,
   runMigrations,
 } from "../orchestrator.js";
 
@@ -12,10 +14,28 @@ beforeEach(async () => {
   await runMigrations();
 });
 
+async function makeMenuItemTestContext(numberOfMenuItems = 1, props) {
+  const business = await createBusiness();
+  const { business_id, role, id } = await createEmployee(business.id);
+  const token = generateAuthCookie({
+    businessId: business_id,
+    role,
+    employeeId: id,
+  });
+  const menu = await createMenu(business.id);
+  const menuItem = await createMenuItem(
+    business.id,
+    menu.id,
+    numberOfMenuItems,
+    props,
+  );
+
+  return { business, menu, menuItem, token };
+}
+
 describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
-  test("should register a menu and return 201", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
+  test("Should register a menu and return 201", async () => {
+    const { menu, token } = await makeMenuItemTestContext(0);
 
     const requestBody = {
       name: "any_name",
@@ -26,10 +46,13 @@ describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu/${menu.id}/item`,
+      `http://localhost:3000/api/v1/menu/${menu.id}/item`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          cookie: `token=${token}`,
+        },
         body: JSON.stringify(requestBody),
       },
     );
@@ -63,10 +86,10 @@ describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
     expect(Date.parse(menuItem.updated_at)).not.toBeNaN();
   });
 
-  test("should return ValidationError if name already exists on menu", async () => {
-    const business = await createBusiness();
-    const menu = await createMenu(business.id);
-    await createMenuItem(business.id, menu.id, 1, { name: "any_name_1" });
+  test("Should return ValidationError if name already exists on menu", async () => {
+    const { menu, token } = await makeMenuItemTestContext(1, {
+      name: "any_name_1",
+    });
 
     const requestBody = {
       name: "any_name_1",
@@ -77,10 +100,13 @@ describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/business/${business.id}/menu/${menu.id}/item`,
+      `http://localhost:3000/api/v1/menu/${menu.id}/item`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          cookie: `token=${token}`,
+        },
         body: JSON.stringify(requestBody),
       },
     );
