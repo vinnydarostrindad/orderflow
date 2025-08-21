@@ -181,17 +181,24 @@
       transform: translateY(0);
     }
 
-    .loading {
-      animation-duration: 500ms;
-      animation-iteration-count: infinite;
-      animation-name: loading;
-      animation-timing-function: linear;
-      background-color: transparent;
-      border: 3px solid #ffffffa2;
-      border-left-color: #ffffff38;
-      border-radius: 50%;
-      height: 20px;
-      width: 20px;
+    div {
+      display: none;
+    }
+
+    &.form__btn--loading {
+      div {
+        animation-duration: 500ms;
+        animation-iteration-count: infinite;
+        animation-name: loading;
+        animation-timing-function: linear;
+        background-color: transparent;
+        border: 3px solid #ffffffa2;
+        border-left-color: #ffffff38;
+        border-radius: 50%;
+        display: block;
+        height: 20px;
+        width: 20px;
+      }
     }
   }
 }

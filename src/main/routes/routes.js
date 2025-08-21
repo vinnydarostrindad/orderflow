@@ -137,6 +137,10 @@ const pagesRoutes = [
     filePath: "/register_me/index.html",
   },
   {
+    pattern: /^\/login\/?(?:\?.*)?$/,
+    filePath: "/login/index.html",
+  },
+  {
     pattern: /^\/create-menu$/,
     filePath: "/create_menu/index.html",
     role: "manager",
