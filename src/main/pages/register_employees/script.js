@@ -190,7 +190,7 @@ async function postEmployees(e) {
 
   try {
     for (let { name, role } of employees) {
-      const response = await fetch(`http://localhost:375000/api/v1/employee`, {
+      const response = await fetch(`http://localhost:3000/api/v1/employee`, {
         method: "POST",
         headers: {
           "content-type": "application/json",

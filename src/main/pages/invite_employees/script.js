@@ -10,6 +10,7 @@ const codeUrl = new URL(`/login?b=${businessId}`, "http://localhost:3000/");
 
 advanceButton.addEventListener("click", () => {
   advanceButton.classList.add("header__button--loading");
+  localStorage.removeItem("b");
   window.location.href = `http://localhost:3000/dashboard`;
 });
 copyCodeBtn.addEventListener("click", (e) => copyToClipBoard(e, businessId));
