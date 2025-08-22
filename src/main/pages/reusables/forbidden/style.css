@@ -1,0 +1,71 @@
+@import url("/styles/base.css");
+
+body {
+  align-items: center;
+  background: var(--background-color);
+  color: var(--text-color);
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.card {
+  width: clamp(560px, 80%, 740px);
+
+  .header {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+
+    .icon {
+      background: #d8121221;
+      border: 1px solid var(--bg-light);
+      border-radius: 12px;
+      display: grid;
+      flex: 0 0 auto;
+      height: 72px;
+      place-items: center;
+      width: 72px;
+
+      svg {
+        color: #e50914;
+        height: 100%;
+        width: 100%;
+      }
+    }
+
+    .title {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      color: var(--link-color);
+      margin-top: 0.25rem;
+    }
+  }
+
+  .notice {
+    background-color: #1b1b1b;
+    border: 1px dashed var(--bg-light);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    margin: 1.1rem 0 1.4rem;
+    padding: 0.7rem 0.9rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.7rem;
+    justify-content: center;
+    margin-top: 0.6rem;
+
+    .btn {
+      flex: 0.5;
+      text-align: center;
+    }
+  }
+}
