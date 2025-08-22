@@ -201,6 +201,13 @@ async function postEmployees(e) {
           password: "funcionario",
         }),
       });
+      if (!response.ok) {
+        throw {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+        };
+      }
       const responseBody = await response.json();
       console.log(responseBody);
     }

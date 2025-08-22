@@ -17,14 +17,24 @@ const router = async function (req, res) {
     const pageInfoObj = findMatchingPageRoute(url);
     const apiRouteInfo = findMatchingApiRoute(url, method);
     let authObj = authMiddleware(req, pageInfoObj || apiRouteInfo);
-    if (authObj && !authObj.auth) {
-      const fileContent = await fsPromises.readFile(
-        path.join("src/main/pages/reusables/unauthorized/index.html"),
-        { encoding: "utf-8" },
-      );
+    if (authObj) {
+      if (!authObj.auth && Object.keys(authObj.employeeData).length > 0) {
+        const fileContent = await fsPromises.readFile(
+          path.join("src/main/pages/reusables/forbidden/index.html"),
+          { encoding: "utf-8" },
+        );
 
-      res.writeHead(401, { "content-type": "text/html" });
-      return res.end(fileContent);
+        res.writeHead(403, { "content-type": "text/html" });
+        return res.end(fileContent);
+      } else if (!authObj.auth) {
+        const fileContent = await fsPromises.readFile(
+          path.join("src/main/pages/reusables/unauthorized/index.html"),
+          { encoding: "utf-8" },
+        );
+
+        res.writeHead(401, { "content-type": "text/html" });
+        return res.end(fileContent);
+      }
     }
 
     let response;

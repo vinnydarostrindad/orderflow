@@ -41,6 +41,11 @@ function authMiddleware(req, routeInfoObj) {
       employeeData,
     };
   }
+
+  return {
+    auth: false,
+    employeeData: {},
+  };
 }
 
 export default authMiddleware;
