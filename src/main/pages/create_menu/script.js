@@ -69,7 +69,9 @@ function changeForms() {
 async function createMenu(e) {
   e.preventDefault();
 
-  menuFormBtn.innerHTML = "Criando <div class='loading'></div>";
+  menuFormBtn.classList.add("form__btn--loading");
+  menuFormBtn.disabled = true;
+  menuFormBtn.firstElementChild.textContent = "Criando";
 
   const name = e.target[0].value;
 
@@ -96,10 +98,14 @@ async function createMenu(e) {
 
     menu.firstElementChild.textContent = name;
 
+    menuFormBtn.classList.remove("form__btn--loading");
+    menuFormBtn.disabled = false;
     menuFormBtn.innerHTML = "Criar";
     changeForms();
   } catch (error) {
     console.error(error);
+    menuFormBtn.classList.remove("form__btn--loading");
+    menuFormBtn.disabled = false;
     menuFormBtn.textContent = "Criar";
     showSnackBar(
       "error",

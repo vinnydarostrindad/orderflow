@@ -7,7 +7,7 @@ function redirect(e) {
 
   switch (localStorage.getItem("role")) {
     case "waiter":
-      window.location.href = "/waiter";
+      window.location.href = "/menus";
       break;
 
     case "cook":

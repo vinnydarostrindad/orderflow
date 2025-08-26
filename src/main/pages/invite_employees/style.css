@@ -3,7 +3,7 @@
 
 body,
 html {
-  color: var(--text-color);
+  color: var(--color-text);
   height: 100dvh;
 }
 
@@ -30,7 +30,7 @@ main.invite {
     }
 
     p {
-      color: var(--link-color);
+      color: var(--color-text-muted);
       font-size: 1.125rem;
       text-align: center;
     }
@@ -39,7 +39,7 @@ main.invite {
   .invite__code {
     .code-box {
       align-items: center;
-      border: 2px solid var(--text-color);
+      border: var(--border-default);
       display: flex;
       height: 40px;
       margin: 0.5rem 0;
@@ -80,8 +80,8 @@ main.invite {
   }
 
   .invite__share-button {
-    background-color: var(--primary-color);
-    border: 2px solid var(--text-color);
+    background-color: var(--color-primary);
+    border: var(--border-default);
     box-shadow: 0 0 #000;
     color: #fff;
     cursor: pointer;
@@ -94,7 +94,7 @@ main.invite {
     width: min(100%, 322px);
 
     &:hover {
-      box-shadow: var(--button-shadow);
+      box-shadow: var(--shadow-button);
       transform: translateY(-2px);
     }
   }
@@ -128,7 +128,7 @@ main.invite {
 }
 
 .modal {
-  background-color: var(--bg-light);
+  background-color: var(--color-bg-light);
   border-radius: 1.25rem 1.25rem 0 0;
   bottom: 0;
   position: fixed;
@@ -142,7 +142,7 @@ main.invite {
   }
 
   .modal__header {
-    border-bottom: 1px solid var(--link-color);
+    border-bottom: 1px solid var(--color-text-muted);
     margin-bottom: 1.6rem;
     padding: 1rem 1.6rem;
 
@@ -200,7 +200,7 @@ main.invite {
         align-items: center;
         background-color: transparent;
         border: none;
-        color: var(--text-color);
+        color: var(--color-text);
         cursor: pointer;
         display: flex;
         flex-direction: column;

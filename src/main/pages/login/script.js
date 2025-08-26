@@ -16,8 +16,9 @@ if (urlBusinessId) businessIdInput.value = urlBusinessId;
 async function submitForm(e) {
   e.preventDefault();
 
+  submitBtn.classList.add("form__btn--loading");
   submitBtn.disabled = true;
-  submitBtn.innerHTML = "Entrando <div class='loading'></div>";
+  submitBtn.firstElementChild.textContent = "Entrando";
 
   const name = nameInput.value;
   const businessId = businessIdInput.value;
@@ -47,6 +48,9 @@ async function submitForm(e) {
 
     await response.json();
 
+    submitBtn.classList.remove("form__btn--loading");
+    submitBtn.disabled = false;
+    submitBtn.firstElementChild.textContent = "Entrar";
     redirectUser(role);
   } catch (err) {
     console.error(err);
@@ -64,6 +68,8 @@ async function submitForm(e) {
         );
         break;
     }
+
+    submitBtn.classList.add("form__btn--loading");
     submitBtn.textContent = "Entrar";
     submitBtn.disabled = false;
   }
@@ -72,10 +78,10 @@ async function submitForm(e) {
 function redirectUser(role) {
   switch (role) {
     case "manager":
-      window.location.href = "/dashbord";
+      window.location.href = "/dashboard";
       break;
     case "waiter":
-      window.location.href = "/waiter";
+      window.location.href = "/menus";
       break;
     case "cook":
       window.location.href = "/cook";

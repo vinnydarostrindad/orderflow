@@ -1,34 +1,58 @@
 :root {
-  --primary-color: #d81212;
-  --primary-dark: #7c0606;
-  --background-color: #dfdfdf;
-  --text-color: #000;
-  --link-color: #5f5f5f;
-  --button-shadow: 0 2px #181818;
-  --scroll-bar-color: #aaa #f0f0f0;
-  --bg-light: #fff;
-  --skeleton-bg: #ededed;
-  --skeleton-shine: #fff;
+  /* COLORS */
+  --color-primary: #d81212;
+  --color-bg-dark: #dfdfdf;
+  --color-bg-light: #fff;
+  --color-text: #000;
+  --color-text-muted: #5f5f5f;
+  --color-skeleton-bg: #ededed;
+  --color-skeleton-shine: #fff;
+
+  /* EFFECTS */
+  --shadow-button: 0 2px #181818;
+
+  /* BORDERS */
+  --border-default: 2px solid var(--text-color);
+
+  /* SPACING */
+  --space-xs: 0.4rem;
+  --space-sm: 0.8rem;
+  --space-md: 1.2rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+
+  /* TYPOGRAPHI */
+  --font-base: 16px;
+  --font-family: arial, helvetica, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary-color: #e50914;
-    --primary-dark: #7c0606;
-    --background-color: #201e1e;
-    --text-color: #dadada;
-    --link-color: #a5a5a5;
-    --button-shadow: 0 2px #afafaf;
-    --scroll-bar-color: #555 #222;
-    --bg-light: #333;
-    --skeleton-shine: #505050;
-    --skeleton-bg: #333;
+    /* COLORS */
+    --color-primary: #e50914;
+    --color-bg-dark: #201e1e;
+    --color-bg-light: #333;
+    --color-text: #dadada;
+    --color-text-muted: #a5a5a5;
+    --color-skeleton-bg: #333;
+    --color-skeleton-shine: #505050;
+
+    /* EFFECTS */
+    --shadow-button: 0 2px #afafaf;
+
+    /* BORDERS */
+    --border-width: 2px;
+    --border-default: var(--border-width) solid var(--text-color);
   }
 
   .invert {
     filter: invert(1);
   }
 }
+
+/*----------------*/
+/*      RESET     */
+/*----------------*/
 
 * {
   box-sizing: border-box;
@@ -38,10 +62,28 @@
 
 html,
 body {
-  background-color: var(--background-color);
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 16px;
-  scrollbar-color: var(--scroll-bar-color);
+  background-color: var(--color-bg-dark);
+  font-family: var(--font-family);
+  font-size: var(--font-base);
+}
+
+a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+/*-------------------*/
+/*      BUTTONS      */
+/*-------------------*/
+
+@keyframes loading {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .btn {
@@ -49,13 +91,13 @@ body {
   cursor: pointer;
   font-weight: bold;
   outline-offset: 4px;
-  padding: 0.8rem 0.9rem;
+  padding: var(--space-sm) var(--space-md);
   transition:
     box-shadow 150ms,
     transform 150ms;
 
   &:hover {
-    box-shadow: var(--button-shadow);
+    box-shadow: var(--shadow-button);
     transform: translateY(-2px);
   }
 
@@ -65,12 +107,37 @@ body {
   }
 
   &.primary-btn {
-    background-color: var(--primary-color);
-    border: 2px solid var(--text-color);
+    background-color: var(--color-primary);
+    border: var(--border-default);
   }
 
   &.ghost-btn {
-    background-color: var(--background-color);
-    border: 2px solid var(--link-color);
+    background-color: var(--color-bg-dark);
+    border: var(--border-width) solid var(--color-text-muted);
+  }
+}
+
+/*--------------------*/
+/*      SKELETON      */
+/*--------------------*/
+
+.skeleton {
+  animation: skeleton-shine 2.5s infinite;
+  background: linear-gradient(
+    120deg,
+    var(--color-skeleton-bg) 40%,
+    var(--color-skeleton-shine) 50%,
+    var(--color-skeleton-bg) 60%
+  );
+  background-size: 200% 100%;
+}
+
+@keyframes skeleton-shine {
+  0% {
+    background-position: 150% 0;
+  }
+
+  100% {
+    background-position: -50% 0;
   }
 }

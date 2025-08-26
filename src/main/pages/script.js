@@ -8,8 +8,9 @@ registerForm.addEventListener("submit", submitForm);
 async function submitForm(e) {
   e.preventDefault();
 
+  submitBtn.classList.add("form__btn--loading");
   submitBtn.disabled = true;
-  submitBtn.innerHTML = "Registrando <div class='loading'></div>";
+  submitBtn.firstElementChild.textContent = "Registrando";
 
   const name = document.querySelector("#name").value;
   const email = document.querySelector("#email").value;
@@ -35,6 +36,10 @@ async function submitForm(e) {
     const responseBody = await response.json();
     console.log(responseBody);
 
+    submitBtn.classList.remove("form__btn--loading");
+    submitBtn.firstElementChild.textContent = "Registrar";
+    submitBtn.disabled = false;
+
     localStorage.setItem("b", responseBody.id);
     window.location.href = `http://localhost:3000/register-me`;
   } catch (err) {
@@ -43,7 +48,9 @@ async function submitForm(e) {
       "error",
       "<p>Erro ao fazer o registro. <br /> Tente novamente.</p>",
     );
-    submitBtn.textContent = "Registrar";
+
+    submitBtn.classList.remove("form__btn--loading");
+    submitBtn.firstElementChild.textContent = "Registrar";
     submitBtn.disabled = false;
   }
 }

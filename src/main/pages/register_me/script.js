@@ -10,8 +10,9 @@ registerForm.addEventListener("submit", submitForm);
 async function submitForm(e) {
   e.preventDefault();
 
+  submitBtn.classList.add("form__btn--loading");
   submitBtn.disabled = true;
-  submitBtn.innerHTML = "Continuar <div class='loading'></div>";
+  submitBtn.firstElementChild.textContent = "Continuando";
 
   const name = document.querySelector("#name").value;
 
@@ -48,6 +49,10 @@ async function submitForm(e) {
     const responseBody = await response.json();
     console.log(responseBody);
 
+    submitBtn.classList.remove("form__btn--loading");
+    submitBtn.disabled = false;
+    submitBtn.firstElementChild.textContent = "Continuar";
+
     window.location.href = `http://localhost:3000/register-employees`;
   } catch (err) {
     console.error(err);
@@ -55,8 +60,10 @@ async function submitForm(e) {
       "error",
       "<p>Erro ao fazer o registro. <br /> Tente novamente.</p>",
     );
-    submitBtn.textContent = "Continuar";
+
+    submitBtn.classList.remove("form__btn--loading");
     submitBtn.disabled = false;
+    submitBtn.firstElementChild.textContent = "Continuar";
   }
 }
 
