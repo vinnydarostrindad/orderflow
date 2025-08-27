@@ -1,0 +1,92 @@
+@import url("/styles/base.css");
+@import url("/styles/header.css");
+@import url("/styles/navbar.css");
+
+body {
+  color: var(--color-text);
+}
+
+.header {
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 999;
+}
+
+/*********************/
+/*       MENUS       */
+/*********************/
+
+.main {
+  align-items: center;
+  display: grid;
+  margin-top: 3.75rem;
+  min-height: calc(100vh - 60px);
+
+  .menus {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    width: min(90%, 520px);
+
+    > p {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 3.75rem;
+      text-align: center;
+    }
+
+    .menu-card {
+      align-items: center;
+      background-color: var(--color-bg-light);
+      border-radius: 10px;
+      color: var(--color-text);
+      display: flex;
+      height: 90px;
+      transition: 200ms ease-in-out;
+      width: 100%;
+
+      .menu-card__img {
+        height: 100%;
+        min-width: 100px;
+        width: 30%;
+
+        img {
+          border-radius: 10px 0 0 10px;
+          height: 100%;
+          object-fit: cover;
+          width: 100%;
+        }
+      }
+
+      .menu-card__infos {
+        padding: 1rem;
+        text-align: center;
+        width: 70%;
+
+        .menu-card__name {
+          font-size: 2rem;
+        }
+      }
+
+      &:hover {
+        transform: scale(1.025);
+      }
+    }
+
+    .menu-card-skeleton {
+      border-radius: 10px;
+      height: 90px;
+      width: 100%;
+    }
+  }
+}
+
+@media screen and (width >= 920px) {
+  .main {
+    margin-left: 12.5rem;
+  }
+}

@@ -4,7 +4,7 @@
 
 body,
 html {
-  color: var(--text-color);
+  color: var(--color-text);
   min-height: 100dvh;
 }
 

@@ -28,7 +28,6 @@ carouselLeftBtn.addEventListener("click", moveLastOrders);
 carouselRightBtn.addEventListener("click", moveLastOrders);
 
 function togglenavBar() {
-  window.scrollTo(0, 0);
   document.body.style.overflow = navBar.classList.contains("navbar--hidden")
     ? "hidden"
     : "";

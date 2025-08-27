@@ -4,32 +4,7 @@
 
 body,
 html {
-  color: var(--text-color);
-}
-
-/*--------------------*/
-/*      SKELETON      */
-/*--------------------*/
-
-.skeleton {
-  animation: skeleton-shine 2.5s infinite;
-  background: linear-gradient(
-    120deg,
-    var(--skeleton-bg) 40%,
-    var(--skeleton-shine) 50%,
-    var(--skeleton-bg) 60%
-  );
-  background-size: 200% 100%;
-}
-
-@keyframes skeleton-shine {
-  0% {
-    background-position: 150% 0;
-  }
-
-  100% {
-    background-position: -50% 0;
-  }
+  color: var(--color-text);
 }
 
 /*--------------------*/
@@ -41,16 +16,6 @@ html {
 
   .header__content {
     padding: 0;
-
-    .header__menu-button {
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-
-      img {
-        width: 30px;
-      }
-    }
   }
 }
 
@@ -59,7 +24,7 @@ html {
 /*--------------------*/
 
 .navbar {
-  background-color: var(--bg-light);
+  background-color: var(--color-bg-light);
   font-size: 1.1rem;
   height: 100%;
   overflow: hidden;
@@ -84,7 +49,7 @@ html {
 
       a {
         align-items: center;
-        color: var(--text-color);
+        color: var(--color-text);
         display: flex;
         gap: 0.6rem;
         justify-content: center;
@@ -103,7 +68,7 @@ html {
       }
 
       &.navbar__item--selected {
-        background-color: var(--background-color);
+        background-color: var(--color-bg-dark);
         font-weight: bold;
         margin: 0.6rem 0;
         transform: scale(1.2);
@@ -130,10 +95,10 @@ html {
     width: min(90%, 940px);
 
     .business-stats__select {
-      background-color: var(--background-color);
+      background-color: var(--color-bg-dark);
       border: none;
-      border-bottom: 1px solid var(--text-color);
-      color: var(--text-color);
+      border-bottom: 1px solid var(--color-text);
+      color: var(--color-text);
       font-size: 1rem;
       margin: 0 auto;
       padding: 0.5rem 0.3rem;
@@ -141,8 +106,8 @@ html {
     }
 
     .business-stats__info {
-      background-color: var(--bg-light);
-      border: 2px solid var(--text-color);
+      background-color: var(--color-bg-light);
+      border: var(--border-default);
       border-radius: 10px;
       box-shadow: 1px 1px 25px #0000001a;
       font-size: 1.1rem;
@@ -175,7 +140,7 @@ html {
         width: 300px;
 
         .chart-hole {
-          background-color: var(--background-color);
+          background-color: var(--color-bg-dark);
           border-radius: 50%;
           height: 140px;
           width: 140px;
@@ -254,7 +219,7 @@ html {
           translate: 0 0;
 
           .last-orders__order {
-            border: 2px solid var(--text-color);
+            border: var(--border-default);
             display: flex;
             flex: 0 0 220px;
             flex-direction: column;
@@ -263,7 +228,7 @@ html {
 
             div:first-child {
               align-items: center;
-              border-bottom: 1px solid var(--text-color);
+              border-bottom: 1px solid var(--color-text);
               display: flex;
               height: 65px;
               justify-content: center;
@@ -286,7 +251,7 @@ html {
               height: 55%;
 
               p {
-                border-bottom: 1px solid var(--text-color);
+                border-bottom: 1px solid var(--color-text);
                 padding: 0.15rem 0.6rem;
               }
 
@@ -320,7 +285,7 @@ html {
 
         &:not(:disabled):hover {
           background-color: #fff;
-          color: var(--primary-color);
+          color: var(--color-primary);
 
           /* stylelint-disable-next-line no-descending-specificity */
           img {
@@ -389,7 +354,7 @@ html {
         }
 
         &.navbar__item--selected {
-          background-color: var(--background-color);
+          background-color: var(--color-bg-dark);
           font-weight: bold;
           margin: 0.3rem 0 0.3rem 0.4rem;
           transform: scale(1.1);

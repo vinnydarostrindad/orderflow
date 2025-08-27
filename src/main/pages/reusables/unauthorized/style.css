@@ -1,9 +1,9 @@
-@import url("../../styles/base.css");
+@import url("/styles/base.css");
 
 body {
   align-items: center;
-  background: var(--background-color);
-  color: var(--text-color);
+  background: var(--color-bg-dark);
+  color: var(--color-text);
   display: flex;
   justify-content: center;
   min-height: 100vh;
@@ -20,7 +20,7 @@ body {
 
     .icon {
       background: #d8121221;
-      border: 1px solid var(--bg-light);
+      border: 1px solid var(--color-bg-light);
       border-radius: 12px;
       display: grid;
       flex: 0 0 auto;
@@ -42,14 +42,14 @@ body {
     }
 
     .subtitle {
-      color: var(--link-color);
+      color: var(--color-text-muted);
       margin-top: 0.25rem;
     }
   }
 
   .notice {
     background-color: #1b1b1b;
-    border: 1px dashed var(--bg-light);
+    border: 1px dashed var(--color-bg-light);
     border-radius: 10px;
     font-size: 0.95rem;
     line-height: 1.45;

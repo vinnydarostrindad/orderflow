@@ -10,7 +10,7 @@
 
     <script src="/scripts/check-auth.js"></script>
 
-    <link rel="stylesheet" href="/create_menu/style.css" />
+    <link rel="stylesheet" href="/manager/create_menu/style.css" />
     <title>Criar Cardápio</title>
   </head>
   <body>
@@ -41,8 +41,13 @@
             />
             <label for="menuName" class="form__label">Nome</label>
           </div>
-          <button type="submit" class="form__btn" id="menuFormBtn">
-            Criar
+          <button
+            type="submit"
+            class="btn primary-btn form__btn"
+            id="menuFormBtn"
+          >
+            <span class="form__btn-text">Criar</span>
+            <div class="loading"></div>
           </button>
         </form>
       </section>
@@ -133,7 +138,9 @@
                 </div>
               </div>
             </div>
-            <button type="submit" class="form__btn">Adicionar</button>
+            <button type="submit" class="btn primary-btn form__btn">
+              Adicionar
+            </button>
           </form>
         </div>
         <div class="menu-preview" id="menu">
@@ -145,6 +152,6 @@
       </section>
     </main>
 
-    <script src="/create_menu/script.js" type="module"></script>
+    <script src="'/manager'/create_menu/script.js" type="module"></script>
   </body>
 </html>

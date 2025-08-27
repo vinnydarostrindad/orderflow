@@ -6,7 +6,7 @@
 
 body,
 html {
-  color: var(--text-color);
+  color: var(--color-text);
 }
 
 /*--------------------*/
@@ -16,14 +16,14 @@ html {
 .skip-button {
   background-color: transparent;
   border: none;
-  color: var(--link-color);
+  color: var(--color-text-muted);
   cursor: pointer;
   font-size: 0.875rem;
   text-align: center;
   text-decoration: underline;
 
   &:hover {
-    color: var(--text-color);
+    color: var(--color-text);
   }
 }
 
@@ -139,7 +139,7 @@ html {
           }
 
           .type-select-box {
-            background-color: var(--bg-light);
+            background-color: var(--color-bg-light);
             left: -2px;
             max-height: 7.4rem;
             overflow-y: auto;
@@ -152,15 +152,15 @@ html {
             button {
               background-color: transparent;
               border: none;
-              border-bottom: 1px solid var(--link-color);
-              color: var(--text-color);
+              border-bottom: 1px solid var(--color-text-muted);
+              color: var(--color-text);
               cursor: pointer;
               display: block;
               padding: 0.4rem 0;
               width: 100%;
 
               &:hover {
-                background-color: var(--background-color);
+                background-color: var(--color-bg-dark);
               }
             }
           }
@@ -186,11 +186,11 @@ html {
     }
 
     .menu-preview {
-      color: var(--text-color);
+      color: var(--color-text);
       width: min(97%, 600px);
 
       .menu-preview__items {
-        border: 2px solid var(--link-color);
+        border: var(--border-width) solid var(--color-text-muted);
         margin-top: 0.6rem;
         max-height: 457px;
         min-height: 100px;
@@ -198,7 +198,7 @@ html {
 
         /* stylelint-disable-next-line no-descending-specificity */
         > p {
-          color: var(--link-color);
+          color: var(--color-text-muted);
           font-size: 1.25rem;
           padding: 1.5rem 1rem;
           text-align: center;
@@ -206,9 +206,9 @@ html {
 
         .menu-preview__item {
           align-items: flex-start;
-          background: var(--background-color);
-          border: 1px solid var(--link-color);
-          color: var(--text-color);
+          background: var(--color-bg-dark);
+          border: 1px solid var(--color-text-muted);
+          color: var(--color-text);
           display: flex;
           gap: 0.75rem;
           padding: 0.5rem;
@@ -227,8 +227,8 @@ html {
       .menu-preview__item-img {
         align-items: center;
         align-self: center;
-        background: var(--bg-light);
-        color: var(--link-color);
+        background: var(--color-bg-light);
+        color: var(--color-text-muted);
         display: flex;
         flex-shrink: 0;
         font-size: 0.75rem;

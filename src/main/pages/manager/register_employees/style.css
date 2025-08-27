@@ -6,7 +6,7 @@
 
 body,
 html {
-  color: var(--text-color);
+  color: var(--color-text);
   min-height: 100dvh;
 }
 
@@ -42,14 +42,14 @@ html {
       button {
         background-color: transparent;
         border: none;
-        color: var(--link-color);
+        color: var(--color-text-muted);
         cursor: pointer;
         font-size: 0.875rem;
         text-align: center;
         text-decoration: underline;
 
         &:hover {
-          color: var(--text-color);
+          color: var(--color-text);
         }
       }
     }
@@ -59,10 +59,10 @@ html {
     }
 
     .form-section__role-box {
-      background-color: var(--bg-light);
-      border: 2px solid var(--text-color);
+      background-color: var(--color-bg-light);
+      border: var(--border-default);
       border-radius: 10px;
-      color: var(--text-color);
+      color: var(--color-text);
       font-size: 0.95rem;
       letter-spacing: 1px;
       line-height: 20px;
@@ -71,8 +71,8 @@ html {
     }
 
     .form-section__button {
-      background-color: var(--primary-color);
-      border: 2px solid var(--text-color);
+      background-color: var(--color-primary);
+      border: var(--border-default);
       color: #fff;
       cursor: pointer;
       font-weight: bold;
@@ -83,7 +83,7 @@ html {
         transform 150ms;
 
       &:hover {
-        box-shadow: var(--button-shadow);
+        box-shadow: var(--shadow-button);
         transform: translateY(-2px);
       }
 
@@ -103,7 +103,7 @@ html {
   width: 80%;
 
   table {
-    border: 2px solid rgb(140 140 140);
+    border: var(--border-width) solid rgb(140 140 140);
     border-collapse: collapse;
     font-size: 0.875rem;
     letter-spacing: 1px;
@@ -121,7 +121,7 @@ html {
     }
 
     thead {
-      background-color: var(--primary-color);
+      background-color: var(--color-primary);
       color: #fff;
     }
 
@@ -133,7 +133,7 @@ html {
 
     tr {
       td {
-        background-color: var(--bg-light);
+        background-color: var(--color-bg-light);
       }
 
       td:last-child div {

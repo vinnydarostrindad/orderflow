@@ -33,19 +33,19 @@ function createConfirmModal(msg, cancelFunc, continueFunc) {
   const buttons = document.createElement("div");
   buttons.setAttribute("class", "modal__buttons");
 
-  const cancelBtn = document.createElement("button");
-  cancelBtn.setAttribute("class", "modal__cancel-button");
-  cancelBtn.setAttribute("id", "cancelBtn");
-  cancelBtn.textContent = "Cancelar";
-  cancelBtn.onclick = () => cancelFunc(modalBg, modal);
-
   const continueBtn = document.createElement("button");
   continueBtn.setAttribute("class", "modal__continue-button");
   continueBtn.setAttribute("id", "continueBtn");
   continueBtn.textContent = "Continuar";
   continueBtn.onclick = () => continueFunc(modalBg, modal);
 
-  buttons.append(cancelBtn, continueBtn);
+  const cancelBtn = document.createElement("button");
+  cancelBtn.setAttribute("class", "modal__cancel-button");
+  cancelBtn.setAttribute("id", "cancelBtn");
+  cancelBtn.textContent = "Cancelar";
+  cancelBtn.onclick = () => cancelFunc(modalBg, modal);
+
+  buttons.append(continueBtn, cancelBtn);
   modal.append(message, buttons);
 
   return { modalBg, modal };
