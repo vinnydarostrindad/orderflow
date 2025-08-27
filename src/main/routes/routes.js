@@ -122,38 +122,47 @@ const apiRoutes = [
   },
 ];
 
+const managerPages = [
+  {
+    pattern: /^\/register-employees\/?(?:\?.*)?$/,
+    filePath: "/manager/register_employees/index.html",
+    role: "manager",
+  },
+  {
+    pattern: /^\/register-me\/?(?:\?.*)?$/,
+    filePath: "/manager/register_me/index.html",
+  },
+  {
+    pattern: /^\/create-menu$/,
+    filePath: "/manager/create_menu/index.html",
+    role: "manager",
+  },
+  {
+    pattern: /^\/invite-employees$/,
+    filePath: "/manager/invite_employees/index.html",
+    role: "manager",
+  },
+  {
+    pattern: /^\/dashboard$/,
+    filePath: "/manager/manager_dashboard/index.html",
+    role: "manager",
+  },
+];
+
 const pagesRoutes = [
   {
     pattern: /^\/$/,
     filePath: "/index.html",
   },
   {
-    pattern: /^\/register-employees\/?(?:\?.*)?$/,
-    filePath: "/register_employees/index.html",
-    role: "manager",
-  },
-  {
-    pattern: /^\/register-me\/?(?:\?.*)?$/,
-    filePath: "/register_me/index.html",
-  },
-  {
     pattern: /^\/login\/?(?:\?.*)?$/,
     filePath: "/login/index.html",
   },
+  ...managerPages,
   {
-    pattern: /^\/create-menu$/,
-    filePath: "/create_menu/index.html",
-    role: "manager",
-  },
-  {
-    pattern: /^\/invite-employees$/,
-    filePath: "/invite_employees/index.html",
-    role: "manager",
-  },
-  {
-    pattern: /^\/dashboard$/,
-    filePath: "/manager_dashboard/index.html",
-    role: "manager",
+    pattern: /^\/menus$/,
+    filePath: "/waiter/menus/index.html",
+    role: "waiter",
   },
 ];
 

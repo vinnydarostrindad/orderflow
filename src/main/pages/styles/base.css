@@ -12,7 +12,8 @@
   --shadow-button: 0 2px #181818;
 
   /* BORDERS */
-  --border-default: 2px solid var(--text-color);
+  --border-width: 2px;
+  --border-default: var(--border-width) solid var(--color-text);
 
   /* SPACING */
   --space-xs: 0.4rem;
@@ -41,8 +42,7 @@
     --shadow-button: 0 2px #afafaf;
 
     /* BORDERS */
-    --border-width: 2px;
-    --border-default: var(--border-width) solid var(--text-color);
+    --border-default: var(--border-width) solid var(--color-text);
   }
 
   .invert {

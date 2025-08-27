@@ -1,16 +1,29 @@
 class AppHeader extends HTMLElement {
   connectedCallback() {
+    const headerBtn = this.getAttribute("button");
+
+    if (headerBtn === "menu") {
+      this.buildHeaderWithMenuBtn();
+    } else if (headerBtn === "advance") {
+      this.buildHeaderWithAdvanceBtn();
+    } else {
+      this.buildHeaderWithoutBtn();
+    }
+  }
+
+  buildHeaderWithMenuBtn() {
     this.innerHTML = `
       <header class="header">
         <div class="header__content">
           <h1 class="header__title">OrderFlow</h1>
-          <button
-            class="header__menu-button"
-            id="headerMenuBtn"
-            aria-label="Abrir/Fechar menu"
-          >
-            <img src="/components/header/img/menu-icon.svg" alt="ícone de menu" />
-          </button>
+
+            <button
+              class="header__menu-button"
+              id="headerMenuBtn"
+              aria-label="Abrir/Fechar menu"
+            >
+              <img src="/components/header/img/menu-icon.svg" alt="ícone de menu" />
+            </button>  
         </div>
       </header>
     `;
@@ -23,6 +36,29 @@ class AppHeader extends HTMLElement {
         : "";
       navBar.classList.toggle("navbar--hidden");
     });
+  }
+
+  buildHeaderWithAdvanceBtn() {
+    this.innerHTML = `
+      <header class="header">
+        <div class="header__content">
+          <h1 class="header__title">OrderFlow</h1>
+          <button type="button" class="header__button" id="advanceBtn">
+            avançar
+          </button> 
+        </div>
+      </header>
+    `;
+  }
+
+  buildHeaderWithoutBtn() {
+    this.innerHTML = `
+      <header class="header">
+        <div class="header__content">
+          <h1 class="header__title">OrderFlow</h1>
+        </div>
+      </header>
+    `;
   }
 }
 
