@@ -15,16 +15,26 @@
   --border-width: 2px;
   --border-default: var(--border-width) solid var(--color-text);
 
+  /* BORDER-RADIUS */
+  --radius-lg: 15px;
+
   /* SPACING */
   --space-xs: 0.4rem;
   --space-sm: 0.8rem;
-  --space-md: 1.2rem;
+  --space-md: 1.5rem;
   --space-lg: 2rem;
   --space-xl: 3rem;
 
   /* TYPOGRAPHI */
-  --font-base: 16px;
   --font-family: arial, helvetica, sans-serif;
+  --font-base: 16px;
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-md: 1rem;
+  --font-lg: 1.25rem;
+  --font-xl: 1.5rem;
+  --font-2xl: 2rem;
+  --font-3xl: 2.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -38,7 +48,7 @@
     --color-skeleton-bg: #333;
     --color-skeleton-shine: #505050;
 
-    /* EFFECTS */
+    /* SHADOWS */
     --shadow-button: 0 2px #afafaf;
 
     /* BORDERS */
@@ -109,11 +119,12 @@ a {
   &.primary-btn {
     background-color: var(--color-primary);
     border: var(--border-default);
+    color: #fff;
   }
 
   &.ghost-btn {
-    background-color: var(--color-bg-dark);
-    border: var(--border-width) solid var(--color-text-muted);
+    background-color: var(--color-bg-light);
+    border: var(--border-default);
   }
 }
 

@@ -1,5 +1,5 @@
 import "/components/snackbar.js";
-import showConfirmModal from "/scripts/confirm-modal.js";
+import "/components/confirm-modal.js";
 
 const registerEmployeeForm = document.forms[0];
 const roleSelect = document.querySelector("#role");
@@ -48,19 +48,19 @@ function handleSkip(e) {
     return;
   }
 
-  showConfirmModal({
-    message: "Tudo que foi adicionado será perdido. Deseja continuar?",
-    onCancel: (modalBg, modal) => {
-      modalBg.remove();
-      modal.remove();
-      document.documentElement.style.overflow = "";
-    },
-    onContinue: () => {
-      window.removeEventListener("beforeunload", saveEmployeesDraft);
-      sessionStorage.removeItem("employeesDraft");
-      redirectToNextPage();
-    },
-  });
+  const confirmModal = document.createElement("confirm-modal");
+  confirmModal.msg = "Tudo que foi adicionado será perdido. Deseja continuar?";
+  confirmModal.continueFunc = () => {
+    window.removeEventListener("beforeunload", saveEmployeesDraft);
+    sessionStorage.removeItem("employeesDraft");
+    redirectToNextPage();
+  };
+  confirmModal.cancelFunc = (modalBg, modal) => {
+    modalBg.remove();
+    modal.remove();
+    document.documentElement.style.overflow = "";
+  };
+  document.body.append(confirmModal);
 }
 
 function updateRoleExplanation(e) {
@@ -122,7 +122,7 @@ function renderTableRow({ name, role }) {
         <div>
           ${roles[role]}
           <button class="remove-button" data-name="${name}" data-role="${role}" aria-label="Remover ${name}">
-          <img src="/register_employees/img/remove-icon.svg" alt="Remover">
+          <img src="/manager/register_employees/img/remove-icon.svg" alt="Remover">
           </button>
         </div>
       </td>

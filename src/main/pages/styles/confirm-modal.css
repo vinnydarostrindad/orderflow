@@ -1,4 +1,4 @@
-.modal-background {
+.modal-bg {
   backdrop-filter: blur(5px);
   background-color: #00000063;
   height: 100dvh;
@@ -6,74 +6,34 @@
   position: fixed;
   top: 0;
   width: 100%;
-
-  &.modal-background--hidden {
-    display: none;
-  }
 }
 
 .modal {
   background-color: var(--color-bg-dark);
   border: var(--border-default);
-  border-radius: 15px;
-  font-size: 1.2rem;
+  border-radius: var(--radius-lg);
+  font-size: 1.125rem;
   left: 50%;
-  padding: 1.5rem;
+  padding: var(--space-md);
   position: fixed;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: min(98%, 535px);
-  z-index: 1;
-
-  &.modal--hidden {
-    display: none;
-  }
+  width: min(90%, 505px);
+  z-index: 9999;
 
   div {
     display: flex;
-    gap: 1rem;
+    gap: var(--space-sm);
     justify-content: center;
-    margin-top: 1.5rem;
+    margin-top: var(--space-md);
 
     button {
-      border: var(--border-default);
-      border-radius: 15px;
+      border-radius: var(--radius-lg);
       color: var(--color-text);
-      cursor: pointer;
-      font-weight: bold;
-      padding: 0.8rem;
+      padding: var(--space-sm);
       transition:
         box-shadow 150ms,
         transform 150ms;
-    }
-
-    .modal__cancel-button {
-      background-color: var(--color-bg-dark);
-
-      &:hover {
-        box-shadow: var(--shadow-button);
-        transform: translateY(-2px);
-      }
-
-      &:active {
-        box-shadow: 0 0;
-        transform: translateY(0);
-      }
-    }
-
-    .modal__continue-button {
-      background-color: var(--color-primary);
-      color: #fff;
-
-      &:hover {
-        box-shadow: var(--shadow-button);
-        transform: translateY(-2px);
-      }
-
-      &:active {
-        box-shadow: 0 0;
-        transform: translateY(0);
-      }
     }
   }
 }

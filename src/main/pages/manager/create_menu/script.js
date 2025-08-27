@@ -1,5 +1,5 @@
-import showConfirmModal from "/scripts/confirm-modal.js";
 import "/components/snackbar.js";
+import "/components/confirm-modal.js";
 
 const advanceButton = document.querySelector("#advanceBtn");
 const main = document.querySelector("#main");
@@ -47,19 +47,18 @@ function handleSkip() {
     return;
   }
 
-  showConfirmModal({
-    message: "Tudo que foi adicionado será perdido. Deseja continuar?",
-    onCancel: (modalBg, modal) => {
-      modalBg.remove();
-      modal.remove();
-      document.documentElement.style.overflow = "";
-    },
-    onContinue: () => {
-      window.removeEventListener("beforeunload", saveMenuItemsDraft);
-      sessionStorage.removeItem("menuItemsDraft");
-      redirectToNextPage();
-    },
-  });
+  const confirmModal = document.createElement("confirm-modal");
+  confirmModal.msg = "Tudo que foi adicionado será perdido. Deseja continuar?";
+  confirmModal.continueFunc = () => {
+    window.removeEventListener("beforeunload", saveMenuItemsDraft);
+    sessionStorage.removeItem("menuItemsDraft");
+    redirectToNextPage();
+  };
+  confirmModal.cancelFunc = (modalBg, modal) => {
+    modalBg.remove();
+    modal.remove();
+    document.documentElement.style.overflow = "";
+  };
 }
 
 function changeForms() {
