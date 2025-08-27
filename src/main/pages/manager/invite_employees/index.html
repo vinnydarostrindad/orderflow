@@ -10,7 +10,7 @@
 
     <script src="/scripts/check-auth.js"></script>
 
-    <link rel="stylesheet" href="/invite_employees/style.css" />
+    <link rel="stylesheet" href="/manager/invite_employees/style.css" />
     <title>Business Invite</title>
   </head>
   <body>
@@ -31,7 +31,7 @@
         <div class="code-box">
           <p class="code-box__value" id="code"></p>
           <button class="code-box__copy-button" id="copyCodeBtn">
-            <img src="/invite_employees/img/copy-icon.svg" alt="Copy" />
+            <img src="/manager/invite_employees/img/copy-icon.svg" alt="Copy" />
           </button>
         </div>
         <p class="code-box__message copy-warn"></p>
@@ -50,7 +50,7 @@
       role="dialog"
     >
       <button type="button" class="modal__close-button" id="exitModalBtn">
-        <img src="/invite_employees/img/exit-icon.svg" alt="exit" />
+        <img src="/manager/invite_employees/img/exit-icon.svg" alt="exit" />
       </button>
       <div class="modal__header">
         <h3 class="modal__title">Link do Convite</h3>
@@ -58,7 +58,7 @@
           <p class="modal__link">http://localhost:3000/employee-login</p>
           <button class="modal__copy-button" id="copyUrlBtn">
             <img
-              src="/invite_employees/img/copy-icon.svg"
+              src="/manager/invite_employees/img/copy-icon.svg"
               alt="Copy"
               width="20"
             />
@@ -70,24 +70,33 @@
         <div class="modal__app">
           <a href="#" class="modal__app-link" id="whatsappLink">
             <p>whatsapp</p>
-            <img src="/invite_employees/img/whatsapp-icon.svg" alt="whatsapp" />
+            <img
+              src="/manager/invite_employees/img/whatsapp-icon.svg"
+              alt="whatsapp"
+            />
           </a>
         </div>
         <div class="modal__app">
           <a href="#" class="modal__app-link" id="emailLink">
             <p>email</p>
-            <img src="/invite_employees/img/email-icon.svg" alt="email" />
+            <img
+              src="/manager/invite_employees/img/email-icon.svg"
+              alt="email"
+            />
           </a>
         </div>
         <div class="modal__app">
           <a href="#" class="modal__app-link" id="telegramLink">
             <p>telegram</p>
-            <img src="/invite_employees/img/telegram-icon.svg" alt="telegram" />
+            <img
+              src="/manager/invite_employees/img/telegram-icon.svg"
+              alt="telegram"
+            />
           </a>
         </div>
       </div>
     </div>
 
-    <script src="/invite_employees/script.js"></script>
+    <script src="/manager/invite_employees/script.js"></script>
   </body>
 </html>
