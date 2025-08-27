@@ -1,4 +1,4 @@
-import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
+import "/components/snackbar.js";
 
 const headerMenuBtn = document.querySelector("#headerMenuBtn");
 const navBar = document.querySelector("#navBar");
@@ -14,6 +14,7 @@ const ctx = document.getElementById("salesChart").getContext("2d");
 const carouselLeftBtn = document.querySelector("#carouselLeftBtn");
 const carouselRightBtn = document.querySelector("#carouselRightBtn");
 const ordersBox = document.querySelector("#lastOrders");
+const snackbar = document.querySelector("#snackbar");
 
 let orderedItems;
 let orderedMenuItems;
@@ -41,7 +42,7 @@ async function fetchOrderedItems() {
     console.log(response.ok);
     return await response.json();
   } catch (error) {
-    showSnackBar(
+    snackbar.show(
       "error",
       "<p>Erro ao tentar obter os pedidos. <br> Tente novamente.</p>",
     );
@@ -395,8 +396,6 @@ function moveLastOrders(e) {
 
   ordersBox.style.translate = currentTraslateX + "px";
 }
-
-createSnackBar();
 
 orderedItems = await fetchOrderedItems();
 orderedMenuItems = orderedItems.length > 0 ? await fetchOrderedMenuItems() : [];

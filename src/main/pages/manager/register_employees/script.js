@@ -1,4 +1,4 @@
-import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
+import "/components/snackbar.js";
 import showConfirmModal from "/scripts/confirm-modal.js";
 
 const registerEmployeeForm = document.forms[0];
@@ -8,6 +8,7 @@ const nameInput = document.querySelector("#name");
 const skipBtn = document.querySelector("#skipBtn");
 const employeesTableContainer = document.querySelector("#employeesTable");
 const roleBox = document.querySelector("#roleBox");
+const snackbar = document.querySelector("#snackbar");
 
 let employees = [];
 let tableExists = false;
@@ -140,7 +141,7 @@ async function addEmployee(e) {
   );
 
   if (alreadyExists) {
-    showSnackBar(
+    snackbar.show(
       "warn",
       "<p>Já existe um funcionário com <br> esse nome nesse cargo.</p>",
     );
@@ -176,7 +177,7 @@ async function postEmployees(e) {
   btn.classList.add("header__button--loading");
 
   if (employees.length === 0) {
-    showSnackBar(
+    snackbar.show(
       "warn",
       "<p>Adicione ao menos um funcionário <br> para avançar.</p>",
     );
@@ -217,7 +218,7 @@ async function postEmployees(e) {
     redirectToNextPage();
   } catch (error) {
     console.error(error);
-    showSnackBar(
+    snackbar.show(
       "error",
       "<p>Erro ao adicionar funcionários. <br> Tente novamente.</p>",
     );
@@ -235,5 +236,3 @@ if (employeesDraft) {
   createTableIfNeeded();
   employeesDraft.forEach(renderTableRow);
 }
-
-createSnackBar();

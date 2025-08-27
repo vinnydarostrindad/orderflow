@@ -1,5 +1,5 @@
 import showConfirmModal from "/scripts/confirm-modal.js";
-import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
+import "/components/snackbar.js";
 
 const advanceButton = document.querySelector("#advanceBtn");
 const main = document.querySelector("#main");
@@ -19,6 +19,7 @@ const typeSelectBox = document.querySelector(".type-select-box");
 const checkboxInput = document.querySelector("#checkbox");
 const menu = document.querySelector("#menu");
 const menuItemsBox = document.querySelector("#menuItems");
+const snackbar = document.querySelector("#snackbar");
 
 let menuId;
 let menuItems = [];
@@ -88,8 +89,11 @@ async function createMenu(e) {
 
     console.log(response.ok);
     if (!response.ok) {
-      menuFormBtn.innerHTML = "Criar";
-      return;
+      throw {
+        status: response.status,
+        statusText: response.statusText,
+        url: response.url,
+      };
     }
 
     const responseBody = await response.json();
@@ -100,14 +104,14 @@ async function createMenu(e) {
 
     menuFormBtn.classList.remove("form__btn--loading");
     menuFormBtn.disabled = false;
-    menuFormBtn.innerHTML = "Criar";
+    menuFormBtn.firstElementChild.textContent = "Criar";
     changeForms();
   } catch (error) {
     console.error(error);
     menuFormBtn.classList.remove("form__btn--loading");
     menuFormBtn.disabled = false;
-    menuFormBtn.textContent = "Criar";
-    showSnackBar(
+    menuFormBtn.firstElementChild.textContent = "Criar";
+    snackbar.show(
       "error",
       "<p>Erro ao criar o menu. <br /> Tente novamente.</p>",
     );
@@ -301,7 +305,7 @@ function addMenuItem(e) {
     nameInput.style.backgroundColor = "rgba(147, 147, 0, 1)";
     nameInput.value = "";
     nameInput.focus();
-    showSnackBar("warn", "<p>Nome já adicionado no menu!</p>");
+    snackbar.show("warn", "<p>Nome já adicionado no menu!</p>");
 
     const clearWarning = () => {
       nameInput.style.backgroundColor = "";
@@ -319,7 +323,7 @@ function addMenuItem(e) {
     const priceWrapper = priceInput.parentElement;
     priceWrapper.style.backgroundColor = "rgba(147, 147, 0, 1)";
     priceWrapper.focus();
-    showSnackBar("warn", "<p>O preço precisa ser maior <br> que R$ 0,00.</p>");
+    snackbar.show("warn", "<p>O preço precisa ser maior <br> que R$ 0,00.</p>");
 
     const clearWarning = () => {
       priceWrapper.style.backgroundColor = "";
@@ -408,7 +412,7 @@ async function handleAdvance(e) {
   const btn = e.target;
 
   if (menuItems.length === 0) {
-    showSnackBar(
+    snackbar.show(
       "warn",
       "<p>Adicione algum item no menu <br> para prosseguir.</p>",
     );
@@ -438,6 +442,14 @@ async function handleAdvance(e) {
       );
 
       console.log("OK: ", response.ok);
+      if (!response.ok) {
+        throw {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+        };
+      }
+
       const responseBody = await response.json();
       console.log(responseBody);
     }
@@ -446,14 +458,14 @@ async function handleAdvance(e) {
     sessionStorage.removeItem("menuItemsDraft");
     redirectToNextPage();
   } catch (error) {
+    console.error(error);
     btn.textContent = "avançar";
     btn.classList.remove("header__button--loading");
 
-    showSnackBar(
+    snackbar.show(
       "error",
       "<p>Erro ao adicionar funcionários. <br /> Tente novamente.</p>",
     );
-    console.error(error);
   }
 }
 
@@ -468,5 +480,3 @@ if (menuItemsDraft) {
 
   menuItems.forEach(addItemToMenu);
 }
-
-createSnackBar();

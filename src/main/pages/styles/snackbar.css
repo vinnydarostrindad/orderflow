@@ -3,7 +3,7 @@
   color: #fff;
   left: 50%;
   opacity: 1;
-  padding: 0.5rem 0.8rem;
+  padding: var(--space-xs) var(--space-sm);
   position: fixed;
   transform: translateX(-50%);
   transition: 500ms ease;
@@ -30,7 +30,7 @@
     bottom: unset;
     left: unset;
     right: 15px;
-    top: 80px;
+    top: 75px;
     transform: translateX(0);
 
     &.hidden {
