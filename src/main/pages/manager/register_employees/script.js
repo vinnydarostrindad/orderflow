@@ -110,8 +110,8 @@ function renderTableRow({ name, role }) {
   const tableBody = document.querySelector("tbody");
   const roles = {
     manager: "Gerente",
-    cook: "Cozinheiro(a)",
-    waiter: "Garçom/Garçonete",
+    cook: "Cozinheiro",
+    waiter: "Garçom",
     cashier: "Caixa",
   };
 

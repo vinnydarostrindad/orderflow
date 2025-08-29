@@ -20,7 +20,8 @@ function redirectToMenu(e) {
 
 function addMenusToHTML(menus) {
   if (menus.length === 0) {
-    menusHTML.innerHTML = "<p>Nenhum cardápio foi criado</p>";
+    menusContainer.innerHTML = "<p>Nenhum cardápio foi criado</p>";
+    return;
   }
 
   const menusHTML = menus

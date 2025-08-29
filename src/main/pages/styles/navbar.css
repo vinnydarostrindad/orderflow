@@ -1,6 +1,6 @@
 .navbar {
   background-color: var(--color-bg-light);
-  font-size: 1.1rem;
+  font-size: var(--font-lg);
   height: 100%;
   overflow: hidden;
   position: fixed;
@@ -13,10 +13,9 @@
     flex-direction: column;
     height: calc(100% - 50px);
     justify-content: center;
-    list-style: none;
 
     .navbar__item {
-      padding: 0.5rem 1rem;
+      padding: var(--space-xs) 0;
       transition:
         transform 200ms,
         font-weight 200ms;
@@ -26,7 +25,7 @@
         align-items: center;
         color: var(--color-text);
         display: flex;
-        gap: 0.6rem;
+        gap: var(--space-sm);
         justify-content: center;
         text-decoration: none;
 
@@ -45,7 +44,7 @@
       &.navbar__item--selected {
         background-color: var(--color-bg-dark);
         font-weight: bold;
-        margin: 0.6rem 0;
+        margin: var(--space-sm) 0;
         transform: scale(1.2);
       }
     }
@@ -62,15 +61,14 @@
     bottom: 0;
     box-shadow: 1px 0 25px #0000001a;
     display: block;
-    font-size: 0.95rem;
+    font-size: var(--font-md);
     left: 0;
-    padding: 0.4rem 0;
+    padding: var(--space-xs) 0;
     top: 50px;
     width: 200px;
 
     ul {
       align-items: flex-start;
-      height: fit-content;
       justify-content: flex-start;
 
       .navbar__item {

@@ -463,7 +463,7 @@ async function handleAdvance(e) {
 
     snackbar.show(
       "error",
-      "<p>Erro ao adicionar funcionários. <br /> Tente novamente.</p>",
+      "<p>Erro ao adicionar itens ao menu. <br /> Tente novamente.</p>",
     );
   }
 }

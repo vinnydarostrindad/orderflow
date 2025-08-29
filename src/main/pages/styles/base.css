@@ -1,6 +1,8 @@
 :root {
   /* COLORS */
   --color-primary: #d81212;
+  --color-primary-light: #f29a9a;
+  --color-primary-dark: #720000;
   --color-bg-dark: #dfdfdf;
   --color-bg-light: #fff;
   --color-text: #000;
@@ -16,11 +18,19 @@
   --border-default: var(--border-width) solid var(--color-text);
 
   /* BORDER-RADIUS */
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-md: 10px;
   --radius-lg: 15px;
+  --radius-xl: 20px;
+  --radius-2xl: 25px;
 
   /* SPACING */
+  --space-2xs: 0.2rem;
   --space-xs: 0.4rem;
+  --space-xs-sm: 0.6rem;
   --space-sm: 0.8rem;
+  --space-sm-md: 1.2rem;
   --space-md: 1.5rem;
   --space-lg: 2rem;
   --space-xl: 3rem;
@@ -33,14 +43,17 @@
   --font-md: 1rem;
   --font-lg: 1.25rem;
   --font-xl: 1.5rem;
-  --font-2xl: 2rem;
-  --font-3xl: 2.5rem;
+  --font-2xl: 1.75rem;
+  --font-3xl: 2rem;
+  --font-4xl: 2.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     /* COLORS */
+    --color-primary-light: #f26767;
     --color-primary: #e50914;
+    --color-primary-dark: #930c0c;
     --color-bg-dark: #201e1e;
     --color-bg-light: #333;
     --color-text: #dadada;
@@ -82,6 +95,14 @@ a {
   text-decoration: none;
 }
 
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+}
+
 /*-------------------*/
 /*      BUTTONS      */
 /*-------------------*/
@@ -98,7 +119,6 @@ a {
 
 .btn {
   color: #fff;
-  cursor: pointer;
   font-weight: bold;
   outline-offset: 4px;
   padding: var(--space-sm) var(--space-md);

@@ -16,32 +16,33 @@ html {
   align-items: center;
   display: flex;
   flex-direction: column;
-  font-size: 1rem;
+  font-size: var(--font-md);
   justify-content: center;
   margin: 0 auto;
   min-height: 100dvh;
   width: min(80%, 500px);
 
   .main-container__title {
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-xs-sm);
 
     .role-warn {
+      margin-top: var(--space-sm);
+
       p:first-child {
-        font-size: 1.2rem;
-        margin-top: 1rem;
+        font-size: var(--font-lg);
       }
 
       p:last-child {
         color: var(--color-text-muted);
-        font-size: 0.9rem;
-        margin-top: 0.3rem;
+        font-size: var(--font-sm);
+        margin-top: var(--space-xs);
       }
     }
   }
 
   .form {
     height: 70%;
-    padding-bottom: 2.5rem;
+    padding-bottom: var(--space-lg);
   }
 }
 

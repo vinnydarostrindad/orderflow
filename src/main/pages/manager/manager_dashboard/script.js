@@ -280,6 +280,7 @@ function calculateTimePassed(ms) {
 
 function getLastOrdersInfo() {
   const orderedItemsInfos = orderedItems.map((orderedItem) => {
+    console.log(orderedItem);
     for (let orderedMenuItem of orderedMenuItems) {
       if (orderedItem.menuItemId === orderedMenuItem.id) {
         return {
@@ -361,7 +362,9 @@ async function showLastOrders() {
 function moveLastOrders(e) {
   const allOrders = document.querySelectorAll(".last-orders__order");
 
-  const step = 236;
+  const ordersGap = 1.2 * 16;
+  const ordersWidth = 215;
+  const step = ordersWidth + ordersGap;
   const btn = e.target.closest("button");
 
   const ordersShown = Math.floor(
@@ -387,7 +390,8 @@ function moveLastOrders(e) {
   } else if (btn.id === "carouselLeftBtn") {
     currentTraslateX += step;
 
-    if (currentTraslateX === 0) {
+    if (currentTraslateX >= 0) {
+      currentTraslateX = 0;
       carouselLeftBtn.disabled = true;
     }
 
@@ -395,6 +399,7 @@ function moveLastOrders(e) {
   }
 
   ordersBox.style.translate = currentTraslateX + "px";
+  console.log(currentTraslateX);
 }
 
 orderedItems = await fetchOrderedItems();

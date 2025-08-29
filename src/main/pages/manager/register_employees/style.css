@@ -18,25 +18,25 @@ html {
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--space-sm-md);
   justify-content: center;
-  padding-bottom: 0.75rem;
+  padding-bottom: var(--space-sm);
 
   .main__form-section {
     align-items: center;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: var(--space-sm-md);
     justify-content: center;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-sm-md);
 
     .form-section__text {
-      padding: 2.875rem 1rem 0;
+      padding: var(--space-xl) var(--space-sm-md) 0;
       text-align: center;
 
       h2 {
-        font-size: 1.75rem;
-        margin-bottom: 0.625rem;
+        font-size: var(--font-2xl);
+        margin-bottom: var(--space-xs-sm);
       }
 
       button {
@@ -44,9 +44,8 @@ html {
         border: none;
         color: var(--color-text-muted);
         cursor: pointer;
-        font-size: 0.875rem;
+        font-size: var(--font-sm);
         text-align: center;
-        text-decoration: underline;
 
         &:hover {
           color: var(--color-text);
@@ -61,36 +60,13 @@ html {
     .form-section__role-box {
       background-color: var(--color-bg-light);
       border: var(--border-default);
-      border-radius: 10px;
+      border-radius: var(--radius-md);
       color: var(--color-text);
       font-size: 0.95rem;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       line-height: 20px;
-      padding: 0.625rem;
+      padding: var(--space-xs-sm);
       text-align: justify;
-    }
-
-    .form-section__button {
-      background-color: var(--color-primary);
-      border: var(--border-default);
-      color: #fff;
-      cursor: pointer;
-      font-weight: bold;
-      outline-offset: 4px;
-      padding: 0.5rem 0;
-      transition:
-        box-shadow 150ms,
-        transform 150ms;
-
-      &:hover {
-        box-shadow: var(--shadow-button);
-        transform: translateY(-2px);
-      }
-
-      &:active {
-        box-shadow: 0 0;
-        transform: translateY(0);
-      }
     }
   }
 }
@@ -105,7 +81,7 @@ html {
   table {
     border: var(--border-width) solid rgb(140 140 140);
     border-collapse: collapse;
-    font-size: 0.875rem;
+    font-size: var(--font-sm);
     letter-spacing: 1px;
     line-break: anywhere;
     margin: 0 auto;
@@ -114,9 +90,9 @@ html {
     width: 100%;
 
     caption {
-      font-size: 1rem;
+      font-size: var(--font-md);
       font-weight: bold;
-      margin-bottom: 0.375rem;
+      margin-bottom: var(--space-xs);
       text-align: start;
     }
 
@@ -127,8 +103,8 @@ html {
 
     th,
     td {
-      border: 1px solid #a0a0a0;
-      padding: 0.5rem 0.625rem;
+      border: 1px solid var(--color-text-muted);
+      padding: var(--space-xs-sm);
     }
 
     tr {
@@ -154,7 +130,6 @@ html {
       background-color: #dadada;
       border: none;
       border-radius: 50%;
-      cursor: pointer;
       display: flex;
       height: 35px;
       justify-content: center;
@@ -219,7 +194,7 @@ html {
       gap: 5rem;
       height: 80dvh;
       margin-bottom: 0;
-      padding: 1.5rem;
+      padding: var(--space-md);
 
       .form-section__text {
         padding: 0;
