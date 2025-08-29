@@ -6,7 +6,6 @@ export default class EmployeeRepository {
     this.postgresAdapter = postgresAdapter;
   }
 
-  // Criar ua verificação para ver se o noe é único dentro da empresa
   async create({ id, businessId, name, role, hashedPassword } = {}) {
     if (!id) throw new MissingParamError("id");
     if (!businessId) throw new MissingParamError("businessId");

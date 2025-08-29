@@ -47,7 +47,7 @@
               <option value="waiter">Garçom</option>
               <option value="cashier">Caixa</option>
               <option value="manager">Gerente</option>
-              <option value="cook">Cozinha</option>
+              <option value="cook">Cozinheiro</option>
             </select>
           </div>
           <div class="form-section__role-box" id="roleBox">
@@ -59,11 +59,16 @@
               de visualizar o tempo médio de preparo.
             </p>
           </div>
-          <button type="submit" class="form-section__button">Adicionar</button>
+          <button type="submit" class="btn primary-btn form-section__button">
+            Adicionar
+          </button>
         </form>
       </div>
       <div class="main__employees" id="employeesTable"></div>
     </main>
+
+    <app-snackbar id="snackbar"></app-snackbar>
+
     <script src="/manager/register_employees/script.js" type="module"></script>
   </body>
 </html>

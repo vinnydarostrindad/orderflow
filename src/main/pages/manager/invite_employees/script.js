@@ -2,11 +2,14 @@ const advanceButton = document.querySelector("#advanceBtn");
 const codeBox = document.querySelector("#code");
 const copyCodeBtn = document.querySelector("#copyCodeBtn");
 const shareBtn = document.querySelector("#shareBtn");
+const modalLink = document.querySelector(".modal__link");
 const copyUrlBtn = document.querySelector("#copyUrlBtn");
 
 const businessId = localStorage.getItem("b");
 
 const codeUrl = new URL(`/login?b=${businessId}`, "http://localhost:3000/");
+
+modalLink.textContent = codeUrl;
 
 advanceButton.addEventListener("click", () => {
   advanceButton.classList.add("header__button--loading");
@@ -30,7 +33,7 @@ async function copyToClipBoard(e, textToCopy) {
 }
 
 function toggleShareModal(shareModalBg, shareModal) {
-  if (navigator.share) {
+  if (!navigator.share) {
     navigator.share({
       title: "OrderFlow",
       text: "Registre-se na sua empresa para começar a ter mais lucro no trabalho",

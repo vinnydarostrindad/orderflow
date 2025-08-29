@@ -1,9 +1,10 @@
 import "/waiter/components/nav/script.js";
-import "/components/header/script.js";
 import "/waiter/components/menu-card.js";
-import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
+import "/components/header/script.js";
+import "/components/snackbar.js";
 
 const menusContainer = document.querySelector(".menus");
+const snackbar = document.querySelector("#snackbar");
 
 menusContainer.addEventListener("click", redirectToMenu);
 
@@ -19,7 +20,8 @@ function redirectToMenu(e) {
 
 function addMenusToHTML(menus) {
   if (menus.length === 0) {
-    menusHTML.innerHTML = "<p>Nenhum cardápio foi criado</p>";
+    menusContainer.innerHTML = "<p>Nenhum cardápio foi criado</p>";
+    return;
   }
 
   const menusHTML = menus
@@ -38,18 +40,26 @@ function addMenusToHTML(menus) {
 }
 
 async function getMenus() {
-  const response = await fetch("http://localhost:3000/api/v1/menu");
-  if (!response.ok) {
-    showSnackBar(
+  try {
+    const response = await fetch("http://localhost:3000/api/v1/menu");
+    if (!response.ok) {
+      throw {
+        status: response.status,
+        statusText: response.statusText,
+        url: response.url,
+      };
+    }
+
+    const menus = await response.json();
+
+    addMenusToHTML(menus);
+  } catch (error) {
+    console.error(error);
+    snackbar.show(
       "error",
       "<p>Erro ao tentar obter cardápios <br> Tente novamente.</p>",
     );
   }
-
-  const menus = await response.json();
-
-  addMenusToHTML(menus);
 }
 
-createSnackBar();
 getMenus();

@@ -1,4 +1,4 @@
-import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
+import "/components/snackbar.js";
 
 const headerMenuBtn = document.querySelector("#headerMenuBtn");
 const navBar = document.querySelector("#navBar");
@@ -14,6 +14,7 @@ const ctx = document.getElementById("salesChart").getContext("2d");
 const carouselLeftBtn = document.querySelector("#carouselLeftBtn");
 const carouselRightBtn = document.querySelector("#carouselRightBtn");
 const ordersBox = document.querySelector("#lastOrders");
+const snackbar = document.querySelector("#snackbar");
 
 let orderedItems;
 let orderedMenuItems;
@@ -41,7 +42,7 @@ async function fetchOrderedItems() {
     console.log(response.ok);
     return await response.json();
   } catch (error) {
-    showSnackBar(
+    snackbar.show(
       "error",
       "<p>Erro ao tentar obter os pedidos. <br> Tente novamente.</p>",
     );
@@ -279,6 +280,7 @@ function calculateTimePassed(ms) {
 
 function getLastOrdersInfo() {
   const orderedItemsInfos = orderedItems.map((orderedItem) => {
+    console.log(orderedItem);
     for (let orderedMenuItem of orderedMenuItems) {
       if (orderedItem.menuItemId === orderedMenuItem.id) {
         return {
@@ -360,7 +362,9 @@ async function showLastOrders() {
 function moveLastOrders(e) {
   const allOrders = document.querySelectorAll(".last-orders__order");
 
-  const step = 236;
+  const ordersGap = 1.2 * 16;
+  const ordersWidth = 215;
+  const step = ordersWidth + ordersGap;
   const btn = e.target.closest("button");
 
   const ordersShown = Math.floor(
@@ -386,7 +390,8 @@ function moveLastOrders(e) {
   } else if (btn.id === "carouselLeftBtn") {
     currentTraslateX += step;
 
-    if (currentTraslateX === 0) {
+    if (currentTraslateX >= 0) {
+      currentTraslateX = 0;
       carouselLeftBtn.disabled = true;
     }
 
@@ -394,9 +399,8 @@ function moveLastOrders(e) {
   }
 
   ordersBox.style.translate = currentTraslateX + "px";
+  console.log(currentTraslateX);
 }
-
-createSnackBar();
 
 orderedItems = await fetchOrderedItems();
 orderedMenuItems = orderedItems.length > 0 ? await fetchOrderedMenuItems() : [];

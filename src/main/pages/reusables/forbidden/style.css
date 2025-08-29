@@ -9,19 +9,19 @@ body {
   min-height: 100vh;
 }
 
-.card {
+.main {
   width: clamp(560px, 80%, 740px);
 
   .header {
     align-items: center;
     display: flex;
-    gap: 1rem;
-    margin-bottom: 1.8rem;
+    gap: var(--space-sm-md);
+    margin-bottom: var(--space-lg);
 
     .icon {
       background: #d8121221;
       border: 1px solid var(--color-bg-light);
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       display: grid;
       flex: 0 0 auto;
       height: 72px;
@@ -36,32 +36,31 @@ body {
     }
 
     .title {
-      font-size: 3rem;
+      font-size: var(--font-4xl);
       font-weight: 800;
       line-height: 1.2;
     }
 
     .subtitle {
       color: var(--color-text-muted);
-      margin-top: 0.25rem;
+      margin-top: var(--space-2xs);
     }
   }
 
   .notice {
-    background-color: #1b1b1b;
-    border: 1px dashed var(--color-bg-light);
-    border-radius: 10px;
-    font-size: 0.95rem;
+    background-color: var(--color-bg-light);
+    border: 1px dashed var(--color-text-muted);
+    border-radius: var(--radius-md);
+    font-size: var(--font-md);
     line-height: 1.45;
-    margin: 1.1rem 0 1.4rem;
-    padding: 0.7rem 0.9rem;
+    margin: var(--space-sm-md) 0 var(--space-md);
+    padding: var(--space-sm) var(--space-sm-md);
   }
 
   .actions {
     display: flex;
-    gap: 0.7rem;
+    gap: var(--space-sm);
     justify-content: center;
-    margin-top: 0.6rem;
 
     .btn {
       flex: 0.5;

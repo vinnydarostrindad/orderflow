@@ -1,12 +1,14 @@
 @import url("/styles/base.css");
 @import url("/styles/header.css");
 @import url("/styles/navbar.css");
+@import url("/styles/snackbar.css");
 
 body {
   color: var(--color-text);
 }
 
 .header {
+  height: 50px;
   left: 0;
   position: fixed;
   right: 0;
@@ -21,41 +23,42 @@ body {
 .main {
   align-items: center;
   display: grid;
-  margin-top: 3.75rem;
-  min-height: calc(100vh - 60px);
+  margin-top: 3.15rem;
+  min-height: calc(100vh - 50px);
 
   .menus {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--space-md);
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: var(--space-lg) var(--space-sm-md);
     width: min(90%, 520px);
 
     > p {
-      font-size: 1.4rem;
+      font-size: var(--font-xl);
       font-weight: bold;
-      margin-bottom: 3.75rem;
       text-align: center;
     }
 
     .menu-card {
       align-items: center;
       background-color: var(--color-bg-light);
-      border-radius: 10px;
+      border-radius: var(--radius-md);
       color: var(--color-text);
       display: flex;
       height: 90px;
+      min-width: 200px;
+      overflow: hidden;
       transition: 200ms ease-in-out;
       width: 100%;
 
       .menu-card__img {
         height: 100%;
-        min-width: 100px;
+        min-width: 70px;
         width: 30%;
 
         img {
-          border-radius: 10px 0 0 10px;
+          border-radius: var(--radius-md) 0 0 var(--radius-md);
           height: 100%;
           object-fit: cover;
           width: 100%;
@@ -63,12 +66,20 @@ body {
       }
 
       .menu-card__infos {
-        padding: 1rem;
+        align-items: center;
+        display: grid;
+        padding: var(--space-sm);
         text-align: center;
         width: 70%;
 
         .menu-card__name {
-          font-size: 2rem;
+          -webkit-box-orient: vertical;
+          display: -webkit-box;
+          font-size: clamp(var(--font-md), 5vw, var(--font-xl));
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       }
 
@@ -78,7 +89,7 @@ body {
     }
 
     .menu-card-skeleton {
-      border-radius: 10px;
+      border-radius: var(--radius-md);
       height: 90px;
       width: 100%;
     }
@@ -86,6 +97,10 @@ body {
 }
 
 @media screen and (width >= 920px) {
+  .snackbar {
+    top: 65px;
+  }
+
   .main {
     margin-left: 12.5rem;
   }

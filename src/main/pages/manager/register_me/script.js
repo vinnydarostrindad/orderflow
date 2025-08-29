@@ -1,7 +1,8 @@
-import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
+import "/components/snackbar.js";
 
 const registerForm = document.querySelector(".form");
 const submitBtn = document.querySelector("#submitBtn");
+const snackbar = document.querySelector("#snackbar");
 
 const businessId = localStorage.getItem("b");
 
@@ -44,7 +45,11 @@ async function submitForm(e) {
 
     console.log(response.ok);
     if (!response.ok) {
-      throw 400;
+      throw {
+        status: response.status,
+        statusText: response.statusText,
+        url: response.url,
+      };
     }
     const responseBody = await response.json();
     console.log(responseBody);
@@ -56,7 +61,7 @@ async function submitForm(e) {
     window.location.href = `http://localhost:3000/register-employees`;
   } catch (err) {
     console.error(err);
-    showSnackBar(
+    snackbar.show(
       "error",
       "<p>Erro ao fazer o registro. <br /> Tente novamente.</p>",
     );
@@ -66,5 +71,3 @@ async function submitForm(e) {
     submitBtn.firstElementChild.textContent = "Continuar";
   }
 }
-
-createSnackBar();

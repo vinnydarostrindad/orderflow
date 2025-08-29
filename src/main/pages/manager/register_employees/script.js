@@ -1,5 +1,5 @@
-import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
-import showConfirmModal from "/scripts/confirm-modal.js";
+import "/components/snackbar.js";
+import "/components/confirm-modal.js";
 
 const registerEmployeeForm = document.forms[0];
 const roleSelect = document.querySelector("#role");
@@ -8,6 +8,7 @@ const nameInput = document.querySelector("#name");
 const skipBtn = document.querySelector("#skipBtn");
 const employeesTableContainer = document.querySelector("#employeesTable");
 const roleBox = document.querySelector("#roleBox");
+const snackbar = document.querySelector("#snackbar");
 
 let employees = [];
 let tableExists = false;
@@ -47,19 +48,19 @@ function handleSkip(e) {
     return;
   }
 
-  showConfirmModal({
-    message: "Tudo que foi adicionado será perdido. Deseja continuar?",
-    onCancel: (modalBg, modal) => {
-      modalBg.remove();
-      modal.remove();
-      document.documentElement.style.overflow = "";
-    },
-    onContinue: () => {
-      window.removeEventListener("beforeunload", saveEmployeesDraft);
-      sessionStorage.removeItem("employeesDraft");
-      redirectToNextPage();
-    },
-  });
+  const confirmModal = document.createElement("confirm-modal");
+  confirmModal.msg = "Tudo que foi adicionado será perdido. Deseja continuar?";
+  confirmModal.continueFunc = () => {
+    window.removeEventListener("beforeunload", saveEmployeesDraft);
+    sessionStorage.removeItem("employeesDraft");
+    redirectToNextPage();
+  };
+  confirmModal.cancelFunc = (modalBg, modal) => {
+    modalBg.remove();
+    modal.remove();
+    document.documentElement.style.overflow = "";
+  };
+  document.body.append(confirmModal);
 }
 
 function updateRoleExplanation(e) {
@@ -109,8 +110,8 @@ function renderTableRow({ name, role }) {
   const tableBody = document.querySelector("tbody");
   const roles = {
     manager: "Gerente",
-    cook: "Cozinheiro(a)",
-    waiter: "Garçom/Garçonete",
+    cook: "Cozinheiro",
+    waiter: "Garçom",
     cashier: "Caixa",
   };
 
@@ -121,7 +122,7 @@ function renderTableRow({ name, role }) {
         <div>
           ${roles[role]}
           <button class="remove-button" data-name="${name}" data-role="${role}" aria-label="Remover ${name}">
-          <img src="/register_employees/img/remove-icon.svg" alt="Remover">
+          <img src="/manager/register_employees/img/remove-icon.svg" alt="Remover">
           </button>
         </div>
       </td>
@@ -140,7 +141,7 @@ async function addEmployee(e) {
   );
 
   if (alreadyExists) {
-    showSnackBar(
+    snackbar.show(
       "warn",
       "<p>Já existe um funcionário com <br> esse nome nesse cargo.</p>",
     );
@@ -176,7 +177,7 @@ async function postEmployees(e) {
   btn.classList.add("header__button--loading");
 
   if (employees.length === 0) {
-    showSnackBar(
+    snackbar.show(
       "warn",
       "<p>Adicione ao menos um funcionário <br> para avançar.</p>",
     );
@@ -217,7 +218,7 @@ async function postEmployees(e) {
     redirectToNextPage();
   } catch (error) {
     console.error(error);
-    showSnackBar(
+    snackbar.show(
       "error",
       "<p>Erro ao adicionar funcionários. <br> Tente novamente.</p>",
     );
@@ -235,5 +236,3 @@ if (employeesDraft) {
   createTableIfNeeded();
   employeesDraft.forEach(renderTableRow);
 }
-
-createSnackBar();

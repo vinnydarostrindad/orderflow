@@ -1,10 +1,11 @@
-import { createSnackBar, showSnackBar } from "/scripts/snackbar.js";
+import "/components/snackbar.js";
 
 const registerForm = document.querySelector(".form");
 const submitBtn = document.querySelector("#submitBtn");
 const nameInput = document.querySelector("#name");
 const roleSelect = document.querySelector("#role");
 const businessIdInput = document.querySelector("#businessId");
+const snackbar = document.querySelector("#snackbar");
 
 const params = new URLSearchParams(window.location.search);
 const urlBusinessId = params.get("b");
@@ -56,21 +57,21 @@ async function submitForm(e) {
     console.error(err);
     switch (err.status) {
       case 401:
-        showSnackBar(
+        snackbar.show(
           "error",
           "<p>Acesso não autorizado. <br /> Tente novamente.</p>",
         );
         break;
       default:
-        showSnackBar(
+        snackbar.show(
           "error",
           "<p>Erro ao tentar entrar. <br /> Tente novamente.</p>",
         );
         break;
     }
 
-    submitBtn.classList.add("form__btn--loading");
-    submitBtn.textContent = "Entrar";
+    submitBtn.classList.remove("form__btn--loading");
+    submitBtn.firstElementChild.textContent = "Entrar";
     submitBtn.disabled = false;
   }
 }
@@ -94,5 +95,3 @@ function redirectUser(role) {
       break;
   }
 }
-
-createSnackBar();
