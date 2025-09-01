@@ -1,5 +1,6 @@
 import "/components/snackbar.js";
 import "/components/confirm-modal.js";
+import "/components/header/script.js";
 
 const registerEmployeeForm = document.forms[0];
 const roleSelect = document.querySelector("#role");

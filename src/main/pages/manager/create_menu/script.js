@@ -1,5 +1,6 @@
 import "/components/snackbar.js";
 import "/components/confirm-modal.js";
+import "/components/header/script.js";
 
 const advanceButton = document.querySelector("#advanceBtn");
 const main = document.querySelector("#main");

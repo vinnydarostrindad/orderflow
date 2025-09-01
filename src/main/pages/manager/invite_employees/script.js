@@ -1,3 +1,5 @@
+import "/components/header/script.js";
+
 const advanceButton = document.querySelector("#advanceBtn");
 const codeBox = document.querySelector("#code");
 const copyCodeBtn = document.querySelector("#copyCodeBtn");

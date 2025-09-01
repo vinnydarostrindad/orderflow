@@ -144,7 +144,7 @@ const managerPages = [
   },
   {
     pattern: /^\/dashboard$/,
-    filePath: "/manager/manager_dashboard/index.html",
+    filePath: "/manager/dashboard/index.html",
     role: "manager",
   },
 ];
