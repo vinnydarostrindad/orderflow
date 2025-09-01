@@ -1,7 +1,8 @@
 :root {
   /* COLORS */
-  --color-primary: #d81212;
   --color-primary-light: #f29a9a;
+  --color-primary: #d81212;
+  --color-primary-transparent: #d8121273;
   --color-primary-dark: #720000;
   --color-bg-dark: #dfdfdf;
   --color-bg-light: #fff;
@@ -53,6 +54,7 @@
     /* COLORS */
     --color-primary-light: #f26767;
     --color-primary: #e50914;
+    --color-primary-transparent: #e5091473;
     --color-primary-dark: #930c0c;
     --color-bg-dark: #201e1e;
     --color-bg-light: #333;
@@ -100,6 +102,12 @@ ul {
 }
 
 button {
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+select {
   cursor: pointer;
 }
 

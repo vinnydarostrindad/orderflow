@@ -1,6 +1,7 @@
 class AppHeader extends HTMLElement {
   connectedCallback() {
     const headerBtn = this.getAttribute("button");
+    this.hasSearchBar = this.hasAttribute("search-bar");
 
     if (headerBtn === "menu") {
       this.buildHeaderWithMenuBtn();
@@ -16,14 +17,35 @@ class AppHeader extends HTMLElement {
       <header class="header">
         <div class="header__content">
           <h1 class="header__title">OrderFlow</h1>
-
-            <button
-              class="header__menu-button"
-              id="headerMenuBtn"
-              aria-label="Abrir/Fechar menu"
-            >
-              <img src="/components/header/img/menu-icon.svg" alt="ícone de menu" />
-            </button>  
+          ${
+            this.hasSearchBar
+              ? `<div class="header__actions">
+                  <input
+                    name="search"
+                    id="search"
+                    type="text"
+                    placeholder="Buscar..."
+                    class="header__search-bar"
+                  />
+                  <button
+                    class="header__menu-btn"
+                    id="headerMenuBtn"
+                    aria-label="Abrir/Fechar menu"
+                  >
+                    <img
+                      src="/components/header/img/menu-icon.svg"
+                      alt="ícone de menu"
+                    />
+                  </button>
+                </div>`
+              : `<button
+                    class="header__menu-btn"
+                    id="headerMenuBtn"
+                    aria-label="Abrir/Fechar menu"
+                  >
+                    <img src="/components/header/img/menu-icon.svg" alt="ícone de menu" />
+                  </button>`
+          }
         </div>
       </header>
     `;
@@ -43,7 +65,7 @@ class AppHeader extends HTMLElement {
       <header class="header">
         <div class="header__content">
           <h1 class="header__title">OrderFlow</h1>
-          <button type="button" class="header__button" id="advanceBtn">
+          <button type="button" class="header__advance-btn" id="advanceBtn">
             avançar
           </button> 
         </div>

@@ -174,7 +174,7 @@ async function postEmployees(e) {
   const btn = e.target;
   btn.disabled = true;
   btn.innerHTML = "avançando";
-  btn.classList.add("header__button--loading");
+  btn.classList.add("header__advance-btn--loading");
 
   if (employees.length === 0) {
     snackbar.show(
@@ -184,7 +184,7 @@ async function postEmployees(e) {
 
     btn.disabled = false;
     btn.textContent = "avançar";
-    btn.classList.remove("header__button--loading");
+    btn.classList.remove("header__advance-btn--loading");
 
     return;
   }
@@ -224,7 +224,7 @@ async function postEmployees(e) {
     );
     btn.disabled = false;
     btn.textContent = "avançar";
-    btn.classList.remove("header__button--loading");
+    btn.classList.remove("header__advance-btn--loading");
   }
 }
 

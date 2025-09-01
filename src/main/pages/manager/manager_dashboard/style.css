@@ -254,7 +254,7 @@ html {
     .header__content {
       margin: 0 var(--space-lg);
 
-      .header__menu-button {
+      .header__menu-btn {
         display: none;
       }
     }
