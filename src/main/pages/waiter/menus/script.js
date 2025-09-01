@@ -41,7 +41,9 @@ function addMenusToHTML(menus) {
 
 async function getMenus() {
   try {
-    const response = await fetch("http://localhost:3000/api/v1/menu");
+    const response = await fetch(
+      "https://orderflow-0pj4.onrender.com/api/v1/menu",
+    );
     if (!response.ok) {
       throw {
         status: response.status,
