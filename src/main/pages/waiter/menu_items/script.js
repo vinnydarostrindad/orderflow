@@ -13,12 +13,115 @@ const menuName = document.querySelector("#menuName");
 const typeSelect = document.querySelector("#typeSelect");
 
 let allMenuItemsByType = Object.create(null);
-let searchedMenuItemsByType;
 let menuItemsTypes = [];
 menuName.textContent = menuNameValue;
 
-typeSelect.addEventListener("change", filterByType);
-searchBar.addEventListener("input", searchItem);
+typeSelect.addEventListener("change", filterMenuItems);
+searchBar.addEventListener("input", filterMenuItems);
+
+function renderTypeOptions() {
+  for (let type of menuItemsTypes) {
+    if (!type) continue;
+
+    const opt = document.createElement("option");
+    opt.value = type;
+    opt.textContent = type;
+    typeSelect.append(opt);
+  }
+}
+
+function buildGroupItemsFragment(items) {
+  const fragment = document.createDocumentFragment();
+  items.forEach((item) => {
+    const button = document.createElement("button");
+    button.classList.add("menu-item");
+
+    if (!item.imagePath) {
+      button.classList.add("menu-item--no-img");
+    } else {
+      const imgWrapper = document.createElement("div");
+      imgWrapper.classList.add("menu-item__img");
+
+      const img = document.createElement("img");
+      img.src = item.imagePath;
+
+      imgWrapper.append(img);
+      button.append(imgWrapper);
+    }
+
+    const info = document.createElement("div");
+    info.classList.add("menu-item__info");
+
+    const name = document.createElement("h4");
+    name.classList.add("menu-item__name");
+    name.textContent = item.name;
+
+    const price = document.createElement("p");
+    price.classList.add("menu-item__price");
+    price.textContent = new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(item.price);
+
+    info.append(name);
+    info.append(price);
+    button.append(info);
+    fragment.append(button);
+  });
+
+  return fragment;
+}
+
+function buildGroupFragment(groupedItems, type) {
+  const fragment = document.createDocumentFragment();
+  const categorySection = document.createElement("section");
+  categorySection.classList.add("menu-category");
+
+  if (type) {
+    const categoryName = document.createElement("h3");
+    categoryName.classList.add("menu-category__title");
+    categoryName.textContent = type;
+
+    categorySection.append(categoryName);
+  }
+
+  const menuItems = document.createElement("div");
+  menuItems.classList.add("menu__items");
+
+  let items = buildGroupItemsFragment(groupedItems[type]);
+
+  menuItems.append(items);
+  categorySection.append(menuItems);
+  fragment.append(categorySection);
+  return fragment;
+}
+
+function renderGroupedMenuItems(groupedItems) {
+  menuBox.innerHTML = "";
+
+  const types = Object.keys(groupedItems).sort();
+  if (types.length === 0) {
+    menuBox.innerHTML = "<p>Nenhum item encontrado!</p>";
+  }
+  for (let type of types) {
+    const categorySection = buildGroupFragment(groupedItems, type);
+    menuBox.append(categorySection);
+  }
+}
+
+function groupItemsByType(menuItems) {
+  let groupedItems = Object.create(null);
+  menuItems.forEach((item) => {
+    const type = item.type;
+    if (groupedItems[type]) {
+      groupedItems[type].push(item);
+    } else {
+      groupedItems[type] = [item];
+    }
+  });
+
+  return groupedItems;
+}
 
 async function fetchMenuItems() {
   const res = await fetch(`http://localhost:3000/api/v1/menu/${menuId}/item`);
@@ -36,237 +139,16 @@ async function fetchMenuItems() {
   return menuItems;
 }
 
-function groupItemsByType(menuItems) {
-  menuItems.forEach((item) => {
-    const itemType = item.type;
-    if (allMenuItemsByType[itemType]) {
-      allMenuItemsByType[itemType].push(item);
-    } else {
-      allMenuItemsByType[itemType] = [item];
-    }
-  });
-
-  if (menuItemsTypes.length === 0) {
-    menuItemsTypes = Object.keys(allMenuItemsByType);
-    menuItemsTypes.sort();
-  }
-
-  return allMenuItemsByType;
-}
-
-function groupSearchedItemsByType(menuItems) {
-  searchedMenuItemsByType = Object.create(null);
-  menuItems.forEach((item) => {
-    const itemType = item.type;
-    if (searchedMenuItemsByType[itemType]) {
-      searchedMenuItemsByType[itemType].push(item);
-    } else {
-      searchedMenuItemsByType[itemType] = [item];
-    }
-  });
-
-  return searchedMenuItemsByType;
-}
-
-function buildItemsHTML(items) {
-  let itemsGroupHTML = "";
-  items.forEach((item) => {
-    itemsGroupHTML += item.imagePath
-      ? `
-      <button class="menu-item">
-        <div class="menu-item__img">
-          <img src="${item.imagePath}"/>
-        </div>
-        <div class="menu-item__info">
-          <h4 class="menu-item__name">${item.name}</h4>
-          <p class="menu-item__price">R$ ${item.price}</p>
-        </div>
-      </button>
-      `
-      : `
-      <button class="menu-item menu-item--no-img">
-        <div class="menu-item__info">
-          <h4 class="menu-item__name">${item.name}</h4>
-          <p class="menu-item__price">R$ ${item.price}</p>
-        </div>
-      </button>
-      `;
-  });
-  return itemsGroupHTML;
-}
-
-function getHTML(items) {
-  menuBox.innerHTML = "";
-  let itemsGroupHTML;
-  if (items[""]) {
-    const categorySection = document.createElement("section");
-    categorySection.className = "menu-category";
-
-    const menuItems = document.createElement("div");
-    menuItems.className = "menu__items";
-
-    itemsGroupHTML = buildItemsHTML(items[""]);
-
-    menuItems.innerHTML += itemsGroupHTML;
-    categorySection.append(menuItems);
-    menuBox.append(categorySection);
-  }
-
-  const types = Object.keys(items).sort();
-  for (let type of types) {
-    if (!type) continue;
-
-    const categorySection = document.createElement("section");
-    categorySection.className = "menu-category";
-
-    const categoryName = document.createElement("h3");
-    categoryName.className = "menu-category__title";
-    categoryName.textContent = type;
-
-    categorySection.append(categoryName);
-
-    const menuItems = document.createElement("div");
-    menuItems.className = "menu__items";
-
-    itemsGroupHTML = buildItemsHTML(items[type]);
-
-    menuItems.innerHTML += itemsGroupHTML;
-    categorySection.append(menuItems);
-    menuBox.append(categorySection);
-  }
-}
-
-function putOptionsOnSelect() {
-  for (let type of menuItemsTypes) {
-    if (!type) continue;
-
-    const opt = document.createElement("option");
-    opt.value = opt.textContent = type;
-    typeSelect.append(opt);
-  }
-}
-
-function filterByType(e) {
-  const selectType = e.target.value;
-  const searchBarValue = searchBar.value.toLowerCase().trim();
-  let filteredItemsHTML;
-
-  if (selectType === "everything") {
-    if (searchBarValue) {
-      const matchedItems = [];
-      for (let type in allMenuItemsByType) {
-        allMenuItemsByType[type].forEach((item) => {
-          if (item.name.toLowerCase().includes(searchBarValue)) {
-            matchedItems.push(item);
-          }
-        });
-      }
-
-      if (matchedItems.length === 0) {
-        menuBox.innerHTML = "<p>Nenhum item encontrado!</p>";
-        return;
-      }
-
-      const matchedItemsByType = groupSearchedItemsByType(matchedItems);
-      getHTML(matchedItemsByType);
-      return;
-    } else {
-      getHTML(allMenuItemsByType);
-      return;
-    }
-  }
-
-  if (searchBarValue) {
-    let searchedMenuItemsFilteredByType = Object.create(null);
-    searchedMenuItemsFilteredByType[selectType] = [];
-    for (let item of allMenuItemsByType[selectType]) {
-      if (item.name.toLowerCase().includes(searchBarValue)) {
-        searchedMenuItemsFilteredByType[selectType].push(item);
-      }
-    }
-
-    filteredItemsHTML = buildItemsHTML(
-      searchedMenuItemsFilteredByType[selectType],
-    );
-  } else {
-    filteredItemsHTML = buildItemsHTML(allMenuItemsByType[selectType]);
-  }
-
-  const categorySection = document.createElement("section");
-  categorySection.className = "menu-category";
-
-  const categoryName = document.createElement("h3");
-  categoryName.className = "menu-category__title";
-  categoryName.textContent = selectType;
-
-  const menuItems = document.createElement("div");
-  menuItems.className = "menu__items";
-
-  menuItems.innerHTML = filteredItemsHTML;
-  categorySection.append(categoryName);
-  categorySection.append(menuItems);
-  menuBox.replaceChildren(categorySection);
-}
-
-function searchItem(e) {
-  const value = e.target.value.toLowerCase().trim();
-  const selectType = typeSelect.value;
-
-  if (selectType === "everything") {
-    const matchedItems = [];
-    for (let type in allMenuItemsByType) {
-      allMenuItemsByType[type].forEach((item) => {
-        if (item.name.toLowerCase().includes(value)) {
-          matchedItems.push(item);
-        }
-      });
-    }
-
-    if (matchedItems.length === 0) {
-      menuBox.innerHTML = "<p>Nenhum item encontrado!</p>";
-      return;
-    }
-
-    const matchedItemsByType = groupSearchedItemsByType(matchedItems);
-    getHTML(matchedItemsByType);
-  } else {
-    const matchedItems = [];
-    for (let item of allMenuItemsByType[selectType]) {
-      if (item.name.toLowerCase().includes(value)) {
-        matchedItems.push(item);
-      }
-    }
-
-    if (matchedItems.length === 0) {
-      menuBox.innerHTML = "<p>Nenhum item encontrado!</p>";
-      return;
-    }
-
-    const matchedItemsHTML = buildItemsHTML(matchedItems);
-
-    const categorySection = document.createElement("section");
-    categorySection.className = "menu-category";
-
-    const categoryName = document.createElement("h3");
-    categoryName.className = "menu-category__title";
-    categoryName.textContent = selectType;
-
-    const menuItems = document.createElement("div");
-    menuItems.className = "menu__items";
-
-    menuItems.innerHTML = matchedItemsHTML;
-    categorySection.append(categoryName);
-    categorySection.append(menuItems);
-    menuBox.replaceChildren(categorySection);
-  }
-}
-
 async function setupMenuPage() {
   try {
     const menuItems = await fetchMenuItems();
-    const items = groupItemsByType(menuItems);
-    getHTML(items);
-    putOptionsOnSelect();
+    allMenuItemsByType = groupItemsByType(menuItems);
+
+    menuItemsTypes = Object.keys(allMenuItemsByType);
+    menuItemsTypes.sort();
+
+    renderGroupedMenuItems(allMenuItemsByType);
+    renderTypeOptions();
   } catch (err) {
     console.error(err);
     snackbar.show(
@@ -274,6 +156,36 @@ async function setupMenuPage() {
       "<p>Error ao obter itens do cardápio. <br> Tente novamente!</p>",
     );
   }
+}
+
+function filterMenuItems() {
+  const selectValue = typeSelect.value;
+  const searchBarValue = searchBar.value.toLowerCase().trim();
+
+  let itemsToSearch =
+    selectValue === "everything"
+      ? Object.values(allMenuItemsByType).flat()
+      : allMenuItemsByType[selectValue];
+
+  if (!itemsToSearch || itemsToSearch.length === 0) {
+    menuBox.innerHTML = "<p>Nenhum item encontrado!</p>";
+    return;
+  }
+
+  if (searchBarValue) {
+    itemsToSearch = itemsToSearch.filter((item) =>
+      item.name.toLowerCase().includes(searchBarValue),
+    );
+  }
+
+  if (itemsToSearch.length === 0) {
+    menuBox.innerHTML = "<p>Nenhum item encontrado!</p>";
+    return;
+  }
+
+  console.log("ITEMS to SHEArch: ", itemsToSearch);
+  const filteredItems = groupItemsByType(itemsToSearch);
+  renderGroupedMenuItems(filteredItems);
 }
 
 setupMenuPage();
