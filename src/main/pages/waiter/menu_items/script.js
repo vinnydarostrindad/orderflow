@@ -124,7 +124,9 @@ function groupItemsByType(menuItems) {
 }
 
 async function fetchMenuItems() {
-  const res = await fetch(`http://localhost:3000/api/v1/menu/${menuId}/item`);
+  const res = await fetch(
+    `https://orderflow-0pj4.onrender.com/api/v1/menu/${menuId}/item`,
+  );
 
   if (!res.ok) {
     throw {

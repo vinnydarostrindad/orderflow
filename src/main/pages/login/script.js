@@ -26,17 +26,20 @@ async function submitForm(e) {
   const role = roleSelect.value;
 
   try {
-    const response = await fetch(`http://localhost:3000/api/v1/session`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
+    const response = await fetch(
+      `https://orderflow-0pj4.onrender.com/api/v1/session`,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          role,
+          businessId,
+        }),
       },
-      body: JSON.stringify({
-        name,
-        role,
-        businessId,
-      }),
-    });
+    );
 
     if (!response.ok) {
       const { status, statusText, url } = response;

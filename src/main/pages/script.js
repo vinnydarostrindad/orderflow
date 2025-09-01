@@ -18,17 +18,20 @@ async function submitForm(e) {
   const password = document.querySelector("#password").value;
 
   try {
-    const response = await fetch("http://localhost:3000/api/v1/business", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
+    const response = await fetch(
+      "https://orderflow-0pj4.onrender.com/api/v1/business",
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
       },
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-      }),
-    });
+    );
 
     console.log(response.ok);
     if (!response.ok) {
@@ -46,7 +49,7 @@ async function submitForm(e) {
     submitBtn.disabled = false;
 
     localStorage.setItem("b", responseBody.id);
-    window.location.href = `http://localhost:3000/register-me`;
+    window.location.href = `/register-me`;
   } catch (err) {
     console.error(err);
     snackbar.show(

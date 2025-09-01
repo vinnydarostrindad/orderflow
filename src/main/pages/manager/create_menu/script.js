@@ -39,7 +39,7 @@ menu.addEventListener("click", selectItem);
 skipBtns.forEach((btn) => btn.addEventListener("click", handleSkip));
 
 function redirectToNextPage() {
-  window.location.href = `http://localhost:3000/invite-employees`;
+  window.location.href = `https://orderflow-0pj4.onrender.com/invite-employees`;
 }
 
 function handleSkip() {
@@ -77,15 +77,18 @@ async function createMenu(e) {
   const name = e.target[0].value;
 
   try {
-    const response = await fetch(`http://localhost:3000/api/v1/menu`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
+    const response = await fetch(
+      `https://orderflow-0pj4.onrender.com/api/v1/menu`,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+        }),
       },
-      body: JSON.stringify({
-        name,
-      }),
-    });
+    );
 
     console.log(response.ok);
     if (!response.ok) {
@@ -434,7 +437,7 @@ async function handleAdvance(e) {
 
       // Talvez retornar todos como promises pra ir todas de uma vez seja melhor. Testar isso depois.
       const response = await fetch(
-        `http://localhost:3000/api/v1/menu/${menuId}/item`,
+        `https://orderflow-0pj4.onrender.com/api/v1/menu/${menuId}/item`,
         {
           method: "POST",
           body: formData,

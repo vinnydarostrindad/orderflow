@@ -18,7 +18,7 @@ async function submitForm(e) {
   const name = document.querySelector("#name").value;
 
   try {
-    await fetch(`http://localhost:3000/api/v1/employee`, {
+    await fetch(`https://orderflow-0pj4.onrender.com/api/v1/employee`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -31,17 +31,20 @@ async function submitForm(e) {
       }),
     });
 
-    const response = await fetch(`http://localhost:3000/api/v1/session`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
+    const response = await fetch(
+      `https://orderflow-0pj4.onrender.com/api/v1/session`,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          businessId,
+          role: "manager",
+        }),
       },
-      body: JSON.stringify({
-        name,
-        businessId,
-        role: "manager",
-      }),
-    });
+    );
 
     console.log(response.ok);
     if (!response.ok) {
@@ -58,7 +61,7 @@ async function submitForm(e) {
     submitBtn.disabled = false;
     submitBtn.firstElementChild.textContent = "Continuar";
 
-    window.location.href = `http://localhost:3000/register-employees`;
+    window.location.href = `https://orderflow-0pj4.onrender.com/register-employees`;
   } catch (err) {
     console.error(err);
     snackbar.show(
