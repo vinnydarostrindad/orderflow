@@ -1,0 +1,187 @@
+@import url("/styles/base.css");
+@import url("/styles/header.css");
+@import url("/styles/navbar.css");
+@import url("/styles/snackbar.css");
+
+html,
+body {
+  color: var(--color-text);
+}
+
+.header {
+  height: 50px;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 999;
+}
+
+.main {
+  margin: 3.15rem auto 0;
+
+  .menu {
+    padding: var(--space-md) var(--space-md);
+
+    .menu__header {
+      h2 {
+        font-size: var(--font-3xl);
+      }
+
+      .menu__filter-type-group {
+        align-items: center;
+        display: flex;
+        font-size: var(--font-md);
+        gap: var(--space-xs);
+        margin-top: var(--space-xs-sm);
+
+        label {
+          flex: 0 0 auto;
+        }
+
+        select {
+          background-color: var(--color-bg-light);
+          border: var(--border-default);
+          color: var(--color-text);
+          font-size: var(--font-sm);
+          padding: var(--space-2xs);
+          width: min(100%, 150px);
+        }
+      }
+    }
+
+    .menu__categories {
+      margin: 0 auto;
+      width: 100%;
+
+      > p {
+        font-size: var(--font-2xl);
+        font-weight: bold;
+        margin-top: var(--space-xl);
+        text-align: center;
+      }
+
+      .menu-category {
+        margin-top: var(--space-md);
+
+        .menu-category__title {
+          border-bottom: 1px solid var(--color-text);
+          font-size: var(--font-xl);
+          margin-bottom: var(--space-sm-md);
+        }
+
+        .menu__items {
+          display: grid;
+          gap: var(--space-sm-md);
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+
+          .menu-item {
+            align-items: center;
+            background: var(--color-bg-light);
+            border-radius: var(--radius-lg);
+            display: flex;
+            gap: var(--space-md);
+            height: 120px;
+            transition: transform 150ms ease;
+
+            .menu-item__img {
+              height: 100%;
+              min-width: 80px;
+              width: 40%;
+
+              img {
+                border-radius: var(--radius-md) 0 0 var(--radius-md);
+                height: 100%;
+                object-fit: cover;
+                width: 100%;
+              }
+            }
+
+            .menu-item__info {
+              align-items: flex-start;
+              display: flex;
+              flex-direction: column;
+              gap: var(--space-xs);
+              padding: var(--space-sm);
+              padding-left: 0;
+              width: 60%;
+
+              .menu-item__name {
+                -webkit-box-orient: vertical;
+                display: -webkit-box;
+                font-size: var(--font-lg);
+                font-weight: bold;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+                overflow: hidden;
+                text-align: start;
+                text-overflow: ellipsis;
+              }
+
+              .menu-item__price {
+                color: var(--color-primary);
+                font-size: var(--font-md);
+              }
+            }
+
+            &:hover {
+              transform: scale(1.02);
+            }
+
+            &.menu-item--no-img {
+              justify-content: center;
+              text-align: center;
+
+              & .menu-item__info {
+                align-items: center;
+                padding: 0;
+              }
+
+              & .menu-item__name {
+                font-size: var(--font-lg);
+                text-align: center;
+              }
+
+              & .menu-item__price {
+                font-size: var(--font-md);
+              }
+            }
+          }
+        }
+      }
+
+      .menu__items-skeleton {
+        display: grid;
+        gap: var(--space-sm-md);
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        margin-top: var(--space-md);
+
+        .menu__item-skeleton {
+          border-radius: var(--radius-lg);
+          height: 120px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (width >= 920px) {
+  .snackbar {
+    top: 65px;
+  }
+
+  .header {
+    .header__content {
+      width: 95%;
+    }
+  }
+
+  .main {
+    margin-left: 12.5rem;
+
+    .menu {
+      margin: 0 auto;
+      width: min(100%, 1500px);
+    }
+  }
+}

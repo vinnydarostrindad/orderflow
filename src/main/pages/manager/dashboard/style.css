@@ -29,6 +29,8 @@ html {
 /*--------------------*/
 
 .main {
+  min-height: calc(100dvh - 50px);
+
   .business-stats {
     display: flex;
     flex-direction: column;
@@ -113,8 +115,6 @@ html {
       display: flex;
       gap: var(--space-sm-md);
       height: 140px;
-      position: absolute;
-      top: 0;
 
       .last-orders__order-skeleton {
         border-radius: var(--radius-lg);
@@ -131,21 +131,17 @@ html {
     .last-orders__carousel {
       align-items: center;
       display: flex;
+      height: 130px;
       justify-content: space-between;
 
       .last-orders__box {
         overflow: hidden;
-        position: relative;
         width: var(--order-width);
 
         > p {
           font-size: var(--font-lg);
           font-weight: bold;
-          left: 50%;
-          position: absolute;
           text-align: center;
-          top: 50%;
-          transform: translate(-50%, -50%);
         }
 
         .last-orders__orders {
@@ -254,7 +250,7 @@ html {
     .header__content {
       margin: 0 var(--space-lg);
 
-      .header__menu-button {
+      .header__menu-btn {
         display: none;
       }
     }

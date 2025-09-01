@@ -1,4 +1,5 @@
 import "/components/snackbar.js";
+import "/components/header/script.js";
 
 const headerMenuBtn = document.querySelector("#headerMenuBtn");
 const navBar = document.querySelector("#navBar");

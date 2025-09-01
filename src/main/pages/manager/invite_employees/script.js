@@ -1,3 +1,5 @@
+import "/components/header/script.js";
+
 const advanceButton = document.querySelector("#advanceBtn");
 const codeBox = document.querySelector("#code");
 const copyCodeBtn = document.querySelector("#copyCodeBtn");
@@ -12,7 +14,7 @@ const codeUrl = new URL(`/login?b=${businessId}`, "http://localhost:3000/");
 modalLink.textContent = codeUrl;
 
 advanceButton.addEventListener("click", () => {
-  advanceButton.classList.add("header__button--loading");
+  advanceButton.classList.add("header__advance-btn--loading");
   localStorage.removeItem("b");
   window.location.href = `http://localhost:3000/dashboard`;
 });

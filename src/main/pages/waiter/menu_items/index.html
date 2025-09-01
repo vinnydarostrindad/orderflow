@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/waiter/menu_items/style.css" />
+    <title>Cardápio</title>
+  </head>
+  <body>
+    <app-header search-bar button="menu"></app-header>
+
+    <waiter-nav></waiter-nav>
+
+    <main class="main">
+      <div class="menu">
+        <section class="menu__header">
+          <h2 id="menuName">Nome do Cardápio</h2>
+          <div class="menu__filter-type-group">
+            <label for="typeSelect">Filtrar por Tipo:</label>
+            <select name="type" id="typeSelect">
+              <option value="everything" selected>Tudo</option>
+            </select>
+          </div>
+        </section>
+        <section class="menu__categories">
+          <div class="menu__items-skeleton">
+            <div class="menu__item-skeleton skeleton"></div>
+            <div class="menu__item-skeleton skeleton"></div>
+            <div class="menu__item-skeleton skeleton"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <app-snackbar id="snackbar"></app-snackbar>
+
+    <script type="module" src="/waiter/menu_items/script.js"></script>
+  </body>
+</html>

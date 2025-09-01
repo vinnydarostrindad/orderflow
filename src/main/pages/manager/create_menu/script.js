@@ -1,5 +1,6 @@
 import "/components/snackbar.js";
 import "/components/confirm-modal.js";
+import "/components/header/script.js";
 
 const advanceButton = document.querySelector("#advanceBtn");
 const main = document.querySelector("#main");
@@ -419,7 +420,7 @@ async function handleAdvance(e) {
   }
 
   btn.textContent = "avançando";
-  btn.classList.add("header__button--loading");
+  btn.classList.add("header__advance-btn--loading");
 
   try {
     for (let item of menuItems) {
@@ -459,7 +460,7 @@ async function handleAdvance(e) {
   } catch (error) {
     console.error(error);
     btn.textContent = "avançar";
-    btn.classList.remove("header__button--loading");
+    btn.classList.remove("header__advance-btn--loading");
 
     snackbar.show(
       "error",

@@ -101,6 +101,12 @@ body {
     top: 65px;
   }
 
+  .header {
+    .header__content {
+      width: 95%;
+    }
+  }
+
   .main {
     margin-left: 12.5rem;
   }

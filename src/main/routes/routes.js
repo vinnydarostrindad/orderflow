@@ -144,7 +144,7 @@ const managerPages = [
   },
   {
     pattern: /^\/dashboard$/,
-    filePath: "/manager/manager_dashboard/index.html",
+    filePath: "/manager/dashboard/index.html",
     role: "manager",
   },
 ];
@@ -162,6 +162,11 @@ const pagesRoutes = [
   {
     pattern: /^\/menus$/,
     filePath: "/waiter/menus/index.html",
+    role: "waiter",
+  },
+  {
+    pattern: /^\/menu(?:[^/]+)?$/,
+    filePath: "/waiter/menu_items/index.html",
     role: "waiter",
   },
 ];
