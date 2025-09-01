@@ -5,7 +5,7 @@
   "description": "OrderFlow é um sistema digital voltado para pontos de alimentação como bares, restaurantes e lanchonetes. O objetivo é facilitar o processo de de pedidos e a organização.",
   "main": "src/main/index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/main/index.js",
     "dev": "npm run services:up && npm run wait:database && npm run migrations:up && node --watch src/main",
     "test": "npm run services:up && npm run wait:database && concurrently -n node,jest --hide node -k -s command-jest \"node src/main\" \"npm run test:integration\"",
     "posttest": "npm run services:down",
