@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken";
 import MissingParamError from "./errors/missing-param-error.js";
 import DependencyError from "./errors/dependency-error.js";
-import dotenv from "dotenv";
 
-dotenv.config({ path: ".env.development" });
+import dotenv from "dotenv";
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: ".env.development" });
+}
 
 const SECRET = process.env.SECRET;
 

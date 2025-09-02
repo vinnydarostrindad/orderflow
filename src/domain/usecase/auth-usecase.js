@@ -1,8 +1,10 @@
 import InvalidParamError from "../../utils/errors/invalid-param-error.js";
 import MissingParamError from "../../utils/errors/missing-param-error.js";
-import dotenv from "dotenv";
 
-dotenv.config({ path: ".env.development" });
+import dotenv from "dotenv";
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: ".env.development" });
+}
 
 export default class AuthUseCase {
   constructor({ jwt } = {}) {
