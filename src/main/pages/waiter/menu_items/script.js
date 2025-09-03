@@ -1,6 +1,7 @@
 import "/waiter/components/nav/script.js";
 import "/components/header/script.js";
 import "/components/snackbar.js";
+import API_URL from "/scripts/config-api-url.js";
 
 const params = new URLSearchParams(window.location.search);
 const menuId = params.get("mi");
@@ -124,9 +125,7 @@ function groupItemsByType(menuItems) {
 }
 
 async function fetchMenuItems() {
-  const res = await fetch(
-    `https://orderflow-0pj4.onrender.com/api/v1/menu/${menuId}/item`,
-  );
+  const res = await fetch(`${API_URL}/api/v1/menu/${menuId}/item`);
 
   if (!res.ok) {
     throw {

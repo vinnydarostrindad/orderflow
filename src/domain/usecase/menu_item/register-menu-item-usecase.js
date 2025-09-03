@@ -1,11 +1,11 @@
 import MenuItem from "../../entities/menu-item.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import { writeFile } from "node:fs/promises";
 
 export default class RegisterMenuItemUseCase {
-  constructor({ idGenerator, menuItemRepository } = {}) {
+  constructor({ idGenerator, menuItemRepository, supabaseAdapter } = {}) {
     this.idGenerator = idGenerator;
     this.menuItemRepository = menuItemRepository;
+    this.supabaseAdapter = supabaseAdapter;
   }
 
   async execute({ menuId, name, price, imgFile, description, type } = {}) {
@@ -13,11 +13,12 @@ export default class RegisterMenuItemUseCase {
     if (!price) throw new MissingParamError("price");
     if (!menuId) throw new MissingParamError("menuId");
 
-    let imagePath;
+    let fileName;
     if (imgFile?.fileName && imgFile?.content) {
       const timestamp = Date.now();
-      imagePath = `assets/${timestamp}_${imgFile?.fileName}`;
-      await writeFile(`./src/main/pages/${imagePath}`, imgFile?.content);
+      const bucket = "menu-item-img";
+      fileName = `${timestamp}_${imgFile?.fileName}`;
+      await this.supabaseAdapter.uploadFile(bucket, fileName, imgFile);
     }
 
     const id = this.idGenerator.execute();
@@ -27,7 +28,7 @@ export default class RegisterMenuItemUseCase {
       menuId,
       name,
       price,
-      imagePath,
+      fileName,
       description,
       type,
     });

@@ -4,6 +4,7 @@ import validators from "../../../utils/validator.js";
 import MenuItemRepository from "../../../infra/repositories/menu-item-repository.js";
 import idGenerator from "../../../utils/id-generator.js";
 import postgresAdapter from "../../../infra/adaptors/postgres-adapter.js";
+import supabaseAdapter from "../../../infra/adaptors/supabase-adapter.js";
 
 const registerMenuItemRouterComposer = {
   execute() {
@@ -11,6 +12,7 @@ const registerMenuItemRouterComposer = {
     const registerMenuItemUseCase = new RegisterMenuItemUseCase({
       idGenerator,
       menuItemRepository,
+      supabaseAdapter,
     });
     const registerMenuItemRouter = new RegisterMenuItemRouter({
       registerMenuItemUseCase,

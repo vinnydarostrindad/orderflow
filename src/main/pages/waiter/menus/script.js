@@ -2,6 +2,7 @@ import "/waiter/components/nav/script.js";
 import "/waiter/components/menu-card.js";
 import "/components/header/script.js";
 import "/components/snackbar.js";
+import API_URL from "/scripts/config-api-url.js";
 
 const menusContainer = document.querySelector(".menus");
 const snackbar = document.querySelector("#snackbar");
@@ -41,9 +42,7 @@ function addMenusToHTML(menus) {
 
 async function getMenus() {
   try {
-    const response = await fetch(
-      "https://orderflow-0pj4.onrender.com/api/v1/menu",
-    );
+    const response = await fetch(`${API_URL}/api/v1/menu`);
     if (!response.ok) {
       throw {
         status: response.status,

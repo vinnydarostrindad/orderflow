@@ -1,5 +1,6 @@
 import "/components/snackbar.js";
 import "/components/header/script.js";
+import API_URL from "/scripts/config-api-url.js";
 
 const headerMenuBtn = document.querySelector("#headerMenuBtn");
 const navBar = document.querySelector("#navBar");
@@ -38,9 +39,7 @@ function togglenavBar() {
 
 async function fetchOrderedItems() {
   try {
-    const response = await fetch(
-      `https://orderflow-0pj4.onrender.com/api/v1/ordered-items`,
-    );
+    const response = await fetch(`${API_URL}/api/v1/ordered-items`);
 
     console.log(response.ok);
     return await response.json();
@@ -59,7 +58,7 @@ async function fetchOrderedMenuItems() {
     orderedItems.map(async (orderedItem) => {
       try {
         const response = await fetch(
-          `https://orderflow-0pj4.onrender.com/api/v1/menu-item/${orderedItem.menuItemId}`,
+          `${API_URL}/api/v1/menu-item/${orderedItem.menuItemId}`,
         );
         console.log(response.ok);
         return await response.json();
@@ -82,7 +81,7 @@ async function fetchFilteredOrderedItems(e) {
 
 // async function showRevenue() {
 // Quando fizer a API dos pagamentos, finalizar essa função
-// const revenue = await fetch("https://orderflow-0pj4.onrender.com/api/v1/business/id/payments")
+// const revenue = await fetch("${API_URL}/api/v1/business/id/payments")
 // Fazer os calculos necessários
 // revenue.textContent = revenueCalculated
 //

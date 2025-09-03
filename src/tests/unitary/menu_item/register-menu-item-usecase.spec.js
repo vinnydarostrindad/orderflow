@@ -1,31 +1,20 @@
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
-import { jest } from "@jest/globals";
-
-jest.unstable_mockModule("node:fs/promises", () => ({
-  writeFile(path, content) {
-    writeFile.path = path;
-    writeFile.content = content;
-  },
-}));
-
-const RegisterMenuItemUseCase = (
-  await import(
-    "../../../domain/usecase/menu_item/register-menu-item-usecase.js"
-  )
-).default;
-const { writeFile } = await import("node:fs/promises");
+import RegisterMenuItemUseCase from "../../../domain/usecase/menu_item/register-menu-item-usecase.js";
 
 const makeSut = () => {
   const idGeneratorSpy = makeIdGenerator();
   const menuItemRepositorySpy = makeMenuItemRepository();
+  const supabaseAdapterSpy = makeSupabaseAdaptor();
   const sut = new RegisterMenuItemUseCase({
     idGenerator: idGeneratorSpy,
     menuItemRepository: menuItemRepositorySpy,
+    supabaseAdapter: supabaseAdapterSpy,
   });
   return {
     sut,
     idGeneratorSpy,
     menuItemRepositorySpy,
+    supabaseAdapterSpy,
   };
 };
 
@@ -85,6 +74,28 @@ const makeMenuItemRepositoryWithError = () => {
   return new MenuItemRepositorySpy();
 };
 
+const makeSupabaseAdaptor = () => {
+  const supabaseAdapterSpy = {
+    async uploadFile(bucket, fileName, imgFile) {
+      this.bucket = bucket;
+      this.fileName = fileName;
+      this.imgFile = imgFile;
+    },
+  };
+
+  return supabaseAdapterSpy;
+};
+
+const makeSupabaseAdaptorWithError = () => {
+  const supabaseAdapter = {
+    uploadFile: function () {
+      throw new Error();
+    },
+  };
+
+  return supabaseAdapter;
+};
+
 describe("Register Menu Item UseCase", () => {
   test("Should throw if no props are provided ", async () => {
     const { sut } = makeSut();
@@ -135,6 +146,29 @@ describe("Register Menu Item UseCase", () => {
     );
   });
 
+  test("Should call supabaseAdaptor.uploadFile with correct values", async () => {
+    const { sut, supabaseAdapterSpy } = makeSut();
+    const props = {
+      menuId: "any_menu_id",
+      name: "any_name",
+      price: "any_price",
+      description: "any_description",
+      imgFile: {
+        fileName: "any_file_name",
+        content: "any_content",
+      },
+      type: "any_type",
+    };
+
+    await sut.execute(props);
+    expect(supabaseAdapterSpy.bucket).toBe("menu-item-img");
+    expect(supabaseAdapterSpy.fileName).toMatch(/[\d]*_any_file_name/);
+    expect(supabaseAdapterSpy.imgFile).toEqual({
+      content: "any_content",
+      fileName: "any_file_name",
+    });
+  });
+
   test("Should call menuItemRepository with correct values", async () => {
     const { sut, menuItemRepositorySpy, idGeneratorSpy } = makeSut();
     const props = {
@@ -153,27 +187,6 @@ describe("Register Menu Item UseCase", () => {
     expect(menuItemRepositorySpy.imagePath).toBe(undefined);
     expect(menuItemRepositorySpy.description).toBe("any_description");
     expect(menuItemRepositorySpy.type).toBe("any_type");
-  });
-
-  test("Should call writeFile with correct values", async () => {
-    const { sut } = makeSut();
-    const props = {
-      menuId: "any_menu_id",
-      name: "any_name",
-      price: "any_price",
-      description: "any_description",
-      imgFile: {
-        fileName: "any_file_name",
-        content: "any_content",
-      },
-      type: "any_type",
-    };
-
-    await sut.execute(props);
-    expect(writeFile.path).toMatch(
-      /\.\/src\/main\/pages\/assets\/\d*_any_file_name/,
-    );
-    expect(writeFile.content).toBe("any_content");
   });
 
   test("Should return menu item if everything is right", async () => {
@@ -200,6 +213,7 @@ describe("Register Menu Item UseCase", () => {
 
   test("Should throw if invalid dependencieses are provided", async () => {
     const idGenerator = makeIdGenerator();
+    const menuItemRepository = makeMenuItemRepository();
     const suts = [
       new RegisterMenuItemUseCase(),
       new RegisterMenuItemUseCase({}),
@@ -213,11 +227,20 @@ describe("Register Menu Item UseCase", () => {
         idGenerator,
         menuItemRepository: {},
       }),
+      new RegisterMenuItemUseCase({
+        idGenerator,
+        menuItemRepository,
+        supabaseAdapter: {},
+      }),
     ];
     const props = {
       menuId: "any_menu_id",
       name: "any_name",
       price: "any_price",
+      imgFile: {
+        fileName: "any_file_name",
+        content: "any_content",
+      },
       description: "any_description",
       type: "any_type",
     };
@@ -229,6 +252,7 @@ describe("Register Menu Item UseCase", () => {
 
   test("Should throw if any dependency throws", async () => {
     const idGenerator = makeIdGenerator();
+    const menuItemRepository = makeMenuItemRepository();
     const suts = [
       new RegisterMenuItemUseCase({
         idGenerator: makeIdGeneratorWithError(),
@@ -237,12 +261,20 @@ describe("Register Menu Item UseCase", () => {
         idGenerator,
         menuItemRepository: makeMenuItemRepositoryWithError(),
       }),
+      new RegisterMenuItemUseCase({
+        idGenerator,
+        menuItemRepository,
+        supabaseAdapter: makeSupabaseAdaptorWithError(),
+      }),
     ];
     const props = {
       menuId: "any_menu_id",
       name: "any_name",
       price: "any_price",
-      imgFile: "any_img_file",
+      imgFile: {
+        fileName: "any_file_name",
+        content: "any_content",
+      },
       description: "any_description",
       type: "any_type",
     };
