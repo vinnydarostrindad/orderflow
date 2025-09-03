@@ -16,7 +16,7 @@ export default class RegisterMenuItemUseCase {
     let fileName;
     if (imgFile?.fileName && imgFile?.content) {
       const timestamp = Date.now();
-      const bucket = "menu-item-img";
+      const bucket = "menu-items-img";
       fileName = `${timestamp}_${imgFile?.fileName}`;
       await this.supabaseAdapter.uploadFile(bucket, fileName, imgFile);
     }
@@ -28,7 +28,7 @@ export default class RegisterMenuItemUseCase {
       menuId,
       name,
       price,
-      fileName,
+      imagePath: fileName,
       description,
       type,
     });

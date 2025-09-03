@@ -1,6 +1,7 @@
 import "/waiter/components/nav/script.js";
 import "/components/header/script.js";
 import "/components/snackbar.js";
+import supabase from "/scripts/supabase.js";
 import API_URL from "/scripts/config-api-url.js";
 
 const params = new URLSearchParams(window.location.search);
@@ -44,7 +45,8 @@ function buildGroupItemsFragment(items) {
       imgWrapper.classList.add("menu-item__img");
 
       const img = document.createElement("img");
-      img.src = item.imagePath;
+      const { publicUrl } = supabase.getUrl("menu-items-img", item.imagePath);
+      img.src = publicUrl;
 
       imgWrapper.append(img);
       button.append(imgWrapper);

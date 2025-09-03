@@ -4,7 +4,6 @@ import MissingParamError from "../../utils/errors/missing-param-error.js";
 import DependencyError from "../../utils/errors/dependency-error.js";
 
 dotenv.config();
-
 const supabase = createClient(
   "https://gyhsfpdaqfyhmbmigsuo.supabase.co",
   process.env.SUPABASE_SERVICE_KEY,
@@ -24,6 +23,7 @@ export default {
 
     if (error) {
       throw new DependencyError("@supabase/supabase-js", {
+        message: "Failed to upload file to storage",
         cause: error,
       });
     }
