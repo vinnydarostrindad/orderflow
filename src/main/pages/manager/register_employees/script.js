@@ -1,6 +1,7 @@
 import "/components/snackbar.js";
 import "/components/confirm-modal.js";
 import "/components/header/script.js";
+import API_URL from "/scripts/config-api-url.js";
 
 const registerEmployeeForm = document.forms[0];
 const roleSelect = document.querySelector("#role");
@@ -38,7 +39,7 @@ function saveEmployeesDraft() {
 }
 
 function redirectToNextPage() {
-  window.location.href = `https://orderflow-0pj4.onrender.com/create-menu`;
+  window.location.href = "/create-menu";
 }
 
 function handleSkip(e) {
@@ -192,20 +193,17 @@ async function postEmployees(e) {
 
   try {
     for (let { name, role } of employees) {
-      const response = await fetch(
-        `https://orderflow-0pj4.onrender.com/api/v1/employee`,
-        {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            role,
-            password: "funcionario",
-          }),
+      const response = await fetch(`${API_URL}/api/v1/employee`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          name,
+          role,
+          password: "funcionario",
+        }),
+      });
       if (!response.ok) {
         throw {
           status: response.status,

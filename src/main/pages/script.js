@@ -1,4 +1,5 @@
 import "/components/snackbar.js";
+import API_URL from "/scripts/config-api-url.js";
 
 const registerForm = document.querySelector(".form");
 const submitBtn = document.querySelector("#submitBtn");
@@ -18,20 +19,17 @@ async function submitForm(e) {
   const password = document.querySelector("#password").value;
 
   try {
-    const response = await fetch(
-      "https://orderflow-0pj4.onrender.com/api/v1/business",
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
+    const response = await fetch(`${API_URL}/api/v1/business`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
       },
-    );
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+      }),
+    });
 
     console.log(response.ok);
     if (!response.ok) {

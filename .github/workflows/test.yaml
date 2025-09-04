@@ -33,5 +33,8 @@ jobs:
 
       - run: npm ci
 
+      - name: Set environment variables
+        run: echo "SUPABASE_SERVICE_KEY=${{ secrets.SUPABASE_SERVICE_KEY }}" >> $GITHUB_ENV
+
       - name: Run Integration Tests
         run: npm test

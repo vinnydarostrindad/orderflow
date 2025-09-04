@@ -14,8 +14,7 @@ if (process.env.NODE_ENV !== "production") {
     host: process.env.POSTGRES_HOST,
     port: process.env.POSTGRES_PORT,
   };
-}
-if (process.env.NODE_ENV === "production") {
+} else if (process.env.NODE_ENV === "production") {
   config = {
     user: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,

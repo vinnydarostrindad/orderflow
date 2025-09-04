@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/main/index.js",
     "dev": "npm run services:up && npm run wait:database && npm run migrations:up && node --watch src/main",
-    "test": "npm run services:up && npm run wait:database && concurrently -n node,jest --hide node -k -s command-jest \"node src/main\" \"npm run test:integration\"",
+    "test": "npm run services:up && npm run wait:database && concurrently -k --success first -n node,jest --hide node \"node src/main\" \"npm run test:integration\"",
     "posttest": "npm run services:down",
     "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --verbose --colors -c jest-unitary-config.js",
     "test:unit:watch": "npm run test:unit -- --watch",
@@ -41,6 +41,7 @@
     "uuid": "^11.1.0"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.57.0",
     "dotenv": "^16.5.0",
     "dotenv-expand": "^12.0.2",
     "husky": "^9.1.7",

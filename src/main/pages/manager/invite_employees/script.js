@@ -1,4 +1,5 @@
 import "/components/header/script.js";
+import API_URL from "/scripts/config-api-url.js";
 
 const advanceButton = document.querySelector("#advanceBtn");
 const codeBox = document.querySelector("#code");
@@ -9,17 +10,14 @@ const copyUrlBtn = document.querySelector("#copyUrlBtn");
 
 const businessId = localStorage.getItem("b");
 
-const codeUrl = new URL(
-  `/login?b=${businessId}`,
-  "https://orderflow-0pj4.onrender.com/",
-);
+const codeUrl = new URL(`/login?b=${businessId}`, API_URL);
 
 modalLink.textContent = codeUrl;
 
 advanceButton.addEventListener("click", () => {
   advanceButton.classList.add("header__advance-btn--loading");
   localStorage.removeItem("b");
-  window.location.href = `https://orderflow-0pj4.onrender.com/dashboard`;
+  window.location.href = "/dashboard";
 });
 copyCodeBtn.addEventListener("click", (e) => copyToClipBoard(e, businessId));
 shareBtn.addEventListener("click", share);
