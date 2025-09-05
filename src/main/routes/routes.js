@@ -169,6 +169,11 @@ const pagesRoutes = [
     filePath: "/waiter/menu_items/index.html",
     role: "waiter",
   },
+  {
+    pattern: /^\/menu\/(?<menuId>[^/]+)\/item\/(?<menuItemId>[^/]+)$/,
+    filePath: "/waiter/order_menu_item/index.html",
+    role: "waiter",
+  },
 ];
 
 export { apiRoutes, pagesRoutes };
