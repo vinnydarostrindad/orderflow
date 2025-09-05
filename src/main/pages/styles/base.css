@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
+
 :root {
   /* COLORS */
   --color-primary-light: #f29a9a;
@@ -37,7 +39,7 @@
   --space-xl: 3rem;
 
   /* TYPOGRAPHI */
-  --font-family: arial, helvetica, sans-serif;
+  --font-family: "Inter", arial, helvetica, sans-serif;
   --font-base: 16px;
   --font-xs: 0.75rem;
   --font-sm: 0.875rem;
@@ -108,6 +110,9 @@ button {
 }
 
 select {
+  background-color: var(--color-bg-light);
+  border: 1px solid var(--color-text);
+  color: var(--color-text);
   cursor: pointer;
 }
 

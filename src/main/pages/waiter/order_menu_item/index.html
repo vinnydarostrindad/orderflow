@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/waiter/menus/style.css" />
+    <title>Menu</title>
+  </head>
+  <body>
+    <app-header button="menu"></app-header>
+
+    <waiter-nav></waiter-nav>
+
+    <main class="main">
+      <div class="menu-item">
+        <div class="menu-item__header">
+          <div class="menu-item__img">
+            <img src="./img/menu-photo.jpeg" />
+            <span class="menu-item__price">R$ 22,00</span>
+          </div>
+          <div class="menu-item__info">
+            <h2 class="menu-item__name">PF Médio</h2>
+            <p class="menu-item__description">
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Corrupti
+              doloribus corporis animi non, maiores, magni debitis iusto quis,
+              architecto sunt libero. Ipsam illum dolor impedit eum non
+              perferendis quia numquam?
+            </p>
+            <button class="menu-item__description-btn">Ver mais</button>
+          </div>
+        </div>
+        <div class="menu-item__body">
+          <div class="menu-item__ingredients">
+            <h3>Ingredientes</h3>
+            <ul>
+              <li class="menu-item__ingredient" id="ingredient1">
+                Ingrediente 1
+              </li>
+              <li class="menu-item__ingredient" id="ingredient2">
+                Ingrediente 2
+              </li>
+              <li class="menu-item__ingredient" id="ingredient3">
+                Ingrediente 3
+              </li>
+              <li class="menu-item__ingredient" id="ingredient4">
+                Ingrediente 4
+              </li>
+              <li class="menu-item__ingredient" id="ingredient5">
+                Ingrediente 5
+              </li>
+            </ul>
+          </div>
+          <div class="menu-item__select-waiting">
+            <div class="menu-item__select-group">
+              <label for="quantity">Quantidade:</label>
+              <select name="" id="quantity" class="menu-item__quantity">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
+            </div>
+            <p class="menu-item__waiting-time">
+              Tempo Médio por Unidade:
+              <span id="waitingTime">40 Min.</span>
+            </p>
+          </div>
+          <details class="menu-item__textarea-group">
+            <summary>Adicionar observações</summary>
+            <textarea
+              name="notes"
+              id="notes"
+              class="menu-item__notes"
+              placeholder="Ex: Sem cebola, mais queimado..."
+            ></textarea>
+          </details>
+          <button class="btn primary-btn">Realizar pedido</button>
+        </div>
+      </div>
+    </main>
+
+    <app-snackbar id="snackbar"></app-snackbar>
+
+    <script type="module" src="/waiter/menus/script.js"></script>
+  </body>
+</html>
