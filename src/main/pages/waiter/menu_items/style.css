@@ -79,6 +79,7 @@ body {
             align-items: center;
             background: var(--color-bg-light);
             border-radius: var(--radius-lg);
+            color: var(--color-text);
             display: flex;
             gap: var(--space-md);
             height: 120px;
