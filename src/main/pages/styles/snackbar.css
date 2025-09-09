@@ -8,6 +8,7 @@
   transform: translateX(-50%);
   transition: 500ms ease;
   width: max-content;
+  z-index: 9999;
 
   &.snackbar--warn {
     background-color: #8b8710;

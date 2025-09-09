@@ -160,6 +160,11 @@ const pagesRoutes = [
   },
   ...managerPages,
   {
+    pattern: /^\/tables$/,
+    filePath: "/waiter/tables/index.html",
+    role: "waiter",
+  },
+  {
     pattern: /^\/menus$/,
     filePath: "/waiter/menus/index.html",
     role: "waiter",

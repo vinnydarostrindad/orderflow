@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/waiter/tables/style.css" />
+    <title>Tables</title>
+  </head>
+  <body>
+    <app-header button="menu"></app-header>
+
+    <waiter-nav></waiter-nav>
+
+    <main class="main">
+      <div class="tables-box">
+        <button class="tables-box__add-btn" id="createTable">
+          Criar Mesa <span class="plus-sign">+</span>
+        </button>
+        <div class="tables-box__tables" id="tables">
+          <div class="table-card-skeleton skeleton"></div>
+          <div class="table-card-skeleton skeleton"></div>
+          <div class="table-card-skeleton skeleton"></div>
+          <div class="table-card-skeleton skeleton"></div>
+        </div>
+      </div>
+    </main>
+
+    <div class="modal-bg modal-bg--hidden">
+      <div class="all-tables-modal all-tables-modal--hidden">
+        <button class="all-tables-modal__table-number">1</button>
+        <button class="all-tables-modal__table-number">2</button>
+        <button class="all-tables-modal__table-number">3</button>
+        <button class="all-tables-modal__table-number">4</button>
+        <button class="all-tables-modal__table-number">5</button>
+        <button class="all-tables-modal__table-number">6</button>
+        <button class="all-tables-modal__table-number">7</button>
+        <button class="all-tables-modal__table-number">8</button>
+        <button class="all-tables-modal__table-number">9</button>
+        <button class="all-tables-modal__table-number">10</button>
+        <button class="all-tables-modal__table-number">11</button>
+        <button class="all-tables-modal__table-number">12</button>
+        <button class="all-tables-modal__table-number">13</button>
+        <button class="all-tables-modal__table-number">14</button>
+        <button class="all-tables-modal__table-number">15</button>
+        <button class="all-tables-modal__table-number">16</button>
+        <button class="all-tables-modal__table-number">17</button>
+        <button class="all-tables-modal__table-number">18</button>
+        <button class="all-tables-modal__table-number">19</button>
+        <button class="all-tables-modal__table-number">20</button>
+        <button class="all-tables-modal__table-number">21</button>
+        <button class="all-tables-modal__table-number">22</button>
+        <button class="all-tables-modal__table-number">23</button>
+        <button class="all-tables-modal__table-number">24</button>
+        <button class="all-tables-modal__table-number">25</button>
+        <button class="all-tables-modal__table-number">26</button>
+        <button class="all-tables-modal__table-number">27</button>
+        <button class="all-tables-modal__table-number">28</button>
+        <button class="all-tables-modal__table-number">29</button>
+        <button class="all-tables-modal__table-number">30</button>
+        <button class="all-tables-modal__table-number">31</button>
+        <button class="all-tables-modal__table-number">32</button>
+        <button class="all-tables-modal__table-number">33</button>
+        <button class="all-tables-modal__table-number">34</button>
+        <button class="all-tables-modal__table-number">35</button>
+        <button class="all-tables-modal__table-number">36</button>
+        <button class="all-tables-modal__table-number">37</button>
+        <button class="all-tables-modal__table-number">38</button>
+        <button class="all-tables-modal__table-number">39</button>
+        <button class="all-tables-modal__table-number">40</button>
+        <button class="all-tables-modal__table-number">41</button>
+        <button class="all-tables-modal__table-number">42</button>
+        <button class="all-tables-modal__table-number">43</button>
+        <button class="all-tables-modal__table-number">44</button>
+        <button class="all-tables-modal__table-number">45</button>
+        <button class="all-tables-modal__table-number">46</button>
+        <button class="all-tables-modal__table-number">47</button>
+        <button class="all-tables-modal__table-number">48</button>
+        <button class="all-tables-modal__table-number">49</button>
+        <button class="all-tables-modal__table-number">50</button>
+      </div>
+
+      <div class="table-name-modal table-name-modal--hidden">
+        <p>Adicionar nome:</p>
+        <input
+          type="text"
+          id="tableInputName"
+          placeholder="Opcional"
+          autocomplete="off"
+        />
+        <button class="primary-btn btn" id="tableNameInputContinueBtn">
+          Continuar
+        </button>
+      </div>
+    </div>
+
+    <app-snackbar id="snackbar"></app-snackbar>
+
+    <script type="module" src="/waiter/tables/script.js"></script>
+  </body>
+</html>
