@@ -83,7 +83,7 @@ function redirectUser(role) {
       window.location.href = "/dashboard";
       break;
     case "waiter":
-      window.location.href = "/menus";
+      window.location.href = "/tables";
       break;
     case "cook":
       window.location.href = "/cook";
