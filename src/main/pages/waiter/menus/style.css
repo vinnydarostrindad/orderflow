@@ -24,7 +24,7 @@ body {
   align-items: center;
   display: grid;
   margin-top: 3.15rem;
-  min-height: calc(100vh - 50px);
+  min-height: calc(100dvh - 50px);
 
   .menus {
     display: flex;
