@@ -1,6 +1,7 @@
 import "/components/snackbar.js";
 import "/components/header/script.js";
 import API_URL from "/scripts/config-api-url.js";
+import supabase from "../../scripts/supabase.js";
 
 const headerMenuBtn = document.querySelector("#headerMenuBtn");
 const navBar = document.querySelector("#navBar");
@@ -327,12 +328,20 @@ async function showLastOrders() {
       if (amountOfLastOrders === 10) return;
       const createdAt = Date.parse(item.createdAt);
 
+      let img;
+      if (item.imagePath) {
+        const { publicUrl } = supabase.getUrl("menu-items-img", item.imagePath);
+        img = `<img src="${publicUrl}" alt="${item.name}" />`;
+      } else {
+        img = "";
+      }
+
       ordersBox.insertAdjacentHTML(
         "beforeend",
         `
       <div class="last-orders__order">
         <div>
-          ${item.imagePath ? `<img src="../${item.imagePath}" alt="${item.name}" />` : ""}
+          ${img}
           
           <h4>${item.name}</h4>
         </div>
@@ -414,14 +423,14 @@ showAmountOfOrdersCanceled();
 makeChart();
 showLastOrders();
 
-setInterval(async () => {
-  orderedItems = await fetchOrderedItems();
-  orderedMenuItems =
-    orderedItems.length > 0 ? await fetchOrderedMenuItems() : [];
+// setInterval(async () => {
+//   orderedItems = await fetchOrderedItems();
+//   orderedMenuItems =
+//     orderedItems.length > 0 ? await fetchOrderedMenuItems() : [];
 
-  showAmountOfOrders();
-  showAmountOfOrdersCompleted();
-  showAmountOfOrdersCanceled();
-  updateChart();
-  showLastOrders();
-}, 30000);
+//   showAmountOfOrders();
+//   showAmountOfOrdersCompleted();
+//   showAmountOfOrdersCanceled();
+//   updateChart();
+//   showLastOrders();
+// }, 30000);
