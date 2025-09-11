@@ -5,7 +5,7 @@ class MenuCard extends HTMLElement {
     const id = this.dataset.id;
 
     this.innerHTML = `
-      <a href="/menu?mn=${name}&mi=${id}" class="menu-card">
+      <a href="/menu/${id}?mn=${encodeURIComponent(name)}" class="menu-card">
         <div class="menu-card__img">
           <img src="${imgPath}" alt="" />
         </div>

@@ -170,8 +170,13 @@ const pagesRoutes = [
     role: "waiter",
   },
   {
-    pattern: /^\/menu(?:[^/]+)?$/,
+    pattern: /^\/menu\/(?<menuId>[^/]+)$/,
     filePath: "/waiter/menu_items/index.html",
+    role: "waiter",
+  },
+  {
+    pattern: /^\/menu\/(?<menuId>[^/]+)\/item\/(?<menuItemId>[^/]+)$/,
+    filePath: "/waiter/order_menu_item/index.html",
     role: "waiter",
   },
 ];

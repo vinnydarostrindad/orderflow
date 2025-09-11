@@ -1,5 +1,4 @@
 import OrderRepository from "../../../infra/repositories/order-repository.js";
-import ValidationError from "../../../utils/errors/validation-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 const makePostgresAdapter = () => {
@@ -153,6 +152,7 @@ describe("OrderRepository", () => {
       });
     });
   });
+
   describe("findAll method", () => {
     test("Should throw if no tableId is provided", async () => {
       const { sut } = makeSut();
@@ -240,41 +240,6 @@ describe("OrderRepository", () => {
         table_number: "any_table_number",
         status: "pending",
       });
-    });
-  });
-
-  describe("valideUniqueTableNumber method", () => {
-    test("Should throw if no businessId is provided", async () => {
-      const { sut } = makeSut();
-
-      await expect(sut.validateUniqueTableNumber()).rejects.toThrow(
-        new MissingParamError("businessId"),
-      );
-    });
-
-    test("Should throw if no tableNumber is provided", async () => {
-      const { sut } = makeSut();
-
-      await expect(
-        sut.validateUniqueTableNumber("any_business_id"),
-      ).rejects.toThrow(new MissingParamError("tableNumber"));
-    });
-
-    test("Should throw rows if length is bigger than 0", async () => {
-      const { sut, postgresAdapterSpy } = makeSut();
-      postgresAdapterSpy.validateUniqueTableNumberQueryResult.rows = [{}];
-
-      await expect(
-        sut.validateUniqueTableNumber(
-          "any_business_id",
-          "repeated_table_number",
-        ),
-      ).rejects.toThrow(
-        new ValidationError({
-          message: "The table number provided is already in use.",
-          action: "Use another table number to perform this operation.",
-        }),
-      );
     });
   });
 

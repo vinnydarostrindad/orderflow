@@ -4,6 +4,9 @@ import "/components/header/script.js";
 import "/components/snackbar.js";
 import API_URL from "/scripts/config-api-url.js";
 
+sessionStorage.removeItem("tableId");
+sessionStorage.removeItem("tableNumber");
+
 const createTableBtn = document.querySelector("#createTable");
 const tablesContainer = document.querySelector("#tables");
 const snackbar = document.querySelector("#snackbar");

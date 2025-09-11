@@ -4,8 +4,9 @@ import "/components/snackbar.js";
 import supabase from "/scripts/supabase.js";
 import API_URL from "/scripts/config-api-url.js";
 
+const pathParts = window.location.pathname.split("/");
+const menuId = pathParts[2];
 const params = new URLSearchParams(window.location.search);
-const menuId = params.get("mi");
 const menuNameValue = params.get("mn");
 
 const snackbar = document.querySelector("#snackbar");
@@ -35,11 +36,12 @@ function renderTypeOptions() {
 function buildGroupItemsFragment(items) {
   const fragment = document.createDocumentFragment();
   items.forEach((item) => {
-    const button = document.createElement("button");
-    button.classList.add("menu-item");
+    const link = document.createElement("a");
+    link.classList.add("menu-item");
+    link.href = `/menu/${menuId}/item/${item.id}`;
 
     if (!item.imagePath) {
-      button.classList.add("menu-item--no-img");
+      link.classList.add("menu-item--no-img");
     } else {
       const imgWrapper = document.createElement("div");
       imgWrapper.classList.add("menu-item__img");
@@ -49,7 +51,7 @@ function buildGroupItemsFragment(items) {
       img.src = publicUrl;
 
       imgWrapper.append(img);
-      button.append(imgWrapper);
+      link.append(imgWrapper);
     }
 
     const info = document.createElement("div");
@@ -68,8 +70,8 @@ function buildGroupItemsFragment(items) {
 
     info.append(name);
     info.append(price);
-    button.append(info);
-    fragment.append(button);
+    link.append(info);
+    fragment.append(link);
   });
 
   return fragment;

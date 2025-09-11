@@ -7,18 +7,6 @@ import API_URL from "/scripts/config-api-url.js";
 const menusContainer = document.querySelector(".menus");
 const snackbar = document.querySelector("#snackbar");
 
-menusContainer.addEventListener("click", redirectToMenu);
-
-function redirectToMenu(e) {
-  const menuCard = e.target.closest("menu-card");
-  if (!menuCard) return;
-
-  const menuId = menuCard.dataset.id;
-  if (!menuId) throw new Error("Cadê a porcaira do iID IDIOTA");
-
-  window.location.href = `/menu/${menuId}`;
-}
-
 function addMenusToHTML(menus) {
   if (menus.length === 0) {
     menusContainer.innerHTML = "<p>Nenhum cardápio foi criado</p>";
