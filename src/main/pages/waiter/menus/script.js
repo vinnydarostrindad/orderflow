@@ -1,3 +1,7 @@
+if (!sessionStorage.getItem("tableId")) {
+  window.location.href = "/tables?r=mnd";
+}
+
 import "/waiter/components/nav/script.js";
 import "/waiter/components/menu-card.js";
 import "/components/header/script.js";
