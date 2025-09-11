@@ -18,6 +18,12 @@ const tableNameInputContinueBtn = document.querySelector(
   "#tableNameInputContinueBtn",
 );
 
+const params = new URLSearchParams(window.location.search);
+const redirectCode = params.get("r");
+if (redirectCode === "mnd") {
+  snackbar.show("warn", "<p>Defina uma mesa para <br> continuar</p>");
+}
+
 tablesContainer.addEventListener("click", selectTable);
 createTableBtn.addEventListener("click", toggleAllTablesModal);
 modalBg.addEventListener("click", closeModals);

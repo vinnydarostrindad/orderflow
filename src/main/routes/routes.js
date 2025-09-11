@@ -133,17 +133,17 @@ const managerPages = [
     filePath: "/manager/register_me/index.html",
   },
   {
-    pattern: /^\/create-menu$/,
+    pattern: /^\/create-menu\/?(?:\?.*)?$/,
     filePath: "/manager/create_menu/index.html",
     role: "manager",
   },
   {
-    pattern: /^\/invite-employees$/,
+    pattern: /^\/invite-employees\/?(?:\?.*)?$/,
     filePath: "/manager/invite_employees/index.html",
     role: "manager",
   },
   {
-    pattern: /^\/dashboard$/,
+    pattern: /^\/dashboard\/?(?:\?.*)?$/,
     filePath: "/manager/dashboard/index.html",
     role: "manager",
   },
@@ -151,7 +151,7 @@ const managerPages = [
 
 const pagesRoutes = [
   {
-    pattern: /^\/$/,
+    pattern: /^\/(?:\?.*)?$/,
     filePath: "/index.html",
   },
   {
@@ -160,22 +160,23 @@ const pagesRoutes = [
   },
   ...managerPages,
   {
-    pattern: /^\/tables$/,
+    pattern: /^\/tables\/?(?:\?.*)?$/,
     filePath: "/waiter/tables/index.html",
     role: "waiter",
   },
   {
-    pattern: /^\/menus$/,
+    pattern: /^\/menus\/?(?:\?.*)?$/,
     filePath: "/waiter/menus/index.html",
     role: "waiter",
   },
   {
-    pattern: /^\/menu\/(?<menuId>[^/]+)$/,
+    pattern: /^\/menu\/(?<menuId>[^/]+)\/?(?:\?.*)?$/,
     filePath: "/waiter/menu_items/index.html",
     role: "waiter",
   },
   {
-    pattern: /^\/menu\/(?<menuId>[^/]+)\/item\/(?<menuItemId>[^/]+)$/,
+    pattern:
+      /^\/menu\/(?<menuId>[^/]+)\/item\/(?<menuItemId>[^/]+)\/?(?:\?.*)?$/,
     filePath: "/waiter/order_menu_item/index.html",
     role: "waiter",
   },
