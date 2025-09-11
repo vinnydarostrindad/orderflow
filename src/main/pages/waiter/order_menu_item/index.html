@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/waiter/menus/style.css" />
+    <link rel="stylesheet" href="/waiter/order_menu_item/style.css" />
     <title>Menu</title>
   </head>
   <body>
@@ -12,43 +12,26 @@
     <waiter-nav></waiter-nav>
 
     <main class="main">
-      <div class="menu-item">
+      <div class="menu-item" hidden>
         <div class="menu-item__header">
-          <div class="menu-item__img">
-            <img src="./img/menu-photo.jpeg" />
-            <span class="menu-item__price">R$ 22,00</span>
+          <div class="menu-item__img-container">
+            <span class="menu-item__price"></span>
           </div>
           <div class="menu-item__info">
-            <h2 class="menu-item__name">PF Médio</h2>
+            <div class="menu-item__name-type">
+              <h2 class="menu-item__name"></h2>
+              <span class="menu-item__type"></span>
+            </div>
             <p class="menu-item__description">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Corrupti
-              doloribus corporis animi non, maiores, magni debitis iusto quis,
-              architecto sunt libero. Ipsam illum dolor impedit eum non
-              perferendis quia numquam?
+              <span class="description-hider"></span>
             </p>
-            <button class="menu-item__description-btn">Ver mais</button>
+            <button class="menu-item__description-btn">Mostrar mais</button>
           </div>
         </div>
         <div class="menu-item__body">
           <div class="menu-item__ingredients">
             <h3>Ingredientes</h3>
-            <ul>
-              <li class="menu-item__ingredient" id="ingredient1">
-                Ingrediente 1
-              </li>
-              <li class="menu-item__ingredient" id="ingredient2">
-                Ingrediente 2
-              </li>
-              <li class="menu-item__ingredient" id="ingredient3">
-                Ingrediente 3
-              </li>
-              <li class="menu-item__ingredient" id="ingredient4">
-                Ingrediente 4
-              </li>
-              <li class="menu-item__ingredient" id="ingredient5">
-                Ingrediente 5
-              </li>
-            </ul>
+            <ul></ul>
           </div>
           <div class="menu-item__select-waiting">
             <div class="menu-item__select-group">
@@ -68,7 +51,7 @@
             </div>
             <p class="menu-item__waiting-time">
               Tempo Médio por Unidade:
-              <span id="waitingTime">40 Min.</span>
+              <span id="waitingTime"></span>
             </p>
           </div>
           <details class="menu-item__textarea-group">
@@ -80,13 +63,16 @@
               placeholder="Ex: Sem cebola, mais queimado..."
             ></textarea>
           </details>
-          <button class="btn primary-btn">Realizar pedido</button>
+          <button class="btn primary-btn" id="orderItemBtn">
+            Realizar pedido
+          </button>
         </div>
       </div>
+      <div class="menu-item--skeleton skeleton"></div>
     </main>
 
     <app-snackbar id="snackbar"></app-snackbar>
 
-    <script type="module" src="/waiter/menus/script.js"></script>
+    <script type="module" src="/waiter/order_menu_item/script.js"></script>
   </body>
 </html>
