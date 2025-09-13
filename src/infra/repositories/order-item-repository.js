@@ -62,6 +62,7 @@ export default class OrderItemRepository {
     const result = await this.postgresAdapter.query({
       text: `
         SELECT 
+          order_items.order_id,
           order_items.menu_item_id,
           order_items.quantity,
           order_items.total_price,

@@ -24,14 +24,17 @@ export default class GetOrderItemRouter {
         businessId,
       });
 
+      console.log(orderedItems);
       const editedOrderedItems = orderedItems.map(
         ({
+          order_id,
           menu_item_id,
           quantity,
           total_price,
           status,
           order_item_created_at,
         }) => ({
+          orderId: order_id,
           menuItemId: menu_item_id,
           quantity: quantity.toString(),
           totalPrice: total_price,
