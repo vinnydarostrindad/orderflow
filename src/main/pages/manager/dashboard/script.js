@@ -1,7 +1,11 @@
 import "/components/snackbar.js";
 import "/components/header/script.js";
 import API_URL from "/scripts/config-api-url.js";
-import supabase from "../../scripts/supabase.js";
+
+import {
+  showLastOrders,
+  updateLastOrders,
+} from "/manager/dashboard/js/last-orders.js";
 
 const headerMenuBtn = document.querySelector("#headerMenuBtn");
 const navBar = document.querySelector("#navBar");
@@ -14,22 +18,15 @@ const canceledOrder = document.querySelector("#canceledOrders");
 const chartPorcentage = document.querySelector("#chartPorcentage");
 const chartQuantity = document.querySelector("#chartQuantity");
 const ctx = document.getElementById("salesChart").getContext("2d");
-const carouselLeftBtn = document.querySelector("#carouselLeftBtn");
-const carouselRightBtn = document.querySelector("#carouselRightBtn");
-const ordersBox = document.querySelector("#lastOrders");
 const snackbar = document.querySelector("#snackbar");
 
 let orderedItems;
 let orderedMenuItems;
 let salesChart;
 let lastFetchTime;
-let orderTimeIntervalId;
-let currentTraslateX = 0;
 
 headerMenuBtn.addEventListener("click", togglenavBar);
 timeFilterSelect.addEventListener("change", fetchFilteredOrderedItems);
-carouselLeftBtn.addEventListener("click", moveLastOrders);
-carouselRightBtn.addEventListener("click", moveLastOrders);
 
 function togglenavBar() {
   document.body.style.overflow = navBar.classList.contains("navbar--hidden")
@@ -42,7 +39,7 @@ async function fetchOrderedItems() {
   try {
     const response = await fetch(`${API_URL}/api/v1/ordered-items`);
 
-    console.log(response.ok);
+    // console.log(response.ok);
     return await response.json();
   } catch (error) {
     snackbar.show(
@@ -61,7 +58,7 @@ async function fetchOrderedMenuItems() {
         const response = await fetch(
           `${API_URL}/api/v1/menu-item/${orderedItem.menuItemId}`,
         );
-        console.log(response.ok);
+        // console.log(response.ok);
         return await response.json();
       } catch (error) {
         console.error(error);
@@ -136,7 +133,7 @@ function getInfosToMakeChart() {
     };
   });
 
-  let formatedOrderedItems = {};
+  const formatedOrderedItems = {};
 
   for (let item of orderedItemsInfos) {
     if (formatedOrderedItems[item.type]) {
@@ -229,7 +226,7 @@ function getInfosToUpdateChart() {
     })
     .filter((elem) => elem !== undefined);
 
-  let formatedOrderedItems = {};
+  const formatedOrderedItems = {};
   for (let item of orderedItemsInfos) {
     if (formatedOrderedItems[item.type]) {
       formatedOrderedItems[item.type] = String(
@@ -268,151 +265,6 @@ function updateChart() {
   }
 }
 
-// Last Orders Funcitons
-
-function calculateTimePassed(ms) {
-  const totalSeconds = Math.floor(ms / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-
-  const pad = (n) => String(n).padStart(2, "0");
-
-  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-}
-
-function getLastOrdersInfo() {
-  const orderedItemsInfos = orderedItems.map((orderedItem) => {
-    console.log(orderedItem);
-    for (let orderedMenuItem of orderedMenuItems) {
-      if (orderedItem.menuItemId === orderedMenuItem.id) {
-        return {
-          name: orderedMenuItem.name,
-          quantity: orderedItem.quantity,
-          imagePath: orderedMenuItem.imagePath,
-          status: orderedItem.status,
-          tableNumber: orderedItem.tableNumber,
-          createdAt: orderedItem.createdAt,
-        };
-      }
-    }
-  });
-
-  return orderedItemsInfos.reverse();
-}
-
-async function showLastOrders() {
-  const orderedItemsInfos = getLastOrdersInfo(orderedItems, orderedMenuItems);
-
-  document.querySelector(".last-orders__skeletons")?.remove();
-
-  if (orderedItemsInfos.length === 0) {
-    ordersBox.parentElement.innerHTML = `<p>Nenhum pedido foi feito hoje</p>`;
-    carouselLeftBtn.style.opacity = 0;
-    carouselLeftBtn.disabled = true;
-    carouselRightBtn.style.opacity = 0;
-    carouselRightBtn.disabled = true;
-    return;
-  }
-
-  carouselLeftBtn.style.opacity = "";
-  carouselRightBtn.style.opacity = "";
-  if (carouselLeftBtn.disabled) {
-    carouselRightBtn.disabled = false;
-  }
-
-  let amountOfLastOrders = 0;
-  ordersBox.innerHTML = "";
-  orderedItemsInfos.forEach((item) => {
-    for (let i = 0; i < +item.quantity; i++) {
-      if (amountOfLastOrders === 10) return;
-      const createdAt = Date.parse(item.createdAt);
-
-      let img;
-      if (item.imagePath) {
-        const { publicUrl } = supabase.getUrl("menu-items-img", item.imagePath);
-        img = `<img src="${publicUrl}" alt="${item.name}" />`;
-      } else {
-        img = "";
-      }
-
-      ordersBox.insertAdjacentHTML(
-        "beforeend",
-        `
-      <div class="last-orders__order">
-        <div>
-          ${img}
-          
-          <h4>${item.name}</h4>
-        </div>
-        <div class="last-orders__info">
-          <p class="last-orders__status">Status: ${item.status}</p>
-          <p class="last-orders__table-number">Mesa: ${item.tableNumber}</p>
-          <p class="last-orders__time">Tempo: <span class="order-time" data-created-at="${createdAt}">${calculateTimePassed(Date.now() - createdAt)}</span></p>
-        </div>
-      </div>  
-    `,
-      );
-      amountOfLastOrders++;
-    }
-  });
-
-  const lastOrders = document.querySelectorAll(".order-time");
-
-  if (orderTimeIntervalId) clearInterval(orderTimeIntervalId);
-
-  orderTimeIntervalId = setInterval(() => {
-    lastOrders.forEach((timer) => {
-      timer.textContent = calculateTimePassed(
-        Date.now() - timer.dataset.createdAt,
-      );
-    });
-  }, 1000);
-}
-
-function moveLastOrders(e) {
-  const allOrders = document.querySelectorAll(".last-orders__order");
-
-  const ordersGap = 1.2 * 16;
-  const ordersWidth = 215;
-  const step = ordersWidth + ordersGap;
-  const btn = e.target.closest("button");
-
-  const ordersShown = Math.floor(
-    ordersBox.parentElement.clientWidth / allOrders[0].offsetWidth,
-  );
-
-  if (allOrders.length - ordersShown === 0) {
-    carouselRightBtn.style.opacity = 0;
-    carouselRightBtn.disabled = true;
-    carouselLeftBtn.style.opacity = 0;
-    carouselLeftBtn.disabled = true;
-    return;
-  }
-
-  if (btn.id === "carouselRightBtn") {
-    currentTraslateX -= step;
-
-    if (currentTraslateX <= -((allOrders.length - ordersShown) * step)) {
-      carouselRightBtn.disabled = true;
-    }
-
-    carouselLeftBtn.disabled = false;
-  } else if (btn.id === "carouselLeftBtn") {
-    currentTraslateX += step;
-
-    if (currentTraslateX >= 0) {
-      currentTraslateX = 0;
-      carouselLeftBtn.disabled = true;
-    }
-
-    carouselRightBtn.disabled = false;
-  }
-
-  ordersBox.style.translate = currentTraslateX + "px";
-  console.log(currentTraslateX);
-}
-
 orderedItems = await fetchOrderedItems();
 orderedMenuItems = orderedItems.length > 0 ? await fetchOrderedMenuItems() : [];
 lastFetchTime = Date.now();
@@ -421,16 +273,17 @@ showAmountOfOrders();
 showAmountOfOrdersCompleted();
 showAmountOfOrdersCanceled();
 makeChart();
-showLastOrders();
+showLastOrders(orderedItems, orderedMenuItems);
 
-// setInterval(async () => {
-//   orderedItems = await fetchOrderedItems();
-//   orderedMenuItems =
-//     orderedItems.length > 0 ? await fetchOrderedMenuItems() : [];
+setInterval(async () => {
+  orderedItems = await fetchOrderedItems();
+  orderedMenuItems =
+    orderedItems.length > 0 ? await fetchOrderedMenuItems() : [];
 
-//   showAmountOfOrders();
-//   showAmountOfOrdersCompleted();
-//   showAmountOfOrdersCanceled();
-//   updateChart();
-//   showLastOrders();
-// }, 30000);
+  showAmountOfOrders();
+  showAmountOfOrdersCompleted();
+  showAmountOfOrdersCanceled();
+  updateChart();
+  updateLastOrders(orderedItems, orderedMenuItems);
+  console.log("FOI, legal");
+}, 5000);

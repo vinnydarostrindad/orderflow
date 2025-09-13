@@ -135,8 +135,9 @@ html {
       justify-content: space-between;
 
       .last-orders__box {
+        display: grid;
         overflow: hidden;
-        width: var(--order-width);
+        width: calc(var(--order-width) + 2px);
 
         > p {
           font-size: var(--font-lg);
@@ -235,7 +236,7 @@ html {
 
 @media screen and (width >= 680px) {
   .main .last-orders .last-orders__carousel .last-orders__box {
-    width: 455px;
+    width: 453px;
   }
 }
 
@@ -292,7 +293,7 @@ html {
     }
 
     .last-orders .last-orders__carousel .last-orders__box {
-      width: 690px;
+      width: 689px;
     }
   }
 }
@@ -304,7 +305,7 @@ html {
 
       .last-orders__carousel {
         .last-orders__box {
-          width: 925px;
+          width: 923px;
         }
       }
     }
