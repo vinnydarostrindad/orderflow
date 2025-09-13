@@ -24,7 +24,6 @@ export default class GetOrderItemRouter {
         businessId,
       });
 
-      console.log(orderedItems);
       const editedOrderedItems = orderedItems.map(
         ({
           order_id,
