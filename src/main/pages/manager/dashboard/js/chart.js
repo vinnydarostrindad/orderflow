@@ -68,6 +68,11 @@ function makeChart(items, menuItems, lastFetch) {
 
   document.querySelector(".chart-skeleton")?.remove();
 
+  if (salesChart) {
+    salesChart.destroy();
+    document.querySelector("canvas").onmouseleave = "";
+  }
+
   if (orderedItems.length === 0) {
     chartPorcentage.textContent = "Nada foi vendido durante esse período";
     chartQuantity.textContent = "";
@@ -75,8 +80,6 @@ function makeChart(items, menuItems, lastFetch) {
   }
 
   const formatedOrderedItems = buildChartData();
-
-  if (salesChart) salesChart.destroy();
 
   // eslint-disable-next-line no-undef
   salesChart = new Chart(ctx, {

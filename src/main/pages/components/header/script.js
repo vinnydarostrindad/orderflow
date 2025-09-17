@@ -52,6 +52,7 @@ class AppHeader extends HTMLElement {
 
     const btn = this.querySelector("#headerMenuBtn");
     const navBar = document.querySelector("#navBar");
+
     btn.addEventListener("click", () => {
       document.body.style.overflow = navBar.classList.contains("navbar--hidden")
         ? "hidden"

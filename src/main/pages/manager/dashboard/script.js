@@ -1,12 +1,11 @@
-import "/components/snackbar.js";
+import "/manager/components/nav/script.js";
 import "/components/header/script.js";
+import "/components/snackbar.js";
 import API_URL from "/scripts/config-api-url.js";
 import textStats from "/manager/dashboard/js/text-stats.js";
 import { makeChart, updateChart } from "/manager/dashboard/js/chart.js";
 import showLastOrders from "/manager/dashboard/js/last-orders.js";
 
-const headerMenuBtn = document.querySelector("#headerMenuBtn");
-const navBar = document.querySelector("#navBar");
 const timeFilterSelect = document.querySelector(".business-stats__select");
 const chartPorcentage = document.querySelector("#chartPorcentage");
 const chartQuantity = document.querySelector("#chartQuantity");
@@ -30,13 +29,6 @@ function resetChartSkeleton() {
       </div>
     `,
   );
-}
-
-function togglenavBar() {
-  document.body.style.overflow = navBar.classList.contains("navbar--hidden")
-    ? "hidden"
-    : "";
-  navBar.classList.toggle("navbar--hidden");
 }
 
 async function fetchOrderedItems() {
@@ -106,7 +98,6 @@ function startAutoRefresh() {
 }
 
 function init() {
-  headerMenuBtn.addEventListener("click", togglenavBar);
   timeFilterSelect.addEventListener("change", updateDatas);
 
   loadInitialData();
