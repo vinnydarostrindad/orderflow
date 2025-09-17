@@ -1,6 +1,6 @@
 import { parseJsonBody, parseMultipartBody } from "../helper/parse-body.js";
 
-async function nodeRequestAdapter(req, groups = {}, authObj) {
+async function nodeRequestAdapter(req, groups = {}, query, authObj) {
   const contentType = req.headers["content-type"]?.split(";")[0];
   const method = req.method;
   let body = {};
@@ -19,6 +19,7 @@ async function nodeRequestAdapter(req, groups = {}, authObj) {
     method,
     body,
     params,
+    query,
     auth,
   };
 

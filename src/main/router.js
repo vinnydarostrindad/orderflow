@@ -95,9 +95,21 @@ function findMatchingApiRoute(url, method) {
   for (const route of apiRoutes) {
     const match = url.match(route.pattern);
     if (match) {
+      const query = {};
+
+      if (url.includes("?")) {
+        url
+          .split("?")[1]
+          .split("&")
+          .forEach((queryParam) => {
+            const [key, value] = queryParam.split("=");
+            query[key] = value || null;
+          });
+      }
+
       verifyIfMethodIsAllowed(route, method);
 
-      return { route, params: match.groups, role: route.role };
+      return { route, params: match.groups, role: route.role, query };
     }
   }
   return null;
@@ -160,8 +172,8 @@ async function pageRoute(res, pageInfoObj) {
   }
 }
 
-async function apiRoute(req, res, method, { route, params }, authObj) {
-  const httpRequest = await nodeRequestAdapter(req, params, authObj);
+async function apiRoute(req, res, method, { route, params, query }, authObj) {
+  const httpRequest = await nodeRequestAdapter(req, params, query, authObj);
   const httpResponse = await route.methods[method](httpRequest);
 
   if (httpResponse.body instanceof Error) {

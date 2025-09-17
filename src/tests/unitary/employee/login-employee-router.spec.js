@@ -225,8 +225,6 @@ describe("LoginEmployeeRouter", () => {
     };
 
     for (const sut of suts) {
-      console.log("UM");
-      console.log(sut);
       await expect(sut.route(httpRequest)).rejects.toMatchObject({
         name: "Error",
       });

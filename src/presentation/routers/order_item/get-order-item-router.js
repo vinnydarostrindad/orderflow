@@ -11,6 +11,7 @@ export default class GetOrderItemRouter {
   async route(httpRequest) {
     const { orderId, orderItemId } = httpRequest.params;
     const { businessId } = httpRequest.auth;
+    const { period } = httpRequest.query;
 
     if (!orderId) {
       if (!businessId) {
@@ -20,9 +21,12 @@ export default class GetOrderItemRouter {
         return httpResponse.badRequest(new InvalidParamError("businessId"));
       }
 
-      const orderedItems = await this.getOrderItemUseCase.execute({
-        businessId,
-      });
+      const orderedItems = await this.getOrderItemUseCase.execute(
+        {
+          businessId,
+        },
+        period,
+      );
 
       const editedOrderedItems = orderedItems.map(
         ({
@@ -32,6 +36,7 @@ export default class GetOrderItemRouter {
           total_price,
           status,
           order_item_created_at,
+          table_number,
         }) => ({
           orderId: order_id,
           menuItemId: menu_item_id,
@@ -39,6 +44,7 @@ export default class GetOrderItemRouter {
           totalPrice: total_price,
           status,
           createdAt: order_item_created_at,
+          tableNumber: table_number,
         }),
       );
 

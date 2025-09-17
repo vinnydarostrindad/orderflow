@@ -5,12 +5,14 @@ export default class GetOrderItemUseCase {
     this.orderItemRepository = orderItemRepository;
   }
 
-  async execute({ businessId, orderId, orderItemId }) {
+  async execute({ businessId, orderId, orderItemId }, period) {
     if (!orderId) {
       if (!businessId) throw new MissingParamError("businessId");
 
-      const orderedItems =
-        await this.orderItemRepository.findAllByBusinessId(businessId);
+      const orderedItems = await this.orderItemRepository.findAllByBusinessId(
+        businessId,
+        period,
+      );
 
       return orderedItems;
     }

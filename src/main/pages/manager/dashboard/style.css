@@ -99,7 +99,6 @@ html {
 
         p {
           margin: 0 auto;
-          width: 270px;
         }
       }
     }
@@ -139,12 +138,6 @@ html {
         overflow: hidden;
         width: calc(var(--order-width) + 2px);
 
-        > p {
-          font-size: var(--font-lg);
-          font-weight: bold;
-          text-align: center;
-        }
-
         .last-orders__orders {
           align-items: center;
           display: flex;
@@ -152,6 +145,12 @@ html {
           height: 100%;
           transition: translate 200ms;
           translate: 0 0;
+
+          > p {
+            font-size: var(--font-lg);
+            font-weight: bold;
+            text-align: center;
+          }
 
           .last-orders__order {
             border: var(--border-default);

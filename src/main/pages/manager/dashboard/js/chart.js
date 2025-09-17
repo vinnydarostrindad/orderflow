@@ -2,37 +2,63 @@ const chartPorcentage = document.querySelector("#chartPorcentage");
 const chartQuantity = document.querySelector("#chartQuantity");
 const ctx = document.getElementById("salesChart").getContext("2d");
 
-let orderedItems;
-let orderedMenuItems;
+let orderedItems = [];
+let orderedMenuItems = [];
 let salesChart;
 let lastFetchTime;
 
-function getInfosToMakeChart() {
+function aggregateItemsByType(items) {
+  return items.reduce((acc, item) => {
+    acc[item.type] = (acc[item.type] || 0) + Number(item.quantity);
+    return acc;
+  }, {});
+}
+
+function buildChartData() {
   const menuItemsMap = new Map(orderedMenuItems.map((item) => [item.id, item]));
 
-  const orderedItemsInfos = orderedItems.map((orderedItem) => {
-    const menuItem = menuItemsMap.get(orderedItem.menuItemId);
+  const itemsInfo = orderedItems
+    .map((orderedItem) => {
+      const menuItem = menuItemsMap.get(orderedItem.menuItemId);
+      if (!menuItem) return null;
 
-    if (!menuItem) return;
+      return {
+        quantity: orderedItem.quantity,
+        type: menuItem.type || "(Sem tipo)",
+      };
+    })
+    .filter(Boolean);
 
-    return {
-      quantity: orderedItem.quantity,
-      type: menuItem.type ? menuItem.type : "(Sem tipo)",
-    };
-  });
+  return aggregateItemsByType(itemsInfo);
+}
 
-  const formatedOrderedItems = {};
-
-  for (let item of orderedItemsInfos) {
-    if (formatedOrderedItems[item.type]) {
-      formatedOrderedItems[item.type] = String(
-        Number(formatedOrderedItems[item.type]) + Number(item.quantity),
+function buildChartDataForUpdates() {
+  const itemsInfo = orderedItems
+    .map((orderedItem) => {
+      const menuItem = orderedItems.find(
+        (m) => m.id === orderedItem.menuItemId,
       );
-      continue;
-    }
-    formatedOrderedItems[item.type] = item.quantity;
-  }
-  return formatedOrderedItems;
+      if (!menuItem) return null;
+
+      if (Date.parse(orderedItem.createdAt) < lastFetchTime) return null;
+
+      return {
+        quantity: orderedItem.quantity,
+        type: menuItem.type ? menuItem.type : "(Sem tipo)",
+      };
+    })
+    .filter(Boolean);
+
+  return aggregateItemsByType(itemsInfo);
+}
+
+function updateHoverTexts(chart, index) {
+  const value = chart.data.datasets[0].data[index];
+  const total = chart.data.datasets[0].data.reduce((a, b) => +a + +b);
+  const percentage = ((value / total) * 100).toFixed(1);
+
+  chartPorcentage.innerText = `${percentage}%`;
+  chartQuantity.innerText = `(${value})`;
 }
 
 function makeChart(items, menuItems, lastFetch) {
@@ -48,7 +74,9 @@ function makeChart(items, menuItems, lastFetch) {
     return;
   }
 
-  const formatedOrderedItems = getInfosToMakeChart();
+  const formatedOrderedItems = buildChartData();
+
+  if (salesChart) salesChart.destroy();
 
   // eslint-disable-next-line no-undef
   salesChart = new Chart(ctx, {
@@ -65,26 +93,16 @@ function makeChart(items, menuItems, lastFetch) {
     options: {
       responsive: false,
       layout: {
-        padding: 20,
+        padding: 10,
       },
       plugins: {
         legend: {
-          position: "none",
+          position: false,
         },
       },
       onHover: (event, chartElement) => {
         if (chartElement.length > 0) {
-          const index = chartElement[0].index;
-          const value = salesChart.data.datasets[0].data[index];
-
-          const percentage = (
-            (value /
-              salesChart.data.datasets[0].data.reduce((a, b) => +a + +b)) *
-            100
-          ).toFixed(1);
-
-          chartPorcentage.innerText = `${percentage}%`;
-          chartQuantity.innerText = `(${value})`;
+          updateHoverTexts(salesChart, chartElement[0].index);
         } else {
           chartPorcentage.innerText = "";
           chartQuantity.innerText = "";
@@ -103,57 +121,27 @@ function makeChart(items, menuItems, lastFetch) {
   };
 }
 
-function getInfosToUpdateChart() {
-  const orderedItemsInfos = orderedItems
-    .map((orderedItem) => {
-      for (let menuItem of orderedMenuItems) {
-        if (menuItem.id === orderedItem.menuItemId) {
-          if (Date.parse(orderedItem.createdAt) < lastFetchTime) continue;
-          return {
-            quantity: orderedItem.quantity,
-            type: menuItem.type ? menuItem.type : "(Sem tipo)",
-          };
-        }
-      }
-    })
-    .filter((elem) => elem !== undefined);
-
-  const formatedOrderedItems = {};
-  for (let item of orderedItemsInfos) {
-    if (formatedOrderedItems[item.type]) {
-      formatedOrderedItems[item.type] = String(
-        Number(formatedOrderedItems[item.type]) + Number(item.quantity),
-      );
-      continue;
-    }
-    formatedOrderedItems[item.type] = item.quantity;
-  }
-
-  return formatedOrderedItems;
-}
-
 function updateChart(items, menuItems) {
   orderedItems = items;
   orderedMenuItems = menuItems;
 
-  const addedOrders = getInfosToUpdateChart();
+  const newOrders = buildChartDataForUpdates();
   lastFetchTime = Date.now();
 
-  for (let order in addedOrders) {
-    if (salesChart.data.labels.includes(order)) {
-      const indexOfOrder = salesChart.data.labels.indexOf(order);
+  for (let type in newOrders) {
+    if (salesChart.data.labels.includes(type)) {
+      const indexOfOrder = salesChart.data.labels.indexOf(type);
 
       const currentValue = Number(
         salesChart.data.datasets[0].data[indexOfOrder],
       );
-      const addedValue = Number(addedOrders[order]);
+      const addedValue = Number(newOrders[type]);
 
       salesChart.data.datasets[0].data[indexOfOrder] =
         currentValue + addedValue;
     } else {
-      salesChart.data.labels.push(order);
-
-      salesChart.data.datasets[0].data.push(addedOrders.order);
+      salesChart.data.labels.push(type);
+      salesChart.data.datasets[0].data.push(newOrders.order);
     }
 
     salesChart.update();

@@ -56,8 +56,43 @@ export default class OrderItemRepository {
     return result.rows;
   }
 
-  async findAllByBusinessId(businessId) {
+  async findAllByBusinessId(businessId, period) {
     if (!businessId) throw new MissingParamError("businessId");
+
+    let timeFilter;
+    switch (period) {
+      case "day":
+        timeFilter =
+          "AND order_items.created_at >= date_trunc('day', CURRENT_DATE)";
+        break;
+      case "week":
+        timeFilter = `
+          AND order_items.created_at >= date_trunc('week', CURRENT_DATE)
+          AND order_items.created_at < date_trunc('week', CURRENT_DATE) + INTERVAL '1 week'
+        `;
+        break;
+      case "month":
+        timeFilter = `
+          AND order_items.created_at >= date_trunc('month', CURRENT_DATE)
+          AND order_items.created_at < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'
+        `;
+        break;
+      case "6month":
+        timeFilter = `
+          AND order_items.created_at >= date_trunc('day', CURRENT_DATE) - INTERVAL '6 months'
+        `;
+        break;
+      case "year":
+        timeFilter = `
+          AND order_items.created_at >= date_trunc('year', CURRENT_DATE)
+          AND order_items.created_at < date_trunc('year', CURRENT_DATE) + INTERVAL '1 year'
+        `;
+        break;
+
+      default:
+        timeFilter = "";
+        break;
+    }
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -74,9 +109,9 @@ export default class OrderItemRepository {
         JOIN
           orders ON order_items.order_id = orders.id
         WHERE
-          orders.business_id = $1
+          orders.business_id = $1 ${timeFilter}
         ORDER BY
-          order_items.created_at ASC
+          order_item_created_at ASC
       ;`,
       values: [businessId],
     });
