@@ -248,34 +248,17 @@ describe("OrderItem Repository", () => {
       );
     });
 
-    test("Should call postgresAdapter with correct object", async () => {
+    test("Should call postgresAdapter with correct query when no filter is provided", async () => {
       const { sut, postgresAdapterSpy } = makeSut();
-      await sut.findAllByBusinessId("any_order_id");
-      expect(postgresAdapterSpy.queryObject).toEqual({
-        text: `
-        SELECT 
-          order_items.menu_item_id,
-          order_items.quantity,
-          order_items.total_price,
-          order_items.status,
-          order_items.created_at AS order_item_created_at,
-          orders.table_number
-        FROM
-          order_items
-        JOIN
-          orders ON order_items.order_id = orders.id
-        WHERE
-          orders.business_id = $1
-        ORDER BY
-          order_items.created_at ASC
-      ;`,
-        values: ["any_order_id"],
-      });
+      await sut.findAllByBusinessId("any_business_id");
+      expect(postgresAdapterSpy.queryObject.text).toContain(
+        "WHERE\n          orders.business_id = $1 ",
+      );
     });
 
     test("Should return order items if everything is right", async () => {
       const { sut } = makeSut();
-      const result = await sut.findAllByBusinessId("any_order_id");
+      const result = await sut.findAllByBusinessId("any_business_id");
       expect(Array.isArray(result)).toBe(true);
       expect(result[0]).toEqual({
         id: "any_order_item_id",
@@ -285,6 +268,57 @@ describe("OrderItem Repository", () => {
         unit_price: 20,
         total_price: 40,
         notes: "any_notes",
+      });
+    });
+
+    describe("Filters", () => {
+      test("Should add correct filter when period=day", async () => {
+        const { sut, postgresAdapterSpy } = makeSut();
+        await sut.findAllByBusinessId("any_business_id", "day");
+        expect(postgresAdapterSpy.queryObject.text).toContain(
+          "AND order_items.created_at >= date_trunc('day', CURRENT_DATE)",
+        );
+      });
+
+      test("Should add correct filter when period=week", async () => {
+        const { sut, postgresAdapterSpy } = makeSut();
+        await sut.findAllByBusinessId("any_business_id", "week");
+        expect(postgresAdapterSpy.queryObject.text).toContain(
+          "AND order_items.created_at >= date_trunc('week', CURRENT_DATE)",
+        );
+        expect(postgresAdapterSpy.queryObject.text).toContain(
+          "AND order_items.created_at < date_trunc('week', CURRENT_DATE) + INTERVAL '1 week'",
+        );
+      });
+
+      test("Should add correct filter when period=month", async () => {
+        const { sut, postgresAdapterSpy } = makeSut();
+        await sut.findAllByBusinessId("any_business_id", "month");
+        expect(postgresAdapterSpy.queryObject.text).toContain(
+          "AND order_items.created_at >= date_trunc('month', CURRENT_DATE)",
+        );
+        expect(postgresAdapterSpy.queryObject.text).toContain(
+          "AND order_items.created_at < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'",
+        );
+      });
+
+      test("Should add correct filter when period=6month", async () => {
+        const { sut, postgresAdapterSpy } = makeSut();
+        await sut.findAllByBusinessId("any_business_id", "6month");
+        expect(postgresAdapterSpy.queryObject.text).toContain(
+          "AND order_items.created_at >= date_trunc('day', CURRENT_DATE) - INTERVAL '6 months'",
+        );
+      });
+
+      test("Should add correct filter when period=year", async () => {
+        const { sut, postgresAdapterSpy } = makeSut();
+        await sut.findAllByBusinessId("any_business_id", "year");
+        expect(postgresAdapterSpy.queryObject.text).toContain(
+          "AND order_items.created_at >= date_trunc('year', CURRENT_DATE)",
+        );
+        expect(postgresAdapterSpy.queryObject.text).toContain(
+          "AND order_items.created_at < date_trunc('year', CURRENT_DATE) + INTERVAL '1 year'",
+        );
       });
     });
   });

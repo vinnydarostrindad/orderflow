@@ -68,7 +68,7 @@ const apiRoutes = [
     },
   },
   {
-    pattern: /^\/api\/v1\/ordered-items$/,
+    pattern: /^\/api\/v1\/ordered-items\/?(?:\?.*)?$/,
     methods: {
       get: orderItemRoute.getAllByBusinessId,
     },
@@ -78,6 +78,12 @@ const apiRoutes = [
     methods: {
       get: tableRoute.getAll,
       post: tableRoute.post,
+    },
+  },
+  {
+    pattern: /^\/api\/v1\/order\/(?<orderId>[^/]+)$/,
+    methods: {
+      get: orderRoute.getOne,
     },
   },
   {

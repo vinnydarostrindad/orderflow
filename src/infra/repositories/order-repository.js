@@ -1,5 +1,4 @@
 import MissingParamError from "../../utils/errors/missing-param-error.js";
-// import ValidationError from "../../utils/errors/validation-error.js";
 
 export default class OrderRepository {
   constructor({ postgresAdapter } = {}) {
@@ -47,7 +46,7 @@ export default class OrderRepository {
     return result.rows;
   }
 
-  async findById(tableId, orderId) {
+  async findByTableId(tableId, orderId) {
     if (!tableId) throw new MissingParamError("tableId");
     if (!orderId) throw new MissingParamError("orderId");
 
@@ -63,6 +62,27 @@ export default class OrderRepository {
           1
         ;`,
       values: [orderId, tableId],
+    });
+
+    return result.rows[0];
+  }
+
+  async findByBusinessId(businessId, orderId) {
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!orderId) throw new MissingParamError("orderId");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          *
+        FROM
+          orders
+        WHERE
+          id = $1 AND business_id = $2
+        LIMIT
+          1
+        ;`,
+      values: [orderId, businessId],
     });
 
     return result.rows[0];

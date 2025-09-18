@@ -195,24 +195,24 @@ describe("OrderRepository", () => {
     });
   });
 
-  describe("findById method", () => {
+  describe("findByTableId method", () => {
     test("Should throw if no tableId is provided", async () => {
       const { sut } = makeSut();
-      await expect(sut.findById(undefined, "any_order_id")).rejects.toThrow(
-        new MissingParamError("tableId"),
-      );
+      await expect(
+        sut.findByTableId(undefined, "any_order_id"),
+      ).rejects.toThrow(new MissingParamError("tableId"));
     });
 
     test("Should throw if no orderId is provided", async () => {
       const { sut } = makeSut();
-      await expect(sut.findById("any_table_id")).rejects.toThrow(
+      await expect(sut.findByTableId("any_table_id")).rejects.toThrow(
         new MissingParamError("orderId"),
       );
     });
 
     test("Should call postgresAdapter with correct query", async () => {
       const { sut, postgresAdapterSpy } = makeSut();
-      await sut.findById("any_table_id", "any_order_id");
+      await sut.findByTableId("any_table_id", "any_order_id");
 
       expect(postgresAdapterSpy.queryObject).toEqual({
         text: `
@@ -231,7 +231,58 @@ describe("OrderRepository", () => {
 
     test("Should return order if found", async () => {
       const { sut } = makeSut();
-      const result = await sut.findById("any_table_id", "any_order_id");
+      const result = await sut.findByTableId("any_table_id", "any_order_id");
+
+      expect(result).toEqual({
+        id: "any_order_id",
+        business_id: "any_business_id",
+        table_id: "any_table_id",
+        table_number: "any_table_number",
+        status: "pending",
+      });
+    });
+  });
+
+  describe("findByBusinessId method", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+      await expect(
+        sut.findByBusinessId(undefined, "any_order_id"),
+      ).rejects.toThrow(new MissingParamError("businessId"));
+    });
+
+    test("Should throw if no orderId is provided", async () => {
+      const { sut } = makeSut();
+      await expect(sut.findByBusinessId("any_business_id")).rejects.toThrow(
+        new MissingParamError("orderId"),
+      );
+    });
+
+    test("Should call postgresAdapter with correct query", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      await sut.findByBusinessId("any_business_id", "any_order_id");
+
+      expect(postgresAdapterSpy.queryObject).toEqual({
+        text: `
+        SELECT
+          *
+        FROM
+          orders
+        WHERE
+          id = $1 AND business_id = $2
+        LIMIT
+          1
+        ;`,
+        values: ["any_order_id", "any_business_id"],
+      });
+    });
+
+    test("Should return order if found", async () => {
+      const { sut } = makeSut();
+      const result = await sut.findByBusinessId(
+        "any_business_id",
+        "any_order_id",
+      );
 
       expect(result).toEqual({
         id: "any_order_id",
@@ -260,7 +311,7 @@ describe("OrderRepository", () => {
     for (const sut of suts) {
       await expect(sut.create(props)).rejects.toThrow(TypeError);
       await expect(sut.findAll(props.tableId)).rejects.toThrow(TypeError);
-      await expect(sut.findById(props.tableId, props.id)).rejects.toThrow(
+      await expect(sut.findByTableId(props.tableId, props.id)).rejects.toThrow(
         TypeError,
       );
     }
@@ -280,6 +331,6 @@ describe("OrderRepository", () => {
 
     await expect(sut.create(props)).rejects.toThrow();
     await expect(sut.findAll(props.tableId)).rejects.toThrow();
-    await expect(sut.findById(props.tableId, props.id)).rejects.toThrow();
+    await expect(sut.findByTableId(props.tableId, props.id)).rejects.toThrow();
   });
 });

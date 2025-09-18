@@ -1,12 +1,17 @@
-import MissingParamError from "../../../utils/errors/missing-param-error.js";
-
 export default class GetOrderUseCase {
   constructor({ orderRepository } = {}) {
     this.orderRepository = orderRepository;
   }
 
-  async execute(tableId, orderId) {
-    if (!tableId) throw new MissingParamError("tableId");
+  async execute({ businessId, tableId, orderId }) {
+    if (!tableId) {
+      const order = await this.orderRepository.findByBusinessId(
+        businessId,
+        orderId,
+      );
+
+      return order;
+    }
 
     if (!orderId) {
       const orders = await this.orderRepository.findAll(tableId);
@@ -14,7 +19,7 @@ export default class GetOrderUseCase {
       return orders;
     }
 
-    const order = await this.orderRepository.findById(tableId, orderId);
+    const order = await this.orderRepository.findByTableId(tableId, orderId);
 
     return order;
   }

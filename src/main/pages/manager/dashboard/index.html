@@ -16,89 +16,16 @@
   <body>
     <app-header button="menu"></app-header>
 
-    <nav class="navbar navbar--hidden" id="navBar">
-      <ul>
-        <li class="navbar__item navbar__item--selected">
-          <a href="#">
-            <img
-              src="/manager/dashboard/img/dashboard-icon.svg"
-              alt="dashboard-icon"
-              class="navbar__icon invert"
-            />
-            DashBoard
-          </a>
-        </li>
-        <li class="navbar__item">
-          <a href="#">
-            <img
-              src="/manager/dashboard/img/employees-icon.svg"
-              alt="employees-icon"
-              class="navbar__icon invert"
-            />
-            Funcionários
-          </a>
-        </li>
-        <li class="navbar__item">
-          <a href="#">
-            <img
-              src="/manager/dashboard/img/food-menu-icon.svg"
-              alt="menu-icon"
-              class="navbar__icon invert"
-            />
-            Cardápio
-          </a>
-        </li>
-        <li class="navbar__item">
-          <a href="#">
-            <img
-              src="/manager/dashboard/img/sales-icon.svg"
-              alt="sales-icon"
-              class="navbar__icon invert"
-            />
-            Vendas
-          </a>
-        </li>
-        <li class="navbar__item">
-          <a href="#">
-            <img
-              src="/manager/dashboard/img/stock-icon.svg"
-              alt="stock-icon"
-              class="navbar__icon invert"
-            />
-            Estoque
-          </a>
-        </li>
-        <li class="navbar__item">
-          <a href="#">
-            <img
-              src="/manager/dashboard/img/orders-icon.svg"
-              alt="orders-icon"
-              class="navbar__icon invert"
-            />
-            Pedidos
-          </a>
-        </li>
-        <li class="navbar__item">
-          <a href="#">
-            <img
-              src="/manager/dashboard/img/config-icon.svg"
-              alt="config-icon"
-              class="navbar__icon invert"
-            />
-            Configuração
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <manager-nav page="dashboard"></manager-nav>
 
     <main class="main">
       <div class="business-stats">
-        <h2 class="business-stats__title">Nome da Empresa</h2>
+        <h2 class="business-stats__title skeleton" id="businessName"></h2>
         <select name="timeFilter" class="business-stats__select">
           <option value="day">Hoje</option>
           <option value="week">Essa Semana</option>
           <option value="month">Esse Mês</option>
-          <option value="six-months">Últimos 6 Meses</option>
+          <option value="6months">Últimos 6 Meses</option>
           <option value="year">Esse Ano</option>
         </select>
         <div class="business-stats__info">
@@ -115,7 +42,7 @@
           <div class="chart-skeleton skeleton">
             <div class="chart-hole"></div>
           </div>
-          <canvas id="salesChart" width="300" height="300"></canvas>
+          <canvas id="salesChart" width="280" height="280"></canvas>
           <div class="chart-info">
             <p id="chartPorcentage"></p>
             <p id="chartQuantity"></p>
@@ -123,7 +50,7 @@
         </div>
       </div>
       <div class="last-orders">
-        <h3>Últimos pedidos feitos:</h3>
+        <h3>Últimos pedidos de hoje:</h3>
         <div class="last-orders__carousel">
           <button
             id="carouselLeftBtn"
