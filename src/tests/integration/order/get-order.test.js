@@ -28,6 +28,71 @@ async function makeOrderTestContext(numberOfOrders = 1) {
   return { business, order, token, table };
 }
 
+describe("GET /api/v1/order/[orderId]", () => {
+  test("Should return correct order", async () => {
+    const { business, table, order, token } = await makeOrderTestContext();
+
+    const response = await fetch(
+      `http://localhost:3000/api/v1/order/${order.id}`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
+    );
+
+    expect(response.status).toBe(200);
+
+    const responseBody = await response.json();
+
+    expect(responseBody).toMatchObject({
+      id: order.id,
+      businessId: business.id,
+      tableId: table.id,
+      tableNumber: "1",
+      status: "pending",
+    });
+
+    expect(typeof responseBody.id).toBe("string");
+    expect(uuidVersion(responseBody.id)).toBe(4);
+
+    expect(typeof responseBody.businessId).toBe("string");
+    expect(uuidVersion(responseBody.businessId)).toBe(4);
+
+    expect(typeof responseBody.tableId).toBe("string");
+    expect(uuidVersion(responseBody.tableId)).toBe(4);
+
+    expect(typeof responseBody.createdAt).toBe("string");
+    expect(Date.parse(responseBody.createdAt)).not.toBeNaN();
+
+    expect(typeof responseBody.updatedAt).toBe("string");
+    expect(Date.parse(responseBody.updatedAt)).not.toBeNaN();
+  });
+
+  test("Should return NotFoundError if order does not exists", async () => {
+    const { token } = await makeOrderTestContext(0);
+
+    const response = await fetch(
+      `http://localhost:3000/api/v1/order/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      {
+        headers: {
+          cookie: `token=${token}`,
+        },
+      },
+    );
+
+    expect(response.status).toBe(404);
+
+    const responseBody = await response.json();
+    expect(responseBody).toEqual({
+      name: "NotFoundError",
+      statusCode: 404,
+      action: "Make sure order exists.",
+      message: "Order was not found.",
+    });
+  });
+});
+
 describe("GET /api/v1/table/[tableId]/order", () => {
   test("Should return all orders with correct data", async () => {
     const { business, table, token } = await makeOrderTestContext(2);

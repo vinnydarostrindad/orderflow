@@ -19,7 +19,6 @@ export default class GetOrderItemUseCase {
 
     if (!orderItemId) {
       const orderItems = await this.orderItemRepository.findAll(orderId);
-
       return orderItems;
     }
 

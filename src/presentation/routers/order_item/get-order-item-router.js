@@ -30,6 +30,7 @@ export default class GetOrderItemRouter {
 
       const editedOrderedItems = orderedItems.map(
         ({
+          id,
           order_id,
           menu_item_id,
           quantity,
@@ -38,6 +39,7 @@ export default class GetOrderItemRouter {
           order_item_created_at,
           table_number,
         }) => ({
+          id,
           orderId: order_id,
           menuItemId: menu_item_id,
           quantity: quantity.toString(),

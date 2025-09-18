@@ -1,5 +1,4 @@
 import MissingParamError from "../../utils/errors/missing-param-error.js";
-// import ValidationError from "../../utils/errors/validation-error.js";
 
 export default class OrderRepository {
   constructor({ postgresAdapter } = {}) {

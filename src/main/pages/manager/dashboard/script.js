@@ -118,7 +118,7 @@ function startAutoRefresh() {
       chartExists = makeChart(orderedItems, orderedMenuItems);
     }
     showLastOrders(orderedMenuItems);
-  }, 5000);
+  }, 30000);
 }
 
 function init() {

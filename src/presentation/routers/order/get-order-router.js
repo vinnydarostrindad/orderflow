@@ -16,13 +16,25 @@ export default class GetOrderRouter {
         businessId,
         orderId,
       });
-      const { id, business_id, table_number, status, created_at, updated_at } =
-        order;
+
+      if (!order) {
+        return httpResponse.notFound("Order", "Make sure order exists.");
+      }
+
+      const {
+        id,
+        business_id,
+        table_id,
+        table_number,
+        status,
+        created_at,
+        updated_at,
+      } = order;
 
       return httpResponse.ok({
         id,
         businessId: business_id,
-        tableId,
+        tableId: table_id,
         tableNumber: table_number.toString(),
         status,
         createdAt: created_at,

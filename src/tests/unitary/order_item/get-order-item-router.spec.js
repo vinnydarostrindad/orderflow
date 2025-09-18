@@ -37,6 +37,8 @@ const makeGetOrderItemUseCase = () => {
     unit_price: "20.00",
     total_price: "40.00",
     notes: "any_notes",
+    order_item_created_at: "any_time",
+    table_number: "any_table_number",
   };
   getOrderItemUseCaseSpy.orderItems = [
     {
@@ -48,6 +50,8 @@ const makeGetOrderItemUseCase = () => {
       unit_price: "20.00",
       total_price: "40.00",
       notes: "any_notes",
+      order_item_created_at: "any_time",
+      table_number: "any_table_number",
     },
   ];
   return getOrderItemUseCaseSpy;
@@ -98,6 +102,7 @@ describe("Get Order Item Router", () => {
       const httpRequest = {
         params: {},
         auth: {},
+        query: {},
       };
 
       const httpResponse = await sut.route(httpRequest);
@@ -109,6 +114,7 @@ describe("Get Order Item Router", () => {
       const httpRequest = {
         params: {},
         auth: { businessId: "invalid_business_id" },
+        query: {},
       };
 
       validatorsSpy.isValid = false;
@@ -122,6 +128,7 @@ describe("Get Order Item Router", () => {
       const httpRequest = {
         params: {},
         auth: { businessId: "any_business_id" },
+        query: {},
       };
 
       await sut.route(httpRequest);
@@ -134,12 +141,17 @@ describe("Get Order Item Router", () => {
       const httpRequest = {
         params: {},
         auth: { businessId: "any_business_id" },
+        query: {},
       };
 
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(200);
       expect(Array.isArray(httpResponse.body)).toBeTruthy();
       expect(httpResponse.body[0]).toEqual({
+        id: "any_order_item_id",
+        orderId: "any_order_id",
+        tableNumber: "any_table_number",
+        createdAt: "any_time",
         menuItemId: "any_menu_item_id",
         quantity: "2",
         status: "pending",
@@ -158,6 +170,7 @@ describe("Get Order Item Router", () => {
         auth: {
           businessId: "any_business_id",
         },
+        query: {},
       };
 
       await sut.route(httpRequest);
@@ -174,6 +187,7 @@ describe("Get Order Item Router", () => {
         auth: {
           businessId: "any_business_id",
         },
+        query: {},
       };
 
       const httpResponse = await sut.route(httpRequest);
@@ -203,6 +217,7 @@ describe("Get Order Item Router", () => {
         auth: {
           businessId: "any_business_id",
         },
+        query: {},
       };
 
       validatorsSpy.isValid = false;
@@ -223,6 +238,7 @@ describe("Get Order Item Router", () => {
         auth: {
           businessId: "any_business_id",
         },
+        query: {},
       };
       getOrderItemUseCaseSpy.orderItem = null;
 
@@ -243,6 +259,7 @@ describe("Get Order Item Router", () => {
         auth: {
           businessId: "any_business_id",
         },
+        query: {},
       };
 
       await sut.route(httpRequest);
@@ -260,6 +277,7 @@ describe("Get Order Item Router", () => {
         auth: {
           businessId: "any_business_id",
         },
+        query: {},
       };
 
       const httpResponse = await sut.route(httpRequest);
@@ -287,6 +305,7 @@ describe("Get Order Item Router", () => {
       auth: {
         businessId: "any_business_id",
       },
+      query: {},
     };
 
     validatorsSpy.isValid = false;
@@ -331,6 +350,7 @@ describe("Get Order Item Router", () => {
       auth: {
         businessId: "any_business_id",
       },
+      query: {},
     };
 
     for (const sut of suts) {
@@ -357,6 +377,7 @@ describe("Get Order Item Router", () => {
       auth: {
         businessId: "any_business_id",
       },
+      query: {},
     };
 
     for (const sut of suts) {
