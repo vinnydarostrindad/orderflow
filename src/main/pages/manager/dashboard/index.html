@@ -20,7 +20,7 @@
 
     <main class="main">
       <div class="business-stats">
-        <h2 class="business-stats__title">Nome da Empresa</h2>
+        <h2 class="business-stats__title skeleton" id="businessName"></h2>
         <select name="timeFilter" class="business-stats__select">
           <option value="day">Hoje</option>
           <option value="week">Essa Semana</option>
@@ -42,7 +42,7 @@
           <div class="chart-skeleton skeleton">
             <div class="chart-hole"></div>
           </div>
-          <canvas id="salesChart" width="300" height="300"></canvas>
+          <canvas id="salesChart" width="280" height="280"></canvas>
           <div class="chart-info">
             <p id="chartPorcentage"></p>
             <p id="chartQuantity"></p>

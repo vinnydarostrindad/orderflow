@@ -6,6 +6,7 @@ import textStats from "/manager/dashboard/js/text-stats.js";
 import { makeChart, updateChart } from "/manager/dashboard/js/chart.js";
 import showLastOrders from "/manager/dashboard/js/last-orders.js";
 
+const businessName = document.querySelector("#businessName");
 const timeFilterSelect = document.querySelector(".business-stats__select");
 const chartPorcentage = document.querySelector("#chartPorcentage");
 const chartQuantity = document.querySelector("#chartQuantity");
@@ -14,8 +15,8 @@ const snackbar = document.querySelector("#snackbar");
 
 let orderedItems = [];
 let orderedMenuItems = [];
+let chartExists = false;
 let intervalId;
-let lastFetchTime = Date.now();
 
 function resetChartSkeleton() {
   chartPorcentage.textContent = "";
@@ -29,6 +30,19 @@ function resetChartSkeleton() {
       </div>
     `,
   );
+}
+
+async function fetchBusiness() {
+  try {
+    const response = await fetch(`${API_URL}/api/v1/business`);
+    return await response.json();
+  } catch (error) {
+    snackbar.show(
+      "error",
+      "<p>Erro ao tentar obter empresa. <br> Tente novamente.</p>",
+    );
+    console.error(error);
+  }
 }
 
 async function fetchOrderedItems() {
@@ -64,11 +78,15 @@ async function fetchOrderedMenuItems() {
 }
 
 async function loadInitialData() {
+  const { name } = await fetchBusiness();
+  businessName.classList.remove("skeleton");
+  businessName.textContent = name;
+
   orderedItems = await fetchOrderedItems();
   orderedMenuItems = orderedItems.length ? await fetchOrderedMenuItems() : [];
 
   textStats(orderedItems);
-  makeChart(orderedItems, orderedMenuItems, lastFetchTime);
+  chartExists = makeChart(orderedItems, orderedMenuItems);
   showLastOrders(orderedMenuItems);
 }
 
@@ -81,7 +99,7 @@ async function updateDatas() {
   orderedMenuItems = orderedItems.length ? await fetchOrderedMenuItems() : [];
 
   textStats(orderedItems);
-  makeChart(orderedItems, orderedMenuItems);
+  chartExists = makeChart(orderedItems, orderedMenuItems);
 
   startAutoRefresh();
 }
@@ -92,9 +110,15 @@ function startAutoRefresh() {
     orderedMenuItems = orderedItems.length ? await fetchOrderedMenuItems() : [];
 
     textStats(orderedItems);
-    updateChart(orderedItems, orderedMenuItems);
+    if (orderedItems.length === 0) {
+      chartExists = makeChart(orderedItems, orderedMenuItems);
+    } else if (chartExists) {
+      updateChart(orderedItems, orderedMenuItems);
+    } else {
+      chartExists = makeChart(orderedItems, orderedMenuItems);
+    }
     showLastOrders(orderedMenuItems);
-  }, 30000);
+  }, 5000);
 }
 
 function init() {

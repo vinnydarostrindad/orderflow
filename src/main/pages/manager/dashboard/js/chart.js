@@ -5,7 +5,6 @@ const ctx = document.getElementById("salesChart").getContext("2d");
 let orderedItems = [];
 let orderedMenuItems = [];
 let salesChart;
-let lastFetchTime;
 
 function aggregateItemsByType(items) {
   return items.reduce((acc, item) => {
@@ -35,12 +34,10 @@ function buildChartData() {
 function buildChartDataForUpdates() {
   const itemsInfo = orderedItems
     .map((orderedItem) => {
-      const menuItem = orderedItems.find(
+      const menuItem = orderedMenuItems.find(
         (m) => m.id === orderedItem.menuItemId,
       );
       if (!menuItem) return null;
-
-      if (Date.parse(orderedItem.createdAt) < lastFetchTime) return null;
 
       return {
         quantity: orderedItem.quantity,
@@ -61,10 +58,9 @@ function updateHoverTexts(chart, index) {
   chartQuantity.innerText = `(${value})`;
 }
 
-function makeChart(items, menuItems, lastFetch) {
+function makeChart(items, menuItems) {
   orderedItems = items;
   orderedMenuItems = menuItems;
-  lastFetchTime = lastFetch;
 
   document.querySelector(".chart-skeleton")?.remove();
 
@@ -76,7 +72,7 @@ function makeChart(items, menuItems, lastFetch) {
   if (orderedItems.length === 0) {
     chartPorcentage.textContent = "Nada foi vendido durante esse período";
     chartQuantity.textContent = "";
-    return;
+    return false;
   }
 
   const formatedOrderedItems = buildChartData();
@@ -122,6 +118,9 @@ function makeChart(items, menuItems, lastFetch) {
     chartPorcentage.innerText = "";
     chartQuantity.innerText = "";
   };
+  chartPorcentage.textContent = "";
+  chartQuantity.textContent = "";
+  return true;
 }
 
 function updateChart(items, menuItems) {
@@ -129,26 +128,15 @@ function updateChart(items, menuItems) {
   orderedMenuItems = menuItems;
 
   const newOrders = buildChartDataForUpdates();
-  lastFetchTime = Date.now();
 
   for (let type in newOrders) {
-    if (salesChart.data.labels.includes(type)) {
-      const indexOfOrder = salesChart.data.labels.indexOf(type);
+    const indexOfOrder = salesChart.data.labels.indexOf(type);
 
-      const currentValue = Number(
-        salesChart.data.datasets[0].data[indexOfOrder],
-      );
-      const addedValue = Number(newOrders[type]);
+    const newValue = Number(newOrders[type]);
 
-      salesChart.data.datasets[0].data[indexOfOrder] =
-        currentValue + addedValue;
-    } else {
-      salesChart.data.labels.push(type);
-      salesChart.data.datasets[0].data.push(newOrders.order);
-    }
-
-    salesChart.update();
+    salesChart.data.datasets[0].data[indexOfOrder] = newValue;
   }
+  salesChart.update();
 }
 
 export { makeChart, updateChart };

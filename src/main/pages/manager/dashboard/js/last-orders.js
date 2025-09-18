@@ -84,7 +84,7 @@ function organizeCarousel(e) {
     toggleCarouselButton(carouselLeftBtn, false);
     ordersBox.style.justifyContent = "center";
     return;
-  } else {
+  } else if (currentTranslateX === 0) {
     toggleCarouselButton(carouselRightBtn, true);
     toggleCarouselButton(carouselLeftBtn, false, false);
     ordersBox.style.justifyContent = "start";
@@ -121,20 +121,26 @@ function renderLastOrdersHTML(orderedItemsInfos) {
         "beforeend",
         `
           <div class="last-orders__order">
-            <div>
-              ${img}
-              <h4>${item.name}</h4>
-            </div>
+            ${
+              img
+                ? `<div class="last-orders__order-header">
+                    ${img}
+                    <h4>${item.name}</h4>
+                  </div>`
+                : `<div class="last-orders__order-header last-orders__order-header--no-img">
+                    <h4>${item.name}</h4>
+                  </div>`
+            }
             <div class="last-orders__info">
-              <p class="last-orders__status">Status: ${item.status}</p>
-              <p class="last-orders__table-number">Mesa: ${item.tableNumber}</p>
-              <p class="last-orders__time">Tempo:
+              <p><strong>Status:</strong> ${item.status}</p>
+              <p><strong>Mesa:</strong> ${item.tableNumber}</p>
+              <p><strong>Tempo:</strong>
                 <span class="order-time" data-created-at="${createdAt}">
                   ${calculateTimePassed(Date.now() - createdAt)}
                 </span>
               </p>
             </div>
-          </div>  
+          </div>
         `,
       );
       renderedOrders++;
@@ -142,7 +148,7 @@ function renderLastOrdersHTML(orderedItemsInfos) {
   });
 }
 
-async function getLastOrdersInfo() {
+function getLastOrdersInfo() {
   const data = orderedItems.map((orderedItem) => {
     const menuItem = orderedMenuItems.find(
       (m) => m.id === orderedItem.menuItemId,
@@ -180,7 +186,7 @@ async function showLastOrders(menuItems) {
   orderedItems = await fetchTodayLastOrders();
   orderedMenuItems = menuItems;
 
-  const orderedItemsInfos = await getLastOrdersInfo();
+  const orderedItemsInfos = getLastOrdersInfo();
 
   document.querySelector(".last-orders__skeletons")?.remove();
   ordersBox.innerHTML = "";
