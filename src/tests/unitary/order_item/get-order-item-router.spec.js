@@ -154,6 +154,7 @@ describe("Get Order Item Router", () => {
         createdAt: "any_time",
         menuItemId: "any_menu_item_id",
         quantity: "2",
+        notes: "any_notes",
         status: "pending",
         totalPrice: "40.00",
       });

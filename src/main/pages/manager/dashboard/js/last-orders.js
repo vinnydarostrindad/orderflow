@@ -114,7 +114,7 @@ function renderLastOrdersHTML(orderedItemsInfos) {
       const createdAt = Date.parse(item.createdAt);
 
       const img = item.imagePath
-        ? `<img src="${supabase.getUrl("menu-items-img", item.imagePath).publicUrl}" alt="${item.name}" />`
+        ? `<img src="${supabase.getUrl("orderflow", item.imagePath).publicUrl}" alt="${item.name}" />`
         : "";
 
       ordersBox.insertAdjacentHTML(

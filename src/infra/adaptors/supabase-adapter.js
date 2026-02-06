@@ -5,7 +5,7 @@ import DependencyError from "../../utils/errors/dependency-error.js";
 
 dotenv.config();
 const supabase = createClient(
-  "https://gyhsfpdaqfyhmbmigsuo.supabase.co",
+  "https://tplzbipcemddykwlhxlp.supabase.co",
   process.env.SUPABASE_SERVICE_KEY,
 );
 

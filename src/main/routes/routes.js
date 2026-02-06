@@ -186,6 +186,11 @@ const pagesRoutes = [
     filePath: "/waiter/order_menu_item/index.html",
     role: "waiter",
   },
+  {
+    pattern: /^\/orders\/?(?:\?.*)?$/,
+    filePath: "/cook/index.html",
+    role: "cook",
+  },
 ];
 
 export { apiRoutes, pagesRoutes };

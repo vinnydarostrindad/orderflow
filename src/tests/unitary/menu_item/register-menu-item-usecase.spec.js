@@ -161,7 +161,7 @@ describe("Register Menu Item UseCase", () => {
     };
 
     await sut.execute(props);
-    expect(supabaseAdapterSpy.bucket).toBe("menu-items-img");
+    expect(supabaseAdapterSpy.bucket).toBe("orderflow");
     expect(supabaseAdapterSpy.fileName).toMatch(/[\d]*_any_file_name/);
     expect(supabaseAdapterSpy.imgFile).toEqual({
       content: "any_content",

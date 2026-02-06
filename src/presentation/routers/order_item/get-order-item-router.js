@@ -36,6 +36,7 @@ export default class GetOrderItemRouter {
           quantity,
           total_price,
           status,
+          notes,
           order_item_created_at,
           table_number,
         }) => ({
@@ -45,6 +46,7 @@ export default class GetOrderItemRouter {
           quantity: quantity.toString(),
           totalPrice: total_price,
           status,
+          notes,
           createdAt: order_item_created_at,
           tableNumber: table_number,
         }),

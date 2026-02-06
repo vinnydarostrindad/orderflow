@@ -102,6 +102,7 @@ export default class OrderItemRepository {
           order_items.menu_item_id,
           order_items.quantity,
           order_items.total_price,
+          order_items.notes,
           order_items.status,
           order_items.created_at AS order_item_created_at,
           orders.table_number
