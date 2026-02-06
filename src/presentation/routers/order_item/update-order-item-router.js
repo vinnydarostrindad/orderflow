@@ -11,7 +11,7 @@ class UpdateOrderItemRouter {
   async route(httpRequest) {
     const { businessId } = httpRequest.auth;
     const { orderItemId } = httpRequest.params;
-    const newOrderItemValues = httpRequest.body;
+    const { status, quantity, notes } = httpRequest.body;
 
     if (!businessId) {
       return httpResponse.badRequest(new MissingParamError("businessId"));
@@ -26,10 +26,13 @@ class UpdateOrderItemRouter {
       return httpResponse.badRequest(new InvalidParamError("orderItemId"));
     }
 
-    const updatedOrderItem = await this.updateOrderItemUseCase.execute(
+    const updatedOrderItem = await this.updateOrderItemUseCase.execute({
       businessId,
-      newOrderItemValues,
-    );
+      orderItemId,
+      status,
+      quantity,
+      notes,
+    });
     return httpResponse.ok(updatedOrderItem);
   }
 }
