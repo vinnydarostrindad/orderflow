@@ -92,8 +92,7 @@ async function postOrder() {
       };
     }
 
-    const orderItemBody = await orderItemResponse.json();
-    console.log("FINAL:", orderItemBody);
+    await orderItemResponse.json();
     window.location.href = `/menu/${menuId}`;
   } catch (error) {
     console.error(error);
@@ -125,7 +124,7 @@ function populateMenuItem({
 
   if (imagePath) {
     const imgEl = document.createElement("img");
-    const { publicUrl } = supabase.getUrl("menu-items-img", imagePath);
+    const { publicUrl } = supabase.getUrl("orderflow", imagePath);
     imgEl.src = publicUrl;
     imgBox.prepend(imgEl);
   } else {

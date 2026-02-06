@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/cook/style.css" />
+    <title>Cardápio</title>
+  </head>
+  <body>
+    <app-header button="menu"></app-header>
+
+    <waiter-nav></waiter-nav>
+
+    <main class="main">
+      <section class="orders-in-progress">
+        <header class="orders-in-progress__header">
+          <h2>Em Andamento</h2>
+        </header>
+        <div class="orders__skeleton">
+          <div class="orders__item-skeleton skeleton"></div>
+          <div class="orders__item-skeleton skeleton"></div>
+          <div class="orders__item-skeleton skeleton"></div>
+        </div>
+        <div
+          class="orders-in-progress__items"
+          id="ordersInProgressContainer"
+        ></div>
+      </section>
+      <section class="orders">
+        <header class="orders__header">
+          <h2>Pedidos</h2>
+        </header>
+        <section class="orders__box">
+          <div class="orders__skeleton">
+            <div class="orders__item-skeleton skeleton"></div>
+            <div class="orders__item-skeleton skeleton"></div>
+            <div class="orders__item-skeleton skeleton"></div>
+          </div>
+          <div class="orders__items" id="orderedItemsContainer"></div>
+        </section>
+      </section>
+      <div
+        class="all-order-info-container all-order-info-container--hidden"
+        id="orderInfoContainer"
+      >
+        <div class="all-order-info">
+          <div class="all-order-info__header">
+            <div class="all-order-info__img">
+              <img id="orderImg" src="https://picsum.photos/200" alt="" />
+            </div>
+            <div class="all-order-info__text">
+              <h2 class="all-order-info__name" id="orderName">
+                Nome da Comida
+              </h2>
+              <p class="all-order-info__quantity" id="orderQuantity">
+                Quantidade: 2
+              </p>
+              <p class="all-order-info__time" id="orderTime">Tempo: 00:00:00</p>
+            </div>
+          </div>
+          <p class="all-order-info__notes" id="orderNotes">
+            Não quero com pão de brioche, e sem salada. Lorem ipsum dolor sit
+            amet, consectetur adipisicing elit. Dolorem voluptatum aut cumque
+            odit magni eius error?
+          </p>
+          <div class="all-order-info__ingredients">
+            <ul id="orderIngridients">
+              <li>500g Batata Frita com bacon e chedar</li>
+              <li>Item 2</li>
+              <li>Item 3</li>
+              <li>Item 4</li>
+              <li>Item 5</li>
+              <li>Item 6</li>
+            </ul>
+          </div>
+          <div class="all-order-info-btns">
+            <button type="button" class="btn ghost-btn" id="closeOrderInfoBtn">
+              Voltar
+            </button>
+            <button
+              type="button"
+              class="btn primary-btn"
+              id="setOrderToDoneBtn"
+            >
+              Pronto
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <app-snackbar id="snackbar"></app-snackbar>
+
+    <script type="module" src="/cook/script.js"></script>
+  </body>
+</html>

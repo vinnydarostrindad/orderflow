@@ -44,7 +44,7 @@ const sut = (await import("../../infra/adaptors/supabase-adapter.js")).default;
 describe("Supabase Adapter", () => {
   test("Should call createClient with correct params", () => {
     expect(createClient.supabaseUrl).toBe(
-      "https://gyhsfpdaqfyhmbmigsuo.supabase.co",
+      "https://tplzbipcemddykwlhxlp.supabase.co",
     );
     expect(createClient.supabaseKey).toBe("any_supabase_service_key");
   });

@@ -51,7 +51,7 @@ function buildGroupItemsFragment(items) {
       imgWrapper.classList.add("menu-item__img");
 
       const img = document.createElement("img");
-      const { publicUrl } = supabase.getUrl("menu-items-img", item.imagePath);
+      const { publicUrl } = supabase.getUrl("orderflow", item.imagePath);
       img.src = publicUrl;
 
       imgWrapper.append(img);

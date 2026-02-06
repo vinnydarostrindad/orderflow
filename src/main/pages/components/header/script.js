@@ -33,7 +33,7 @@ class AppHeader extends HTMLElement {
                     aria-label="Abrir/Fechar menu"
                   >
                     <img
-                      src="/components/header/img/menu-icon.svg"
+                      src="../components/header/img/menu-icon.svg"
                       alt="ícone de menu"
                     />
                   </button>
@@ -43,7 +43,7 @@ class AppHeader extends HTMLElement {
                     id="headerMenuBtn"
                     aria-label="Abrir/Fechar menu"
                   >
-                    <img src="/components/header/img/menu-icon.svg" alt="ícone de menu" />
+                    <img src="../components/header/img/menu-icon.svg" alt="ícone de menu" />
                   </button>`
           }
         </div>
