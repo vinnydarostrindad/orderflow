@@ -141,4 +141,27 @@ export default class OrderItemRepository {
 
     return result.rows[0];
   }
+
+  async update({ businessId, orderItemId, status, quantity, notes }) {
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!orderItemId) throw new MissingParamError("orderItemId");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        UPDATE order_items oi
+        SET
+          status = COALESCE($3, order_items.status),
+          quantity = COALESCE($4, order_items.quantity),
+          notes = COALESCE($5, order_items.notes),
+        FROM order o
+          oi.id = $1
+          AND oi.order_id = oi.id
+          AND o.business_id = $2
+        RETURNING oi.*
+        ;`,
+      values: [orderItemId, businessId, status, quantity, notes],
+    });
+
+    return result.rows[0];
+  }
 }

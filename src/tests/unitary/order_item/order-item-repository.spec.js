@@ -371,6 +371,99 @@ describe("OrderItem Repository", () => {
     });
   });
 
+  describe("update Method", () => {
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+      const props = {
+        orderItemId: "any_order_item_id",
+        status: "updated_status",
+        quantity: 4,
+        notes: "updated_notes",
+      };
+
+      await expect(sut.update(props)).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+
+    test("Should throw if no orderItemId is provided", async () => {
+      const { sut } = makeSut();
+      const props = {
+        businessId: "any_business_id",
+        status: "updated_status",
+        quantity: 4,
+        notes: "updated_notes",
+      };
+
+      await expect(sut.update(props)).rejects.toThrow(
+        new MissingParamError("orderItemId"),
+      );
+    });
+
+    test("Should call postgresAdapter with correct object", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      const props = {
+        businessId: "any_business_id",
+        orderItemId: "any_order_item_id",
+        status: "updated_status",
+        quantity: 4,
+        notes: "updated_notes",
+      };
+
+      await sut.update(props);
+      expect(postgresAdapterSpy.queryObject).toEqual({
+        text: `
+        UPDATE order_items oi
+        SET
+          status = COALESCE($3, order_items.status),
+          quantity = COALESCE($4, order_items.quantity),
+          notes = COALESCE($5, order_items.notes),
+        FROM order o
+          oi.id = $1
+          AND oi.order_id = oi.id
+          AND o.business_id = $2
+        RETURNING oi.*
+        ;`,
+        values: [
+          "any_order_item_id",
+          "any_business_id",
+          "updated_status",
+          4,
+          "updated_notes",
+        ],
+      });
+    });
+
+    test("Should return order item if everything is right", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      const props = {
+        businessId: "any_business_id",
+        orderItemId: "any_order_item_id",
+        status: "updated_status",
+        quantity: 4,
+        notes: "updated_notes",
+      };
+
+      postgresAdapterSpy.queryResult.rows[0].quantity = props.quantity;
+      postgresAdapterSpy.queryResult.rows[0].total_price =
+        props.quantity * postgresAdapterSpy.queryResult.rows[0].unit_price;
+      postgresAdapterSpy.queryResult.rows[0].status = props.status;
+      postgresAdapterSpy.queryResult.rows[0].notes = props.notes;
+
+      const result = await sut.update(props);
+      expect(result).toEqual({
+        id: "any_order_item_id",
+        order_id: "any_order_id",
+        menu_item_id: "any_menu_item_id",
+        quantity: 4,
+        unit_price: 20,
+        total_price: 80,
+        status: "updated_status",
+        notes: "updated_notes",
+      });
+    });
+  });
+
   test("Should throw if invalid dependencies are provided", async () => {
     const suts = [
       new OrderItemRepository(),
