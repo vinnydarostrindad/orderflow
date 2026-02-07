@@ -118,6 +118,7 @@ const apiRoutes = [
       /^\/api\/v1\/table\/(?<tableId>[^/]+)\/order\/(?<orderId>[^/]+)\/item\/(?<orderItemId>[^/]+)$/,
     methods: {
       get: orderItemRoute.getOne,
+      patch: orderItemRoute.patch,
     },
   },
   {

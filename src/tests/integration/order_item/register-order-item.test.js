@@ -12,7 +12,7 @@ import {
   createEmployee,
 } from "../orchestrator.js";
 
-beforeAll(async () => {
+beforeEach(async () => {
   await cleanDatabase();
   await runMigrations();
 });

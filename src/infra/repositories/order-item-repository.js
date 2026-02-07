@@ -150,12 +150,20 @@ export default class OrderItemRepository {
       text: `
         UPDATE order_items oi
         SET
-          status = COALESCE($3, order_items.status),
-          quantity = COALESCE($4, order_items.quantity),
-          notes = COALESCE($5, order_items.notes),
-        FROM order o
+          quantity = COALESCE($4, oi.quantity),
+
+          total_price = CASE
+            WHEN $4 IS NOT NULL
+              THEN $4 * oi.unit_price
+            ELSE oi.total_price
+          END,
+
+          status = COALESCE($3, oi.status),
+          notes = COALESCE($5, oi.notes)
+        FROM orders o
+        WHERE
           oi.id = $1
-          AND oi.order_id = oi.id
+          AND oi.order_id = o.id
           AND o.business_id = $2
         RETURNING oi.*
         ;`,

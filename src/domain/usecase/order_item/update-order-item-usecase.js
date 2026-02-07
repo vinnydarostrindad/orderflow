@@ -1,4 +1,4 @@
-import MissingParamError from "../../../utils/errors/missing-param-error";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 class UpdateOrderItemUseCase {
   constructor({ orderItemRepository } = {}) {

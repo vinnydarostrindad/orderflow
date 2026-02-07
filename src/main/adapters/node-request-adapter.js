@@ -7,7 +7,7 @@ async function nodeRequestAdapter(req, groups = {}, query, authObj) {
   let params = { ...groups };
   const auth = authObj ? authObj.employeeData : {};
 
-  if (req.method === "POST") {
+  if (req.method === "POST" || req.method === "PATCH") {
     if (contentType === "multipart/form-data") {
       body = await parseMultipartBody(req);
     } else if (contentType === "application/json") {

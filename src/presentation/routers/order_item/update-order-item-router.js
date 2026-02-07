@@ -1,6 +1,6 @@
-import InvalidParamError from "../../../utils/errors/invalid-param-error";
-import MissingParamError from "../../../utils/errors/missing-param-error";
-import httpResponse from "../../http-response";
+import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
+import httpResponse from "../../http-response.js";
 
 class UpdateOrderItemRouter {
   constructor({ updateOrderItemUseCase, validators } = {}) {
