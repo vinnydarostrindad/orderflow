@@ -12,53 +12,48 @@ const ordersInProgressContainer = document.querySelector(
 );
 const orderInfoContainer = document.querySelector("#orderInfoContainer");
 const closeOrderInfoBtn = document.querySelector("#closeOrderInfoBtn");
-// const setOrderToDoneBtn = document.querySelector("#setOrderToDoneBtn")
+const setOrderToDoneBtn = document.querySelector("#setOrderToDoneBtn");
+const setOrderToPendingBtn = document.querySelector("#setOrderToPendingBtn");
+const orderInfoTimer = document.querySelector("#orderTime");
+
+const orderInfoImg = document.querySelector("#orderImg");
+const orderInfoName = document.querySelector("#orderName");
+const orderInfoQuantity = document.querySelector("#orderQuantity");
+const orderInfoNotes = document.querySelector("#orderNotes");
+const orderInfoIngridients = document.querySelector("#orderIngredients");
 
 let ordersPending = [];
 let ordersInProgress = [];
+let orderTimers = [];
+let specificIntervalId;
+let intervalId;
 
-orderedItemsContainer.addEventListener("click", changeOrderToOnProgress);
+orderedItemsContainer.addEventListener("click", setOrderToOnProgress);
 ordersInProgressContainer.addEventListener("click", showOrderInfo);
-closeOrderInfoBtn.addEventListener("click", toggleOrderInfo);
-// setOrderToDoneBtn.addEventListener("click", setOrderToDone)
+closeOrderInfoBtn.addEventListener("click", closeOrderInfo);
+setOrderToPendingBtn.addEventListener("click", setOrderToPending);
+setOrderToDoneBtn.addEventListener("click", setOrderToDone);
 
-function changeOrderToOnProgress(e) {
-  let order = e.target.closest("order-card");
-  if (!order) return;
+function calculateTimePassed(time) {
+  const totalSeconds = Math.floor((Date.now() - new Date(time)) / 1000);
 
-  console.log(ordersPending);
-  const itemIndex = ordersPending.findIndex(
-    (item) => item.id === order.dataset.id,
-  );
-  ordersInProgress.push(ordersPending[itemIndex]);
-  ordersPending.splice(itemIndex, 1);
-  console.log(ordersPending);
-  console.log(ordersInProgress);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
 
-  ordersInProgressContainer.appendChild(order);
+  return [hours, minutes, seconds]
+    .map((unit) => String(unit).padStart(2, "0"))
+    .join(":");
 }
 
-function showOrderInfo(e) {
-  let order = e.target.closest("order-card");
-  if (!order) return;
+function organizeOrdersInArray() {
+  ordersPending.sort((a, b) => {
+    return new Date(a.createdAt) - new Date(b.createdAt);
+  });
 
-  toggleOrderInfo(order);
-}
-
-function toggleOrderInfo(e) {
-  const classNameHidden = "all-order-info-container--hidden";
-  if (orderInfoContainer.classList.contains(classNameHidden)) {
-    orderInfoContainer.classList.remove(classNameHidden);
-    orderInfoContainer.addEventListener("click", toggleOrderInfo);
-    document.body.style.overflow = "hidden";
-    return;
-  }
-
-  if (e.target == orderInfoContainer || e.target == closeOrderInfoBtn) {
-    orderInfoContainer.classList.add(classNameHidden);
-    orderInfoContainer.removeEventListener("click", toggleOrderInfo);
-    document.body.style.overflow = "";
-  }
+  ordersInProgress.sort((a, b) => {
+    return new Date(a.createdAt) - new Date(b.createdAt);
+  });
 }
 
 async function fetchItemInfos(id) {
@@ -76,47 +71,19 @@ async function fetchItemInfos(id) {
   return itemInfo;
 }
 
-async function buildOrderedItems(items) {
-  const fragment = document.createDocumentFragment();
-  for (var item of items) {
-    const itemInfo = await fetchItemInfos(item.menuItemId);
-    const { publicUrl } = supabase.getUrl("orderflow", itemInfo.imagePath);
+async function fetchOrderTableId(orderId) {
+  const res = await fetch(`${API_URL}/api/v1/order/${orderId}`);
 
-    const orderCard = document.createElement("order-card");
-    orderCard.setAttribute("name", itemInfo.name);
-    orderCard.setAttribute("quantity", item.quantity);
-    orderCard.setAttribute("imgPath", publicUrl);
-    if (item.notes) {
-      orderCard.setAttribute("notes", true);
-    }
-    orderCard.setAttribute("data-id", item.id);
-    orderCard.setAttribute("data-time", item.createdAt);
-    fragment.appendChild(orderCard);
+  if (!res.ok) {
+    throw {
+      status: res.status,
+      statusText: res.statusText,
+      url: res.url,
+    };
   }
 
-  return fragment;
-}
-
-async function renderOrderedPendingItems() {
-  orderedItemsContainer.innerHTML = "";
-
-  if (ordersPending.length === 0) {
-    orderedItemsContainer.innerHTML = `<p class="orders-none">Nenhum pedido pendente!</p>`;
-    return;
-  }
-  const orderedItemsFragment = await buildOrderedItems(ordersPending);
-  orderedItemsContainer.append(orderedItemsFragment);
-}
-
-async function renderOrderedInProgressItems() {
-  ordersInProgressContainer.innerHTML = "";
-
-  if (ordersInProgress.length === 0) {
-    ordersInProgressContainer.innerHTML = `<p class="orders-none">Nenhum pedido em andamento!</p>`;
-    return;
-  }
-  const orderedItemsFragment = await buildOrderedItems(ordersInProgress);
-  ordersInProgressContainer.append(orderedItemsFragment);
+  const order = await res.json();
+  return order.tableId;
 }
 
 async function fetchOrderedItems() {
@@ -134,19 +101,275 @@ async function fetchOrderedItems() {
   return orderedItems;
 }
 
-async function setupMenuPage() {
+function buildOrderedItems(items) {
+  const fragment = document.createDocumentFragment();
+
+  for (var item of items) {
+    const { publicUrl } = supabase.getUrl("orderflow", item.imagePath);
+
+    const orderCard = document.createElement("order-card");
+
+    orderCard.setAttribute("name", item.name);
+    orderCard.setAttribute("quantity", item.quantity);
+    orderCard.setAttribute("imgPath", publicUrl);
+
+    if (item.notes) orderCard.setAttribute("notes", true);
+
+    if (item.maxTime) orderCard.setAttribute("data-max_time", item.id);
+    orderCard.setAttribute("data-id", item.id);
+    orderCard.setAttribute("data-time", item.createdAt);
+    fragment.appendChild(orderCard);
+  }
+
+  return fragment;
+}
+
+function configTimers() {
+  orderTimers = [];
+
+  document.querySelectorAll(".order-item__time").forEach((timer) => {
+    orderTimers.push(timer);
+    const timePassedString = calculateTimePassed(timer.dataset.time);
+    timer.innerText = `Tempo: ${timePassedString}`;
+  });
+
+  if (intervalId) clearInterval(intervalId);
+
+  intervalId = setInterval(() => {
+    orderTimers.forEach((timer) => {
+      const timePassedString = calculateTimePassed(timer.dataset.time);
+      timer.innerText = `Tempo: ${timePassedString}`;
+    });
+  }, 1000);
+}
+
+function configOrderInfoTimer() {
+  const orderId = orderInfoContainer.dataset.order_id;
+  var { createdAt } = ordersInProgress.find((order) => order.id === orderId);
+
+  const timePassedString = calculateTimePassed(createdAt);
+  orderInfoTimer.innerText = `Tempo: ${timePassedString}`;
+
+  if (specificIntervalId) clearInterval(specificIntervalId);
+
+  specificIntervalId = setInterval(() => {
+    const currentTimePassedString = calculateTimePassed(createdAt);
+    orderInfoTimer.innerText = `Tempo: ${currentTimePassedString}`;
+  }, 1000);
+}
+
+function renderAllOrders() {
+  if (ordersPending.length === 0) {
+    orderedItemsContainer.innerHTML = `<p class="orders-none">Nenhum pedido pendente!</p>`;
+  } else {
+    const pendingOrdersFragment = buildOrderedItems(ordersPending);
+    orderedItemsContainer.replaceChildren(pendingOrdersFragment);
+  }
+
+  if (ordersInProgress.length === 0) {
+    ordersInProgressContainer.innerHTML = `<p class="orders-none">Nenhum pedido em andamento!</p>`;
+  } else {
+    const inProgressOrdersFragment = buildOrderedItems(ordersInProgress);
+    ordersInProgressContainer.replaceChildren(inProgressOrdersFragment);
+  }
+
+  configTimers();
+}
+
+function closeOrderInfo(e) {
+  if (e.target == orderInfoContainer || e.target == closeOrderInfoBtn) {
+    orderInfoContainer.classList.add("all-order-info-container--hidden");
+    orderInfoContainer.removeEventListener("click", closeOrderInfo);
+    document.body.style.overflow = "";
+  }
+}
+
+function showOrderInfo(e) {
+  let order = e.target.closest("order-card");
+  if (!order) return;
+
+  const orderInfo = ordersInProgress.filter(
+    (item) => item.id == order.dataset.id,
+  )[0];
+
+  orderInfoContainer.dataset.order_id = orderInfo.id;
+  orderInfoImg.src = order.getAttribute("imgPath");
+  orderInfoName.innerText = order.getAttribute("name");
+  orderInfoQuantity.innerText = "Quantidade: " + orderInfo.quantity;
+
+  if (orderInfo.notes) {
+    orderInfoNotes.hidden = false;
+    orderInfoNotes.innerText = orderInfo.notes;
+  } else {
+    orderInfoNotes.hidden = true;
+  }
+
+  if (orderInfo.ingredients) {
+    orderInfoIngridients.hidden = false;
+    orderInfoIngridients.innerText = orderInfo.ingredients;
+  } else {
+    orderInfoIngridients.hidden = true;
+  }
+
+  orderInfoContainer.classList.remove("all-order-info-container--hidden");
+  orderInfoContainer.addEventListener("click", closeOrderInfo);
+  document.body.style.overflow = "hidden";
+
+  configOrderInfoTimer();
+}
+
+async function setOrderToOnProgress(e) {
+  let order = e.target.closest("order-card");
+  if (!order) return;
+
+  const itemIndex = ordersPending.findIndex(
+    (item) => item.id === order.dataset.id,
+  );
+
+  try {
+    await fetch(
+      `${API_URL}/api/v1/table/${ordersPending[itemIndex].tableId}/order/${ordersPending[itemIndex].orderId}/item/${ordersPending[itemIndex].id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: "in_progress",
+        }),
+      },
+    );
+
+    ordersInProgress.push(ordersPending[itemIndex]);
+    ordersPending.splice(itemIndex, 1);
+
+    organizeOrdersInArray();
+    renderAllOrders();
+  } catch (err) {
+    console.error(err);
+    snackbar.show("error", '<p>Erro ao passar para "Em Progresso"</p>');
+  }
+}
+
+async function setOrderToPending(e) {
+  let orderId = e.target.closest(".all-order-info-container").dataset.order_id;
+  if (!orderId) return;
+
+  const itemIndex = ordersInProgress.findIndex((item) => item.id === orderId);
+  if (itemIndex == null) return;
+
+  try {
+    await fetch(
+      `${API_URL}/api/v1/table/${ordersInProgress[itemIndex].tableId}/order/${ordersInProgress[itemIndex].orderId}/item/${ordersInProgress[itemIndex].id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: "pending",
+        }),
+      },
+    );
+
+    orderInfoContainer.classList.add("all-order-info-container--hidden");
+    orderInfoContainer.removeEventListener("click", closeOrderInfo);
+    document.body.style.overflow = "";
+
+    ordersPending.push(ordersInProgress[itemIndex]);
+    ordersInProgress.splice(itemIndex, 1);
+
+    organizeOrdersInArray();
+    renderAllOrders();
+  } catch (err) {
+    console.error(err);
+    snackbar.show("error", '<p>Erro ao tirar de "Em Progresso"</p>');
+  }
+}
+
+async function setOrderToDone() {
+  const orderId = orderInfoContainer.dataset.order_id;
+
+  const itemIndex = ordersInProgress.findIndex((order) => order.id === orderId);
+  const item = ordersInProgress.find((order) => order.id === orderId);
+
+  try {
+    await fetch(
+      `${API_URL}/api/v1/table/${ordersInProgress[itemIndex].tableId}/order/${ordersInProgress[itemIndex].orderId}/item/${ordersInProgress[itemIndex].id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: "ready",
+        }),
+      },
+    );
+
+    orderInfoContainer.classList.add("all-order-info-container--hidden");
+    orderInfoContainer.removeEventListener("click", closeOrderInfo);
+    document.body.style.overflow = "";
+
+    ordersInProgress.splice(itemIndex, 1);
+
+    organizeOrdersInArray();
+    renderAllOrders();
+
+    snackbar.show("btn", "Deseja voltar a aÃ§Ã£o que fez?", {
+      label: "Reverter",
+      action: async () => {
+        try {
+          await fetch(
+            `${API_URL}/api/v1/table/${item.tableId}/order/${item.orderId}/item/${item.id}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                status: "in_progress",
+              }),
+            },
+          );
+
+          ordersInProgress.push(item);
+
+          organizeOrdersInArray();
+          renderAllOrders();
+        } catch (err) {
+          console.error(err);
+          snackbar.show("error", "<p>Erro ao passar para 'Em Progresso'</p>");
+        }
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    snackbar.show("error", '<p>Erro ao tirar de "Em Progresso"</p>');
+  }
+}
+
+async function setUpPage() {
   try {
     const orderedItems = await fetchOrderedItems();
-    orderedItems.map((item) => {
-      if (item.status === "pending") {
-        ordersPending.push(item);
-      } else if (item.status === "in_progress") {
-        ordersInProgress.push(item);
-      }
-    });
 
-    renderOrderedPendingItems();
-    renderOrderedInProgressItems();
+    await Promise.all(
+      orderedItems.map(async (item) => {
+        const tableId = await fetchOrderTableId(item.orderId);
+        const { name, imagePath } = await fetchItemInfos(item.menuItemId);
+
+        const enrichedItem = { ...item, tableId, name, imagePath };
+
+        if (enrichedItem.status === "pending") {
+          ordersPending.push(enrichedItem);
+        } else if (enrichedItem.status === "in_progress") {
+          ordersInProgress.push(enrichedItem);
+        }
+      }),
+    );
+
+    organizeOrdersInArray();
+    renderAllOrders();
 
     document.querySelectorAll(".orders__skeleton").forEach((el) => {
       el.remove();
@@ -160,4 +383,4 @@ async function setupMenuPage() {
   }
 }
 
-setupMenuPage();
+setUpPage();

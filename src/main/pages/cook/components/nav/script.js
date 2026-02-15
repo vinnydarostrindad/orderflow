@@ -1,4 +1,4 @@
-class WaiterNav extends HTMLElement {
+class CookNav extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
     <nav class="navbar navbar--hidden" id="navBar">
@@ -6,18 +6,8 @@ class WaiterNav extends HTMLElement {
         <li class="navbar__item navbar__item--selected">
           <a href="#">
             <img
-              src="../cook/components/nav/img/food-menu-icon.svg"
-              alt="menu-icon"
-              class="navbar__icon invert"
-            />
-            Cardápios
-          </a>
-        </li>
-        <li class="navbar__item">
-          <a href="#">
-            <img
               src="../cook/components/nav/img/orders-icon.svg"
-              alt="orders-icon"
+              alt="menu-icon"
               class="navbar__icon invert"
             />
             Pedidos
@@ -26,21 +16,21 @@ class WaiterNav extends HTMLElement {
         <li class="navbar__item">
           <a href="#">
             <img
-              src="../cook/components/nav/img/customers-icon.svg"
-              alt="customers-icon"
+              src="../cook/components/nav/img/history-icon.svg"
+              alt="orders-icon"
               class="navbar__icon invert"
             />
-            Clientes
+            Histórico
           </a>
         </li>
         <li class="navbar__item">
           <a href="#">
             <img
-              src="../cook/components/nav/img/config-icon.svg"
-              alt="config-icon"
+              src="../cook/components/nav/img/food-menu-icon.svg"
+              alt="customers-icon"
               class="navbar__icon invert"
             />
-            Configuração
+            Pratos
           </a>
         </li>
       </ul>
@@ -49,4 +39,4 @@ class WaiterNav extends HTMLElement {
   }
 }
 
-customElements.define("waiter-nav", WaiterNav);
+customElements.define("cook-nav", CookNav);

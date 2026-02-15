@@ -9,7 +9,7 @@
   <body>
     <app-header button="menu"></app-header>
 
-    <waiter-nav></waiter-nav>
+    <cook-nav></cook-nav>
 
     <main class="main">
       <section class="orders-in-progress">
@@ -46,43 +46,39 @@
         <div class="all-order-info">
           <div class="all-order-info__header">
             <div class="all-order-info__img">
-              <img id="orderImg" src="https://picsum.photos/200" alt="" />
+              <img id="orderImg" src="" alt="" />
             </div>
             <div class="all-order-info__text">
-              <h2 class="all-order-info__name" id="orderName">
-                Nome da Comida
-              </h2>
-              <p class="all-order-info__quantity" id="orderQuantity">
-                Quantidade: 2
-              </p>
-              <p class="all-order-info__time" id="orderTime">Tempo: 00:00:00</p>
+              <h2 class="all-order-info__name" id="orderName"></h2>
+              <p class="all-order-info__quantity" id="orderQuantity"></p>
+              <p class="all-order-info__time" id="orderTime"></p>
             </div>
           </div>
-          <p class="all-order-info__notes" id="orderNotes">
-            Não quero com pão de brioche, e sem salada. Lorem ipsum dolor sit
-            amet, consectetur adipisicing elit. Dolorem voluptatum aut cumque
-            odit magni eius error?
-          </p>
-          <div class="all-order-info__ingredients">
-            <ul id="orderIngridients">
-              <li>500g Batata Frita com bacon e chedar</li>
-              <li>Item 2</li>
-              <li>Item 3</li>
-              <li>Item 4</li>
-              <li>Item 5</li>
-              <li>Item 6</li>
-            </ul>
-          </div>
-          <div class="all-order-info-btns">
-            <button type="button" class="btn ghost-btn" id="closeOrderInfoBtn">
-              Voltar
-            </button>
+          <p class="all-order-info__notes" id="orderNotes"></p>
+          <div class="all-order-info__ingredients" id="orderIngredients"></div>
+          <div class="all-order-info__btns">
+            <div>
+              <button
+                type="button"
+                class="btn ghost-btn"
+                id="closeOrderInfoBtn"
+              >
+                Voltar
+              </button>
+              <button
+                type="button"
+                class="btn primary-btn"
+                id="setOrderToDoneBtn"
+              >
+                Pronto
+              </button>
+            </div>
             <button
               type="button"
-              class="btn primary-btn"
-              id="setOrderToDoneBtn"
+              class="all-order-info__btns__go-back"
+              id="setOrderToPendingBtn"
             >
-              Pronto
+              Tirar de Em Andamento
             </button>
           </div>
         </div>
