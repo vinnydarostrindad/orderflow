@@ -14,8 +14,9 @@ const makeSut = () => {
 
 const makeUpdateOrderItemUseCase = () => {
   class UpdateOrderItemUseCaseSpy {
-    execute(businessId, { quantity, status, notes }) {
+    execute({ businessId, orderItemId, quantity, status, notes }) {
       this.businessId = businessId;
+      this.orderItemId = orderItemId;
       this.quantity = quantity;
       this.status = status;
       this.notes = notes;
@@ -144,12 +145,18 @@ describe("Update Order Item Router", () => {
         quantity: 2,
         notes: "any_note",
       },
-      params: { orderItemId: "invalid_order_item_id" },
+      params: { orderItemId: "valid_order_item_id" },
       auth: { businessId: "valid_business_id" },
       query: {},
     };
 
     await sut.route(httpRequest);
+    expect(updateOrderItemUseCaseSpy.businessId).toEqual(
+      httpRequest.auth.businessId,
+    );
+    expect(updateOrderItemUseCaseSpy.orderItemId).toEqual(
+      httpRequest.params.orderItemId,
+    );
     expect(updateOrderItemUseCaseSpy.status).toEqual(httpRequest.body.status);
     expect(updateOrderItemUseCaseSpy.quantity).toEqual(
       httpRequest.body.quantity,
@@ -176,7 +183,6 @@ describe("Update Order Item Router", () => {
     };
 
     const httpResponse = await sut.route(httpRequest);
-    console.log(httpResponse);
     expect(httpResponse).toEqual({
       statusCode: 200,
       body: {

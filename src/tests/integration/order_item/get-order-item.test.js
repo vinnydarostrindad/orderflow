@@ -58,7 +58,6 @@ describe("GET /api/v1/ordered-items", () => {
     expect(responseBody.length).toBeGreaterThan(0);
 
     responseBody.forEach((orderItem) => {
-      console.log(orderItem);
       expect(orderItem).toMatchObject({
         id: orderItem.id,
         orderId: order.id,

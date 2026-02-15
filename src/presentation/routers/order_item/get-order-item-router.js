@@ -38,6 +38,7 @@ export default class GetOrderItemRouter {
           status,
           notes,
           order_item_created_at,
+          order_item_updated_at,
           table_number,
         }) => ({
           id,
@@ -48,10 +49,10 @@ export default class GetOrderItemRouter {
           status,
           notes,
           createdAt: order_item_created_at,
+          updatedAt: order_item_updated_at,
           tableNumber: table_number,
         }),
       );
-
       return httpResponse.ok(editedOrderedItems);
     }
 
@@ -66,6 +67,7 @@ export default class GetOrderItemRouter {
         ({
           id,
           menu_item_id,
+          order_id,
           quantity,
           unit_price,
           total_price,
@@ -75,7 +77,7 @@ export default class GetOrderItemRouter {
           updated_at,
         }) => ({
           id,
-          orderId,
+          orderId: order_id,
           menuItemId: menu_item_id,
           quantity: quantity.toString(),
           unitPrice: unit_price,
@@ -106,6 +108,7 @@ export default class GetOrderItemRouter {
     const {
       id,
       menu_item_id,
+      order_id,
       quantity,
       unit_price,
       total_price,
@@ -117,7 +120,7 @@ export default class GetOrderItemRouter {
 
     return httpResponse.ok({
       id,
-      orderId,
+      orderId: order_id,
       menuItemId: menu_item_id,
       quantity: quantity.toString(),
       unitPrice: unit_price,

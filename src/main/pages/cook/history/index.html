@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/cook/style.css" />
-    <title>Cardápio</title>
+    <link rel="stylesheet" href="/cook/history/style.css" />
+    <title>Histórico</title>
   </head>
   <body>
     <app-header button="menu"></app-header>
@@ -12,32 +12,38 @@
     <cook-nav></cook-nav>
 
     <main class="main">
-      <section class="orders-in-progress">
+      <section class="orders-done">
         <header class="orders-in-progress__header">
-          <h2>Em Andamento</h2>
+          <h2>Prontos</h2>
         </header>
         <div class="orders__skeleton">
           <div class="orders__item-skeleton skeleton"></div>
-          <div class="orders__item-skeleton skeleton"></div>
+        </div>
+        <div class="orders-done__items" id="ordersReadyContainer"></div>
+      </section>
+      <section class="orders-delivered">
+        <header class="orders-delivered__header">
+          <h2>Entregues</h2>
+        </header>
+        <div class="orders__skeleton">
           <div class="orders__item-skeleton skeleton"></div>
         </div>
         <div
-          class="orders-in-progress__items"
-          id="ordersInProgressContainer"
+          class="orders-delivered__items"
+          id="ordersDeliveredContainer"
         ></div>
       </section>
-      <section class="orders">
-        <header class="orders__header">
-          <h2>Pedidos</h2>
+      <section class="orders-cancelled">
+        <header class="orders-cancelled__header">
+          <h2>Cancelados</h2>
         </header>
-        <section class="orders__box">
-          <div class="orders__skeleton">
-            <div class="orders__item-skeleton skeleton"></div>
-            <div class="orders__item-skeleton skeleton"></div>
-            <div class="orders__item-skeleton skeleton"></div>
-          </div>
-          <div class="orders__items" id="orderedItemsContainer"></div>
-        </section>
+        <div class="orders__skeleton">
+          <div class="orders__item-skeleton skeleton"></div>
+        </div>
+        <div
+          class="orders-cancelled__items"
+          id="ordersCancelledContainer"
+        ></div>
       </section>
       <div
         class="all-order-info-container all-order-info-container--hidden"
@@ -57,28 +63,15 @@
           <p class="all-order-info__notes" id="orderNotes"></p>
           <div class="all-order-info__ingredients" id="orderIngredients"></div>
           <div class="all-order-info__btns">
-            <div>
-              <button
-                type="button"
-                class="btn ghost-btn"
-                id="closeOrderInfoBtn"
-              >
-                Voltar
-              </button>
-              <button
-                type="button"
-                class="btn primary-btn"
-                id="setOrderToDoneBtn"
-              >
-                Pronto
-              </button>
-            </div>
+            <button type="button" class="btn ghost-btn" id="closeOrderInfoBtn">
+              Voltar
+            </button>
             <button
               type="button"
-              class="all-order-info__btns__go-back"
-              id="setOrderToPendingBtn"
+              class="btn primary-btn"
+              id="setOrderToInProgressBtn"
             >
-              Tirar de Em Andamento
+              Voltar para Em Andamento
             </button>
           </div>
         </div>
@@ -87,6 +80,6 @@
 
     <app-snackbar id="snackbar"></app-snackbar>
 
-    <script type="module" src="/cook/script.js"></script>
+    <script type="module" src="/cook/history/script.js"></script>
   </body>
 </html>

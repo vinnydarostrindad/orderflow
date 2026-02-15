@@ -105,6 +105,7 @@ export default class OrderItemRepository {
           order_items.notes,
           order_items.status,
           order_items.created_at AS order_item_created_at,
+          order_items.updated_at AS order_item_updated_at,
           orders.table_number
         FROM
           order_items
@@ -137,6 +138,38 @@ export default class OrderItemRepository {
           1
         ;`,
       values: [orderItemId, orderId],
+    });
+
+    return result.rows[0];
+  }
+
+  async update({ businessId, orderItemId, status, quantity, notes }) {
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!orderItemId) throw new MissingParamError("orderItemId");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        UPDATE order_items oi
+        SET
+          quantity = COALESCE($4, oi.quantity),
+
+          total_price = CASE
+            WHEN $4 IS NOT NULL
+              THEN $4 * oi.unit_price
+            ELSE oi.total_price
+          END,
+
+          status = COALESCE($3, oi.status),
+          notes = COALESCE($5, oi.notes),
+          updated_at = timezone('utc', now())
+        FROM orders o
+        WHERE
+          oi.id = $1
+          AND oi.order_id = o.id
+          AND o.business_id = $2
+        RETURNING oi.*
+        ;`,
+      values: [orderItemId, businessId, status, quantity, notes],
     });
 
     return result.rows[0];

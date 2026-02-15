@@ -34,12 +34,16 @@ body {
     }
   }
 
-  .orders-in-progress {
+  .orders-done,
+  .orders-delivered,
+  .orders-cancelled {
     border-bottom: 2px solid #00000046;
     padding-bottom: var(--space-md);
     display: grid;
 
-    .orders-in-progress__header {
+    .orders-in-progress__header,
+    .orders-delivered__header,
+    .orders-cancelled__header {
       margin-top: var(--space-xs-sm);
       margin-bottom: var(--space-md);
 
@@ -48,7 +52,9 @@ body {
       }
     }
 
-    .orders-in-progress__items {
+    .orders-done__items,
+    .orders-delivered_items,
+    .orders-cancelled_items {
       display: grid;
       gap: var(--space-md);
       grid-template-columns: repeat(auto-fit, 300px);
@@ -56,22 +62,8 @@ body {
     }
   }
 
-  .orders {
-    .orders__header {
-      margin-top: var(--space-xs-sm);
-      margin-bottom: var(--space-md);
-
-      h2 {
-        font-size: var(--font-3xl);
-      }
-    }
-
-    .orders__items {
-      display: grid;
-      gap: var(--space-md);
-      grid-template-columns: repeat(auto-fit, 300px);
-      justify-content: center;
-    }
+  .orders-cancelled {
+    border-bottom: none;
   }
 
   order-card {
@@ -291,29 +283,12 @@ body {
     .all-order-info__btns {
       margin-top: var(--space-xs);
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      align-items: stretch;
+      justify-content: space-evenly;
       gap: 25px;
 
-      div {
-        width: 100%;
-        display: flex;
-        justify-content: space-evenly;
-      }
-
       button {
-        width: 120px;
-      }
-
-      .all-order-info__btns__go-back {
-        background-color: transparent;
-        color: var(--color-text-muted);
-        text-decoration: underline;
-        width: fit-content;
-
-        &:hover {
-          color: var(--color-text);
-        }
+        width: 150px;
       }
     }
   }

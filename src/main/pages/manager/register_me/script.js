@@ -44,7 +44,6 @@ async function submitForm(e) {
       }),
     });
 
-    console.log(response.ok);
     if (!response.ok) {
       throw {
         status: response.status,
@@ -52,8 +51,7 @@ async function submitForm(e) {
         url: response.url,
       };
     }
-    const responseBody = await response.json();
-    console.log(responseBody);
+    await response.json();
 
     submitBtn.classList.remove("form__btn--loading");
     submitBtn.disabled = false;

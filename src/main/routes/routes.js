@@ -118,6 +118,7 @@ const apiRoutes = [
       /^\/api\/v1\/table\/(?<tableId>[^/]+)\/order\/(?<orderId>[^/]+)\/item\/(?<orderItemId>[^/]+)$/,
     methods: {
       get: orderItemRoute.getOne,
+      patch: orderItemRoute.patch,
     },
   },
   {
@@ -189,6 +190,11 @@ const pagesRoutes = [
   {
     pattern: /^\/orders\/?(?:\?.*)?$/,
     filePath: "/cook/index.html",
+    role: "cook",
+  },
+  {
+    pattern: /^\/orders\/history\/?(?:\?.*)?$/,
+    filePath: "/cook/history/index.html",
     role: "cook",
   },
 ];

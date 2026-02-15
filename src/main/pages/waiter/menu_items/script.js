@@ -144,7 +144,6 @@ async function fetchMenuItems() {
   }
 
   const menuItems = await res.json();
-  console.log(menuItems);
   return menuItems;
 }
 
@@ -192,7 +191,6 @@ function filterMenuItems() {
     return;
   }
 
-  console.log("ITEMS to SHEArch: ", itemsToSearch);
   const filteredItems = groupItemsByType(itemsToSearch);
   renderGroupedMenuItems(filteredItems);
 }
