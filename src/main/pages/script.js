@@ -31,7 +31,6 @@ async function submitForm(e) {
       }),
     });
 
-    console.log(response.ok);
     if (!response.ok) {
       throw {
         status: response.status,
@@ -40,7 +39,6 @@ async function submitForm(e) {
       };
     }
     const responseBody = await response.json();
-    console.log(responseBody);
 
     submitBtn.classList.remove("form__btn--loading");
     submitBtn.firstElementChild.textContent = "Registrar";

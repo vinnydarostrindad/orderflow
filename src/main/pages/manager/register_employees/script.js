@@ -211,8 +211,7 @@ async function postEmployees(e) {
           url: response.url,
         };
       }
-      const responseBody = await response.json();
-      console.log(responseBody);
+      await response.json();
     }
 
     window.removeEventListener("beforeunload", saveEmployeesDraft);

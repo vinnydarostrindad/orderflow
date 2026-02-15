@@ -88,7 +88,6 @@ async function createMenu(e) {
       }),
     });
 
-    console.log(response.ok);
     if (!response.ok) {
       throw {
         status: response.status,
@@ -99,7 +98,6 @@ async function createMenu(e) {
 
     const responseBody = await response.json();
     menuId = responseBody.id;
-    console.log(responseBody);
 
     menu.firstElementChild.textContent = name;
 
@@ -439,7 +437,6 @@ async function handleAdvance(e) {
         body: formData,
       });
 
-      console.log("OK: ", response.ok);
       if (!response.ok) {
         throw {
           status: response.status,
@@ -448,8 +445,7 @@ async function handleAdvance(e) {
         };
       }
 
-      const responseBody = await response.json();
-      console.log(responseBody);
+      await response.json();
     }
 
     window.addEventListener("beforeunload", saveMenuItemsDraft);

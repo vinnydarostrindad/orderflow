@@ -7,15 +7,40 @@ class Snackbar extends HTMLElement {
     `;
   }
 
-  show(type, message) {
+  show(type, message, btnInfo) {
     const snackbar = this.querySelector(".snackbar");
 
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
+      this.timeoutId = undefined;
     }
 
-    snackbar.innerHTML = message;
     snackbar.className = `snackbar snackbar--${type}`;
+
+    if (btnInfo) {
+      snackbar.innerHTML = `
+        <p>${message}</p>
+        <button>${btnInfo.label}</button>
+      `;
+
+      this.querySelector("button").addEventListener(
+        "click",
+        async () => {
+          try {
+            await btnInfo.action();
+          } finally {
+            snackbar.classList.add("snackbar--hidden");
+            clearTimeout(this.timeoutId);
+            this.timeoutId = undefined;
+          }
+        },
+        { once: true },
+      );
+
+      this.querySelector("button").focus();
+    } else {
+      snackbar.innerHTML = message;
+    }
 
     this.timeoutId = setTimeout(() => {
       snackbar.classList.add("snackbar--hidden");
