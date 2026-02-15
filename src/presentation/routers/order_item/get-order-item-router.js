@@ -38,6 +38,7 @@ export default class GetOrderItemRouter {
           status,
           notes,
           order_item_created_at,
+          order_item_updated_at,
           table_number,
         }) => ({
           id,
@@ -48,6 +49,7 @@ export default class GetOrderItemRouter {
           status,
           notes,
           createdAt: order_item_created_at,
+          updatedAt: order_item_updated_at,
           tableNumber: table_number,
         }),
       );

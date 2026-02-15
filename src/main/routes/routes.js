@@ -192,6 +192,11 @@ const pagesRoutes = [
     filePath: "/cook/index.html",
     role: "cook",
   },
+  {
+    pattern: /^\/orders\/history\/?(?:\?.*)?$/,
+    filePath: "/cook/history/index.html",
+    role: "cook",
+  },
 ];
 
 export { apiRoutes, pagesRoutes };

@@ -105,6 +105,7 @@ export default class OrderItemRepository {
           order_items.notes,
           order_items.status,
           order_items.created_at AS order_item_created_at,
+          order_items.updated_at AS order_item_updated_at,
           orders.table_number
         FROM
           order_items
@@ -159,7 +160,8 @@ export default class OrderItemRepository {
           END,
 
           status = COALESCE($3, oi.status),
-          notes = COALESCE($5, oi.notes)
+          notes = COALESCE($5, oi.notes),
+          updated_at = timezone('utc', now())
         FROM orders o
         WHERE
           oi.id = $1

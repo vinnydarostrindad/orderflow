@@ -424,7 +424,8 @@ describe("OrderItem Repository", () => {
           END,
 
           status = COALESCE($3, oi.status),
-          notes = COALESCE($5, oi.notes)
+          notes = COALESCE($5, oi.notes),
+          updated_at = timezone('utc', now())
         FROM orders o
         WHERE
           oi.id = $1

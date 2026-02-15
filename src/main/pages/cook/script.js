@@ -28,7 +28,7 @@ let orderTimers = [];
 let specificIntervalId;
 let intervalId;
 
-orderedItemsContainer.addEventListener("click", setOrderToOnProgress);
+orderedItemsContainer.addEventListener("click", setOrderToInProgress);
 ordersInProgressContainer.addEventListener("click", showOrderInfo);
 closeOrderInfoBtn.addEventListener("click", closeOrderInfo);
 setOrderToPendingBtn.addEventListener("click", setOrderToPending);
@@ -218,7 +218,7 @@ function showOrderInfo(e) {
   configOrderInfoTimer();
 }
 
-async function setOrderToOnProgress(e) {
+async function setOrderToInProgress(e) {
   let order = e.target.closest("order-card");
   if (!order) return;
 

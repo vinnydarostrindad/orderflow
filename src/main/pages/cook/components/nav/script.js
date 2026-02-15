@@ -4,7 +4,7 @@ class CookNav extends HTMLElement {
     <nav class="navbar navbar--hidden" id="navBar">
       <ul>
         <li class="navbar__item navbar__item--selected">
-          <a href="#">
+          <a href="http://localhost:3000/orders">
             <img
               src="../cook/components/nav/img/orders-icon.svg"
               alt="menu-icon"
@@ -14,7 +14,7 @@ class CookNav extends HTMLElement {
           </a>
         </li>
         <li class="navbar__item">
-          <a href="#">
+          <a href="http://localhost:3000/orders/history">
             <img
               src="../cook/components/nav/img/history-icon.svg"
               alt="orders-icon"
