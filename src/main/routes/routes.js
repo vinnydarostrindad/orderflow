@@ -188,6 +188,11 @@ const pagesRoutes = [
     role: "waiter",
   },
   {
+    pattern: /^\/waiter\/orders\/?(?:\?.*)?$/,
+    filePath: "/waiter/orders/index.html",
+    role: "waiter",
+  },
+  {
     pattern: /^\/orders\/?(?:\?.*)?$/,
     filePath: "/cook/index.html",
     role: "cook",

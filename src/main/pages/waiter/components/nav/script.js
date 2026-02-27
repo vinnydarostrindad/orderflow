@@ -4,7 +4,7 @@ class WaiterNav extends HTMLElement {
     <nav class="navbar navbar--hidden" id="navBar">
       <ul>
         <li class="navbar__item navbar__item--selected">
-          <a href="#">
+          <a href="http://localhost:3000/tables">
             <img
               src="/waiter/components/nav/img/food-menu-icon.svg"
               alt="menu-icon"
@@ -14,7 +14,7 @@ class WaiterNav extends HTMLElement {
           </a>
         </li>
         <li class="navbar__item">
-          <a href="#">
+          <a href="http://localhost:3000/waiter/orders">
             <img
               src="/waiter/components/nav/img/orders-icon.svg"
               alt="orders-icon"

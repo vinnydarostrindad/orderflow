@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/waiter/orders/style.css" />
+    <title>Pedidos</title>
+  </head>
+  <body>
+    <app-header search-bar button="menu"></app-header>
+
+    <waiter-nav></waiter-nav>
+
+    <main class="main">
+      <div class="orders">
+        <section class="orders__header">
+          <h2>Pedidos</h2>
+          <div class="orders__filter-status-group">
+            <label for="statusSelect">Filtrar por Tipo:</label>
+            <select name="status" id="statusSelect">
+              <option value="everything" selected>Tudo</option>
+              <option value="ready">Prontos</option>
+              <option value="in_progress">Em Andamento</option>
+              <option value="pending">Pendentes</option>
+            </select>
+          </div>
+        </section>
+        <section class="ready-orders">
+          <header class="ready-orders__header">
+            <h3>Prontos</h3>
+          </header>
+          <div class="ready-orders__items-skeleton">
+            <div class="ready-orders__item-skeleton skeleton"></div>
+          </div>
+          <div class="ready-orders__items" id="readyOrders"></div>
+        </section>
+        <section class="in-progress-orders">
+          <header class="in-progress-orders__header">
+            <h3>Em Andamento</h3>
+          </header>
+          <div class="in-progress-orders__items-skeleton">
+            <div class="in-progress-orders__item-skeleton skeleton"></div>
+          </div>
+          <div class="in-progress-orders__items" id="inProgressOrders"></div>
+        </section>
+        <section class="pending-orders">
+          <header class="pending-orders__header">
+            <h3>Pendente</h3>
+          </header>
+          <div class="pending-orders__items-skeleton">
+            <div class="pending-orders__item-skeleton skeleton"></div>
+          </div>
+          <div class="pending-orders__items" id="pendingOrders"></div>
+        </section>
+      </div>
+      <div
+        class="all-order-info-container all-order-info-container--hidden"
+        id="orderInfoContainer"
+      >
+        <div class="all-order-info">
+          <div class="all-order-info__header">
+            <div class="all-order-info__img">
+              <img id="orderImg" src="" alt="" />
+            </div>
+            <div class="all-order-info__text">
+              <h2 class="all-order-info__name" id="orderName"></h2>
+              <p class="all-order-info__table" id="orderTable"></p>
+              <p class="all-order-info__quantity" id="orderQuantity"></p>
+              <p class="all-order-info__time" id="orderTime"></p>
+            </div>
+          </div>
+          <p class="all-order-info__notes" id="orderNotes"></p>
+          <div class="all-order-info__ingredients" id="orderIngredients"></div>
+          <div class="all-order-info__btns">
+            <div>
+              <button
+                type="button"
+                class="btn ghost-btn"
+                id="closeOrderInfoBtn"
+              >
+                Voltar
+              </button>
+              <button
+                type="button"
+                class="btn primary-btn"
+                id="setOrderToCancelledBtn"
+              >
+                Cancelar Pedido
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <app-snackbar id="snackbar"></app-snackbar>
+
+    <script type="module" src="/waiter/orders/script.js"></script>
+  </body>
+</html>

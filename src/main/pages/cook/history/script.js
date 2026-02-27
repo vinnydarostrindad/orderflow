@@ -1,7 +1,7 @@
 import "/cook/components/nav/script.js";
 import "/components/header/script.js";
 import "/components/snackbar.js";
-import "/cook/components/order-card.js";
+import "/components/order-card.js";
 import supabase from "/scripts/supabase.js";
 import API_URL from "/scripts/config-api-url.js";
 
@@ -22,6 +22,7 @@ const setOrderToInProgressBtn = document.querySelector(
 
 const orderInfoImg = document.querySelector("#orderImg");
 const orderInfoName = document.querySelector("#orderName");
+const orderInfoTable = document.querySelector("#orderTable");
 const orderInfoQuantity = document.querySelector("#orderQuantity");
 const orderInfoNotes = document.querySelector("#orderNotes");
 const orderInfoIngridients = document.querySelector("#orderIngredients");
@@ -31,10 +32,7 @@ let ordersDelivered = [];
 let ordersCancelled = [];
 
 ordersReadyContainer.addEventListener("click", showOrderInfo);
-// ordersInProgressContainer.addEventListener("click", showOrderInfo);
-// closeOrderInfoBtn.addEventListener("click", closeOrderInfo);
 setOrderToInProgressBtn.addEventListener("click", setOrderToInProgress);
-// setOrderToDoneBtn.addEventListener("click", setOrderToDone);
 
 function calculateTime(time) {
   const totalSeconds = Math.floor(time / 1000);
@@ -88,7 +86,8 @@ async function fetchOrderTableId(orderId) {
 }
 
 async function fetchOrderedItems() {
-  const res = await fetch(`${API_URL}/api/v1/ordered-items?period=day`);
+  // Voltar com o filtro aquí ó -> ?period=day!
+  const res = await fetch(`${API_URL}/api/v1/ordered-items`);
 
   if (!res.ok) {
     throw {
@@ -111,6 +110,7 @@ function buildOrderedItems(items) {
     const orderCard = document.createElement("order-card");
 
     orderCard.setAttribute("name", item.name);
+    orderCard.setAttribute("table", item.tableNumber);
     orderCard.setAttribute("quantity", item.quantity);
     orderCard.setAttribute("imgPath", publicUrl);
 
@@ -118,8 +118,6 @@ function buildOrderedItems(items) {
 
     if (item.maxTime) orderCard.setAttribute("data-max_time", item.id);
     orderCard.setAttribute("data-id", item.id);
-    console.log(item.createdAt);
-    console.log(item.updatedAt);
     const readyTime = new Date(item.updatedAt) - new Date(item.createdAt);
     orderCard.setAttribute("data-time", readyTime);
     fragment.appendChild(orderCard);
@@ -177,6 +175,7 @@ function showOrderInfo(e) {
   orderInfoContainer.dataset.order_id = orderInfo.id;
   orderInfoImg.src = order.getAttribute("imgPath");
   orderInfoName.innerText = order.getAttribute("name");
+  orderInfoTable.innerText = "Mesa " + order.getAttribute("table");
   orderInfoQuantity.innerText = "Quantidade: " + orderInfo.quantity;
 
   if (orderInfo.notes) {
@@ -240,7 +239,6 @@ async function setUpPage() {
 
   try {
     const orderedItems = await fetchOrderedItems();
-
     await Promise.all(
       orderedItems.map(async (item) => {
         const tableId = await fetchOrderTableId(item.orderId);
