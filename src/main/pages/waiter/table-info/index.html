@@ -3,18 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/waiter/orders/style.css" />
+    <link rel="stylesheet" href="/waiter/table-info/style.css" />
     <title>Pedidos</title>
   </head>
   <body>
-    <app-header search-bar button="menu"></app-header>
+    <app-header back-button search-bar button="menu"></app-header>
 
     <waiter-nav></waiter-nav>
 
     <main class="main">
       <div class="orders">
         <section class="orders__header">
-          <h2>Pedidos</h2>
+          <h2 id="ordersTitle">Pedidos</h2>
           <div class="orders__filter-status-group">
             <label for="statusSelect">Filtrar por Tipo:</label>
             <select name="status" id="statusSelect">
@@ -22,6 +22,7 @@
               <option value="ready">Prontos</option>
               <option value="in_progress">Em Andamento</option>
               <option value="pending">Pendentes</option>
+              <option value="delivered">Entregues</option>
             </select>
           </div>
         </section>
@@ -29,70 +30,84 @@
           <header class="orders-section__header">
             <h3>Prontos</h3>
           </header>
+
           <div class="orders-section__items-skeleton">
             <div class="orders-section__item-skeleton skeleton"></div>
           </div>
+
           <div class="orders-section__items" id="readyOrders"></div>
         </section>
         <section class="orders-section">
           <header class="orders-section__header">
-            <h3>Em Andamento</h3>
+            <h3>Em andamento</h3>
           </header>
+
           <div class="orders-section__items-skeleton">
             <div class="orders-section__item-skeleton skeleton"></div>
           </div>
+
           <div class="orders-section__items" id="inProgressOrders"></div>
         </section>
         <section class="orders-section">
           <header class="orders-section__header">
-            <h3>Pendente</h3>
+            <h3>Pendentes</h3>
           </header>
+
           <div class="orders-section__items-skeleton">
             <div class="orders-section__item-skeleton skeleton"></div>
           </div>
+
           <div class="orders-section__items" id="pendingOrders"></div>
         </section>
-      </div>
-      <div
-        class="all-order-info-container all-order-info-container--hidden"
-        id="orderInfoContainer"
-      >
-        <div class="all-order-info">
-          <div class="all-order-info__header">
-            <div class="all-order-info__img">
-              <img id="orderImg" src="" alt="" />
-            </div>
-            <div class="all-order-info__text">
-              <h2 class="all-order-info__name" id="orderName"></h2>
-              <p class="all-order-info__table" id="orderTable"></p>
-              <p class="all-order-info__quantity" id="orderQuantity"></p>
-              <p class="all-order-info__time" id="orderTime"></p>
-            </div>
+        <section class="orders-section">
+          <header class="orders-section__header">
+            <h3>Entregues</h3>
+          </header>
+
+          <div class="orders-section__items-skeleton">
+            <div class="orders-section__item-skeleton skeleton"></div>
           </div>
-          <p class="all-order-info__notes" id="orderNotes"></p>
-          <div class="all-order-info__ingredients" id="orderIngredients"></div>
-          <div class="all-order-info__btns">
-            <div>
-              <button
-                type="button"
-                class="btn ghost-btn"
-                id="closeOrderInfoBtn"
-              >
-                Voltar
-              </button>
-              <button
-                type="button"
-                class="btn primary-btn"
-                id="orderPrincipalAction"
-              ></button>
-            </div>
-          </div>
-        </div>
+
+          <div class="orders-section__items" id="deliveredOrders"></div>
+        </section>
       </div>
     </main>
 
+    <div
+      class="all-order-info-container all-order-info-container--hidden"
+      id="orderInfoContainer"
+    >
+      <div class="all-order-info">
+        <div class="all-order-info__header">
+          <div class="all-order-info__img">
+            <img id="orderImg" src="" alt="" />
+          </div>
+          <div class="all-order-info__text">
+            <h2 class="all-order-info__name" id="orderName"></h2>
+            <p class="all-order-info__table" id="orderTable"></p>
+            <p class="all-order-info__quantity" id="orderQuantity"></p>
+            <p class="all-order-info__time" id="orderTime"></p>
+          </div>
+        </div>
+        <p class="all-order-info__notes" id="orderNotes"></p>
+        <div class="all-order-info__ingredients" id="orderIngredients"></div>
+        <div class="all-order-info__btns">
+          <div>
+            <button type="button" class="btn ghost-btn" id="closeOrderInfoBtn">
+              Voltar
+            </button>
+            <button
+              type="button"
+              class="btn primary-btn"
+              id="orderPrincipalAction"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <app-snackbar id="snackbar"></app-snackbar>
 
-    <script type="module" src="/waiter/orders/script.js"></script>
+    <script type="module" src="/waiter/table-info/script.js"></script>
   </body>
 </html>

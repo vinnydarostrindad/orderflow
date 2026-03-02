@@ -22,7 +22,7 @@
   .header__content {
     align-items: center;
     display: flex;
-    gap: var(--space-md);
+    gap: var(--space-xs);
     height: 100%;
     justify-content: space-between;
     margin: 0 auto;
@@ -32,6 +32,30 @@
     .header__title {
       color: #fff;
       font-size: 1.5rem;
+    }
+
+    .header__back-btn {
+      background: transparent;
+      font-size: 1.3rem;
+      padding: 0 6px 1px;
+      transition:
+        background-color 100ms,
+        scale 200s ease-in-out;
+
+      .header__back-icon {
+        display: inline-block;
+        transition: transform 200ms ease-in-out;
+      }
+
+      &:hover {
+        background-color: var(--color-primary-dark);
+        outline: var(--border-default);
+        scale: 1.05;
+      }
+
+      &:hover .header__back-icon {
+        transform: rotate(360deg);
+      }
     }
 
     .header__advance-btn {
@@ -79,7 +103,7 @@
         position: relative;
 
         &::before {
-          background: #dbdbdb;
+          background-color: #dbdbdb;
           content: "";
           height: 100%;
           left: 50%;

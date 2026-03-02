@@ -1,0 +1,123 @@
+@import url("/styles/base.css");
+@import url("/styles/header.css");
+@import url("/styles/navbar.css");
+@import url("/styles/snackbar.css");
+@import url("/styles/order-card.css");
+
+html,
+body {
+  color: var(--color-text);
+}
+
+.header {
+  height: 50px;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 999;
+}
+
+.main {
+  margin: 3.15rem auto 0;
+  padding: var(--space-md) var(--space-md);
+
+  .clients-tables__skeleton {
+    display: grid;
+    gap: var(--space-md);
+    grid-template-columns: repeat(auto-fit, 300px);
+    justify-content: center;
+    margin-top: var(--space-md);
+
+    .clients-tables__table-skeleton {
+      border-radius: var(--radius-lg);
+      height: 120px;
+    }
+  }
+
+  .clients {
+    .clients__header {
+      margin-top: var(--space-xs-sm);
+      margin-bottom: var(--space-md);
+
+      h2 {
+        font-size: var(--font-3xl);
+      }
+    }
+
+    .clients-tables {
+      padding-bottom: var(--space-md);
+      display: grid;
+
+      header {
+        margin-top: var(--space-xs-sm);
+        margin-bottom: var(--space-md);
+
+        h3 {
+          font-size: var(--font-xl);
+        }
+      }
+
+      .clients-tables__tables {
+        display: grid;
+        gap: var(--space-md);
+        grid-template-columns: repeat(auto-fit, 300px);
+        justify-content: center;
+
+        .table-card {
+          align-items: center;
+          background-color: var(--color-bg-light);
+          border: 1px solid transparent;
+          border-radius: var(--radius-md);
+          color: var(--color-text);
+          display: flex;
+          flex-direction: column;
+          gap: var(--space-2xs);
+          height: 90px;
+          justify-content: center;
+          overflow: hidden;
+          transition: 125ms ease-in-out;
+
+          .table-card__number {
+            font-size: var(--font-xl);
+          }
+
+          .table-card__name {
+            font-size: var(--font-md);
+            overflow: hidden;
+            text-align: center;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 85%;
+          }
+
+          &:hover {
+            border: 1px solid var(--color-text);
+            transform: scale(1.025);
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (width >= 920px) {
+  .snackbar {
+    top: 65px;
+  }
+
+  .header {
+    .header__content {
+      width: 95%;
+    }
+  }
+
+  .main {
+    margin-left: 12.5rem;
+
+    .menu {
+      margin: 0 auto;
+      width: min(100%, 1500px);
+    }
+  }
+}

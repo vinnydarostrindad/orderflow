@@ -24,7 +24,7 @@ class WaiterNav extends HTMLElement {
           </a>
         </li>
         <li class="navbar__item">
-          <a href="#">
+          <a href="http://localhost:3000/clients">
             <img
               src="/waiter/components/nav/img/customers-icon.svg"
               alt="customers-icon"

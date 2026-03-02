@@ -47,7 +47,7 @@ function calculateTime(time) {
 }
 
 function organizeOrdersInArray() {
-  var ordersArray = [ordersReady, ordersDelivered, ordersCancelled];
+  let ordersArray = [ordersReady, ordersDelivered, ordersCancelled];
   ordersArray.forEach((array) =>
     array.sort((a, b) => {
       return new Date(a.updatedAt) - new Date(b.updatedAt);
@@ -104,7 +104,7 @@ async function fetchOrderedItems() {
 function buildOrderedItems(items) {
   const fragment = document.createDocumentFragment();
 
-  for (var item of items) {
+  for (let item of items) {
     const { publicUrl } = supabase.getUrl("orderflow", item.imagePath);
 
     const orderCard = document.createElement("order-card");

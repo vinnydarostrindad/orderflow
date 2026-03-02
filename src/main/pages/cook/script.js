@@ -105,7 +105,7 @@ async function fetchOrderedItems() {
 function buildOrderedItems(items) {
   const fragment = document.createDocumentFragment();
 
-  for (var item of items) {
+  for (let item of items) {
     const { publicUrl } = supabase.getUrl("orderflow", item.imagePath);
 
     const orderCard = document.createElement("order-card");
@@ -147,7 +147,7 @@ function configTimers() {
 
 function configOrderInfoTimer() {
   const orderId = orderInfoContainer.dataset.order_id;
-  var { createdAt } = ordersInProgress.find((order) => order.id === orderId);
+  let { createdAt } = ordersInProgress.find((order) => order.id === orderId);
 
   const timePassedString = calculateTimePassed(createdAt);
   orderInfoTimer.innerText = `Tempo: ${timePassedString}`;

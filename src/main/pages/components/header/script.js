@@ -2,6 +2,8 @@ class AppHeader extends HTMLElement {
   connectedCallback() {
     const headerBtn = this.getAttribute("button");
     this.hasSearchBar = this.hasAttribute("search-bar");
+    this.hasBackButton = this.hasAttribute("back-button");
+    this.backButtonTarget = this.getAttribute("back-button");
 
     if (headerBtn === "menu") {
       this.buildHeaderWithMenuBtn();
@@ -16,6 +18,18 @@ class AppHeader extends HTMLElement {
     this.innerHTML = `
       <header class="header">
         <div class="header__content">
+          ${
+            this.hasBackButton
+              ? `
+                <button 
+                  class="header__back-btn" 
+                  id="headerBackBtn"
+                  aria-label="Voltar"
+                >
+                  <span class="header__back-icon">←</span>
+                </button>`
+              : ""
+          }
           <h1 class="header__title">OrderFlow</h1>
           ${
             this.hasSearchBar
@@ -52,6 +66,17 @@ class AppHeader extends HTMLElement {
 
     const btn = this.querySelector("#headerMenuBtn");
     const navBar = document.querySelector("#navBar");
+    const backBtn = this.querySelector("#headerBackBtn");
+
+    if (backBtn) {
+      backBtn.addEventListener("click", () => {
+        if (this.backButtonTarget) {
+          window.location.href = this.backButtonTarget;
+        } else {
+          window.history.back();
+        }
+      });
+    }
 
     btn.addEventListener("click", () => {
       document.body.style.overflow = navBar.classList.contains("navbar--hidden")

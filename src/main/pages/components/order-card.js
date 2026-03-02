@@ -18,7 +18,7 @@ class OrderCard extends HTMLElement {
           <div class="order-item__text">
             <div>
               <h3 class="order-item__name">${name}</h3>
-              <p>Mesa ${table}</p>
+              ${table ? `<p>Mesa ${table}</p>` : ""}
             </div>
               <p class="order-item__quantity">Quantidade: ${quantity}</p>
             ${

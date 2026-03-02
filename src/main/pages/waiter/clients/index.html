@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/waiter/clients/style.css" />
+    <title>Clientes</title>
+  </head>
+  <body>
+    <app-header button="menu"></app-header>
+
+    <waiter-nav></waiter-nav>
+
+    <main class="main">
+      <div class="clients">
+        <header class="clients__header">
+          <h2>Mesas</h2>
+        </header>
+        <section class="clients-tables">
+          <div class="clients-tables__skeleton">
+            <div class="clients-tables__table-skeleton skeleton"></div>
+            <div class="clients-tables__table-skeleton skeleton"></div>
+            <div class="clients-tables__table-skeleton skeleton"></div>
+          </div>
+          <div class="clients-tables__tables" id="tables"></div>
+        </section>
+      </div>
+    </main>
+    <aside class="fast-nav" id="fastNav">
+      
+    </aside>
+
+    <app-snackbar id="snackbar"></app-snackbar>
+
+    <script type="module" src="/waiter/clients/script.js"></script>
+  </body>
+</html>
