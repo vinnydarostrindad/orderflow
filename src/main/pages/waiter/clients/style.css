@@ -99,6 +99,12 @@ body {
       }
     }
   }
+
+  .none-tables {
+    padding: var(--space-md);
+    color: var(--color-text-muted);
+    text-align: center;
+  }
 }
 
 @media screen and (width >= 920px) {

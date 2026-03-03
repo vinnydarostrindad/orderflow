@@ -18,19 +18,21 @@ class AppHeader extends HTMLElement {
     this.innerHTML = `
       <header class="header">
         <div class="header__content">
-          ${
-            this.hasBackButton
-              ? `
-                <button 
-                  class="header__back-btn" 
-                  id="headerBackBtn"
-                  aria-label="Voltar"
-                >
-                  <span class="header__back-icon">←</span>
-                </button>`
-              : ""
-          }
-          <h1 class="header__title">OrderFlow</h1>
+          <div class="header__title-group">
+            ${
+              this.hasBackButton
+                ? `
+                  <button 
+                    class="header__back-btn" 
+                    id="headerBackBtn"
+                    aria-label="Voltar"
+                  >
+                    <span class="header__back-icon" aria-hidden="true">&larr;</span>
+                  </button>`
+                : ""
+            }
+            <h1 class="header__title">OrderFlow</h1>
+          </div>
           ${
             this.hasSearchBar
               ? `<div class="header__actions">

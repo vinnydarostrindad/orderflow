@@ -6,9 +6,18 @@ import API_URL from "/scripts/config-api-url.js";
 
 const snackbar = document.querySelector("#snackbar");
 const navbar = document.querySelector("#navBar");
+const searchBar = document.querySelector("#search");
 const tablesContainer = document.querySelector("#tables");
 
+let tables = [];
+
 tablesContainer.addEventListener("click", goToTable);
+searchBar.addEventListener("input", search);
+
+function search(e) {
+  const frag = buildOrderedItems(e.target.value);
+  renderTables(frag.childNodes.length > 0, frag);
+}
 
 function goToTable(e) {
   const btn = e.target.closest(".table-card");
@@ -32,18 +41,27 @@ async function fetchTables() {
   return tables;
 }
 
-function buildOrderedItems(tables) {
+function buildOrderedItems(searchText = "") {
+  const text = searchText.toLowerCase().trim();
+
+  const filteredTables = tables.filter((data) => {
+    const number = String(data.number);
+    const name = String(data?.name ?? "").toLowerCase();
+    return number.includes(text) || name.includes(text);
+  });
+
   const fragment = document.createDocumentFragment();
 
-  for (let table of tables) {
+  for (let table of filteredTables) {
     const button = document.createElement("button");
+    button.id = String(table.number ?? "");
     button.type = "button";
-    button.dataset.table_id = table.id;
-    button.dataset.table_number = table.number;
+    button.dataset.table_id = String(table.id ?? "");
+    button.dataset.table_number = String(table.number ?? "");
     button.classList.add("table-card");
     const h4 = document.createElement("h4");
     h4.classList.add("table-card__number");
-    h4.innerText = table.number;
+    h4.innerText = String(table.number ?? "");
     button.append(h4);
     if (table.name) {
       const p = document.createElement("p");
@@ -59,18 +77,22 @@ function buildOrderedItems(tables) {
 
 function renderTables(exists, tablesFrag) {
   if (exists) {
-    tablesContainer.append(tablesFrag);
+    tablesContainer.replaceChildren(tablesFrag);
   } else {
-    tablesContainer.innerHTML = `<p class="orders-none">Nenhuma mesa registrada!</p>`;
+    if (tables.length > 0 && !exists) {
+      tablesContainer.innerHTML = `<p class="none-tables">Nenhuma mesa encontrada!</p>`;
+    } else {
+      tablesContainer.innerHTML = `<p class="none-tables">Nenhuma mesa registrada!</p>`;
+    }
   }
 }
 
 async function setupOrdersPage() {
   try {
-    const tables = await fetchTables();
-    const tablesFragment = buildOrderedItems(tables);
-
+    tables = await fetchTables();
+    const tablesFragment = buildOrderedItems();
     renderTables(tables.length > 0, tablesFragment);
+
     document.querySelectorAll(".clients-tables__skeleton").forEach((el) => {
       el.remove();
     });

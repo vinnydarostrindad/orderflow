@@ -33,16 +33,6 @@ class WaiterNav extends HTMLElement {
             Clientes
           </a>
         </li>
-        <li class="navbar__item">
-          <a href="#">
-            <img
-              src="/waiter/components/nav/img/config-icon.svg"
-              alt="config-icon"
-              class="navbar__icon invert"
-            />
-            Configuração
-          </a>
-        </li>
       </ul>
     </nav>
     `;
