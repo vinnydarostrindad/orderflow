@@ -1,7 +1,7 @@
 import "/cook/components/nav/script.js";
 import "/components/header/script.js";
 import "/components/snackbar.js";
-import "/cook/components/order-card.js";
+import "/components/order-card.js";
 import supabase from "/scripts/supabase.js";
 import API_URL from "/scripts/config-api-url.js";
 
@@ -14,10 +14,11 @@ const orderInfoContainer = document.querySelector("#orderInfoContainer");
 const closeOrderInfoBtn = document.querySelector("#closeOrderInfoBtn");
 const setOrderToDoneBtn = document.querySelector("#setOrderToDoneBtn");
 const setOrderToPendingBtn = document.querySelector("#setOrderToPendingBtn");
-const orderInfoTimer = document.querySelector("#orderTime");
 
+const orderInfoTimer = document.querySelector("#orderTime");
 const orderInfoImg = document.querySelector("#orderImg");
 const orderInfoName = document.querySelector("#orderName");
+const orderInfoTable = document.querySelector("#orderTable");
 const orderInfoQuantity = document.querySelector("#orderQuantity");
 const orderInfoNotes = document.querySelector("#orderNotes");
 const orderInfoIngridients = document.querySelector("#orderIngredients");
@@ -104,12 +105,13 @@ async function fetchOrderedItems() {
 function buildOrderedItems(items) {
   const fragment = document.createDocumentFragment();
 
-  for (var item of items) {
+  for (let item of items) {
     const { publicUrl } = supabase.getUrl("orderflow", item.imagePath);
 
     const orderCard = document.createElement("order-card");
 
     orderCard.setAttribute("name", item.name);
+    orderCard.setAttribute("table", item.tableNumber);
     orderCard.setAttribute("quantity", item.quantity);
     orderCard.setAttribute("imgPath", publicUrl);
 
@@ -145,7 +147,7 @@ function configTimers() {
 
 function configOrderInfoTimer() {
   const orderId = orderInfoContainer.dataset.order_id;
-  var { createdAt } = ordersInProgress.find((order) => order.id === orderId);
+  let { createdAt } = ordersInProgress.find((order) => order.id === orderId);
 
   const timePassedString = calculateTimePassed(createdAt);
   orderInfoTimer.innerText = `Tempo: ${timePassedString}`;
@@ -195,6 +197,7 @@ function showOrderInfo(e) {
   orderInfoContainer.dataset.order_id = orderInfo.id;
   orderInfoImg.src = order.getAttribute("imgPath");
   orderInfoName.innerText = order.getAttribute("name");
+  orderInfoTable.innerText = "Mesa " + order.getAttribute("table");
   orderInfoQuantity.innerText = "Quantidade: " + orderInfo.quantity;
 
   if (orderInfo.notes) {
@@ -289,6 +292,7 @@ async function setOrderToPending(e) {
 
 async function setOrderToDone() {
   const orderId = orderInfoContainer.dataset.order_id;
+  if (!orderId) return;
 
   const itemIndex = ordersInProgress.findIndex((order) => order.id === orderId);
   const item = ordersInProgress.find((order) => order.id === orderId);
@@ -316,7 +320,7 @@ async function setOrderToDone() {
     organizeOrdersInArray();
     renderAllOrders();
 
-    snackbar.show("btn", "Deseja voltar a aÃ§Ã£o que fez?", {
+    snackbar.show("btn", "Deseja voltar a ação que fez?", {
       label: "Reverter",
       action: async () => {
         try {

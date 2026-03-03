@@ -22,38 +22,16 @@ body {
   margin: 3.15rem auto 0;
   padding: var(--space-md) var(--space-md);
 
-  .orders__skeleton {
+  .orders-section__items-skeleton {
     display: grid;
     gap: var(--space-md);
     grid-template-columns: repeat(auto-fit, 300px);
     justify-content: center;
     margin-top: var(--space-md);
 
-    .orders__item-skeleton {
+    .orders-section__item-skeleton {
       border-radius: var(--radius-lg);
       height: 120px;
-    }
-  }
-
-  .orders-in-progress {
-    border-bottom: 2px solid #00000046;
-    padding-bottom: var(--space-md);
-    display: grid;
-
-    .orders-in-progress__header {
-      margin-top: var(--space-xs-sm);
-      margin-bottom: var(--space-md);
-
-      h2 {
-        font-size: var(--font-3xl);
-      }
-    }
-
-    .orders-in-progress__items {
-      display: grid;
-      gap: var(--space-md);
-      grid-template-columns: repeat(auto-fit, 300px);
-      justify-content: center;
     }
   }
 
@@ -65,13 +43,61 @@ body {
       h2 {
         font-size: var(--font-3xl);
       }
+
+      .orders__filter-status-group {
+        align-items: center;
+        display: flex;
+        font-size: var(--font-md);
+        gap: var(--space-xs);
+        margin-top: var(--space-xs-sm);
+
+        label {
+          flex: 0 0 auto;
+        }
+
+        select {
+          background-color: var(--color-bg-light);
+          border: var(--border-default);
+          color: var(--color-text);
+          font-size: var(--font-sm);
+          padding: var(--space-2xs);
+          width: min(100%, 150px);
+        }
+      }
     }
 
-    .orders__items {
+    .orders-section {
+      border-bottom: 2px solid #00000046;
+      padding-bottom: var(--space-md);
       display: grid;
-      gap: var(--space-md);
-      grid-template-columns: repeat(auto-fit, 300px);
-      justify-content: center;
+
+      header {
+        margin-top: var(--space-xs-sm);
+        margin-bottom: var(--space-md);
+
+        h3 {
+          font-size: var(--font-xl);
+        }
+      }
+
+      .orders-section__items {
+        display: grid;
+        gap: var(--space-md);
+        grid-template-columns: repeat(auto-fit, 300px);
+        justify-content: center;
+      }
+
+      &.orders-section--hidden {
+        display: none;
+      }
+
+      &.orders-section--no-border {
+        border-bottom: none;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
     }
   }
 
@@ -230,13 +256,9 @@ body {
   .main {
     margin-left: 12.5rem;
 
-    .orders {
+    .menu {
       margin: 0 auto;
       width: min(100%, 1500px);
     }
-  }
-
-  .all-order-info-container {
-    left: 200px;
   }
 }

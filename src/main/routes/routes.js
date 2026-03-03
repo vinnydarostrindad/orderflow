@@ -156,19 +156,20 @@ const managerPages = [
   },
 ];
 
-const pagesRoutes = [
-  {
-    pattern: /^\/(?:\?.*)?$/,
-    filePath: "/index.html",
-  },
-  {
-    pattern: /^\/login\/?(?:\?.*)?$/,
-    filePath: "/login/index.html",
-  },
-  ...managerPages,
+const waiterPages = [
   {
     pattern: /^\/tables\/?(?:\?.*)?$/,
     filePath: "/waiter/tables/index.html",
+    role: "waiter",
+  },
+  {
+    pattern: /^\/table\/(?<tableId>[^/]+)\/?(?:\?.*)?$/,
+    filePath: "/waiter/table-info/index.html",
+    role: "waiter",
+  },
+  {
+    pattern: /^\/clients\/?(?:\?.*)?$/,
+    filePath: "/waiter/clients/index.html",
     role: "waiter",
   },
   {
@@ -188,6 +189,14 @@ const pagesRoutes = [
     role: "waiter",
   },
   {
+    pattern: /^\/waiter\/orders\/?(?:\?.*)?$/,
+    filePath: "/waiter/orders/index.html",
+    role: "waiter",
+  },
+];
+
+const cookPages = [
+  {
     pattern: /^\/orders\/?(?:\?.*)?$/,
     filePath: "/cook/index.html",
     role: "cook",
@@ -197,6 +206,20 @@ const pagesRoutes = [
     filePath: "/cook/history/index.html",
     role: "cook",
   },
+];
+
+const pagesRoutes = [
+  {
+    pattern: /^\/(?:\?.*)?$/,
+    filePath: "/index.html",
+  },
+  {
+    pattern: /^\/login\/?(?:\?.*)?$/,
+    filePath: "/login/index.html",
+  },
+  ...managerPages,
+  ...waiterPages,
+  ...cookPages,
 ];
 
 export { apiRoutes, pagesRoutes };
