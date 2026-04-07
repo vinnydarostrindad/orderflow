@@ -208,6 +208,19 @@ const cookPages = [
   },
 ];
 
+const cashierPages = [
+  {
+    pattern: /^\/cashier\/?(?:\?.*)?$/,
+    filePath: "/cashier/tables/index.html",
+    role: "cashier",
+  },
+  {
+    pattern: /^\/table\/(?<tableId>[^/]+)\/pagamento?(?:\?.*)?$/,
+    filePath: "/cashier/table-payment/index.html",
+    role: "cashier",
+  },
+];
+
 const pagesRoutes = [
   {
     pattern: /^\/(?:\?.*)?$/,
@@ -220,6 +233,7 @@ const pagesRoutes = [
   ...managerPages,
   ...waiterPages,
   ...cookPages,
+  ...cashierPages,
 ];
 
 export { apiRoutes, pagesRoutes };
