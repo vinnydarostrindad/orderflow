@@ -38,7 +38,7 @@ const makeOrderItemRepository = () => {
   class OrderItemRepositorySpy {
     async create({
       id,
-      orderId,
+      tableId,
       menuItemId,
       quantity,
       unitPrice,
@@ -46,7 +46,7 @@ const makeOrderItemRepository = () => {
       notes,
     }) {
       this.id = id;
-      this.orderId = orderId;
+      this.tableId = tableId;
       this.menuItem_id = menuItemId;
       this.quantity = quantity;
       this.unitPrice = unitPrice;
@@ -59,7 +59,7 @@ const makeOrderItemRepository = () => {
   const orderItemRepositorySpy = new OrderItemRepositorySpy();
   orderItemRepositorySpy.orderItem = {
     id: "any_order_item_id",
-    order_id: "any_order_id",
+    table_id: "any_table_id",
     menu_item_id: "any_menu_item_id",
     quantity: 2,
     unit_price: 20,
@@ -84,7 +84,7 @@ describe("Register Order Item UseCase", () => {
   test("Should return order item if everything is right", async () => {
     const { sut } = makeSut();
     const props = {
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       unitPrice: 20,
@@ -95,7 +95,7 @@ describe("Register Order Item UseCase", () => {
     const orderItem = await sut.execute(props);
     expect(orderItem).toEqual({
       id: "any_order_item_id",
-      order_id: "any_order_id",
+      table_id: "any_table_id",
       menu_item_id: "any_menu_item_id",
       quantity: 2,
       unit_price: 20,
@@ -108,11 +108,11 @@ describe("Register Order Item UseCase", () => {
   test("Should throw if no props are provided ", async () => {
     const { sut } = makeSut();
     await expect(sut.execute()).rejects.toThrow(
-      new MissingParamError("orderId"),
+      new MissingParamError("tableId"),
     );
   });
 
-  test("Should throw if no orderId is provided ", async () => {
+  test("Should throw if no tableId is provided ", async () => {
     const { sut } = makeSut();
     const props = {
       menuItemId: "any_menu_item_id",
@@ -122,14 +122,14 @@ describe("Register Order Item UseCase", () => {
       notes: "any_notes",
     };
     await expect(sut.execute(props)).rejects.toThrow(
-      new MissingParamError("orderId"),
+      new MissingParamError("tableId"),
     );
   });
 
   test("Should throw if no menuItemId is provided ", async () => {
     const { sut } = makeSut();
     const props = {
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       quantity: 2,
       unitPrice: 20,
       totalPrice: 40,
@@ -143,7 +143,7 @@ describe("Register Order Item UseCase", () => {
   test("Should throw if no quantity is provided ", async () => {
     const { sut } = makeSut();
     const props = {
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       unitPrice: 20,
       totalPrice: 40,
@@ -158,7 +158,7 @@ describe("Register Order Item UseCase", () => {
   test("Should throw if no unitPrice is provided ", async () => {
     const { sut } = makeSut();
     const props = {
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       totalPrice: 40,
@@ -173,7 +173,7 @@ describe("Register Order Item UseCase", () => {
   test("Should throw if no totalPrice is provided ", async () => {
     const { sut } = makeSut();
     const props = {
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       unitPrice: 20,
@@ -188,7 +188,7 @@ describe("Register Order Item UseCase", () => {
   test("Should call orderItemRepository with correct values", async () => {
     const { sut, orderItemRepositorySpy, idGeneratorSpy } = makeSut();
     const props = {
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       unitPrice: 20,
@@ -198,7 +198,7 @@ describe("Register Order Item UseCase", () => {
 
     await sut.execute(props);
     expect(orderItemRepositorySpy.id).toBe(idGeneratorSpy.id);
-    expect(orderItemRepositorySpy.orderId).toBe("any_order_id");
+    expect(orderItemRepositorySpy.tableId).toBe("any_table_id");
     expect(orderItemRepositorySpy.quantity).toBe(2);
     expect(orderItemRepositorySpy.unitPrice).toBe(20);
     expect(orderItemRepositorySpy.totalPrice).toBe(40);
@@ -222,7 +222,7 @@ describe("Register Order Item UseCase", () => {
       }),
     ];
     const props = {
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       unitPrice: 20,
@@ -247,7 +247,7 @@ describe("Register Order Item UseCase", () => {
       }),
     ];
     const props = {
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       unitPrice: 20,
