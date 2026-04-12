@@ -31,6 +31,7 @@ const makeGetOrderItemUseCase = () => {
   getOrderItemUseCaseSpy.orderItem = {
     id: "any_order_item_id",
     table_id: "any_table_id",
+    business_id: "any_business_id",
     menu_item_id: "any_menu_item_id",
     quantity: 2,
     status: "pending",
@@ -44,6 +45,7 @@ const makeGetOrderItemUseCase = () => {
     {
       id: "any_order_item_id",
       table_id: "any_table_id",
+      business_id: "any_business_id",
       menu_item_id: "any_menu_item_id",
       quantity: 2,
       status: "pending",
@@ -51,6 +53,9 @@ const makeGetOrderItemUseCase = () => {
       total_price: "40.00",
       notes: "any_notes",
       order_item_created_at: "any_time",
+      order_item_updated_at: "any_time",
+      created_at: "any_time",
+      updated_at: "any_time",
       table_number: "any_table_number",
     },
   ];
@@ -136,7 +141,7 @@ describe("Get Order Item Router", () => {
       expect(getOrderItemUseCaseSpy.orderItemId).toBeUndefined();
     });
 
-    test("Should return 200 and order item", async () => {
+    test("Should return 200 and order item with businessId", async () => {
       const { sut } = makeSut();
       const httpRequest = {
         params: {},
@@ -147,9 +152,11 @@ describe("Get Order Item Router", () => {
       const httpResponse = await sut.route(httpRequest);
       expect(httpResponse.statusCode).toBe(200);
       expect(Array.isArray(httpResponse.body)).toBeTruthy();
+      expect(httpResponse.body[0].businessId).toBe("any_business_id");
       expect(httpResponse.body[0]).toEqual({
         id: "any_order_item_id",
         tableId: "any_table_id",
+        businessId: "any_business_id",
         tableNumber: "any_table_number",
         createdAt: "any_time",
         menuItemId: "any_menu_item_id",
@@ -157,6 +164,7 @@ describe("Get Order Item Router", () => {
         notes: "any_notes",
         status: "pending",
         totalPrice: "40.00",
+        updatedAt: "any_time",
       });
     });
   });
@@ -197,12 +205,15 @@ describe("Get Order Item Router", () => {
       expect(httpResponse.body[0]).toEqual({
         id: "any_order_item_id",
         tableId: "any_table_id",
+        businessId: "any_business_id",
         menuItemId: "any_menu_item_id",
         quantity: "2",
         status: "pending",
         unitPrice: "20.00",
         totalPrice: "40.00",
         notes: "any_notes",
+        createdAt: "any_time",
+        updatedAt: "any_time",
       });
     });
   });
@@ -286,6 +297,7 @@ describe("Get Order Item Router", () => {
       expect(httpResponse.body).toEqual({
         id: "any_order_item_id",
         tableId: "any_table_id",
+        businessId: "any_business_id",
         menuItemId: "any_menu_item_id",
         quantity: "2",
         status: "pending",

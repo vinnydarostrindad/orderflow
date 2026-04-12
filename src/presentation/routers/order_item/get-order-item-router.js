@@ -32,6 +32,7 @@ export default class GetOrderItemRouter {
         ({
           id,
           table_id,
+          business_id,
           menu_item_id,
           quantity,
           total_price,
@@ -43,6 +44,7 @@ export default class GetOrderItemRouter {
         }) => ({
           id,
           tableId: table_id,
+          businessId: business_id,
           menuItemId: menu_item_id,
           quantity: quantity.toString(),
           totalPrice: total_price,
@@ -67,6 +69,7 @@ export default class GetOrderItemRouter {
         ({
           id,
           menu_item_id,
+          business_id,
           table_id,
           quantity,
           unit_price,
@@ -78,6 +81,7 @@ export default class GetOrderItemRouter {
         }) => ({
           id,
           tableId: table_id,
+          businessId: business_id,
           menuItemId: menu_item_id,
           quantity: quantity.toString(),
           unitPrice: unit_price,
@@ -108,6 +112,7 @@ export default class GetOrderItemRouter {
     const {
       id,
       menu_item_id,
+      business_id,
       table_id,
       quantity,
       unit_price,
@@ -121,6 +126,7 @@ export default class GetOrderItemRouter {
     return httpResponse.ok({
       id,
       tableId: table_id,
+      businessId: business_id,
       menuItemId: menu_item_id,
       quantity: quantity.toString(),
       unitPrice: unit_price,
