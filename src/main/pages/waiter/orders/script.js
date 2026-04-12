@@ -100,21 +100,6 @@ async function fetchItemInfos(id) {
   return itemInfo;
 }
 
-async function fetchOrderTableId(orderId) {
-  const res = await fetch(`${API_URL}/api/v1/order/${orderId}`);
-
-  if (!res.ok) {
-    throw {
-      status: res.status,
-      statusText: res.statusText,
-      url: res.url,
-    };
-  }
-
-  const order = await res.json();
-  return order.tableId;
-}
-
 async function fetchOrderedItems() {
   const res = await fetch(`${API_URL}/api/v1/ordered-items`);
 
@@ -325,18 +310,15 @@ function getOrderItem(orderId) {
 }
 
 async function updateOrderStatus(newStatus, item) {
-  await fetch(
-    `${API_URL}/api/v1/table/${item.tableId}/order/${item.orderId}/item/${item.id}`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        status: newStatus,
-      }),
+  await fetch(`${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({
+      status: newStatus,
+    }),
+  });
 }
 
 async function setOrderToDelivered() {
@@ -399,10 +381,9 @@ async function setupOrdersPage() {
 
     await Promise.all(
       orderedItems.map(async (item) => {
-        const tableId = await fetchOrderTableId(item.orderId);
         const { name, imagePath } = await fetchItemInfos(item.menuItemId);
 
-        const enrichedItem = { ...item, tableId, name, imagePath };
+        const enrichedItem = { ...item, name, imagePath };
 
         allOrders.push(enrichedItem);
       }),

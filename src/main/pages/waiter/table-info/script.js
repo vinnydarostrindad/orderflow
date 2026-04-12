@@ -106,8 +106,8 @@ async function fetchItemInfos(id) {
   return itemInfo;
 }
 
-async function fetchTableOrders() {
-  const res = await fetch(`${API_URL}/api/v1/table/${tableId}/order`);
+async function fetchTableItems() {
+  const res = await fetch(`${API_URL}/api/v1/table/${tableId}/item`);
 
   if (!res.ok) {
     throw {
@@ -117,32 +117,8 @@ async function fetchTableOrders() {
     };
   }
 
-  const tableOrderedItems = await res.json();
-  return tableOrderedItems;
-}
-
-async function fetchTableOrderedItems(tableOrders) {
-  let allOrderItems = [];
-  await Promise.all(
-    tableOrders.map(async (order) => {
-      const res = await fetch(
-        `${API_URL}/api/v1/table/${tableId}/order/${order.id}/item`,
-      );
-
-      if (!res.ok) {
-        throw {
-          status: res.status,
-          statusText: res.statusText,
-          url: res.url,
-        };
-      }
-
-      const tableOrderedItems = await res.json();
-      allOrderItems.push(tableOrderedItems[0]);
-    }),
-  );
-
-  return allOrderItems;
+  const tableItems = await res.json();
+  return tableItems;
 }
 
 function buildOrderedItems(items) {
@@ -343,18 +319,15 @@ function getOrderItem(orderId) {
 }
 
 async function updateOrderStatus(newStatus, item) {
-  await fetch(
-    `${API_URL}/api/v1/table/${item.tableId}/order/${item.orderId}/item/${item.id}`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        status: newStatus,
-      }),
+  await fetch(`${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({
+      status: newStatus,
+    }),
+  });
 }
 
 async function setOrderToReady() {
@@ -429,8 +402,7 @@ async function setOrderToCancelled() {
 
 async function setupOrdersPage() {
   try {
-    const tableOrders = await fetchTableOrders();
-    const tableOrderedItems = await fetchTableOrderedItems(tableOrders);
+    const tableOrderedItems = await fetchTableItems();
 
     ordersTitle.innerText += ` (Mesa ${tableNumber})`;
 

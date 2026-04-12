@@ -70,22 +70,7 @@ async function fetchItemInfos(id) {
   return itemInfo;
 }
 
-async function fetchOrderTableId(orderId) {
-  const res = await fetch(`${API_URL}/api/v1/order/${orderId}`);
-
-  if (!res.ok) {
-    throw {
-      status: res.status,
-      statusText: res.statusText,
-      url: res.url,
-    };
-  }
-
-  const order = await res.json();
-  return order.tableId;
-}
-
-async function fetchOrderedItems() {
+async function fetchItems() {
   // Voltar com o filtro aquí ó -> ?period=day!
   const res = await fetch(`${API_URL}/api/v1/ordered-items`);
 
@@ -97,8 +82,8 @@ async function fetchOrderedItems() {
     };
   }
 
-  const orderedItems = await res.json();
-  return orderedItems;
+  const items = await res.json();
+  return items;
 }
 
 function buildOrderedItems(items) {
@@ -205,7 +190,7 @@ async function setOrderToInProgress(e) {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${ordersReady[itemIndex].tableId}/order/${ordersReady[itemIndex].orderId}/item/${ordersReady[itemIndex].id}`,
+      `${API_URL}/api/v1/table/${ordersReady[itemIndex].tableId}/item/${ordersReady[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -238,13 +223,12 @@ async function setUpPage() {
   navbar.firstElementChild.children[1].classList.add("navbar__item--selected");
 
   try {
-    const orderedItems = await fetchOrderedItems();
+    const orderedItems = await fetchItems();
     await Promise.all(
       orderedItems.map(async (item) => {
-        const tableId = await fetchOrderTableId(item.orderId);
         const { name, imagePath } = await fetchItemInfos(item.menuItemId);
 
-        const enrichedItem = { ...item, tableId, name, imagePath };
+        const enrichedItem = { ...item, name, imagePath };
 
         if (enrichedItem.status === "ready") {
           ordersReady.push(enrichedItem);

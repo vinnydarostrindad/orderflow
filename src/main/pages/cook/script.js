@@ -72,22 +72,7 @@ async function fetchItemInfos(id) {
   return itemInfo;
 }
 
-async function fetchOrderTableId(orderId) {
-  const res = await fetch(`${API_URL}/api/v1/order/${orderId}`);
-
-  if (!res.ok) {
-    throw {
-      status: res.status,
-      statusText: res.statusText,
-      url: res.url,
-    };
-  }
-
-  const order = await res.json();
-  return order.tableId;
-}
-
-async function fetchOrderedItems() {
+async function fetchItems() {
   const res = await fetch(`${API_URL}/api/v1/ordered-items`);
 
   if (!res.ok) {
@@ -98,8 +83,8 @@ async function fetchOrderedItems() {
     };
   }
 
-  const orderedItems = await res.json();
-  return orderedItems;
+  const items = await res.json();
+  return items;
 }
 
 function buildOrderedItems(items) {
@@ -231,7 +216,7 @@ async function setOrderToInProgress(e) {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${ordersPending[itemIndex].tableId}/order/${ordersPending[itemIndex].orderId}/item/${ordersPending[itemIndex].id}`,
+      `${API_URL}/api/v1/table/${ordersPending[itemIndex].tableId}/item/${ordersPending[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -263,7 +248,7 @@ async function setOrderToPending(e) {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${ordersInProgress[itemIndex].tableId}/order/${ordersInProgress[itemIndex].orderId}/item/${ordersInProgress[itemIndex].id}`,
+      `${API_URL}/api/v1/table/${ordersInProgress[itemIndex].tableId}/item/${ordersInProgress[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -299,7 +284,7 @@ async function setOrderToDone() {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${ordersInProgress[itemIndex].tableId}/order/${ordersInProgress[itemIndex].orderId}/item/${ordersInProgress[itemIndex].id}`,
+      `${API_URL}/api/v1/table/${ordersInProgress[itemIndex].tableId}/item/${ordersInProgress[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -325,7 +310,7 @@ async function setOrderToDone() {
       action: async () => {
         try {
           await fetch(
-            `${API_URL}/api/v1/table/${item.tableId}/order/${item.orderId}/item/${item.id}`,
+            `${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`,
             {
               method: "PATCH",
               headers: {
@@ -355,14 +340,13 @@ async function setOrderToDone() {
 
 async function setUpPage() {
   try {
-    const orderedItems = await fetchOrderedItems();
+    const orderedItems = await fetchItems();
 
     await Promise.all(
       orderedItems.map(async (item) => {
-        const tableId = await fetchOrderTableId(item.orderId);
         const { name, imagePath } = await fetchItemInfos(item.menuItemId);
 
-        const enrichedItem = { ...item, tableId, name, imagePath };
+        const enrichedItem = { ...item, name, imagePath };
 
         if (enrichedItem.status === "pending") {
           ordersPending.push(enrichedItem);
