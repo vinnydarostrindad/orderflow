@@ -9,11 +9,11 @@ export default class GetOrderItemRouter {
   }
 
   async route(httpRequest) {
-    const { orderId, orderItemId } = httpRequest.params;
+    const { tableId, orderItemId } = httpRequest.params;
     const { businessId } = httpRequest.auth;
     const { period } = httpRequest.query;
 
-    if (!orderId) {
+    if (!tableId) {
       if (!businessId) {
         return httpResponse.badRequest(new MissingParamError("businessId"));
       }
@@ -31,7 +31,7 @@ export default class GetOrderItemRouter {
       const editedOrderedItems = orderedItems.map(
         ({
           id,
-          order_id,
+          table_id,
           menu_item_id,
           quantity,
           total_price,
@@ -42,7 +42,7 @@ export default class GetOrderItemRouter {
           table_number,
         }) => ({
           id,
-          orderId: order_id,
+          tableId: table_id,
           menuItemId: menu_item_id,
           quantity: quantity.toString(),
           totalPrice: total_price,
@@ -56,18 +56,18 @@ export default class GetOrderItemRouter {
       return httpResponse.ok(editedOrderedItems);
     }
 
-    if (!this.validators.uuid(orderId)) {
-      return httpResponse.badRequest(new InvalidParamError("orderId"));
+    if (!this.validators.uuid(tableId)) {
+      return httpResponse.badRequest(new InvalidParamError("tableId"));
     }
 
     if (!orderItemId) {
-      const orderItems = await this.getOrderItemUseCase.execute({ orderId });
+      const orderItems = await this.getOrderItemUseCase.execute({ tableId });
 
       const editedOrderItems = orderItems.map(
         ({
           id,
           menu_item_id,
-          order_id,
+          table_id,
           quantity,
           unit_price,
           total_price,
@@ -77,7 +77,7 @@ export default class GetOrderItemRouter {
           updated_at,
         }) => ({
           id,
-          orderId: order_id,
+          tableId: table_id,
           menuItemId: menu_item_id,
           quantity: quantity.toString(),
           unitPrice: unit_price,
@@ -97,7 +97,7 @@ export default class GetOrderItemRouter {
     }
 
     const orderItem = await this.getOrderItemUseCase.execute({
-      orderId,
+      tableId,
       orderItemId,
     });
 
@@ -108,7 +108,7 @@ export default class GetOrderItemRouter {
     const {
       id,
       menu_item_id,
-      order_id,
+      table_id,
       quantity,
       unit_price,
       total_price,
@@ -120,7 +120,7 @@ export default class GetOrderItemRouter {
 
     return httpResponse.ok({
       id,
-      orderId: order_id,
+      tableId: table_id,
       menuItemId: menu_item_id,
       quantity: quantity.toString(),
       unitPrice: unit_price,

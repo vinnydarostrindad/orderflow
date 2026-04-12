@@ -11,13 +11,13 @@ export default class RegisterOrderItemRouter {
   async route(httpRequest) {
     const { menuItemId, quantity, unitPrice, totalPrice, notes } =
       httpRequest.body;
-    const { orderId } = httpRequest.params;
+    const { tableId } = httpRequest.params;
 
-    if (!orderId) {
-      return httpResponse.badRequest(new MissingParamError("orderId"));
+    if (!tableId) {
+      return httpResponse.badRequest(new MissingParamError("tableId"));
     }
-    if (!this.validators.uuid(orderId)) {
-      return httpResponse.badRequest(new InvalidParamError("orderId"));
+    if (!this.validators.uuid(tableId)) {
+      return httpResponse.badRequest(new InvalidParamError("tableId"));
     }
     if (!menuItemId) {
       return httpResponse.badRequest(new MissingParamError("menuItemId"));
@@ -36,7 +36,7 @@ export default class RegisterOrderItemRouter {
     }
 
     const orderItem = await this.registerOrderItemUseCase.execute({
-      orderId,
+      tableId,
       menuItemId,
       quantity,
       unitPrice,
