@@ -36,6 +36,7 @@ const makeRegisterOrderItemUseCase = () => {
   useCaseSpy.orderItem = {
     id: "any_order_item_id",
     table_id: "any_table_id",
+    business_id: "any_business_id",
     menu_item_id: "any_menu_item_id",
     quantity: 2,
     status: "pending",
@@ -124,13 +125,16 @@ describe("Register Order Item Router", () => {
     expect(httpResponse.statusCode).toBe(201);
     expect(httpResponse.body).toEqual({
       id: "any_order_item_id",
-      table_id: "any_table_id",
-      menu_item_id: "any_menu_item_id",
-      quantity: 2,
+      tableId: "any_table_id",
+      businessId: "any_business_id",
+      menuItemId: "any_menu_item_id",
+      quantity: "2",
       status: "pending",
-      unit_price: 20,
-      total_price: 40,
+      unitPrice: 20,
+      totalPrice: 40,
       notes: "any_notes",
+      createdAt: undefined,
+      updatedAt: undefined,
     });
   });
 

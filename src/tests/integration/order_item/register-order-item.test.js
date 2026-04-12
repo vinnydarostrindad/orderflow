@@ -4,7 +4,6 @@ import {
   runMigrations,
   createBusiness,
   createTable,
-  createOrder,
   createMenu,
   createMenuItem,
   createOrderItem,
@@ -28,21 +27,19 @@ async function makeOrderItemTestContext(numberOfOrderItems = 1) {
   const menu = await createMenu(business.id);
   const menuItem = await createMenuItem(business.id, menu.id);
   const table = await createTable(business.id);
-  const order = await createOrder(business.id, table.id);
   const orderItem = await createOrderItem(
     business.id,
     table.id,
-    order.id,
     menuItem.id,
     numberOfOrderItems,
   );
 
-  return { business, menuItem, order, orderItem, table, token };
+  return { business, menuItem, orderItem, table, token };
 }
 
-describe("POST /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/item", () => {
+describe("POST /api/v1/business/[businessId]/table/[tableId]/item", () => {
   test("Should register a order item and return 201", async () => {
-    const { table, order, menuItem, token } = await makeOrderItemTestContext(0);
+    const { table, menuItem, token } = await makeOrderItemTestContext(0);
 
     const requestBody = {
       menuItemId: menuItem.id,
@@ -53,7 +50,7 @@ describe("POST /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/ite
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${table.id}/order/${order.id}/item`,
+      `http://localhost:3000/api/v1/table/${table.id}/item`,
       {
         method: "POST",
         headers: {
@@ -72,27 +69,24 @@ describe("POST /api/v1/business/[businessId]/table/[tableId]/order/[orderId]/ite
 
     expect(orderItem).toMatchObject({
       id: orderItem.id,
-      order_id: order.id,
-      menu_item_id: requestBody.menuItemId,
-      quantity: 2,
-      unit_price: "20.00",
-      total_price: "40.00",
+      tableId: table.id,
+      menuItemId: requestBody.menuItemId,
+      quantity: "2",
+      unitPrice: "20.00",
+      totalPrice: "40.00",
       notes: requestBody.notes,
     });
 
     expect(typeof orderItem.id).toBe("string");
     expect(uuidVersion(orderItem.id)).toBe(4);
 
-    expect(typeof orderItem.order_id).toBe("string");
-    expect(uuidVersion(orderItem.order_id)).toBe(4);
+    expect(typeof orderItem.menuItemId).toBe("string");
+    expect(uuidVersion(orderItem.menuItemId)).toBe(4);
 
-    expect(typeof orderItem.menu_item_id).toBe("string");
-    expect(uuidVersion(orderItem.menu_item_id)).toBe(4);
+    expect(typeof orderItem.createdAt).toBe("string");
+    expect(Date.parse(orderItem.createdAt)).not.toBeNaN();
 
-    expect(typeof orderItem.created_at).toBe("string");
-    expect(Date.parse(orderItem.created_at)).not.toBeNaN();
-
-    expect(typeof orderItem.updated_at).toBe("string");
-    expect(Date.parse(orderItem.updated_at)).not.toBeNaN();
+    expect(typeof orderItem.updatedAt).toBe("string");
+    expect(Date.parse(orderItem.updatedAt)).not.toBeNaN();
   });
 });

@@ -44,6 +44,18 @@ export default class RegisterOrderItemRouter {
       notes,
     });
 
-    return httpResponse.created(orderItem);
+    return httpResponse.created({
+      id: orderItem.id,
+      tableId: orderItem.table_id,
+      businessId: orderItem.business_id,
+      menuItemId: orderItem.menu_item_id,
+      quantity: orderItem.quantity.toString(),
+      unitPrice: orderItem.unit_price,
+      totalPrice: orderItem.total_price,
+      status: orderItem.status,
+      notes: orderItem.notes,
+      createdAt: orderItem.created_at,
+      updatedAt: orderItem.updated_at,
+    });
   }
 }

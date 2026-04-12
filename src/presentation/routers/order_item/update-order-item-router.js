@@ -33,7 +33,20 @@ class UpdateOrderItemRouter {
       quantity,
       notes,
     });
-    return httpResponse.ok(updatedOrderItem);
+
+    return httpResponse.ok({
+      id: updatedOrderItem.id,
+      tableId: updatedOrderItem.table_id,
+      businessId: updatedOrderItem.business_id,
+      menuItemId: updatedOrderItem.menu_item_id,
+      quantity: updatedOrderItem.quantity.toString(),
+      unitPrice: updatedOrderItem.unit_price,
+      totalPrice: updatedOrderItem.total_price,
+      status: updatedOrderItem.status,
+      notes: updatedOrderItem.notes,
+      createdAt: updatedOrderItem.created_at,
+      updatedAt: updatedOrderItem.updated_at,
+    });
   }
 }
 
