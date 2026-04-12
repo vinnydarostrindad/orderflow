@@ -7,11 +7,13 @@ import API_URL from "/scripts/config-api-url.js";
 
 const snackbar = document.querySelector("#snackbar");
 const navbar = document.querySelector("#navBar");
-const ordersReadyContainer = document.querySelector("#ordersReadyContainer");
-const ordersDeliveredContainer = document.querySelector(
+const readyOrderItemsContainer = document.querySelector(
+  "#ordersReadyContainer",
+);
+const deliveredOrderItemsContainer = document.querySelector(
   "#ordersDeliveredContainer",
 );
-const ordersCancelledContainer = document.querySelector(
+const cancelledOrderItemsContainer = document.querySelector(
   "#ordersCancelledContainer",
 );
 const orderInfoContainer = document.querySelector("#orderInfoContainer");
@@ -27,11 +29,11 @@ const orderInfoQuantity = document.querySelector("#orderQuantity");
 const orderInfoNotes = document.querySelector("#orderNotes");
 const orderInfoIngridients = document.querySelector("#orderIngredients");
 
-let ordersReady = [];
-let ordersDelivered = [];
-let ordersCancelled = [];
+let readyOrderItems = [];
+let deliveredOrderItems = [];
+let cancelledOrderItems = [];
 
-ordersReadyContainer.addEventListener("click", showOrderInfo);
+readyOrderItemsContainer.addEventListener("click", showOrderInfo);
 setOrderToInProgressBtn.addEventListener("click", setOrderToInProgress);
 
 function calculateTime(time) {
@@ -47,8 +49,12 @@ function calculateTime(time) {
 }
 
 function organizeOrdersInArray() {
-  let ordersArray = [ordersReady, ordersDelivered, ordersCancelled];
-  ordersArray.forEach((array) =>
+  let orderItemsByStatus = [
+    readyOrderItems,
+    deliveredOrderItems,
+    cancelledOrderItems,
+  ];
+  orderItemsByStatus.forEach((array) =>
     array.sort((a, b) => {
       return new Date(a.updatedAt) - new Date(b.updatedAt);
     }),
@@ -119,25 +125,25 @@ function configTimers() {
 }
 
 function renderAllOrders() {
-  if (ordersReady.length === 0) {
-    ordersReadyContainer.innerHTML = `<p class="orders-none">Nenhum pedido pronto hoje!</p>`;
+  if (readyOrderItems.length === 0) {
+    readyOrderItemsContainer.innerHTML = `<p class="orders-none">Nenhum pedido pronto hoje!</p>`;
   } else {
-    const readyOrdersFragment = buildOrderedItems(ordersReady);
-    ordersReadyContainer.replaceChildren(readyOrdersFragment);
+    const readyOrderItemsFragment = buildOrderedItems(readyOrderItems);
+    readyOrderItemsContainer.replaceChildren(readyOrderItemsFragment);
   }
 
-  if (ordersDelivered.length === 0) {
-    ordersDeliveredContainer.innerHTML = `<p class="orders-none">Nenhum pedido foi entregue hoje!</p>`;
+  if (deliveredOrderItems.length === 0) {
+    deliveredOrderItemsContainer.innerHTML = `<p class="orders-none">Nenhum pedido foi entregue hoje!</p>`;
   } else {
-    const deliveredOrdersFragment = buildOrderedItems(ordersDelivered);
-    ordersDeliveredContainer.replaceChildren(deliveredOrdersFragment);
+    const deliveredOrderItemsFragment = buildOrderedItems(deliveredOrderItems);
+    deliveredOrderItemsContainer.replaceChildren(deliveredOrderItemsFragment);
   }
 
-  if (ordersCancelled.length === 0) {
-    ordersCancelledContainer.innerHTML = `<p class="orders-none">Nenhum pedido foi cancelado hoje!</p>`;
+  if (cancelledOrderItems.length === 0) {
+    cancelledOrderItemsContainer.innerHTML = `<p class="orders-none">Nenhum pedido foi cancelado hoje!</p>`;
   } else {
-    const cancelledOrdersFragment = buildOrderedItems(ordersCancelled);
-    ordersCancelledContainer.replaceChildren(cancelledOrdersFragment);
+    const cancelledOrderItemsFragment = buildOrderedItems(cancelledOrderItems);
+    cancelledOrderItemsContainer.replaceChildren(cancelledOrderItemsFragment);
   }
 }
 
@@ -150,17 +156,17 @@ function closeOrderInfo(e) {
 }
 
 function showOrderInfo(e) {
-  let order = e.target.closest("order-card");
-  if (!order) return;
+  let orderCard = e.target.closest("order-card");
+  if (!orderCard) return;
 
-  const orderInfo = ordersReady.filter(
-    (item) => item.id == order.dataset.id,
+  const orderInfo = readyOrderItems.filter(
+    (item) => item.id == orderCard.dataset.id,
   )[0];
 
-  orderInfoContainer.dataset.order_id = orderInfo.id;
-  orderInfoImg.src = order.getAttribute("imgPath");
-  orderInfoName.innerText = order.getAttribute("name");
-  orderInfoTable.innerText = "Mesa " + order.getAttribute("table");
+  orderInfoContainer.dataset.orderItemId = orderInfo.id;
+  orderInfoImg.src = orderCard.getAttribute("imgPath");
+  orderInfoName.innerText = orderCard.getAttribute("name");
+  orderInfoTable.innerText = "Mesa " + orderCard.getAttribute("table");
   orderInfoQuantity.innerText = "Quantidade: " + orderInfo.quantity;
 
   if (orderInfo.notes) {
@@ -183,14 +189,17 @@ function showOrderInfo(e) {
 }
 
 async function setOrderToInProgress(e) {
-  let orderId = e.target.closest(".all-order-info-container").dataset.order_id;
-  if (!orderId) return;
+  let orderItemId = e.target.closest(".all-order-info-container").dataset
+    .orderItemId;
+  if (!orderItemId) return;
 
-  const itemIndex = ordersReady.findIndex((item) => item.id === orderId);
+  const itemIndex = readyOrderItems.findIndex(
+    (item) => item.id === orderItemId,
+  );
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${ordersReady[itemIndex].tableId}/item/${ordersReady[itemIndex].id}`,
+      `${API_URL}/api/v1/table/${readyOrderItems[itemIndex].tableId}/item/${readyOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -202,7 +211,7 @@ async function setOrderToInProgress(e) {
       },
     );
 
-    ordersReady.splice(itemIndex, 1);
+    readyOrderItems.splice(itemIndex, 1);
 
     organizeOrdersInArray();
     renderAllOrders();
@@ -231,11 +240,11 @@ async function setUpPage() {
         const enrichedItem = { ...item, name, imagePath };
 
         if (enrichedItem.status === "ready") {
-          ordersReady.push(enrichedItem);
+          readyOrderItems.push(enrichedItem);
         } else if (enrichedItem.status === "delivered") {
-          ordersDelivered.push(enrichedItem);
+          deliveredOrderItems.push(enrichedItem);
         } else if (enrichedItem.status === "cancelled") {
-          ordersCancelled.push(enrichedItem);
+          cancelledOrderItems.push(enrichedItem);
         }
       }),
     );

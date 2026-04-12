@@ -28,12 +28,12 @@ const orderInfoQuantity = document.querySelector("#orderQuantity");
 const orderInfoNotes = document.querySelector("#orderNotes");
 const orderInfoIngridients = document.querySelector("#orderIngredients");
 
-let allOrders = [];
-let ordersPending = [];
-let ordersInProgress = [];
-let ordersReady = [];
-let orderGroups = [];
-let orderTimers = [];
+let allOrderItems = [];
+let pendingOrderItems = [];
+let inProgressOrderItems = [];
+let readyOrderItems = [];
+let orderItemGroups = [];
+let orderItemTimers = [];
 let intervalId;
 let specificIntervalId;
 
@@ -65,24 +65,26 @@ function sortByCreatedAt(a, b) {
   return new Date(a.createdAt) - new Date(b.createdAt);
 }
 
-function organizeOrdersInArray() {
+function organizeOrderItemsInArray() {
   const grouped = {
     pending: [],
     in_progress: [],
     ready: [],
   };
 
-  allOrders.forEach((order) => {
-    if (grouped[order.status]) {
-      grouped[order.status].push(order);
+  allOrderItems.forEach((orderItem) => {
+    if (grouped[orderItem.status]) {
+      grouped[orderItem.status].push(orderItem);
     }
   });
 
-  Object.values(grouped).forEach((orders) => orders.sort(sortByCreatedAt));
+  Object.values(grouped).forEach((orderItems) =>
+    orderItems.sort(sortByCreatedAt),
+  );
 
-  ordersReady = grouped.ready;
-  ordersInProgress = grouped.in_progress;
-  ordersPending = grouped.pending;
+  readyOrderItems = grouped.ready;
+  inProgressOrderItems = grouped.in_progress;
+  pendingOrderItems = grouped.pending;
 }
 
 async function fetchItemInfos(id) {
@@ -138,10 +140,10 @@ function buildOrderedItems(items) {
 }
 
 function configTimers() {
-  orderTimers = [];
+  orderItemTimers = [];
 
   document.querySelectorAll(".order-item__time").forEach((timer) => {
-    orderTimers.push(timer);
+    orderItemTimers.push(timer);
     const timePassedString = calculateTimePassed(timer.dataset.time);
     timer.innerText = `Tempo: ${timePassedString}`;
   });
@@ -149,7 +151,7 @@ function configTimers() {
   if (intervalId) clearInterval(intervalId);
 
   intervalId = setInterval(() => {
-    orderTimers.forEach((timer) => {
+    orderItemTimers.forEach((timer) => {
       const timePassedString = calculateTimePassed(timer.dataset.time);
       timer.innerText = `Tempo: ${timePassedString}`;
     });
@@ -157,11 +159,11 @@ function configTimers() {
 }
 
 function configOrderInfoTimer() {
-  const orderId = orderInfoContainer.dataset.order_id;
-  let order = allOrders.find((item) => item.id === orderId);
-  if (!order) return;
+  const orderItemId = orderInfoContainer.dataset.orderItemId;
+  let orderItem = allOrderItems.find((item) => item.id === orderItemId);
+  if (!orderItem) return;
 
-  const createdAt = order.createdAt;
+  const createdAt = orderItem.createdAt;
 
   const timePassedString = calculateTimePassed(createdAt);
   orderInfoTimer.innerText = `Tempo: ${timePassedString}`;
@@ -189,54 +191,56 @@ function renderOrders(searchText = "", selectedStatus = "everything") {
   const text = searchText.toLowerCase().trim();
   const visibleStatuses = getVisibleStatuses(selectedStatus);
 
-  organizeOrdersInArray();
-  orderGroups = [
+  organizeOrderItemsInArray();
+  orderItemGroups = [
     {
       status: "ready",
-      orders: ordersReady,
+      orderItems: readyOrderItems,
       section: readyOrdersSection,
       container: readyOrdersContainer,
       emptyText: "Nenhum pedido pronto!",
     },
     {
       status: "in_progress",
-      orders: ordersInProgress,
+      orderItems: inProgressOrderItems,
       section: inProgressOrdersSection,
       container: inProgressOrdersContainer,
       emptyText: "Nenhum pedido em andamento!",
     },
     {
       status: "pending",
-      orders: ordersPending,
+      orderItems: pendingOrderItems,
       section: pendingOrdersSection,
       container: pendingOrdersContainer,
       emptyText: "Nenhum pedido pendente!",
     },
   ];
 
-  orderGroups.forEach(({ orders, status, container, section, emptyText }) => {
-    const filteredOrders = orders.filter((order) =>
-      order.name.toLowerCase().includes(text),
-    );
+  orderItemGroups.forEach(
+    ({ orderItems, status, container, section, emptyText }) => {
+      const filteredOrderItems = orderItems.filter((item) =>
+        item.name.toLowerCase().includes(text),
+      );
 
-    const hasOrders = orders.length > 0;
-    const hasOrdersFiltered = filteredOrders.length > 0;
-    const onlyOneStatus = visibleStatuses.size === 1;
-    const statusIsVisible = visibleStatuses.has(status);
+      const hasOrderItems = orderItems.length > 0;
+      const hasFilteredOrderItems = filteredOrderItems.length > 0;
+      const onlyOneStatus = visibleStatuses.size === 1;
+      const statusIsVisible = visibleStatuses.has(status);
 
-    section.classList.toggle("orders-section--hidden", !statusIsVisible);
-    section.classList.toggle("orders-section--no-border", onlyOneStatus);
+      section.classList.toggle("orders-section--hidden", !statusIsVisible);
+      section.classList.toggle("orders-section--no-border", onlyOneStatus);
 
-    if (hasOrdersFiltered) {
-      container.replaceChildren(buildOrderedItems(filteredOrders));
-    } else {
-      if (!hasOrdersFiltered && hasOrders) {
-        container.innerHTML = `<p class="orders-none">Nenhum pedido encontrado</p>`;
+      if (hasFilteredOrderItems) {
+        container.replaceChildren(buildOrderedItems(filteredOrderItems));
       } else {
-        container.innerHTML = `<p class="orders-none">${emptyText}</p>`;
+        if (!hasFilteredOrderItems && hasOrderItems) {
+          container.innerHTML = `<p class="orders-none">Nenhum pedido encontrado</p>`;
+        } else {
+          container.innerHTML = `<p class="orders-none">${emptyText}</p>`;
+        }
       }
-    }
-  });
+    },
+  );
 
   configTimers();
 }
@@ -254,35 +258,37 @@ function hideOrderInfo() {
 }
 
 function showOrderInfo(e) {
-  let order = e.target.closest("order-card");
-  if (!order) return;
+  let orderCard = e.target.closest("order-card");
+  if (!orderCard) return;
 
-  const orderInfo = allOrders.find((item) => item.id == order.dataset.id);
-  if (!orderInfo) return;
+  const orderItemInfo = allOrderItems.find(
+    (item) => item.id == orderCard.dataset.id,
+  );
+  if (!orderItemInfo) return;
 
-  orderInfoContainer.dataset.order_id = orderInfo.id;
-  orderInfoImg.src = order.getAttribute("imgPath");
-  orderInfoName.innerText = order.getAttribute("name");
-  orderInfoTable.innerText = `Mesa ${order.getAttribute("table")}`;
-  orderInfoQuantity.innerText = `Quantidade: ${orderInfo.quantity}`;
+  orderInfoContainer.dataset.orderItemId = orderItemInfo.id;
+  orderInfoImg.src = orderCard.getAttribute("imgPath");
+  orderInfoName.innerText = orderCard.getAttribute("name");
+  orderInfoTable.innerText = `Mesa ${orderCard.getAttribute("table")}`;
+  orderInfoQuantity.innerText = `Quantidade: ${orderItemInfo.quantity}`;
 
-  if (orderInfo.notes) {
+  if (orderItemInfo.notes) {
     orderInfoNotes.hidden = false;
-    orderInfoNotes.innerText = orderInfo.notes;
+    orderInfoNotes.innerText = orderItemInfo.notes;
   } else {
     orderInfoNotes.hidden = true;
   }
 
-  if (orderInfo.ingredients) {
+  if (orderItemInfo.ingredients) {
     orderInfoIngridients.hidden = false;
-    orderInfoIngridients.innerText = orderInfo.ingredients;
+    orderInfoIngridients.innerText = orderItemInfo.ingredients;
   } else {
     orderInfoIngridients.hidden = true;
   }
 
   orderInfoContainer.classList.remove("all-order-info-container--hidden");
 
-  if (orderInfo.status === "ready") {
+  if (orderItemInfo.status === "ready") {
     orderPrincipalActionBtn.innerText = "Entregue!";
     orderPrincipalActionBtn.onclick = setOrderToDelivered;
   } else {
@@ -296,12 +302,12 @@ function showOrderInfo(e) {
   configOrderInfoTimer();
 }
 
-function getOrderItem(orderId) {
-  if (!orderId) return;
+function getOrderItemById(orderItemId) {
+  if (!orderItemId) return;
 
-  const itemIndex = allOrders.findIndex((item) => item.id === orderId);
+  const itemIndex = allOrderItems.findIndex((item) => item.id === orderItemId);
   if (itemIndex === -1) return;
-  const item = allOrders[itemIndex];
+  const item = allOrderItems[itemIndex];
 
   return {
     item,
@@ -322,15 +328,17 @@ async function updateOrderStatus(newStatus, item) {
 }
 
 async function setOrderToDelivered() {
-  const orderData = getOrderItem(orderInfoContainer.dataset.order_id);
-  if (!orderData) return;
+  const orderItemData = getOrderItemById(
+    orderInfoContainer.dataset.orderItemId,
+  );
+  if (!orderItemData) return;
 
-  const { item, itemIndex } = orderData;
+  const { item, itemIndex } = orderItemData;
 
   try {
     await updateOrderStatus("delivered", item);
 
-    allOrders[itemIndex].status = "delivered";
+    allOrderItems[itemIndex].status = "delivered";
 
     renderOrders(searchBar.value, statusSelect.value);
     hideOrderInfo();
@@ -341,15 +349,17 @@ async function setOrderToDelivered() {
 }
 
 async function setOrderToCancelled() {
-  const orderData = getOrderItem(orderInfoContainer.dataset.order_id);
-  if (!orderData) return;
+  const orderItemData = getOrderItemById(
+    orderInfoContainer.dataset.orderItemId,
+  );
+  if (!orderItemData) return;
 
-  const { item, itemIndex } = orderData;
+  const { item, itemIndex } = orderItemData;
 
   try {
     await updateOrderStatus("cancelled", item);
 
-    allOrders.splice(itemIndex, 1);
+    allOrderItems.splice(itemIndex, 1);
 
     renderOrders(searchBar.value, statusSelect.value);
     hideOrderInfo();
@@ -360,7 +370,7 @@ async function setOrderToCancelled() {
         try {
           await updateOrderStatus(item.status, item);
 
-          allOrders.push(item);
+          allOrderItems.push(item);
 
           renderOrders(searchBar.value, statusSelect.value);
         } catch (err) {
@@ -385,7 +395,7 @@ async function setupOrdersPage() {
 
         const enrichedItem = { ...item, name, imagePath };
 
-        allOrders.push(enrichedItem);
+        allOrderItems.push(enrichedItem);
       }),
     );
 
