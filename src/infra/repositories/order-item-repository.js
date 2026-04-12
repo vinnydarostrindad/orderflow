@@ -7,7 +7,7 @@ export default class OrderItemRepository {
 
   async create({
     id,
-    orderId,
+    tableId,
     menuItemId,
     quantity,
     unitPrice,
@@ -15,7 +15,7 @@ export default class OrderItemRepository {
     notes,
   } = {}) {
     if (!id) throw new MissingParamError("id");
-    if (!orderId) throw new MissingParamError("orderId");
+    if (!tableId) throw new MissingParamError("tableId");
     if (!menuItemId) throw new MissingParamError("menuItemId");
     if (!quantity) throw new MissingParamError("quantity");
     if (!unitPrice) throw new MissingParamError("unitPrice");
@@ -24,20 +24,20 @@ export default class OrderItemRepository {
     const result = await this.postgresAdapter.query({
       text: `
         INSERT INTO
-          order_items (id, order_id, menu_item_id, quantity, unit_price, total_price, notes)
+          order_items (id, table_id, menu_item_id, quantity, unit_price, total_price, notes)
         VALUES
           ($1, $2, $3, $4, $5, $6, $7)
         RETURNING
           *
       ;`,
-      values: [id, orderId, menuItemId, quantity, unitPrice, totalPrice, notes],
+      values: [id, tableId, menuItemId, quantity, unitPrice, totalPrice, notes],
     });
 
     return result.rows[0];
   }
 
-  async findAll(orderId) {
-    if (!orderId) throw new MissingParamError("orderId");
+  async findAll(tableId) {
+    if (!tableId) throw new MissingParamError("tableId");
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -46,11 +46,11 @@ export default class OrderItemRepository {
         FROM
           order_items
         WHERE
-          order_id = $1
+          table_id = $1
         LIMIT
           10
       ;`,
-      values: [orderId],
+      values: [tableId],
     });
 
     return result.rows;
@@ -97,22 +97,23 @@ export default class OrderItemRepository {
     const result = await this.postgresAdapter.query({
       text: `
         SELECT 
-          order_items.id,
-          order_items.order_id,
-          order_items.menu_item_id,
-          order_items.quantity,
-          order_items.total_price,
-          order_items.notes,
-          order_items.status,
-          order_items.created_at AS order_item_created_at,
-          order_items.updated_at AS order_item_updated_at,
-          orders.table_number
+          oi.id,
+          oi.table_id,
+          t.business_id,
+          oi.menu_item_id,
+          oi.quantity,
+          oi.total_price,
+          oi.notes,
+          oi.status,
+          oi.created_at AS order_item_created_at,
+          oi.updated_at AS order_item_updated_at,
+          t.number AS table_number
         FROM
-          order_items
+          order_items oi
         JOIN
-          orders ON order_items.order_id = orders.id
+          tables t ON oi.table_id = t.id
         WHERE
-          orders.business_id = $1 ${timeFilter}
+          t.business_id = $1 ${timeFilter}
         ORDER BY
           order_item_created_at ASC
       ;`,
@@ -122,8 +123,8 @@ export default class OrderItemRepository {
     return result.rows;
   }
 
-  async findById(orderId, orderItemId) {
-    if (!orderId) throw new MissingParamError("orderId");
+  async findById(tableId, orderItemId) {
+    if (!tableId) throw new MissingParamError("tableId");
     if (!orderItemId) throw new MissingParamError("orderItemId");
 
     const result = await this.postgresAdapter.query({
@@ -133,11 +134,11 @@ export default class OrderItemRepository {
         FROM
           order_items
         WHERE
-          id = $1 AND order_id = $2
+          id = $1 AND table_id = $2
         LIMIT
           1
         ;`,
-      values: [orderItemId, orderId],
+      values: [orderItemId, tableId],
     });
 
     return result.rows[0];
@@ -162,11 +163,11 @@ export default class OrderItemRepository {
           status = COALESCE($3, oi.status),
           notes = COALESCE($5, oi.notes),
           updated_at = timezone('utc', now())
-        FROM orders o
+        FROM tables t
         WHERE
           oi.id = $1
-          AND oi.order_id = o.id
-          AND o.business_id = $2
+          AND oi.table_id = t.id
+          AND t.business_id = $2
         RETURNING oi.*
         ;`,
       values: [orderItemId, businessId, status, quantity, notes],

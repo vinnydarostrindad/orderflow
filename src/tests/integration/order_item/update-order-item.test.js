@@ -3,7 +3,6 @@ import {
   runMigrations,
   createBusiness,
   createTable,
-  createOrder,
   createMenu,
   createMenuItem,
   createOrderItem,
@@ -27,21 +26,20 @@ async function makeOrderItemTestContext(numberOfOrderItems = 1) {
   const menu = await createMenu(business.id);
   const menuItem = await createMenuItem(business.id, menu.id);
   const table = await createTable(business.id);
-  const order = await createOrder(business.id, table.id);
   const orderItem = await createOrderItem(
     business.id,
     table.id,
-    order.id,
     menuItem.id,
     numberOfOrderItems,
   );
 
-  return { business, menuItem, order, orderItem, table, token };
+  return { business, menuItem, orderItem, table, token };
 }
 
-describe("PATCH /api/v1/table/[tableId]/order/[orderId]/item", () => {
+describe("PATCH /api/v1/table/[tableId]/item", () => {
   test("Should update order item status, quantity and notes and return 200", async () => {
-    const { table, order, token, orderItem } = await makeOrderItemTestContext();
+    const { table, token, orderItem, menuItem } =
+      await makeOrderItemTestContext();
 
     const requestBody = {
       quantity: 4,
@@ -50,7 +48,7 @@ describe("PATCH /api/v1/table/[tableId]/order/[orderId]/item", () => {
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${table.id}/order/${order.id}/item/${orderItem.id}`,
+      `http://localhost:3000/api/v1/table/${table.id}/item/${orderItem.id}`,
       {
         method: "PATCH",
         headers: {
@@ -67,25 +65,26 @@ describe("PATCH /api/v1/table/[tableId]/order/[orderId]/item", () => {
 
     expect(responseBody).toMatchObject({
       id: responseBody.id,
-      order_id: order.id,
-      menu_item_id: orderItem.menu_item_id,
-      quantity: 4,
-      unit_price: "20.00",
-      total_price: "80.00",
+      tableId: table.id,
+      menuItemId: menuItem.id,
+      quantity: "4",
+      unitPrice: "20.00",
+      totalPrice: "80.00",
       status: "in_progress",
       notes: "updated_notes",
     });
   });
 
   test("Should update order item status, quantity and notes and return 200", async () => {
-    const { table, order, token, orderItem } = await makeOrderItemTestContext();
+    const { table, token, menuItem, orderItem } =
+      await makeOrderItemTestContext();
 
     const requestBody = {
       status: "in_progress",
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${table.id}/order/${order.id}/item/${orderItem.id}`,
+      `http://localhost:3000/api/v1/table/${table.id}/item/${orderItem.id}`,
       {
         method: "PATCH",
         headers: {
@@ -102,11 +101,11 @@ describe("PATCH /api/v1/table/[tableId]/order/[orderId]/item", () => {
 
     expect(responseBody).toMatchObject({
       id: responseBody.id,
-      order_id: order.id,
-      menu_item_id: orderItem.menu_item_id,
-      quantity: 2,
-      unit_price: "20.00",
-      total_price: "40.00",
+      tableId: table.id,
+      menuItemId: menuItem.id,
+      quantity: "2",
+      unitPrice: "20.00",
+      totalPrice: "40.00",
       status: "in_progress",
       notes: "any_notes",
     });

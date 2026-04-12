@@ -35,42 +35,12 @@ orderItemBtn.addEventListener("click", postOrder);
 
 async function postOrder() {
   const tableId = sessionStorage.getItem("tableId");
-  const tableNumber = sessionStorage.getItem("tableNumber");
-
-  let orderBody;
-  try {
-    const orderResponse = await fetch(
-      `${API_URL}/api/v1/table/${tableId}/order`,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ tableNumber }),
-      },
-    );
-
-    if (!orderResponse.ok) {
-      throw {
-        status: orderResponse.status,
-        statusText: orderResponse.statusText,
-        url: orderResponse.url,
-      };
-    }
-
-    orderBody = await orderResponse.json();
-  } catch (error) {
-    console.error(error);
-    snackbar.show(
-      "error",
-      "<p>Erro ao tentar realizar pedido <br> Tente novamente.</p>",
-    );
-  }
-
   const quantity = document.querySelector("#quantity").value;
   const notes = document.querySelector("#notes").value;
 
   try {
     const orderItemResponse = await fetch(
-      `${API_URL}/api/v1/table/${tableId}/order/${orderBody.id}/item`,
+      `${API_URL}/api/v1/table/${tableId}/item`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },

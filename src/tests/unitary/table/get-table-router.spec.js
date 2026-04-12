@@ -117,7 +117,7 @@ describe("Get Table Router", () => {
     test("Should return 400 if tableId is invalid", async () => {
       const { sut, validatorsSpy } = makeSut();
       const httpRequest = {
-        params: { tableId: "invalid_order_id" },
+        params: { tableId: "invalid_table_id" },
         auth: { businessId: "valid_business_id" },
       };
 

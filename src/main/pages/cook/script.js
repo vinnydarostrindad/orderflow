@@ -23,9 +23,9 @@ const orderInfoQuantity = document.querySelector("#orderQuantity");
 const orderInfoNotes = document.querySelector("#orderNotes");
 const orderInfoIngridients = document.querySelector("#orderIngredients");
 
-let ordersPending = [];
-let ordersInProgress = [];
-let orderTimers = [];
+let pendingOrderItems = [];
+let inProgressOrderItems = [];
+let orderItemTimers = [];
 let specificIntervalId;
 let intervalId;
 
@@ -48,11 +48,11 @@ function calculateTimePassed(time) {
 }
 
 function organizeOrdersInArray() {
-  ordersPending.sort((a, b) => {
+  pendingOrderItems.sort((a, b) => {
     return new Date(a.createdAt) - new Date(b.createdAt);
   });
 
-  ordersInProgress.sort((a, b) => {
+  inProgressOrderItems.sort((a, b) => {
     return new Date(a.createdAt) - new Date(b.createdAt);
   });
 }
@@ -72,22 +72,7 @@ async function fetchItemInfos(id) {
   return itemInfo;
 }
 
-async function fetchOrderTableId(orderId) {
-  const res = await fetch(`${API_URL}/api/v1/order/${orderId}`);
-
-  if (!res.ok) {
-    throw {
-      status: res.status,
-      statusText: res.statusText,
-      url: res.url,
-    };
-  }
-
-  const order = await res.json();
-  return order.tableId;
-}
-
-async function fetchOrderedItems() {
+async function fetchItems() {
   const res = await fetch(`${API_URL}/api/v1/ordered-items`);
 
   if (!res.ok) {
@@ -98,8 +83,8 @@ async function fetchOrderedItems() {
     };
   }
 
-  const orderedItems = await res.json();
-  return orderedItems;
+  const items = await res.json();
+  return items;
 }
 
 function buildOrderedItems(items) {
@@ -127,10 +112,10 @@ function buildOrderedItems(items) {
 }
 
 function configTimers() {
-  orderTimers = [];
+  orderItemTimers = [];
 
   document.querySelectorAll(".order-item__time").forEach((timer) => {
-    orderTimers.push(timer);
+    orderItemTimers.push(timer);
     const timePassedString = calculateTimePassed(timer.dataset.time);
     timer.innerText = `Tempo: ${timePassedString}`;
   });
@@ -138,7 +123,7 @@ function configTimers() {
   if (intervalId) clearInterval(intervalId);
 
   intervalId = setInterval(() => {
-    orderTimers.forEach((timer) => {
+    orderItemTimers.forEach((timer) => {
       const timePassedString = calculateTimePassed(timer.dataset.time);
       timer.innerText = `Tempo: ${timePassedString}`;
     });
@@ -146,8 +131,10 @@ function configTimers() {
 }
 
 function configOrderInfoTimer() {
-  const orderId = orderInfoContainer.dataset.order_id;
-  let { createdAt } = ordersInProgress.find((order) => order.id === orderId);
+  const orderItemId = orderInfoContainer.dataset.orderItemId;
+  let { createdAt } = inProgressOrderItems.find(
+    (item) => item.id === orderItemId,
+  );
 
   const timePassedString = calculateTimePassed(createdAt);
   orderInfoTimer.innerText = `Tempo: ${timePassedString}`;
@@ -161,17 +148,17 @@ function configOrderInfoTimer() {
 }
 
 function renderAllOrders() {
-  if (ordersPending.length === 0) {
+  if (pendingOrderItems.length === 0) {
     orderedItemsContainer.innerHTML = `<p class="orders-none">Nenhum pedido pendente!</p>`;
   } else {
-    const pendingOrdersFragment = buildOrderedItems(ordersPending);
+    const pendingOrdersFragment = buildOrderedItems(pendingOrderItems);
     orderedItemsContainer.replaceChildren(pendingOrdersFragment);
   }
 
-  if (ordersInProgress.length === 0) {
+  if (inProgressOrderItems.length === 0) {
     ordersInProgressContainer.innerHTML = `<p class="orders-none">Nenhum pedido em andamento!</p>`;
   } else {
-    const inProgressOrdersFragment = buildOrderedItems(ordersInProgress);
+    const inProgressOrdersFragment = buildOrderedItems(inProgressOrderItems);
     ordersInProgressContainer.replaceChildren(inProgressOrdersFragment);
   }
 
@@ -187,17 +174,17 @@ function closeOrderInfo(e) {
 }
 
 function showOrderInfo(e) {
-  let order = e.target.closest("order-card");
-  if (!order) return;
+  let orderCard = e.target.closest("order-card");
+  if (!orderCard) return;
 
-  const orderInfo = ordersInProgress.filter(
-    (item) => item.id == order.dataset.id,
+  const orderInfo = inProgressOrderItems.filter(
+    (item) => item.id == orderCard.dataset.id,
   )[0];
 
-  orderInfoContainer.dataset.order_id = orderInfo.id;
-  orderInfoImg.src = order.getAttribute("imgPath");
-  orderInfoName.innerText = order.getAttribute("name");
-  orderInfoTable.innerText = "Mesa " + order.getAttribute("table");
+  orderInfoContainer.dataset.orderItemId = orderInfo.id;
+  orderInfoImg.src = orderCard.getAttribute("imgPath");
+  orderInfoName.innerText = orderCard.getAttribute("name");
+  orderInfoTable.innerText = "Mesa " + orderCard.getAttribute("table");
   orderInfoQuantity.innerText = "Quantidade: " + orderInfo.quantity;
 
   if (orderInfo.notes) {
@@ -222,16 +209,16 @@ function showOrderInfo(e) {
 }
 
 async function setOrderToInProgress(e) {
-  let order = e.target.closest("order-card");
-  if (!order) return;
+  let orderCard = e.target.closest("order-card");
+  if (!orderCard) return;
 
-  const itemIndex = ordersPending.findIndex(
-    (item) => item.id === order.dataset.id,
+  const itemIndex = pendingOrderItems.findIndex(
+    (item) => item.id === orderCard.dataset.id,
   );
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${ordersPending[itemIndex].tableId}/order/${ordersPending[itemIndex].orderId}/item/${ordersPending[itemIndex].id}`,
+      `${API_URL}/api/v1/table/${pendingOrderItems[itemIndex].tableId}/item/${pendingOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -243,8 +230,8 @@ async function setOrderToInProgress(e) {
       },
     );
 
-    ordersInProgress.push(ordersPending[itemIndex]);
-    ordersPending.splice(itemIndex, 1);
+    inProgressOrderItems.push(pendingOrderItems[itemIndex]);
+    pendingOrderItems.splice(itemIndex, 1);
 
     organizeOrdersInArray();
     renderAllOrders();
@@ -255,15 +242,18 @@ async function setOrderToInProgress(e) {
 }
 
 async function setOrderToPending(e) {
-  let orderId = e.target.closest(".all-order-info-container").dataset.order_id;
-  if (!orderId) return;
+  let orderItemId = e.target.closest(".all-order-info-container").dataset
+    .orderItemId;
+  if (!orderItemId) return;
 
-  const itemIndex = ordersInProgress.findIndex((item) => item.id === orderId);
+  const itemIndex = inProgressOrderItems.findIndex(
+    (item) => item.id === orderItemId,
+  );
   if (itemIndex == null) return;
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${ordersInProgress[itemIndex].tableId}/order/${ordersInProgress[itemIndex].orderId}/item/${ordersInProgress[itemIndex].id}`,
+      `${API_URL}/api/v1/table/${inProgressOrderItems[itemIndex].tableId}/item/${inProgressOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -279,8 +269,8 @@ async function setOrderToPending(e) {
     orderInfoContainer.removeEventListener("click", closeOrderInfo);
     document.body.style.overflow = "";
 
-    ordersPending.push(ordersInProgress[itemIndex]);
-    ordersInProgress.splice(itemIndex, 1);
+    pendingOrderItems.push(inProgressOrderItems[itemIndex]);
+    inProgressOrderItems.splice(itemIndex, 1);
 
     organizeOrdersInArray();
     renderAllOrders();
@@ -291,15 +281,17 @@ async function setOrderToPending(e) {
 }
 
 async function setOrderToDone() {
-  const orderId = orderInfoContainer.dataset.order_id;
-  if (!orderId) return;
+  const orderItemId = orderInfoContainer.dataset.orderItemId;
+  if (!orderItemId) return;
 
-  const itemIndex = ordersInProgress.findIndex((order) => order.id === orderId);
-  const item = ordersInProgress.find((order) => order.id === orderId);
+  const itemIndex = inProgressOrderItems.findIndex(
+    (item) => item.id === orderItemId,
+  );
+  const item = inProgressOrderItems.find((it) => it.id === orderItemId);
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${ordersInProgress[itemIndex].tableId}/order/${ordersInProgress[itemIndex].orderId}/item/${ordersInProgress[itemIndex].id}`,
+      `${API_URL}/api/v1/table/${inProgressOrderItems[itemIndex].tableId}/item/${inProgressOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -315,7 +307,7 @@ async function setOrderToDone() {
     orderInfoContainer.removeEventListener("click", closeOrderInfo);
     document.body.style.overflow = "";
 
-    ordersInProgress.splice(itemIndex, 1);
+    inProgressOrderItems.splice(itemIndex, 1);
 
     organizeOrdersInArray();
     renderAllOrders();
@@ -325,7 +317,7 @@ async function setOrderToDone() {
       action: async () => {
         try {
           await fetch(
-            `${API_URL}/api/v1/table/${item.tableId}/order/${item.orderId}/item/${item.id}`,
+            `${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`,
             {
               method: "PATCH",
               headers: {
@@ -337,7 +329,7 @@ async function setOrderToDone() {
             },
           );
 
-          ordersInProgress.push(item);
+          inProgressOrderItems.push(item);
 
           organizeOrdersInArray();
           renderAllOrders();
@@ -355,19 +347,18 @@ async function setOrderToDone() {
 
 async function setUpPage() {
   try {
-    const orderedItems = await fetchOrderedItems();
+    const orderedItems = await fetchItems();
 
     await Promise.all(
       orderedItems.map(async (item) => {
-        const tableId = await fetchOrderTableId(item.orderId);
         const { name, imagePath } = await fetchItemInfos(item.menuItemId);
 
-        const enrichedItem = { ...item, tableId, name, imagePath };
+        const enrichedItem = { ...item, name, imagePath };
 
         if (enrichedItem.status === "pending") {
-          ordersPending.push(enrichedItem);
+          pendingOrderItems.push(enrichedItem);
         } else if (enrichedItem.status === "in_progress") {
-          ordersInProgress.push(enrichedItem);
+          inProgressOrderItems.push(enrichedItem);
         }
       }),
     );

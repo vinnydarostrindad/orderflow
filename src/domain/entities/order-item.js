@@ -3,17 +3,17 @@ import MissingParamError from "../../utils/errors/missing-param-error.js";
 export default class OrderItem {
   constructor({
     id,
-    orderId,
+    tableId,
     menuItemId,
     quantity,
     unitPrice,
     totalPrice,
     notes,
   } = {}) {
-    this.validate(id, menuItemId, orderId, quantity, unitPrice, totalPrice);
+    this.validate(id, menuItemId, tableId, quantity, unitPrice, totalPrice);
 
     this.id = id;
-    this.orderId = orderId;
+    this.tableId = tableId;
     this.menuItemId = menuItemId;
     this.quantity = quantity;
     this.unitPrice = unitPrice;
@@ -21,10 +21,10 @@ export default class OrderItem {
     this.notes = notes;
   }
 
-  validate(id, menuItemId, orderId, quantity, unitPrice, totalPrice) {
+  validate(id, menuItemId, tableId, quantity, unitPrice, totalPrice) {
     if (!id) throw new MissingParamError("id");
     if (!menuItemId) throw new MissingParamError("menuItemId");
-    if (!orderId) throw new MissingParamError("orderId");
+    if (!tableId) throw new MissingParamError("tableId");
     if (!quantity) throw new MissingParamError("quantity");
     if (!unitPrice) throw new MissingParamError("unitPrice");
     if (!totalPrice) throw new MissingParamError("totalPrice");

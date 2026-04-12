@@ -15,14 +15,14 @@ const makeSut = () => {
 const makeRegisterOrderItemUseCase = () => {
   class RegisterOrderItemUseCaseSpy {
     async execute({
-      orderId,
+      tableId,
       menuItemId,
       quantity,
       unitPrice,
       totalPrice,
       notes,
     }) {
-      this.orderId = orderId;
+      this.tableId = tableId;
       this.menuItemId = menuItemId;
       this.quantity = quantity;
       this.unit_price = unitPrice;
@@ -35,7 +35,8 @@ const makeRegisterOrderItemUseCase = () => {
   const useCaseSpy = new RegisterOrderItemUseCaseSpy();
   useCaseSpy.orderItem = {
     id: "any_order_item_id",
-    order_id: "any_order_id",
+    table_id: "any_table_id",
+    business_id: "any_business_id",
     menu_item_id: "any_menu_item_id",
     quantity: 2,
     status: "pending",
@@ -88,7 +89,7 @@ describe("Register Order Item Router", () => {
   test("Should call registerOrderItemUseCase with correct values", async () => {
     const { sut, registerOrderItemUseCaseSpy } = makeSut();
     const httpRequest = {
-      params: { orderId: "any_order_id" },
+      params: { tableId: "any_table_id" },
       body: {
         menuItemId: "any_menu_item_id",
         quantity: 2,
@@ -99,7 +100,7 @@ describe("Register Order Item Router", () => {
     };
 
     await sut.route(httpRequest);
-    expect(registerOrderItemUseCaseSpy.orderId).toBe("any_order_id");
+    expect(registerOrderItemUseCaseSpy.tableId).toBe("any_table_id");
     expect(registerOrderItemUseCaseSpy.menuItemId).toBe("any_menu_item_id");
     expect(registerOrderItemUseCaseSpy.quantity).toBe(2);
     expect(registerOrderItemUseCaseSpy.unit_price).toBe(20);
@@ -110,7 +111,7 @@ describe("Register Order Item Router", () => {
   test("Should return 201 with created order item", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { orderId: "any_order_id" },
+      params: { tableId: "any_table_id" },
       body: {
         menuItemId: "any_menu_item_id",
         quantity: 2,
@@ -124,17 +125,20 @@ describe("Register Order Item Router", () => {
     expect(httpResponse.statusCode).toBe(201);
     expect(httpResponse.body).toEqual({
       id: "any_order_item_id",
-      order_id: "any_order_id",
-      menu_item_id: "any_menu_item_id",
-      quantity: 2,
+      tableId: "any_table_id",
+      businessId: "any_business_id",
+      menuItemId: "any_menu_item_id",
+      quantity: "2",
       status: "pending",
-      unit_price: 20,
-      total_price: 40,
+      unitPrice: 20,
+      totalPrice: 40,
       notes: "any_notes",
+      createdAt: undefined,
+      updatedAt: undefined,
     });
   });
 
-  test("Should return 400 if no orderId is provided", async () => {
+  test("Should return 400 if no tableId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       params: {},
@@ -149,13 +153,13 @@ describe("Register Order Item Router", () => {
 
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError("orderId"));
+    expect(httpResponse.body).toEqual(new MissingParamError("tableId"));
   });
 
-  test("Should return 400 if orderId is invalid", async () => {
+  test("Should return 400 if tableId is invalid", async () => {
     const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
-      params: { orderId: "invalid_order_id" },
+      params: { tableId: "invalid_table_id" },
       body: {
         menuItemId: "valid_menu_item_id",
         quantity: 2,
@@ -170,13 +174,13 @@ describe("Register Order Item Router", () => {
     const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new InvalidParamError("orderId"));
+    expect(httpResponse.body).toEqual(new InvalidParamError("tableId"));
   });
 
   test("Should return 400 if no menuItemId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { orderId: "any_order_id" },
+      params: { tableId: "any_table_id" },
       body: {
         quantity: 2,
         unit_price: 20,
@@ -193,7 +197,7 @@ describe("Register Order Item Router", () => {
   test("Should return 400 if menuItemId is invalid", async () => {
     const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
-      params: { orderId: "valid_order_id" },
+      params: { tableId: "valid_table_id" },
       body: {
         menuItemId: "invalid_menu_item_id",
         quantity: 2,
@@ -214,7 +218,7 @@ describe("Register Order Item Router", () => {
   test("Should return 400 if no quantity is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { orderId: "any_order_id" },
+      params: { tableId: "any_table_id" },
       body: {
         menuItemId: "any_menu_item_id",
         unitPrice: 20,
@@ -231,7 +235,7 @@ describe("Register Order Item Router", () => {
   test("Should return 400 if no unitPrice is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { orderId: "any_order_id" },
+      params: { tableId: "any_table_id" },
       body: {
         menuItemId: "any_menu_item_id",
         quantity: 2,
@@ -248,7 +252,7 @@ describe("Register Order Item Router", () => {
   test("Should return 400 if no totalPrice is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      params: { orderId: "any_order_id" },
+      params: { tableId: "any_table_id" },
       body: {
         menuItemId: "any_menu_item_id",
         quantity: 1,
@@ -285,7 +289,7 @@ describe("Register Order Item Router", () => {
 
   test("Should throw if no httpRequest has no body", async () => {
     const { sut } = makeSut();
-    const httpRequest = { params: { orderId: "any_order_id" } };
+    const httpRequest = { params: { tableId: "any_table_id" } };
 
     await expect(sut.route(httpRequest)).rejects.toThrow();
   });
@@ -302,7 +306,7 @@ describe("Register Order Item Router", () => {
     ];
 
     const httpRequest = {
-      params: { orderId: "any_order_id" },
+      params: { tableId: "any_table_id" },
       body: {
         menuItemId: "any_menu_item_id",
         quantity: 2,
@@ -329,7 +333,7 @@ describe("Register Order Item Router", () => {
     ];
 
     const httpRequest = {
-      params: { orderId: "any_order_id" },
+      params: { tableId: "any_table_id" },
       body: {
         menuItemId: "any_menu_item_id",
         quantity: 2,

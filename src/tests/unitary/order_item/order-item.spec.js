@@ -8,7 +8,7 @@ describe("OrderItem Entity", () => {
 
   test("Should throw if no id is provided", () => {
     const props = {
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       unitPrice: 20,
@@ -21,7 +21,7 @@ describe("OrderItem Entity", () => {
   test("Should throw if no menuItemId is provided", () => {
     const props = {
       id: "any_order_item_id",
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       quantity: 2,
       unitPrice: 20,
       totalPrice: 40,
@@ -32,7 +32,7 @@ describe("OrderItem Entity", () => {
     );
   });
 
-  test("Should throw if no orderId is provided", () => {
+  test("Should throw if no table is provided", () => {
     const props = {
       id: "any_order_item_id",
       menuItemId: "any_menu_item_id",
@@ -42,14 +42,14 @@ describe("OrderItem Entity", () => {
       notes: "any_notes",
     };
     expect(() => new OrderItem(props)).toThrow(
-      new MissingParamError("orderId"),
+      new MissingParamError("tableId"),
     );
   });
 
   test("Should throw if no quantity is provided", () => {
     const props = {
       id: "any_order_item_id",
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       unitPrice: 20,
       totalPrice: 40,
@@ -63,7 +63,7 @@ describe("OrderItem Entity", () => {
   test("Should throw if no unitPrice is provided", () => {
     const props = {
       id: "any_order_item_id",
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       totalPrice: 40,
@@ -77,7 +77,7 @@ describe("OrderItem Entity", () => {
   test("Should throw if no totalPrice is provided", () => {
     const props = {
       id: "any_order_item_id",
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       unitPrice: 20,
@@ -91,7 +91,7 @@ describe("OrderItem Entity", () => {
   test("Should return OrderItem", () => {
     const props = {
       id: "any_order_item_id",
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       unitPrice: 20,
@@ -102,7 +102,7 @@ describe("OrderItem Entity", () => {
     const item = new OrderItem(props);
     expect(item).toEqual({
       id: "any_order_item_id",
-      orderId: "any_order_id",
+      tableId: "any_table_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       unitPrice: 20,

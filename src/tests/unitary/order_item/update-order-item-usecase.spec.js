@@ -31,7 +31,6 @@ const makeOrderItemRepository = () => {
   const orderItemRepositorySpy = new OrderItemRepositorySpy();
   orderItemRepositorySpy.orderItem = {
     id: "any_order_item_id",
-    order_id: "any_order_id",
     menu_item_id: "any_menu_item_id",
     quantity: 2,
     unit_price: 20,
@@ -110,7 +109,6 @@ describe("Update Order Item Usecase", () => {
     const updatedOrderItem = await sut.execute(props);
     expect(updatedOrderItem).toMatchObject({
       id: "any_order_item_id",
-      order_id: "any_order_id",
       menu_item_id: "any_menu_item_id",
       quantity: 4,
       unit_price: 20,
