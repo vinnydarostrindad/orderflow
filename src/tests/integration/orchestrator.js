@@ -123,35 +123,9 @@ async function createTable(businessId, quantity = 1, props = {}) {
   return quantity === 1 ? tables[0] : tables;
 }
 
-async function createOrder(businessId, tableId, quantity = 1, props = {}) {
-  const token = await generateToken(businessId);
-
-  let orders = [];
-  for (let i = 0; i < quantity; i++) {
-    const response = await fetch(
-      `http://localhost:3000/api/v1/table/${tableId}/order`,
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          cookie: `token=${token}`,
-        },
-        body: JSON.stringify({
-          tableNumber: props.tableNumber || i + 1,
-        }),
-      },
-    );
-
-    orders.push(await response.json());
-  }
-
-  return quantity === 1 ? orders[0] : orders;
-}
-
 async function createOrderItem(
   businessId,
   tableId,
-  orderId,
   menuItemId,
   quantity = 1,
   props = {},
@@ -161,7 +135,7 @@ async function createOrderItem(
   let orderItems = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${tableId}/order/${orderId}/item`,
+      `http://localhost:3000/api/v1/table/${tableId}/item`,
       {
         method: "POST",
         headers: {
@@ -198,6 +172,5 @@ export {
   createMenu,
   createMenuItem,
   createTable,
-  createOrder,
   createOrderItem,
 };

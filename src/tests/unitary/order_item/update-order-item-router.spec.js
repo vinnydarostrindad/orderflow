@@ -22,11 +22,12 @@ const makeUpdateOrderItemUseCase = () => {
       this.notes = notes;
 
       return {
-        id: "untoched",
-        order_id: "untoched",
-        menu_item_id: "untoched",
-        created_at: "untoched",
-        updated_at: "untoched",
+        id: "any_order_item_id",
+        table_id: "any_table_id",
+        business_id: "any_business_id",
+        menu_item_id: "any_menu_item_id",
+        created_at: "any_created_at",
+        updated_at: "any_updated_at",
         quantity: this.quantity,
         status: this.status,
         notes: this.notes,
@@ -136,11 +137,11 @@ describe("Update Order Item Router", () => {
     const { sut, updateOrderItemUseCaseSpy } = makeSut();
     const httpRequest = {
       body: {
-        id: "hack",
-        order_id: "hack",
-        menu_item_id: "hack",
-        created_at: "hack",
-        updated_at: "hack",
+        id: "any_order_item_id",
+        table_id: "any_table_id",
+        menu_item_id: "any_menu_item_id",
+        created_at: "any_created_at",
+        updated_at: "any_updated_at",
         status: "any_status",
         quantity: 2,
         notes: "any_note",
@@ -164,15 +165,15 @@ describe("Update Order Item Router", () => {
     expect(updateOrderItemUseCaseSpy.notes).toEqual(httpRequest.body.notes);
   });
 
-  test("Should return 201 if everything goes right", async () => {
+  test("Should return 200 if everything goes right", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
-        id: "hack",
-        order_id: "hack",
-        menu_item_id: "hack",
-        created_at: "hack",
-        updated_at: "hack",
+        id: "any_order_item_id",
+        table_id: "any_table_id",
+        menu_item_id: "any_menu_item_id",
+        created_at: "any_created_at",
+        updated_at: "any_updated_at",
         status: "any_status",
         quantity: 2,
         notes: "any_note",
@@ -186,13 +187,16 @@ describe("Update Order Item Router", () => {
     expect(httpResponse).toEqual({
       statusCode: 200,
       body: {
-        id: "untoched",
-        order_id: "untoched",
-        menu_item_id: "untoched",
-        created_at: "untoched",
-        updated_at: "untoched",
+        id: "any_order_item_id",
+        tableId: "any_table_id",
+        businessId: "any_business_id",
+        menuItemId: "any_menu_item_id",
+        createdAt: "any_created_at",
+        updatedAt: "any_updated_at",
         status: "any_status",
-        quantity: 2,
+        quantity: "2",
+        unitPrice: undefined,
+        totalPrice: undefined,
         notes: "any_note",
       },
       headers: {},
@@ -212,11 +216,11 @@ describe("Update Order Item Router", () => {
 
     const httpRequest = {
       body: {
-        id: "hack",
-        order_id: "hack",
-        menu_item_id: "hack",
-        created_at: "hack",
-        updated_at: "hack",
+        id: "any_order_item_id",
+        table_id: "any_table_id",
+        menu_item_id: "any_menu_item_id",
+        created_at: "any_created_at",
+        updated_at: "any_updated_at",
         status: "any_status",
         quantity: 2,
         notes: "any_note",
@@ -244,11 +248,11 @@ describe("Update Order Item Router", () => {
 
     const httpRequest = {
       body: {
-        id: "hack",
-        order_id: "hack",
-        menu_item_id: "hack",
-        created_at: "hack",
-        updated_at: "hack",
+        id: "any_order_item_id",
+        table_id: "any_table_id",
+        menu_item_id: "any_menu_item_id",
+        created_at: "any_created_at",
+        updated_at: "any_updated_at",
         status: "any_status",
         quantity: 2,
         notes: "any_note",

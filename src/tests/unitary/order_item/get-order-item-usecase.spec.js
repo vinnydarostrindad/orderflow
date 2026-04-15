@@ -14,13 +14,13 @@ const makeSut = () => {
 
 const makeOrderItemRepository = () => {
   class OrderItemRepositorySpy {
-    async findAll(orderId) {
-      this.orderId = orderId;
+    async findAll(tableId) {
+      this.tableId = tableId;
       return this.orderItems;
     }
 
-    async findById(orderId, orderItemId) {
-      this.orderId = orderId;
+    async findById(tableId, orderItemId) {
+      this.tableId = tableId;
       this.orderItemId = orderItemId;
       return this.orderItem;
     }
@@ -34,7 +34,7 @@ const makeOrderItemRepository = () => {
   const orderItemRepositorySpy = new OrderItemRepositorySpy();
   orderItemRepositorySpy.orderItem = {
     id: "any_order_item_id",
-    order_id: "any_order_id",
+    table_id: "any_table_id",
     menu_item_id: "any_menu_item_id",
     quantity: 2,
     status: "pending",
@@ -45,7 +45,7 @@ const makeOrderItemRepository = () => {
   orderItemRepositorySpy.orderItems = [
     {
       id: "any_order_item_id",
-      order_id: "any_order_id",
+      table_id: "any_table_id",
       menu_item_id: "any_menu_item_id",
       quantity: 2,
       status: "pending",
@@ -71,23 +71,23 @@ const makeOrderItemRepositoryWithError = () => {
 };
 
 describe("Get Order Item Usecase", () => {
-  describe("With orderId", () => {
+  describe("With tableId", () => {
     test("Should call orderItemRepository.findAll with correct value", async () => {
       const { sut, orderItemRepositorySpy } = makeSut();
 
-      await sut.execute({ orderId: "order_id" });
-      expect(orderItemRepositorySpy.orderId).toBe("order_id");
+      await sut.execute({ tableId: "table_id" });
+      expect(orderItemRepositorySpy.tableId).toBe("table_id");
       expect(orderItemRepositorySpy.orderItemId).toBeUndefined();
     });
 
     test("Should return an array of orderItems", async () => {
       const { sut } = makeSut();
 
-      const orderItems = await sut.execute({ orderId: "order_id" });
+      const orderItems = await sut.execute({ tableId: "table_id" });
       expect(Array.isArray(orderItems)).toBe(true);
       expect(orderItems[0]).toEqual({
         id: "any_order_item_id",
-        order_id: "any_order_id",
+        table_id: "any_table_id",
         menu_item_id: "any_menu_item_id",
         quantity: 2,
         status: "pending",
@@ -104,7 +104,7 @@ describe("Get Order Item Usecase", () => {
       orderItemRepositorySpy.orderItem = null;
 
       const orderItem = await sut.execute({
-        orderId: "order_id",
+        tableId: "table_id",
         orderItemId: "any_order_item_id",
       });
       expect(orderItem).toBeNull();
@@ -114,10 +114,10 @@ describe("Get Order Item Usecase", () => {
       const { sut, orderItemRepositorySpy } = makeSut();
 
       await sut.execute({
-        orderId: "order_id",
+        tableId: "table_id",
         orderItemId: "any_order_item_id",
       });
-      expect(orderItemRepositorySpy.orderId).toBe("order_id");
+      expect(orderItemRepositorySpy.tableId).toBe("table_id");
       expect(orderItemRepositorySpy.orderItemId).toBe("any_order_item_id");
     });
 
@@ -125,12 +125,12 @@ describe("Get Order Item Usecase", () => {
       const { sut } = makeSut();
 
       const orderItem = await sut.execute({
-        orderId: "order_id",
+        tableId: "table_id",
         orderItemId: "any_order_item_id",
       });
       expect(orderItem).toEqual({
         id: "any_order_item_id",
-        order_id: "any_order_id",
+        table_id: "any_table_id",
         menu_item_id: "any_menu_item_id",
         quantity: 2,
         status: "pending",
@@ -168,7 +168,7 @@ describe("Get Order Item Usecase", () => {
       expect(orderItem).toEqual([
         {
           id: "any_order_item_id",
-          order_id: "any_order_id",
+          table_id: "any_table_id",
           menu_item_id: "any_menu_item_id",
           quantity: 2,
           status: "pending",
@@ -191,9 +191,9 @@ describe("Get Order Item Usecase", () => {
 
     for (const sut of suts) {
       await expect(
-        sut.execute({ orderId: "order_id", orderItemId: "any_order_item_id" }),
+        sut.execute({ tableId: "table_id", orderItemId: "any_order_item_id" }),
       ).rejects.toThrow(TypeError);
-      await expect(sut.execute({ orderId: "order_id" })).rejects.toThrow(
+      await expect(sut.execute({ tableId: "table_id" })).rejects.toThrow(
         TypeError,
       );
     }
@@ -208,9 +208,12 @@ describe("Get Order Item Usecase", () => {
 
     for (const sut of suts) {
       await expect(
-        sut.execute({ orderId: "order_id", orderItemId: "any_order_item_id" }),
+        sut.execute({
+          tableId: "any_table_id",
+          orderItemId: "any_order_item_id",
+        }),
       ).rejects.toThrow(new Error());
-      await expect(sut.execute({ orderId: "order_id" })).rejects.toThrow(
+      await expect(sut.execute({ tableId: "any_table_id" })).rejects.toThrow(
         new Error(),
       );
     }
