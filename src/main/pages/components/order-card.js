@@ -14,11 +14,9 @@ class OrderCard extends HTMLElement {
     this.innerHTML = `
       <button class="order-item ${hasImg ? "" : "order-item--no-img"}" data-time="${time}" data-max_time="${maxTime}" data-id="${id}">
         <div class="order-item__info">
-          ${
-            hasImg
-              ? `<div class="order-item__img"><img src="${imgPath}" alt=""></div>`
-              : ""
-          }
+          <div class="order-item__img">
+            ${hasImg ? `<img src="${imgPath}" alt="">` : ""}
+          </div>
           <div class="order-item__text">
             <div>
               <h3 class="order-item__name">${name}</h3>

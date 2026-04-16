@@ -262,6 +262,11 @@ function showOrderInfo(e) {
   orderInfoContainer.dataset.order_id = orderInfo.id;
   orderInfoContainer.dataset.quantity = orderInfo.quantity;
   setOptionalImage(orderInfoImg, orderImgPath);
+  if (orderInfoImg.hidden) {
+    orderInfoImg.parentElement.classList.add("all-order-info__img--no-img");
+  } else {
+    orderInfoImg.parentElement.classList.remove("all-order-info__img--no-img");
+  }
   orderInfoName.innerText = order.getAttribute("name");
   orderInfoQuantity.innerText = `Quantidade: ${orderInfo.quantity}`;
 

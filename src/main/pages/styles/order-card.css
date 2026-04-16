@@ -87,11 +87,29 @@ order-card {
     }
 
     &.order-item--no-img {
-      justify-content: center;
+      justify-content: flex-end;
 
-      & .order-item__info {
+      .order-item__info {
+        align-items: center;
+      }
+
+      .order-item__img {
+        display: flex;
         align-items: center;
         justify-content: center;
+        width: 200px;
+        border-radius: var(--radius-lg);
+        background: var(--color-bg-dark);
+        border: var(--border-default);
+
+        &::before {
+          content: "🍽️";
+          font-size: var(--font-3xl);
+        }
+      }
+
+      .order-item__text {
+        justify-content: space-between;
       }
     }
   }

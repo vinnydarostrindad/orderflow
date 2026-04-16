@@ -290,6 +290,20 @@ body {
           object-fit: cover;
           border-radius: var(--radius-lg);
         }
+
+        &.all-order-info__img--no-img {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: var(--color-bg-dark);
+          border-radius: var(--radius-md);
+          border: var(--border-default);
+
+          &::after {
+            content: "🍽️";
+            font-size: var(--font-3xl);
+          }
+        }
       }
 
       .all-order-info__text {
