@@ -2,8 +2,8 @@ import "/cashier/components/nav/script.js";
 import "/components/header/script.js";
 import "/components/snackbar.js";
 import "/components/order-card.js";
-import supabase from "/scripts/supabase.js";
 import API_URL from "/scripts/config-api-url.js";
+import { getPublicImageUrl, setOptionalImage } from "/scripts/image.js";
 
 const urlParams = new URLSearchParams(window.location.search);
 const pathParts = window.location.pathname.split("/");
@@ -100,18 +100,15 @@ async function saveQuantity(e) {
   const quant = quantityInput.value;
 
   try {
-    await fetch(
-      `${API_URL}/api/v1/table/${item.tableId}/order/${item.orderId}/item/${item.id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          quantity: quant,
-        }),
+    await fetch(`${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({
+        quantity: quant,
+      }),
+    });
 
     orderInfoQuantity.innerText = `Quantidade: ${quant}`;
     item.quantity = quant;
@@ -176,8 +173,8 @@ async function fetchItemInfos(id) {
   return itemInfo;
 }
 
-async function fetchTableOrders() {
-  const res = await fetch(`${API_URL}/api/v1/table/${tableId}/order`);
+async function fetchTableItems() {
+  const res = await fetch(`${API_URL}/api/v1/table/${tableId}/item`);
 
   if (!res.ok) {
     throw {
@@ -187,39 +184,15 @@ async function fetchTableOrders() {
     };
   }
 
-  const tableOrderedItems = await res.json();
-  return tableOrderedItems;
-}
-
-async function fetchTableOrderedItems(tableOrders) {
-  let allOrderItems = [];
-  await Promise.all(
-    tableOrders.map(async (order) => {
-      const res = await fetch(
-        `${API_URL}/api/v1/table/${tableId}/order/${order.id}/item`,
-      );
-
-      if (!res.ok) {
-        throw {
-          status: res.status,
-          statusText: res.statusText,
-          url: res.url,
-        };
-      }
-
-      const tableOrderedItems = await res.json();
-      allOrderItems.push(tableOrderedItems[0]);
-    }),
-  );
-
-  return allOrderItems;
+  const tableItems = await res.json();
+  return tableItems;
 }
 
 function buildOrderedItems(items) {
   const fragment = document.createDocumentFragment();
 
   for (let item of items) {
-    const { publicUrl } = supabase.getUrl("orderflow", item.imagePath);
+    const publicUrl = getPublicImageUrl(item.imagePath);
     const isIncludedInPayment = isOrderIncludedInPayment(item.id);
 
     const orderCard = document.createElement("order-card");
@@ -229,7 +202,9 @@ function buildOrderedItems(items) {
     }
     orderCard.setAttribute("name", item.name);
     orderCard.setAttribute("quantity", item.quantity);
-    orderCard.setAttribute("imgPath", publicUrl);
+    if (publicUrl) {
+      orderCard.setAttribute("imgPath", publicUrl);
+    }
     if (item.notes) orderCard.setAttribute("notes", true);
     if (item.maxTime) orderCard.setAttribute("data-max_time", item.id);
     orderCard.setAttribute("data-id", item.id);
@@ -282,9 +257,11 @@ function showOrderInfo(e) {
   const orderInfo = allOrders.find((item) => item.id === order.dataset.id);
   if (!orderInfo) return;
 
+  const orderImgPath = order.getAttribute("imgPath");
+
   orderInfoContainer.dataset.order_id = orderInfo.id;
   orderInfoContainer.dataset.quantity = orderInfo.quantity;
-  orderInfoImg.src = order.getAttribute("imgPath");
+  setOptionalImage(orderInfoImg, orderImgPath);
   orderInfoName.innerText = order.getAttribute("name");
   orderInfoQuantity.innerText = `Quantidade: ${orderInfo.quantity}`;
 
@@ -342,18 +319,15 @@ function getOrderItem(orderId) {
 }
 
 async function updateOrderStatus(newStatus, item) {
-  await fetch(
-    `${API_URL}/api/v1/table/${item.tableId}/order/${item.orderId}/item/${item.id}`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        status: newStatus,
-      }),
+  await fetch(`${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({
+      status: newStatus,
+    }),
+  });
 }
 
 async function setOrderToCancelled() {
@@ -434,18 +408,17 @@ function buildOrderPayment() {
 
 async function setupOrdersPage() {
   try {
-    const tableOrders = await fetchTableOrders();
-    const tableOrderedItems = await fetchTableOrderedItems(tableOrders);
+    const tableItems = await fetchTableItems();
 
     ordersTitle.forEach((title) => {
       title.innerText += ` (Mesa ${tableNumber})`;
     });
 
     await Promise.all(
-      tableOrderedItems.map(async (item) => {
+      tableItems.map(async (item) => {
         const { name, imagePath } = await fetchItemInfos(item.menuItemId);
 
-        const enrichedItem = { ...item, tableId, name, imagePath };
+        const enrichedItem = { ...item, name, imagePath };
 
         allOrders.push(enrichedItem);
       }),

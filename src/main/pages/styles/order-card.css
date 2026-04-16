@@ -86,22 +86,12 @@ order-card {
       transform: scale(1.02);
     }
 
-    &.orders-item--no-img {
+    &.order-item--no-img {
       justify-content: center;
-      text-align: center;
 
-      & .orders-item__info {
+      & .order-item__info {
         align-items: center;
-        padding: 0;
-      }
-
-      & .orders-item__name {
-        font-size: var(--font-lg);
-        text-align: center;
-      }
-
-      & .orders-item__price {
-        font-size: var(--font-md);
+        justify-content: center;
       }
     }
   }

@@ -2,8 +2,8 @@ import "/waiter/components/nav/script.js";
 import "/components/header/script.js";
 import "/components/snackbar.js";
 import "/components/order-card.js";
-import supabase from "/scripts/supabase.js";
 import API_URL from "/scripts/config-api-url.js";
+import { getPublicImageUrl, setOptionalImage } from "/scripts/image.js";
 
 const urlParams = new URLSearchParams(window.location.search);
 const pathParts = window.location.pathname.split("/");
@@ -127,13 +127,13 @@ function buildOrderedItems(items) {
   const fragment = document.createDocumentFragment();
 
   for (let item of items) {
-    const { publicUrl } = supabase.getUrl("orderflow", item.imagePath);
+    const publicUrl = getPublicImageUrl(item.imagePath);
 
     const orderCard = document.createElement("order-card");
 
     orderCard.setAttribute("name", item.name);
     orderCard.setAttribute("quantity", item.quantity);
-    orderCard.setAttribute("imgPath", publicUrl);
+    if (publicUrl) orderCard.setAttribute("imgPath", publicUrl);
     if (item.notes) orderCard.setAttribute("notes", true);
     if (item.maxTime) orderCard.setAttribute("data-max_time", item.id);
     orderCard.setAttribute("data-id", item.id);
@@ -274,8 +274,10 @@ function showOrderInfo(e) {
   );
   if (!orderItemInfo) return;
 
+  const orderImgPath = orderCard.getAttribute("imgPath");
+
   orderInfoContainer.dataset.orderItemId = orderItemInfo.id;
-  orderInfoImg.src = orderCard.getAttribute("imgPath");
+  setOptionalImage(orderInfoImg, orderImgPath);
   orderInfoName.innerText = orderCard.getAttribute("name");
   orderInfoQuantity.innerText = `Quantidade: ${orderItemInfo.quantity}`;
 
