@@ -2,4 +2,5 @@ node_modules
 .vscode
 coverage
 .env
-README-bugs.md
+docs/README-bugs.md
+docs/README-aprendizado.md
