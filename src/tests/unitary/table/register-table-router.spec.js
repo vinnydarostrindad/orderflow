@@ -14,10 +14,9 @@ const makeSut = () => {
 
 const makeRegisterTableUseCase = () => {
   class RegisterTableUseCaseSpy {
-    async execute({ businessId, number, name }) {
+    async execute({ businessId, number }) {
       this.businessId = businessId;
       this.number = number;
-      this.name = name;
       return this.table;
     }
   }
@@ -27,7 +26,6 @@ const makeRegisterTableUseCase = () => {
     id: "any_table_id",
     businessId: "any_business_id",
     number: "any_number",
-    name: "any_name",
   };
   return registerTableUseCaseSpy;
 };
@@ -75,7 +73,7 @@ describe("Register Table Router", () => {
     const { sut } = makeSut();
     const httpRequest = {
       auth: { businessId: "any_business_id" },
-      body: { name: "any_name" },
+      body: {},
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
@@ -86,7 +84,7 @@ describe("Register Table Router", () => {
     const { sut } = makeSut();
     const httpRequest = {
       auth: {},
-      body: { number: "any_number", name: "any_name" },
+      body: { number: "any_number" },
     };
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
@@ -99,7 +97,6 @@ describe("Register Table Router", () => {
       auth: { businessId: "invalid_business_id" },
       body: {
         number: "any_number",
-        name: "any_name",
       },
     };
 
@@ -127,7 +124,7 @@ describe("Register Table Router", () => {
   test("Should throw if httpRequest has no params", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      body: { number: "any_number", name: "any_name" },
+      body: { number: "any_number" },
     };
     await expect(sut.route(httpRequest)).rejects.toThrow();
   });
@@ -138,13 +135,11 @@ describe("Register Table Router", () => {
       auth: { businessId: "any_business_id" },
       body: {
         number: "any_number",
-        name: "any_name",
       },
     };
     await sut.route(httpRequest);
     expect(registerTableUseCaseSpy.businessId).toBe("any_business_id");
     expect(registerTableUseCaseSpy.number).toBe("any_number");
-    expect(registerTableUseCaseSpy.name).toBe("any_name");
   });
 
   test("Should return 201 with created table if inputs are valid", async () => {
@@ -153,7 +148,6 @@ describe("Register Table Router", () => {
       auth: { businessId: "any_business_id" },
       body: {
         number: "any_number",
-        name: "any_name",
       },
     };
     const httpResponse = await sut.route(httpRequest);
@@ -162,7 +156,6 @@ describe("Register Table Router", () => {
       id: "any_table_id",
       businessId: "any_business_id",
       number: "any_number",
-      name: "any_name",
     });
   });
 
@@ -180,7 +173,7 @@ describe("Register Table Router", () => {
     ];
     const httpRequest = {
       auth: { businessId: "any_business_id" },
-      body: { number: "any_number", name: "any_name" },
+      body: { number: "any_number" },
     };
 
     for (const sut of suts) {
@@ -201,7 +194,7 @@ describe("Register Table Router", () => {
 
     const httpRequest = {
       auth: { businessId: "any_business_id" },
-      body: { number: "any_number", name: "any_name" },
+      body: { number: "any_number" },
     };
 
     for (const sut of suts) {
