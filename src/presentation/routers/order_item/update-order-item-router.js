@@ -36,7 +36,7 @@ class UpdateOrderItemRouter {
 
     return httpResponse.ok({
       id: updatedOrderItem.id,
-      tableId: updatedOrderItem.table_id,
+      tableSessionId: updatedOrderItem.table_session_id,
       businessId: updatedOrderItem.business_id,
       menuItemId: updatedOrderItem.menu_item_id,
       quantity: updatedOrderItem.quantity.toString(),

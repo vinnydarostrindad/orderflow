@@ -9,11 +9,11 @@ export default class GetOrderItemRouter {
   }
 
   async route(httpRequest) {
-    const { tableId, orderItemId } = httpRequest.params;
+    const { tableSessionId, orderItemId } = httpRequest.params;
     const { businessId } = httpRequest.auth;
     const { period } = httpRequest.query;
 
-    if (!tableId) {
+    if (!tableSessionId) {
       if (!businessId) {
         return httpResponse.badRequest(new MissingParamError("businessId"));
       }
@@ -31,7 +31,7 @@ export default class GetOrderItemRouter {
       const editedOrderedItems = orderedItems.map(
         ({
           id,
-          table_id,
+          table_session_id,
           business_id,
           menu_item_id,
           quantity,
@@ -43,7 +43,7 @@ export default class GetOrderItemRouter {
           table_number,
         }) => ({
           id,
-          tableId: table_id,
+          tableSessionId: table_session_id,
           businessId: business_id,
           menuItemId: menu_item_id,
           quantity: quantity.toString(),
@@ -58,19 +58,21 @@ export default class GetOrderItemRouter {
       return httpResponse.ok(editedOrderedItems);
     }
 
-    if (!this.validators.uuid(tableId)) {
-      return httpResponse.badRequest(new InvalidParamError("tableId"));
+    if (!this.validators.uuid(tableSessionId)) {
+      return httpResponse.badRequest(new InvalidParamError("tableSessionId"));
     }
 
     if (!orderItemId) {
-      const orderItems = await this.getOrderItemUseCase.execute({ tableId });
+      const orderItems = await this.getOrderItemUseCase.execute({
+        tableSessionId,
+      });
 
       const editedOrderItems = orderItems.map(
         ({
           id,
           menu_item_id,
           business_id,
-          table_id,
+          table_session_id,
           quantity,
           unit_price,
           total_price,
@@ -80,7 +82,7 @@ export default class GetOrderItemRouter {
           updated_at,
         }) => ({
           id,
-          tableId: table_id,
+          tableSessionId: table_session_id,
           businessId: business_id,
           menuItemId: menu_item_id,
           quantity: quantity.toString(),
@@ -101,7 +103,7 @@ export default class GetOrderItemRouter {
     }
 
     const orderItem = await this.getOrderItemUseCase.execute({
-      tableId,
+      tableSessionId,
       orderItemId,
     });
 
@@ -113,7 +115,7 @@ export default class GetOrderItemRouter {
       id,
       menu_item_id,
       business_id,
-      table_id,
+      table_session_id,
       quantity,
       unit_price,
       total_price,
@@ -125,7 +127,7 @@ export default class GetOrderItemRouter {
 
     return httpResponse.ok({
       id,
-      tableId: table_id,
+      tableSessionId: table_session_id,
       businessId: business_id,
       menuItemId: menu_item_id,
       quantity: quantity.toString(),
