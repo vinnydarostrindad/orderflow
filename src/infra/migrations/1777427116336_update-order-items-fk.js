@@ -9,8 +9,8 @@ export const up = (pgm) => {
     onDelete: "cascade",
   });
 
-  pgm.addConstraint("order_items", "order_item_table_session_id_fkey", {
-    foreignKey: {
+  pgm.addConstraint("order_items", "order_items_table_session_id_fkey", {
+    foreignKeys: {
       columns: "table_session_id",
       references: "table_sessions(id)",
       onDelete: "cascade",

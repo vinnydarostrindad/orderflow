@@ -10,6 +10,9 @@ export const up = (pgm) => {
       onDelete: "cascade",
       notNull: true,
     },
+    name: {
+      type: "text",
+    },
     status: {
       type: "text",
       check: "status IN ('open', 'closed', 'cancelled')",
