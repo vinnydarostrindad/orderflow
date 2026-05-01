@@ -32,3 +32,5 @@ export const up = (pgm) => {
     where: "status = 'open'",
   });
 };
+
+export const down = false;
