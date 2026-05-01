@@ -3,6 +3,7 @@ import {
   runMigrations,
   createBusiness,
   createTable,
+  createTableSession,
   createMenu,
   createMenuItem,
   createOrderItem,
@@ -26,19 +27,20 @@ async function makeOrderItemTestContext(numberOfOrderItems = 1) {
   const menu = await createMenu(business.id);
   const menuItem = await createMenuItem(business.id, menu.id);
   const table = await createTable(business.id);
+  const tableSession = await createTableSession(business.id, table.id);
   const orderItem = await createOrderItem(
     business.id,
-    table.id,
+    tableSession.id,
     menuItem.id,
     numberOfOrderItems,
   );
 
-  return { business, menuItem, orderItem, table, token };
+  return { business, menuItem, orderItem, table, tableSession, token };
 }
 
-describe("PATCH /api/v1/table/[tableId]/item", () => {
+describe("PATCH /api/v1/table-session/[tableSessionId]/item", () => {
   test("Should update order item status, quantity and notes and return 200", async () => {
-    const { table, token, orderItem, menuItem } =
+    const { tableSession, token, orderItem, menuItem } =
       await makeOrderItemTestContext();
 
     const requestBody = {
@@ -48,7 +50,7 @@ describe("PATCH /api/v1/table/[tableId]/item", () => {
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${table.id}/item/${orderItem.id}`,
+      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item/${orderItem.id}`,
       {
         method: "PATCH",
         headers: {
@@ -65,7 +67,7 @@ describe("PATCH /api/v1/table/[tableId]/item", () => {
 
     expect(responseBody).toMatchObject({
       id: responseBody.id,
-      tableId: table.id,
+      tableSessionId: tableSession.id,
       menuItemId: menuItem.id,
       quantity: "4",
       unitPrice: "20.00",
@@ -76,7 +78,7 @@ describe("PATCH /api/v1/table/[tableId]/item", () => {
   });
 
   test("Should update order item status, quantity and notes and return 200", async () => {
-    const { table, token, menuItem, orderItem } =
+    const { tableSession, token, menuItem, orderItem } =
       await makeOrderItemTestContext();
 
     const requestBody = {
@@ -84,7 +86,7 @@ describe("PATCH /api/v1/table/[tableId]/item", () => {
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${table.id}/item/${orderItem.id}`,
+      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item/${orderItem.id}`,
       {
         method: "PATCH",
         headers: {
@@ -101,7 +103,7 @@ describe("PATCH /api/v1/table/[tableId]/item", () => {
 
     expect(responseBody).toMatchObject({
       id: responseBody.id,
-      tableId: table.id,
+      tableSessionId: tableSession.id,
       menuItemId: menuItem.id,
       quantity: "2",
       unitPrice: "20.00",

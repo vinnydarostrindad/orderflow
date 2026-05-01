@@ -123,9 +123,26 @@ async function createTable(businessId, quantity = 1, props = {}) {
   return quantity === 1 ? tables[0] : tables;
 }
 
+async function createTableSession(businessId, tableId, props = {}) {
+  const token = await generateToken(businessId);
+  const response = await fetch("http://localhost:3000/api/v1/table-sessions", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      cookie: `token=${token}`,
+    },
+    body: JSON.stringify({
+      tableId,
+      name: props.name || "any_name",
+    }),
+  });
+
+  return await response.json();
+}
+
 async function createOrderItem(
   businessId,
-  tableId,
+  tableSessionId,
   menuItemId,
   quantity = 1,
   props = {},
@@ -135,7 +152,7 @@ async function createOrderItem(
   let orderItems = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${tableId}/item`,
+      `http://localhost:3000/api/v1/table-session/${tableSessionId}/item`,
       {
         method: "POST",
         headers: {
@@ -172,5 +189,6 @@ export {
   createMenu,
   createMenuItem,
   createTable,
+  createTableSession,
   createOrderItem,
 };

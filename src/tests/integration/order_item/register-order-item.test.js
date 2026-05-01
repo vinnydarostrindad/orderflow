@@ -4,6 +4,7 @@ import {
   runMigrations,
   createBusiness,
   createTable,
+  createTableSession,
   createMenu,
   createMenuItem,
   createOrderItem,
@@ -27,19 +28,20 @@ async function makeOrderItemTestContext(numberOfOrderItems = 1) {
   const menu = await createMenu(business.id);
   const menuItem = await createMenuItem(business.id, menu.id);
   const table = await createTable(business.id);
+  const tableSession = await createTableSession(business.id, table.id);
   const orderItem = await createOrderItem(
     business.id,
-    table.id,
+    tableSession.id,
     menuItem.id,
     numberOfOrderItems,
   );
 
-  return { business, menuItem, orderItem, table, token };
+  return { business, menuItem, orderItem, table, tableSession, token };
 }
 
-describe("POST /api/v1/business/[businessId]/table/[tableId]/item", () => {
+describe("POST /api/v1/table-session/[tableSessionId]/item", () => {
   test("Should register a order item and return 201", async () => {
-    const { table, menuItem, token } = await makeOrderItemTestContext(0);
+    const { tableSession, menuItem, token } = await makeOrderItemTestContext(0);
 
     const requestBody = {
       menuItemId: menuItem.id,
@@ -50,7 +52,7 @@ describe("POST /api/v1/business/[businessId]/table/[tableId]/item", () => {
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${table.id}/item`,
+      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item`,
       {
         method: "POST",
         headers: {
@@ -69,7 +71,7 @@ describe("POST /api/v1/business/[businessId]/table/[tableId]/item", () => {
 
     expect(orderItem).toMatchObject({
       id: orderItem.id,
-      tableId: table.id,
+      tableSessionId: tableSession.id,
       menuItemId: requestBody.menuItemId,
       quantity: "2",
       unitPrice: "20.00",

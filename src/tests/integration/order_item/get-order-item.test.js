@@ -4,6 +4,7 @@ import {
   runMigrations,
   createBusiness,
   createTable,
+  createTableSession,
   createMenu,
   createMenuItem,
   createOrderItem,
@@ -27,14 +28,15 @@ async function makeOrderItemTestContext(numberOfOrderItems = 1) {
   const menu = await createMenu(business.id);
   const menuItem = await createMenuItem(business.id, menu.id);
   const table = await createTable(business.id);
+  const tableSession = await createTableSession(business.id, table.id);
   const orderItem = await createOrderItem(
     business.id,
-    table.id,
+    tableSession.id,
     menuItem.id,
     numberOfOrderItems,
   );
 
-  return { business, menuItem, orderItem, table, token };
+  return { business, menuItem, orderItem, table, tableSession, token };
 }
 
 describe("GET /api/v1/ordered-items", () => {
@@ -72,10 +74,10 @@ describe("GET /api/v1/ordered-items", () => {
   });
 
   test("Should return an empty array", async () => {
-    const { token, table } = await makeOrderItemTestContext(0);
+    const { token, tableSession } = await makeOrderItemTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${table.id}/item`,
+      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -91,12 +93,12 @@ describe("GET /api/v1/ordered-items", () => {
   });
 });
 
-describe("GET /api/v1/table/[tableId]/item", () => {
+describe("GET /api/v1/table-session/[tableSessionId]/item", () => {
   test("Should return all menu items with correct data", async () => {
-    const { token, menuItem, table } = await makeOrderItemTestContext(2);
+    const { token, menuItem, tableSession } = await makeOrderItemTestContext(2);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${table.id}/item`,
+      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -137,10 +139,10 @@ describe("GET /api/v1/table/[tableId]/item", () => {
   });
 
   test("Should return an empty array", async () => {
-    const { token, table } = await makeOrderItemTestContext(0);
+    const { token, tableSession } = await makeOrderItemTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${table.id}/item`,
+      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -156,13 +158,13 @@ describe("GET /api/v1/table/[tableId]/item", () => {
   });
 });
 
-describe("GET /api/v1/table/[tableId]/item/[orderItemId]", () => {
+describe("GET /api/v1/table-session/[tableSessionId]/item/[orderItemId]", () => {
   test("Should return correct menu item", async () => {
-    const { orderItem, table, menuItem, token } =
+    const { orderItem, tableSession, menuItem, token } =
       await makeOrderItemTestContext(1);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${table.id}/item/${orderItem.id}`,
+      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item/${orderItem.id}`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -195,10 +197,10 @@ describe("GET /api/v1/table/[tableId]/item/[orderItemId]", () => {
   });
 
   test("Should return NotFoundError if order item does not exists", async () => {
-    const { table, token } = await makeOrderItemTestContext(0);
+    const { tableSession, token } = await makeOrderItemTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${table.id}/item/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
       {
         headers: {
           cookie: `token=${token}`,

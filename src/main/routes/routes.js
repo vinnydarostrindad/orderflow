@@ -5,6 +5,7 @@ import menuRoute from "./menu-route.js";
 import menuItemRoute from "./menu-item-route.js";
 import tableRoute from "./table-route.js";
 import orderItemRoute from "./order-item-route.js";
+import tableSessionRoute from "./table-session-route.js";
 
 const apiRoutes = [
   {
@@ -86,7 +87,7 @@ const apiRoutes = [
     },
   },
   {
-    pattern: /^\/api\/v1\/table\/(?<tableId>[^/]+)\/item$/,
+    pattern: /^\/api\/v1\/table-session\/(?<tableSessionId>[^/]+)\/item$/,
     methods: {
       get: orderItemRoute.getAll,
       post: orderItemRoute.post,
@@ -94,10 +95,28 @@ const apiRoutes = [
   },
   {
     pattern:
-      /^\/api\/v1\/table\/(?<tableId>[^/]+)\/item\/(?<orderItemId>[^/]+)$/,
+      /^\/api\/v1\/table-session\/(?<tableSessionId>[^/]+)\/item\/(?<orderItemId>[^/]+)$/,
     methods: {
       get: orderItemRoute.getOne,
       patch: orderItemRoute.patch,
+    },
+  },
+  {
+    pattern: /^\/api\/v1\/table-sessions$/,
+    methods: {
+      post: tableSessionRoute.post,
+    },
+  },
+  {
+    pattern: /^\/api\/v1\/table-sessions\/open\/?(?:\?.*)?$/,
+    methods: {
+      get: tableSessionRoute.getOpen,
+    },
+  },
+  {
+    pattern: /^\/api\/v1\/table-sessions\/(?<tableSessionId>[^/]+)\/close$/,
+    methods: {
+      patch: tableSessionRoute.close,
     },
   },
   {
