@@ -9,6 +9,7 @@ const makeSut = () => {
     registerTableUseCase: registerTableUseCaseSpy,
     validators: validatorsSpy,
   });
+
   return { sut, registerTableUseCaseSpy, validatorsSpy };
 };
 
@@ -121,7 +122,7 @@ describe("Register Table Router", () => {
     await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
-  test("Should throw if httpRequest has no params", async () => {
+  test("Should throw if httpRequest has no auth", async () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: { number: "any_number" },
