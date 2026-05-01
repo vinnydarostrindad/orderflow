@@ -25,8 +25,11 @@ const makeRegisterTableSessionUseCase = () => {
   const registerTableSessionUseCaseSpy = new RegisterTableSessionUseCaseSpy();
   registerTableSessionUseCaseSpy.tableSession = {
     id: "any_table_session_id",
-    tableId: "any_table_id",
+    table_id: "any_table_id",
     name: "any_name",
+    status: "open",
+    opened_at: "any_opened_at",
+    closed_at: null,
   };
 
   return registerTableSessionUseCaseSpy;
@@ -155,6 +158,9 @@ describe("Register Table Session Router", () => {
       id: "any_table_session_id",
       tableId: "any_table_id",
       name: "any_name",
+      status: "open",
+      openedAt: "any_opened_at",
+      closedAt: null,
     });
   });
 

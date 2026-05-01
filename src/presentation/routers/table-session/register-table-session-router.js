@@ -21,6 +21,13 @@ export default class RegisterTableSessionRouter {
       name,
     });
 
-    return httpResponse.created(tableSession);
+    return httpResponse.created({
+      id: tableSession.id,
+      tableId: tableSession.table_id,
+      name: tableSession.name,
+      status: tableSession.status,
+      openedAt: tableSession.opened_at,
+      closedAt: tableSession.closed_at,
+    });
   }
 }
