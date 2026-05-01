@@ -25,15 +25,22 @@ async function makeOrderItemTestContext(numberOfOrderItems = 1) {
     role,
     employeeId: id,
   });
-  const menu = await createMenu(business.id);
-  const menuItem = await createMenuItem(business.id, menu.id);
-  const table = await createTable(business.id);
-  const tableSession = await createTableSession(business.id, table.id);
+  const menu = await createMenu(business.id, 1, {}, token);
+  const menuItem = await createMenuItem(business.id, menu.id, 1, {}, token);
+  const table = await createTable(business.id, 1, {}, token);
+  const tableSession = await createTableSession(
+    business.id,
+    table.id,
+    {},
+    token,
+  );
   const orderItem = await createOrderItem(
     business.id,
     tableSession.id,
     menuItem.id,
     numberOfOrderItems,
+    {},
+    token,
   );
 
   return { business, menuItem, orderItem, table, tableSession, token };

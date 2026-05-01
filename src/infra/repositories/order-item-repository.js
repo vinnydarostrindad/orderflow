@@ -70,30 +70,29 @@ export default class OrderItemRepository {
     let timeFilter;
     switch (period) {
       case "day":
-        timeFilter =
-          "AND order_items.created_at >= date_trunc('day', CURRENT_DATE)";
+        timeFilter = "AND oi.created_at >= date_trunc('day', CURRENT_DATE)";
         break;
       case "week":
         timeFilter = `
-          AND order_items.created_at >= date_trunc('week', CURRENT_DATE)
-          AND order_items.created_at < date_trunc('week', CURRENT_DATE) + INTERVAL '1 week'
+          AND oi.created_at >= date_trunc('week', CURRENT_DATE)
+          AND oi.created_at < date_trunc('week', CURRENT_DATE) + INTERVAL '1 week'
         `;
         break;
       case "month":
         timeFilter = `
-          AND order_items.created_at >= date_trunc('month', CURRENT_DATE)
-          AND order_items.created_at < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'
+          AND oi.created_at >= date_trunc('month', CURRENT_DATE)
+          AND oi.created_at < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'
         `;
         break;
       case "6month":
         timeFilter = `
-          AND order_items.created_at >= date_trunc('day', CURRENT_DATE) - INTERVAL '6 months'
+          AND oi.created_at >= date_trunc('day', CURRENT_DATE) - INTERVAL '6 months'
         `;
         break;
       case "year":
         timeFilter = `
-          AND order_items.created_at >= date_trunc('year', CURRENT_DATE)
-          AND order_items.created_at < date_trunc('year', CURRENT_DATE) + INTERVAL '1 year'
+          AND oi.created_at >= date_trunc('year', CURRENT_DATE)
+          AND oi.created_at < date_trunc('year', CURRENT_DATE) + INTERVAL '1 year'
         `;
         break;
 
@@ -107,7 +106,7 @@ export default class OrderItemRepository {
         SELECT 
           oi.id,
           oi.table_session_id,
-          ts.business_id,
+          t.business_id,
           oi.menu_item_id,
           oi.quantity,
           oi.total_price,
@@ -120,8 +119,10 @@ export default class OrderItemRepository {
           order_items oi
         JOIN
           table_sessions ts ON oi.table_session_id = ts.id
+        JOIN
+          tables t ON ts.table_id = t.id
         WHERE
-          ts.business_id = $1 ${timeFilter}
+          t.business_id = $1 ${timeFilter}
         ORDER BY
           order_item_created_at ASC
       ;`,
@@ -171,11 +172,14 @@ export default class OrderItemRepository {
           status = COALESCE($3, oi.status),
           notes = COALESCE($5, oi.notes),
           updated_at = timezone('utc', now())
-        FROM table_sessions ts
+        FROM
+          table_sessions ts
+        JOIN
+          tables t ON ts.table_id = t.id
         WHERE
           oi.id = $1
           AND oi.table_session_id = ts.id
-          AND ts.business_id = $2
+          AND t.business_id = $2
         RETURNING oi.*
         ;`,
       values: [orderItemId, businessId, status, quantity, notes],

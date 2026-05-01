@@ -21,7 +21,7 @@ async function makeTableTestContext(numberOfTables = 1, props) {
     role,
     employeeId: id,
   });
-  const table = await createTable(business.id, numberOfTables, props);
+  const table = await createTable(business.id, numberOfTables, props, token);
 
   return { business, token, table };
 }
@@ -32,7 +32,6 @@ describe("POST /api/v1/business/[businessId]/table", () => {
 
     const requestBody = {
       number: 1,
-      name: "any_name",
     };
 
     const response = await fetch(`http://localhost:3000/api/v1/table`, {
@@ -50,7 +49,6 @@ describe("POST /api/v1/business/[businessId]/table", () => {
       id: menu.id,
       business_id: business.id,
       number: requestBody.number,
-      name: requestBody.name,
     });
 
     expect(typeof menu.id).toBe("string");

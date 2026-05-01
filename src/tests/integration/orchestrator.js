@@ -53,9 +53,7 @@ async function createEmployee(businessId, quantity = 1, props = {}) {
   return quantity === 1 ? employees[0] : employees;
 }
 
-async function createMenu(businessId, quantity = 1, props = {}) {
-  const token = await generateToken(businessId);
-
+async function createMenu(businessId, quantity = 1, props = {}, token) {
   let menus = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(`http://localhost:3000/api/v1/menu`, {
@@ -72,9 +70,13 @@ async function createMenu(businessId, quantity = 1, props = {}) {
   return quantity === 1 ? menus[0] : menus;
 }
 
-async function createMenuItem(businessId, menuId, quantity = 1, props = {}) {
-  const token = await generateToken(businessId);
-
+async function createMenuItem(
+  businessId,
+  menuId,
+  quantity = 1,
+  props = {},
+  token,
+) {
   let menuItems = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
@@ -101,8 +103,7 @@ async function createMenuItem(businessId, menuId, quantity = 1, props = {}) {
   return quantity === 1 ? menuItems[0] : menuItems;
 }
 
-async function createTable(businessId, quantity = 1, props = {}) {
-  const token = await generateToken(businessId);
+async function createTable(businessId, quantity = 1, props = {}, token) {
   let tables = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(`http://localhost:3000/api/v1/table`, {
@@ -123,8 +124,7 @@ async function createTable(businessId, quantity = 1, props = {}) {
   return quantity === 1 ? tables[0] : tables;
 }
 
-async function createTableSession(businessId, tableId, props = {}) {
-  const token = await generateToken(businessId);
+async function createTableSession(businessId, tableId, props = {}, token) {
   const response = await fetch("http://localhost:3000/api/v1/table-sessions", {
     method: "POST",
     headers: {
@@ -146,9 +146,8 @@ async function createOrderItem(
   menuItemId,
   quantity = 1,
   props = {},
+  token,
 ) {
-  const token = await generateToken(businessId);
-
   let orderItems = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
@@ -173,11 +172,6 @@ async function createOrderItem(
   }
 
   return quantity === 1 ? orderItems[0] : orderItems;
-}
-
-async function generateToken(businessId) {
-  const { role, id } = await createEmployee(businessId);
-  return generateAuthCookie({ businessId, role, employeeId: id });
 }
 
 export {

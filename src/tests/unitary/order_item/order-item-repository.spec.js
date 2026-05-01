@@ -252,7 +252,7 @@ describe("OrderItem Repository", () => {
       const { sut, postgresAdapterSpy } = makeSut();
       await sut.findAllByBusinessId("any_business_id");
       expect(postgresAdapterSpy.queryObject.text).toContain(
-        "WHERE\n          ts.business_id = $1 ",
+        "WHERE\n          t.business_id = $1 ",
       );
     });
 
@@ -276,7 +276,7 @@ describe("OrderItem Repository", () => {
         const { sut, postgresAdapterSpy } = makeSut();
         await sut.findAllByBusinessId("any_business_id", "day");
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at >= date_trunc('day', CURRENT_DATE)",
+          "AND oi.created_at >= date_trunc('day', CURRENT_DATE)",
         );
       });
 
@@ -284,10 +284,10 @@ describe("OrderItem Repository", () => {
         const { sut, postgresAdapterSpy } = makeSut();
         await sut.findAllByBusinessId("any_business_id", "week");
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at >= date_trunc('week', CURRENT_DATE)",
+          "AND oi.created_at >= date_trunc('week', CURRENT_DATE)",
         );
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at < date_trunc('week', CURRENT_DATE) + INTERVAL '1 week'",
+          "AND oi.created_at < date_trunc('week', CURRENT_DATE) + INTERVAL '1 week'",
         );
       });
 
@@ -295,10 +295,10 @@ describe("OrderItem Repository", () => {
         const { sut, postgresAdapterSpy } = makeSut();
         await sut.findAllByBusinessId("any_business_id", "month");
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at >= date_trunc('month', CURRENT_DATE)",
+          "AND oi.created_at >= date_trunc('month', CURRENT_DATE)",
         );
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'",
+          "AND oi.created_at < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'",
         );
       });
 
@@ -306,7 +306,7 @@ describe("OrderItem Repository", () => {
         const { sut, postgresAdapterSpy } = makeSut();
         await sut.findAllByBusinessId("any_business_id", "6month");
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at >= date_trunc('day', CURRENT_DATE) - INTERVAL '6 months'",
+          "AND oi.created_at >= date_trunc('day', CURRENT_DATE) - INTERVAL '6 months'",
         );
       });
 
@@ -314,10 +314,10 @@ describe("OrderItem Repository", () => {
         const { sut, postgresAdapterSpy } = makeSut();
         await sut.findAllByBusinessId("any_business_id", "year");
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at >= date_trunc('year', CURRENT_DATE)",
+          "AND oi.created_at >= date_trunc('year', CURRENT_DATE)",
         );
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at < date_trunc('year', CURRENT_DATE) + INTERVAL '1 year'",
+          "AND oi.created_at < date_trunc('year', CURRENT_DATE) + INTERVAL '1 year'",
         );
       });
     });
@@ -429,11 +429,14 @@ describe("OrderItem Repository", () => {
           status = COALESCE($3, oi.status),
           notes = COALESCE($5, oi.notes),
           updated_at = timezone('utc', now())
-        FROM table_sessions ts
+        FROM
+          table_sessions ts
+        JOIN
+          tables t ON ts.table_id = t.id
         WHERE
           oi.id = $1
           AND oi.table_session_id = ts.id
-          AND ts.business_id = $2
+          AND t.business_id = $2
         RETURNING oi.*
         ;`,
         values: [

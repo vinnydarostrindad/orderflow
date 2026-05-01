@@ -22,12 +22,13 @@ async function makeMenuItemTestContext(numberOfMenuItems = 1, props) {
     role,
     employeeId: id,
   });
-  const menu = await createMenu(business.id);
+  const menu = await createMenu(business.id, 1, {}, token);
   const menuItem = await createMenuItem(
     business.id,
     menu.id,
     numberOfMenuItems,
     props,
+    token,
   );
 
   return { business, menu, menuItem, token };

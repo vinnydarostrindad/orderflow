@@ -21,7 +21,7 @@ async function makeTableTestContext(numberOfTables = 1) {
     role,
     employeeId: id,
   });
-  const table = await createTable(business.id, numberOfTables);
+  const table = await createTable(business.id, numberOfTables, {}, token);
 
   return { business, token, table };
 }
@@ -48,7 +48,6 @@ describe("GET /api/v1/business/[businessId]/table", () => {
         id: table.id,
         businessId: business.id,
         number: `${i}`,
-        name: "any_name",
       });
       i++;
 
@@ -103,7 +102,6 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]", () => {
       id: table.id,
       businessId: business.id,
       number: "1",
-      name: `any_name`,
     });
 
     expect(typeof responseBody.id).toBe("string");

@@ -21,7 +21,7 @@ async function makeMenuTestContext(numberOfMenus = 1) {
     role,
     employeeId: id,
   });
-  const menu = await createMenu(business.id, numberOfMenus);
+  const menu = await createMenu(business.id, numberOfMenus, {}, token);
 
   return { business, menu, token };
 }
