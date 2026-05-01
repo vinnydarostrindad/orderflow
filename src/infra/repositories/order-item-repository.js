@@ -7,7 +7,7 @@ export default class OrderItemRepository {
 
   async create({
     id,
-    tableId,
+    tableSessionId,
     menuItemId,
     quantity,
     unitPrice,
@@ -15,7 +15,7 @@ export default class OrderItemRepository {
     notes,
   } = {}) {
     if (!id) throw new MissingParamError("id");
-    if (!tableId) throw new MissingParamError("tableId");
+    if (!tableSessionId) throw new MissingParamError("tableSessionId");
     if (!menuItemId) throw new MissingParamError("menuItemId");
     if (!quantity) throw new MissingParamError("quantity");
     if (!unitPrice) throw new MissingParamError("unitPrice");
@@ -24,20 +24,28 @@ export default class OrderItemRepository {
     const result = await this.postgresAdapter.query({
       text: `
         INSERT INTO
-          order_items (id, table_id, menu_item_id, quantity, unit_price, total_price, notes)
+          order_items (id, table_session_id, menu_item_id, quantity, unit_price, total_price, notes)
         VALUES
           ($1, $2, $3, $4, $5, $6, $7)
         RETURNING
           *
       ;`,
-      values: [id, tableId, menuItemId, quantity, unitPrice, totalPrice, notes],
+      values: [
+        id,
+        tableSessionId,
+        menuItemId,
+        quantity,
+        unitPrice,
+        totalPrice,
+        notes,
+      ],
     });
 
     return result.rows[0];
   }
 
-  async findAll(tableId) {
-    if (!tableId) throw new MissingParamError("tableId");
+  async findAll(tableSessionId) {
+    if (!tableSessionId) throw new MissingParamError("tableSessionId");
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -46,11 +54,11 @@ export default class OrderItemRepository {
         FROM
           order_items
         WHERE
-          table_id = $1
+          table_session_id = $1
         LIMIT
           10
       ;`,
-      values: [tableId],
+      values: [tableSessionId],
     });
 
     return result.rows;
@@ -98,8 +106,8 @@ export default class OrderItemRepository {
       text: `
         SELECT 
           oi.id,
-          oi.table_id,
-          t.business_id,
+          oi.table_session_id,
+          ts.business_id,
           oi.menu_item_id,
           oi.quantity,
           oi.total_price,
@@ -111,9 +119,9 @@ export default class OrderItemRepository {
         FROM
           order_items oi
         JOIN
-          tables t ON oi.table_id = t.id
+          table_sessions ts ON oi.table_session_id = ts.id
         WHERE
-          t.business_id = $1 ${timeFilter}
+          ts.business_id = $1 ${timeFilter}
         ORDER BY
           order_item_created_at ASC
       ;`,
@@ -123,8 +131,8 @@ export default class OrderItemRepository {
     return result.rows;
   }
 
-  async findById(tableId, orderItemId) {
-    if (!tableId) throw new MissingParamError("tableId");
+  async findById(tableSessionId, orderItemId) {
+    if (!tableSessionId) throw new MissingParamError("tableSessionId");
     if (!orderItemId) throw new MissingParamError("orderItemId");
 
     const result = await this.postgresAdapter.query({
@@ -134,11 +142,11 @@ export default class OrderItemRepository {
         FROM
           order_items
         WHERE
-          id = $1 AND table_id = $2
+          id = $1 AND table_session_id = $2
         LIMIT
           1
         ;`,
-      values: [orderItemId, tableId],
+      values: [orderItemId, tableSessionId],
     });
 
     return result.rows[0];
@@ -163,11 +171,11 @@ export default class OrderItemRepository {
           status = COALESCE($3, oi.status),
           notes = COALESCE($5, oi.notes),
           updated_at = timezone('utc', now())
-        FROM tables t
+        FROM table_sessions ts
         WHERE
           oi.id = $1
-          AND oi.table_id = t.id
-          AND t.business_id = $2
+          AND oi.table_session_id = ts.id
+          AND ts.business_id = $2
         RETURNING oi.*
         ;`,
       values: [orderItemId, businessId, status, quantity, notes],
