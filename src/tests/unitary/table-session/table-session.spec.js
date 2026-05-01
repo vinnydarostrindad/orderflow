@@ -1,5 +1,5 @@
-import TableSession from "../../../domain/entities/table-session";
-import MissingParamError from "../../../utils/errors/missing-param-error";
+import TableSession from "../../../domain/entities/table-session.js";
+import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
 describe("Table Session", () => {
   test("Should throw if no props is provided", () => {

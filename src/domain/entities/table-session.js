@@ -1,4 +1,4 @@
-import MissingParamError from "../../utils/errors/missing-param-error";
+import MissingParamError from "../../utils/errors/missing-param-error.js";
 
 export default class TableSession {
   constructor({ id, tableId, name } = {}) {
