@@ -4,7 +4,7 @@ import "/components/header/script.js";
 import "/components/snackbar.js";
 import API_URL from "/scripts/config-api-url.js";
 
-sessionStorage.removeItem("tableId");
+sessionStorage.removeItem("tableSessionId");
 sessionStorage.removeItem("tableNumber");
 
 const createTableBtn = document.querySelector("#createTable");
@@ -28,7 +28,7 @@ tablesContainer.addEventListener("click", selectTable);
 createTableBtn.addEventListener("click", toggleAllTablesModal);
 modalBg.addEventListener("click", closeModals);
 allTablesModal.addEventListener("click", addName);
-tableNameInputContinueBtn.addEventListener("click", postTable);
+tableNameInputContinueBtn.addEventListener("click", postTableSession);
 
 let occupiedTables = [];
 
@@ -43,12 +43,12 @@ function closeModals(e) {
   document.body.style.overflow = "";
 }
 
-async function postTable(e) {
+async function postTableSession(e) {
   const number = e.target.dataset.number;
   const name = addTableNameModalInput.value || null;
 
   try {
-    const response = await fetch(`${API_URL}/api/v1/table`, {
+    const response = await fetch(`${API_URL}/api/v1/table-session`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ number, name }),
@@ -62,10 +62,10 @@ async function postTable(e) {
       };
     }
 
-    const table = await response.json();
+    const tableSession = await response.json();
 
-    sessionStorage.setItem("tableId", table.id);
-    sessionStorage.setItem("tableNumber", table.number);
+    sessionStorage.setItem("tableSessionId", tableSession.id);
+    sessionStorage.setItem("tableNumber", tableSession.number);
     window.location.href = "/menus";
   } catch (error) {
     console.error(error);
@@ -108,7 +108,7 @@ function selectTable(e) {
   const tableCard = e.target.closest(".table-card");
   if (!tableCard) return;
 
-  sessionStorage.setItem("tableId", tableCard.dataset.id);
+  sessionStorage.setItem("tableSessionId", tableCard.dataset.id);
   sessionStorage.setItem(
     "tableNumber",
     parseInt(tableCard.firstElementChild.textContent),
@@ -116,29 +116,29 @@ function selectTable(e) {
   window.location.href = `/menus`;
 }
 
-function addTablesToHTML(tables) {
-  if (tables.length === 0) {
+function addTablesToHTML(tableSessions) {
+  if (tableSessions.length === 0) {
     tablesContainer.innerHTML = "";
     return;
   }
 
   const tablesFrag = document.createDocumentFragment();
 
-  tables.map((table) => {
+  tableSessions.map((tableSession) => {
     const tableCard = document.createElement("div");
     tableCard.className = "table-card";
-    tableCard.dataset.id = table.id;
+    tableCard.dataset.id = tableSession.id;
 
     const tableCardNumber = document.createElement("h2");
     tableCardNumber.className = "table-card__number";
-    tableCardNumber.textContent = table.number;
+    tableCardNumber.textContent = tableSession.number;
 
     tableCard.append(tableCardNumber);
 
-    if (table.name) {
+    if (tableSession.name) {
       const tableCardName = document.createElement("p");
       tableCardName.className = "table-card__name";
-      tableCardName.textContent = table.name;
+      tableCardName.textContent = tableSession.name;
       tableCard.append(tableCardName);
     }
 
@@ -148,9 +148,9 @@ function addTablesToHTML(tables) {
   tablesContainer.replaceChildren(tablesFrag);
 }
 
-async function getTables() {
+async function fetchTableSessionsOpen() {
   try {
-    const response = await fetch(`${API_URL}/api/v1/table`);
+    const response = await fetch(`${API_URL}/api/v1/table-session/open`);
     if (!response.ok) {
       throw {
         status: response.status,
@@ -159,11 +159,11 @@ async function getTables() {
       };
     }
 
-    const tables = await response.json();
-    for (let { number } of tables) {
+    const tableSessions = await response.json();
+    for (let { number } of tableSessions) {
       occupiedTables.push(number);
     }
-    addTablesToHTML(tables);
+    addTablesToHTML(tableSessions);
   } catch (error) {
     console.error(error);
     snackbar.show(
@@ -173,4 +173,4 @@ async function getTables() {
   }
 }
 
-getTables();
+fetchTableSessionsOpen();

@@ -220,7 +220,7 @@ async function setOrderToInProgress(e) {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${pendingOrderItems[itemIndex].tableId}/item/${pendingOrderItems[itemIndex].id}`,
+      `${API_URL}/api/v1/table-session/${pendingOrderItems[itemIndex].tableSessionId}/item/${pendingOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -255,7 +255,7 @@ async function setOrderToPending(e) {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${inProgressOrderItems[itemIndex].tableId}/item/${inProgressOrderItems[itemIndex].id}`,
+      `${API_URL}/api/v1/table-session/${inProgressOrderItems[itemIndex].tableSessionId}/item/${inProgressOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -293,7 +293,7 @@ async function setOrderToDone() {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${inProgressOrderItems[itemIndex].tableId}/item/${inProgressOrderItems[itemIndex].id}`,
+      `${API_URL}/api/v1/table-session/${inProgressOrderItems[itemIndex].tableSessionId}/item/${inProgressOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -319,7 +319,7 @@ async function setOrderToDone() {
       action: async () => {
         try {
           await fetch(
-            `${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`,
+            `${API_URL}/api/v1/table-session/${item.tableSessionId}/item/${item.id}`,
             {
               method: "PATCH",
               headers: {

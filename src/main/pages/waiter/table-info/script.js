@@ -7,7 +7,7 @@ import { getPublicImageUrl, setOptionalImage } from "/scripts/image.js";
 
 const urlParams = new URLSearchParams(window.location.search);
 const pathParts = window.location.pathname.split("/");
-const tableId = pathParts[2];
+const tableSessionId = pathParts[2];
 const tableNumber = urlParams.get("n");
 
 const snackbar = document.querySelector("#snackbar");
@@ -109,7 +109,9 @@ async function fetchItemInfos(id) {
 }
 
 async function fetchTableItems() {
-  const res = await fetch(`${API_URL}/api/v1/table/${tableId}/item`);
+  const res = await fetch(
+    `${API_URL}/api/v1/table-session/${tableSessionId}/item`,
+  );
 
   if (!res.ok) {
     throw {
@@ -327,15 +329,18 @@ function getOrderItemById(orderItemId) {
 }
 
 async function updateOrderStatus(newStatus, item) {
-  await fetch(`${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
+  await fetch(
+    `${API_URL}/api/v1/table-session/${item.tableSessionId}/item/${item.id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: newStatus,
+      }),
     },
-    body: JSON.stringify({
-      status: newStatus,
-    }),
-  });
+  );
 }
 
 async function setOrderToReady() {
@@ -424,7 +429,7 @@ async function setupOrdersPage() {
       tableOrderItems.map(async (item) => {
         const { name, imagePath } = await fetchItemInfos(item.menuItemId);
 
-        const enrichedItem = { ...item, tableId, name, imagePath };
+        const enrichedItem = { ...item, tableSessionId, name, imagePath };
 
         allOrderItems.push(enrichedItem);
       }),

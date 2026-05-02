@@ -7,7 +7,7 @@ import { getPublicImageUrl, setOptionalImage } from "/scripts/image.js";
 
 const urlParams = new URLSearchParams(window.location.search);
 const pathParts = window.location.pathname.split("/");
-const tableId = pathParts[2];
+const tableSessionId = pathParts[2];
 const tableNumber = urlParams.get("n");
 
 const snackbar = document.querySelector("#snackbar");
@@ -100,15 +100,18 @@ async function saveQuantity(e) {
   const quant = quantityInput.value;
 
   try {
-    await fetch(`${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
+    await fetch(
+      `${API_URL}/api/v1/table-session/${item.tableSessionId}/item/${item.id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          quantity: quant,
+        }),
       },
-      body: JSON.stringify({
-        quantity: quant,
-      }),
-    });
+    );
 
     orderInfoQuantity.innerText = `Quantidade: ${quant}`;
     item.quantity = quant;
@@ -174,7 +177,9 @@ async function fetchItemInfos(id) {
 }
 
 async function fetchTableItems() {
-  const res = await fetch(`${API_URL}/api/v1/table/${tableId}/item`);
+  const res = await fetch(
+    `${API_URL}/api/v1/table-session/${tableSessionId}/item`,
+  );
 
   if (!res.ok) {
     throw {
@@ -324,15 +329,18 @@ function getOrderItem(orderId) {
 }
 
 async function updateOrderStatus(newStatus, item) {
-  await fetch(`${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
+  await fetch(
+    `${API_URL}/api/v1/table-session/${item.tableSessionId}/item/${item.id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: newStatus,
+      }),
     },
-    body: JSON.stringify({
-      status: newStatus,
-    }),
-  });
+  );
 }
 
 async function setOrderToCancelled() {

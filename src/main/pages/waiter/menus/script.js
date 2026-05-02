@@ -1,4 +1,4 @@
-if (!sessionStorage.getItem("tableId")) {
+if (!sessionStorage.getItem("tableSessionId")) {
   window.location.href = "/tables?r=mnd";
 }
 

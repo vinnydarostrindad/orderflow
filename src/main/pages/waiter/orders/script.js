@@ -318,15 +318,18 @@ function getOrderItemById(orderItemId) {
 }
 
 async function updateOrderStatus(newStatus, item) {
-  await fetch(`${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
+  await fetch(
+    `${API_URL}/api/v1/table-session/${item.tableSessionId}/item/${item.id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: newStatus,
+      }),
     },
-    body: JSON.stringify({
-      status: newStatus,
-    }),
-  });
+  );
 }
 
 async function setOrderToDelivered() {

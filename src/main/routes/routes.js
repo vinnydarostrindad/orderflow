@@ -102,19 +102,19 @@ const apiRoutes = [
     },
   },
   {
-    pattern: /^\/api\/v1\/table-sessions$/,
+    pattern: /^\/api\/v1\/table-session$/,
     methods: {
       post: tableSessionRoute.post,
     },
   },
   {
-    pattern: /^\/api\/v1\/table-sessions\/open\/?(?:\?.*)?$/,
+    pattern: /^\/api\/v1\/table-session\/open\/?(?:\?.*)?$/,
     methods: {
       get: tableSessionRoute.getOpen,
     },
   },
   {
-    pattern: /^\/api\/v1\/table-sessions\/(?<tableSessionId>[^/]+)\/close$/,
+    pattern: /^\/api\/v1\/table-session\/(?<tableSessionId>[^/]+)\/close$/,
     methods: {
       patch: tableSessionRoute.close,
     },
@@ -156,12 +156,12 @@ const managerPages = [
 
 const waiterPages = [
   {
-    pattern: /^\/tables\/?(?:\?.*)?$/,
+    pattern: /^\/table-sessions\/?(?:\?.*)?$/,
     filePath: "/waiter/tables/index.html",
     role: "waiter",
   },
   {
-    pattern: /^\/table\/(?<tableId>[^/]+)\/?(?:\?.*)?$/,
+    pattern: /^\/table-session\/(?<tableSessionId>[^/]+)\/?(?:\?.*)?$/,
     filePath: "/waiter/table-info/index.html",
     role: "waiter",
   },
@@ -213,7 +213,7 @@ const cashierPages = [
     role: "cashier",
   },
   {
-    pattern: /^\/table\/(?<tableId>[^/]+)\/pagamento?(?:\?.*)?$/,
+    pattern: /^\/table-session\/(?<tableSessionId>[^/]+)\/pagamento?(?:\?.*)?$/,
     filePath: "/cashier/table-payment/index.html",
     role: "cashier",
   },

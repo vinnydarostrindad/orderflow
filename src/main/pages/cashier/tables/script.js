@@ -22,11 +22,11 @@ function goToTable(e) {
   const btn = e.target.closest(".table-card");
   if (!btn) return;
 
-  window.location.href = `http://localhost:3000/table/${btn.dataset.table_id}/pagamento?n=${btn.dataset.table_number}`;
+  window.location.href = `/table-session/${btn.dataset.table_session_id}/pagamento?n=${btn.dataset.table_number}`;
 }
 
-async function fetchTables() {
-  const res = await fetch(`${API_URL}/api/v1/table`);
+async function fetchTableSessionsOpen() {
+  const res = await fetch(`${API_URL}/api/v1/table-session/open`);
 
   if (!res.ok) {
     throw {
@@ -36,8 +36,8 @@ async function fetchTables() {
     };
   }
 
-  const tables = await res.json();
-  return tables;
+  const tableSessions = await res.json();
+  return tableSessions;
 }
 
 function buildOrderedItems(searchText = "") {
@@ -51,20 +51,20 @@ function buildOrderedItems(searchText = "") {
 
   const fragment = document.createDocumentFragment();
 
-  for (let table of filteredTables) {
+  for (let tableSession of filteredTables) {
     const button = document.createElement("button");
-    button.id = String(table.number ?? "");
+    button.id = String(tableSession.number ?? "");
     button.type = "button";
-    button.dataset.table_id = String(table.id ?? "");
-    button.dataset.table_number = String(table.number ?? "");
+    button.dataset.table_session_id = String(tableSession.id ?? "");
+    button.dataset.table_number = String(tableSession.number ?? "");
     button.classList.add("table-card");
     const h4 = document.createElement("h4");
     h4.classList.add("table-card__number");
-    h4.innerText = String(table.number ?? "");
+    h4.innerText = String(tableSession.number ?? "");
     button.append(h4);
-    if (table.name) {
+    if (tableSession.name) {
       const p = document.createElement("p");
-      p.innerText = table.name;
+      p.innerText = tableSession.name;
       p.classList.add("table-card__name");
       button.append(p);
     }
@@ -88,7 +88,7 @@ function renderTables(exists, tablesFrag) {
 
 async function setupOrdersPage() {
   try {
-    tables = await fetchTables();
+    tables = await fetchTableSessionsOpen();
     const tablesFragment = buildOrderedItems();
     renderTables(tables.length > 0, tablesFragment);
 

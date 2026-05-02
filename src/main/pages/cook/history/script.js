@@ -201,7 +201,7 @@ async function setOrderToInProgress(e) {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${readyOrderItems[itemIndex].tableId}/item/${readyOrderItems[itemIndex].id}`,
+      `${API_URL}/api/v1/table-session/${readyOrderItems[itemIndex].tableSessionId}/item/${readyOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
