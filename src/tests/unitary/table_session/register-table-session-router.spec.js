@@ -1,4 +1,4 @@
-import RegisterTableSessionRouter from "../../../presentation/routers/table-session/register-table-session-router.js";
+import RegisterTableSessionRouter from "../../../presentation/routers/table_session/register-table-session-router.js";
 import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
 
