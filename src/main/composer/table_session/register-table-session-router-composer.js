@@ -1,4 +1,4 @@
-import OpenTableSessionRouter from "../../../presentation/routers/table_session/open-table-session-router.js";
+import RegisterTableSessionRouter from "../../../presentation/routers/table_session/register-table-session-router.js";
 import RegisterTableSessionUseCase from "../../../domain/usecase/table_session/register-table-session-usecase.js";
 import TableSessionRepository from "../../../infra/repositories/table-session-repository.js";
 import validators from "../../../utils/validator.js";
@@ -14,11 +14,11 @@ export default {
       idGenerator,
       tableSessionRepository,
     });
-    const openTableSessionRouter = new OpenTableSessionRouter({
+    const registerTableSessionRouter = new RegisterTableSessionRouter({
       registerTableSessionUseCase,
       validators,
     });
 
-    return openTableSessionRouter;
+    return registerTableSessionRouter;
   },
 };
