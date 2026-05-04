@@ -34,7 +34,7 @@ function resetChartSkeleton() {
 
 async function fetchBusiness() {
   try {
-    const response = await fetch(`${API_URL}/api/v1/business`);
+    const response = await fetch(`${API_URL}/api/v1/businesses`);
     return await response.json();
   } catch (error) {
     snackbar.show(
@@ -67,7 +67,7 @@ async function fetchOrderedMenuItems() {
     orderedItems.map(async (orderedItem) => {
       try {
         const response = await fetch(
-          `${API_URL}/api/v1/menu-item/${orderedItem.menuItemId}`,
+          `${API_URL}/api/v1/menu-items/${orderedItem.menuItemId}`,
         );
         return await response.json();
       } catch (error) {

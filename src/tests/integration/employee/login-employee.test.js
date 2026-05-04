@@ -11,11 +11,11 @@ beforeEach(async () => {
   await runMigrations();
 });
 
-describe("POST /api/v1/session", () => {
+describe("POST /api/v1/sessions", () => {
   test("Should return 401 if invalid name is provided", async () => {
     const business = await createBusiness();
 
-    const response = await fetch(`http://localhost:3000/api/v1/session`, {
+    const response = await fetch(`http://localhost:3000/api/v1/sessions`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -42,7 +42,7 @@ describe("POST /api/v1/session", () => {
     const business = await createBusiness();
     const { name, role } = await createEmployee(business.id);
 
-    const response = await fetch(`http://localhost:3000/api/v1/session`, {
+    const response = await fetch(`http://localhost:3000/api/v1/sessions`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -69,7 +69,7 @@ describe("POST /api/v1/session", () => {
     const business = await createBusiness();
     const { name } = await createEmployee(business.id);
 
-    const response = await fetch(`http://localhost:3000/api/v1/session`, {
+    const response = await fetch(`http://localhost:3000/api/v1/sessions`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -96,7 +96,7 @@ describe("POST /api/v1/session", () => {
     const business = await createBusiness();
     const { name, role } = await createEmployee(business.id);
 
-    const response = await fetch(`http://localhost:3000/api/v1/session`, {
+    const response = await fetch(`http://localhost:3000/api/v1/sessions`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({

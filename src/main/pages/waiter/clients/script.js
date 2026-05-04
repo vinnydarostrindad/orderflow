@@ -23,11 +23,11 @@ function goToTable(e) {
   const btn = e.target.closest(".table-card");
   if (!btn) return;
 
-  window.location.href = `/table-session/${btn.dataset.table_session_id}?n=${btn.dataset.table_number}`;
+  window.location.href = `/table-sessions/${btn.dataset.table_session_id}?n=${btn.dataset.table_number}`;
 }
 
 async function fetchTableSessionsOpen() {
-  const res = await fetch(`${API_URL}/api/v1/table-session/open`);
+  const res = await fetch(`${API_URL}/api/v1/table-sessions/open`);
 
   if (!res.ok) {
     throw {

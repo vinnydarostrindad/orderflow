@@ -45,7 +45,7 @@ async function makeOrderItemTestContext(numberOfOrderItems = 1) {
   return { business, menuItem, orderItem, table, tableSession, token };
 }
 
-describe("PATCH /api/v1/table-session/[tableSessionId]/item", () => {
+describe("PATCH /api/v1/table-sessions/[tableSessionId]/items", () => {
   test("Should update order item status, quantity and notes and return 200", async () => {
     const { tableSession, token, orderItem, menuItem } =
       await makeOrderItemTestContext();
@@ -57,7 +57,7 @@ describe("PATCH /api/v1/table-session/[tableSessionId]/item", () => {
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item/${orderItem.id}`,
+      `http://localhost:3000/api/v1/table-sessions/${tableSession.id}/items/${orderItem.id}`,
       {
         method: "PATCH",
         headers: {
@@ -93,7 +93,7 @@ describe("PATCH /api/v1/table-session/[tableSessionId]/item", () => {
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item/${orderItem.id}`,
+      `http://localhost:3000/api/v1/table-sessions/${tableSession.id}/items/${orderItem.id}`,
       {
         method: "PATCH",
         headers: {

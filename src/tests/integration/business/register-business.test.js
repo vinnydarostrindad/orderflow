@@ -11,7 +11,7 @@ beforeEach(async () => {
   await runMigrations();
 });
 
-describe("POST /api/v1/business", () => {
+describe("POST /api/v1/businesses", () => {
   test("Should register a business and return 201 with token", async () => {
     const requestBody = {
       name: "any_name",
@@ -19,7 +19,7 @@ describe("POST /api/v1/business", () => {
       password: "any_password",
     };
 
-    const response = await fetch("http://localhost:3000/api/v1/business", {
+    const response = await fetch("http://localhost:3000/api/v1/businesses", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
@@ -64,7 +64,7 @@ describe("POST /api/v1/business", () => {
       password: "any_password",
     };
 
-    const response = await fetch("http://localhost:3000/api/v1/business", {
+    const response = await fetch("http://localhost:3000/api/v1/businesses", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
@@ -94,7 +94,7 @@ describe("POST /api/v1/business", () => {
       password: "any_password",
     };
 
-    const response = await fetch("http://localhost:3000/api/v1/business", {
+    const response = await fetch("http://localhost:3000/api/v1/businesses", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),

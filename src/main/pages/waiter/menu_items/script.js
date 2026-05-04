@@ -1,5 +1,5 @@
 if (!sessionStorage.getItem("tableSessionId")) {
-  window.location.href = "/tables?r=mnd";
+  window.location.href = "/table-sessions?r=mnd";
 }
 
 import "/waiter/components/nav/script.js";
@@ -133,7 +133,7 @@ function groupItemsByType(menuItems) {
 }
 
 async function fetchMenuItems() {
-  const res = await fetch(`${API_URL}/api/v1/menu/${menuId}/item`);
+  const res = await fetch(`${API_URL}/api/v1/menus/${menuId}/items`);
 
   if (!res.ok) {
     throw {

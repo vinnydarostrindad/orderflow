@@ -46,7 +46,7 @@ async function makeOrderItemTestContext(numberOfOrderItems = 1) {
   return { business, menuItem, orderItem, table, tableSession, token };
 }
 
-describe("POST /api/v1/table-session/[tableSessionId]/item", () => {
+describe("POST /api/v1/table-sessions/[tableSessionId]/items", () => {
   test("Should register a order item and return 201", async () => {
     const { tableSession, menuItem, token } = await makeOrderItemTestContext(0);
 
@@ -59,7 +59,7 @@ describe("POST /api/v1/table-session/[tableSessionId]/item", () => {
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item`,
+      `http://localhost:3000/api/v1/table-sessions/${tableSession.id}/items`,
       {
         method: "POST",
         headers: {

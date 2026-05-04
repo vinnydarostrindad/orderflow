@@ -58,7 +58,7 @@ function organizeOrdersInArray() {
 }
 
 async function fetchItemInfos(id) {
-  const res = await fetch(`${API_URL}/api/v1/menu-item/${id}`);
+  const res = await fetch(`${API_URL}/api/v1/menu-items/${id}`);
 
   if (!res) {
     throw {
@@ -220,7 +220,7 @@ async function setOrderToInProgress(e) {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table-session/${pendingOrderItems[itemIndex].tableSessionId}/item/${pendingOrderItems[itemIndex].id}`,
+      `${API_URL}/api/v1/table-sessions/${pendingOrderItems[itemIndex].tableSessionId}/items/${pendingOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -255,7 +255,7 @@ async function setOrderToPending(e) {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table-session/${inProgressOrderItems[itemIndex].tableSessionId}/item/${inProgressOrderItems[itemIndex].id}`,
+      `${API_URL}/api/v1/table-sessions/${inProgressOrderItems[itemIndex].tableSessionId}/items/${inProgressOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -293,7 +293,7 @@ async function setOrderToDone() {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table-session/${inProgressOrderItems[itemIndex].tableSessionId}/item/${inProgressOrderItems[itemIndex].id}`,
+      `${API_URL}/api/v1/table-sessions/${inProgressOrderItems[itemIndex].tableSessionId}/items/${inProgressOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -319,7 +319,7 @@ async function setOrderToDone() {
       action: async () => {
         try {
           await fetch(
-            `${API_URL}/api/v1/table-session/${item.tableSessionId}/item/${item.id}`,
+            `${API_URL}/api/v1/table-sessions/${item.tableSessionId}/items/${item.id}`,
             {
               method: "PATCH",
               headers: {

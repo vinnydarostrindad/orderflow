@@ -84,7 +84,7 @@ describe("GET /api/v1/ordered-items", () => {
     const { token, tableSession } = await makeOrderItemTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item`,
+      `http://localhost:3000/api/v1/table-sessions/${tableSession.id}/items`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -100,12 +100,12 @@ describe("GET /api/v1/ordered-items", () => {
   });
 });
 
-describe("GET /api/v1/table-session/[tableSessionId]/item", () => {
+describe("GET /api/v1/table-sessions/[tableSessionId]/items", () => {
   test("Should return all menu items with correct data", async () => {
     const { token, menuItem, tableSession } = await makeOrderItemTestContext(2);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item`,
+      `http://localhost:3000/api/v1/table-sessions/${tableSession.id}/items`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -149,7 +149,7 @@ describe("GET /api/v1/table-session/[tableSessionId]/item", () => {
     const { token, tableSession } = await makeOrderItemTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item`,
+      `http://localhost:3000/api/v1/table-sessions/${tableSession.id}/items`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -165,13 +165,13 @@ describe("GET /api/v1/table-session/[tableSessionId]/item", () => {
   });
 });
 
-describe("GET /api/v1/table-session/[tableSessionId]/item/[orderItemId]", () => {
+describe("GET /api/v1/table-sessions/[tableSessionId]/items/[orderItemId]", () => {
   test("Should return correct menu item", async () => {
     const { orderItem, tableSession, menuItem, token } =
       await makeOrderItemTestContext(1);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item/${orderItem.id}`,
+      `http://localhost:3000/api/v1/table-sessions/${tableSession.id}/items/${orderItem.id}`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -207,7 +207,7 @@ describe("GET /api/v1/table-session/[tableSessionId]/item/[orderItemId]", () => 
     const { tableSession, token } = await makeOrderItemTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table-session/${tableSession.id}/item/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/table-sessions/${tableSession.id}/items/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
       {
         headers: {
           cookie: `token=${token}`,

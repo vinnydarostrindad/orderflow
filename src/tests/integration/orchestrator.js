@@ -19,7 +19,7 @@ function generateAuthCookie(payload) {
 }
 
 async function createBusiness(props = {}) {
-  const response = await fetch("http://localhost:3000/api/v1/business", {
+  const response = await fetch("http://localhost:3000/api/v1/businesses", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -37,7 +37,7 @@ async function createBusiness(props = {}) {
 async function createEmployee(businessId, quantity = 1, props = {}) {
   let employees = [];
   for (let i = 0; i < quantity; i++) {
-    const response = await fetch(`http://localhost:3000/api/v1/employee`, {
+    const response = await fetch(`http://localhost:3000/api/v1/employees`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -56,7 +56,7 @@ async function createEmployee(businessId, quantity = 1, props = {}) {
 async function createMenu(businessId, quantity = 1, props = {}, token) {
   let menus = [];
   for (let i = 0; i < quantity; i++) {
-    const response = await fetch(`http://localhost:3000/api/v1/menu`, {
+    const response = await fetch(`http://localhost:3000/api/v1/menus`, {
       method: "POST",
       headers: { "content-type": "application/json", cookie: `token=${token}` },
       body: JSON.stringify({
@@ -80,7 +80,7 @@ async function createMenuItem(
   let menuItems = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
-      `http://localhost:3000/api/v1/menu/${menuId}/item`,
+      `http://localhost:3000/api/v1/menus/${menuId}/items`,
       {
         method: "POST",
         headers: {
@@ -106,7 +106,7 @@ async function createMenuItem(
 async function createTable(businessId, quantity = 1, props = {}, token) {
   let tables = [];
   for (let i = 0; i < quantity; i++) {
-    const response = await fetch(`http://localhost:3000/api/v1/table`, {
+    const response = await fetch(`http://localhost:3000/api/v1/tables`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -151,7 +151,7 @@ async function createOrderItem(
   let orderItems = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
-      `http://localhost:3000/api/v1/table-session/${tableSessionId}/item`,
+      `http://localhost:3000/api/v1/table-sessions/${tableSessionId}/items`,
       {
         method: "POST",
         headers: {

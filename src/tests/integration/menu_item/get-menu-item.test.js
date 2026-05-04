@@ -34,12 +34,12 @@ async function makeMenuItemTestContext(numberOfMenuItems = 1) {
   return { business, menu, menuItem, token };
 }
 
-describe("GET /api/v1/menu-item/[menuItemId]", () => {
+describe("GET /api/v1/menu-items/[menuItemId]", () => {
   test("Should return menu item with correct data", async () => {
     const { menu, menuItem, token } = await makeMenuItemTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/menu-item/${menuItem.id}`,
+      `http://localhost:3000/api/v1/menu-items/${menuItem.id}`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -78,7 +78,7 @@ describe("GET /api/v1/menu-item/[menuItemId]", () => {
     const { token } = await makeMenuItemTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/menu-item/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/menu-items/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -99,12 +99,12 @@ describe("GET /api/v1/menu-item/[menuItemId]", () => {
   });
 });
 
-describe("GET /api/v1/menu/[menuId]/item", () => {
+describe("GET /api/v1/menus/[menuId]/items", () => {
   test("Should return all menu items with correct data", async () => {
     const { menu, token } = await makeMenuItemTestContext(2);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/menu/${menu.id}/item`,
+      `http://localhost:3000/api/v1/menus/${menu.id}/items`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -150,7 +150,7 @@ describe("GET /api/v1/menu/[menuId]/item", () => {
     const { menu, token } = await makeMenuItemTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/menu/${menu.id}/item`,
+      `http://localhost:3000/api/v1/menus/${menu.id}/items`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -166,12 +166,12 @@ describe("GET /api/v1/menu/[menuId]/item", () => {
   });
 });
 
-describe("GET /api/v1/menu/[menuId]/item/[menuItemId]", () => {
+describe("GET /api/v1/menus/[menuId]/items/[menuItemId]", () => {
   test("Should return correct menu item", async () => {
     const { menu, menuItem, token } = await makeMenuItemTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/menu/${menu.id}/item/${menuItem.id}`,
+      `http://localhost:3000/api/v1/menus/${menu.id}/items/${menuItem.id}`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -207,7 +207,7 @@ describe("GET /api/v1/menu/[menuId]/item/[menuItemId]", () => {
     const { menu, token } = await makeMenuItemTestContext(1);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/menu/${menu.id}/item/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/menus/${menu.id}/items/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
       {
         headers: {
           cookie: `token=${token}`,

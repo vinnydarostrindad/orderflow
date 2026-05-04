@@ -25,7 +25,7 @@ async function makeEmployeeTestContext(numberOfEmployees = 1, props) {
   return { business, employee, token };
 }
 
-describe("POST /api/v1/employee", () => {
+describe("POST /api/v1/employees", () => {
   test("Should register a employee correctly via api", async () => {
     const { business, token } = await makeEmployeeTestContext(0);
 
@@ -36,7 +36,7 @@ describe("POST /api/v1/employee", () => {
       businessId: business.id,
     };
 
-    const response = await fetch(`http://localhost:3000/api/v1/employee`, {
+    const response = await fetch(`http://localhost:3000/api/v1/employees`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -86,7 +86,7 @@ describe("POST /api/v1/employee", () => {
       businessId: business.id,
     };
 
-    const response = await fetch(`http://localhost:3000/api/v1/employee`, {
+    const response = await fetch(`http://localhost:3000/api/v1/employees`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -62,7 +62,7 @@ function organizeOrdersInArray() {
 }
 
 async function fetchItemInfos(id) {
-  const res = await fetch(`${API_URL}/api/v1/menu-item/${id}`);
+  const res = await fetch(`${API_URL}/api/v1/menu-items/${id}`);
 
   if (!res) {
     throw {
@@ -201,7 +201,7 @@ async function setOrderToInProgress(e) {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table-session/${readyOrderItems[itemIndex].tableSessionId}/item/${readyOrderItems[itemIndex].id}`,
+      `${API_URL}/api/v1/table-sessions/${readyOrderItems[itemIndex].tableSessionId}/items/${readyOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {

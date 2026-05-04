@@ -26,7 +26,7 @@ async function makeTableTestContext(numberOfTables = 1, props) {
   return { business, token, table };
 }
 
-describe("POST /api/v1/business/[businessId]/table", () => {
+describe("POST /api/v1/businesses/[businessId]/tables", () => {
   test("Should register a table and return 201", async () => {
     const { business, token } = await makeTableTestContext(0);
 
@@ -34,7 +34,7 @@ describe("POST /api/v1/business/[businessId]/table", () => {
       number: 1,
     };
 
-    const response = await fetch(`http://localhost:3000/api/v1/table`, {
+    const response = await fetch(`http://localhost:3000/api/v1/tables`, {
       method: "POST",
       headers: { "Content-Type": "application/json", cookie: `token=${token}` },
       body: JSON.stringify(requestBody),
@@ -71,7 +71,7 @@ describe("POST /api/v1/business/[businessId]/table", () => {
       number: 1,
     };
 
-    const response = await fetch(`http://localhost:3000/api/v1/table`, {
+    const response = await fetch(`http://localhost:3000/api/v1/tables`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

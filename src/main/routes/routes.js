@@ -16,53 +16,54 @@ const apiRoutes = [
     },
   },
   {
-    pattern: /^\/api\/v1\/business$/,
+    pattern: /^\/api\/v1\/businesses$/,
     methods: {
       get: businessRoute.getOne,
       post: businessRoute.post,
     },
   },
   {
-    pattern: /^\/api\/v1\/employee$/,
+    pattern: /^\/api\/v1\/employees$/,
     methods: {
       get: employeeRoute.getAll,
       post: employeeRoute.post,
     },
   },
   {
-    pattern: /^\/api\/v1\/employee\/(?<employeeId>[^/]+)$/,
+    pattern: /^\/api\/v1\/employees\/(?<employeeId>[^/]+)$/,
     methods: {
       get: employeeRoute.getOne,
     },
   },
   {
-    pattern: /^\/api\/v1\/menu$/,
+    pattern: /^\/api\/v1\/menus$/,
     methods: {
       get: menuRoute.getAll,
       post: menuRoute.post,
     },
   },
   {
-    pattern: /^\/api\/v1\/menu\/(?<menuId>[^/]+)$/,
+    pattern: /^\/api\/v1\/menus\/(?<menuId>[^/]+)$/,
     methods: {
       get: menuRoute.getOne,
     },
   },
   {
-    pattern: /^\/api\/v1\/menu\/(?<menuId>[^/]+)\/item$/,
+    pattern: /^\/api\/v1\/menus\/(?<menuId>[^/]+)\/items$/,
     methods: {
       get: menuItemRoute.getAll,
       post: menuItemRoute.post,
     },
   },
   {
-    pattern: /^\/api\/v1\/menu\/(?<menuId>[^/]+)\/item\/(?<menuItemId>[^/]+)$/,
+    pattern:
+      /^\/api\/v1\/menus\/(?<menuId>[^/]+)\/items\/(?<menuItemId>[^/]+)$/,
     methods: {
       get: menuItemRoute.getOne,
     },
   },
   {
-    pattern: /^\/api\/v1\/menu-item\/(?<menuItemId>[^/]+)$/,
+    pattern: /^\/api\/v1\/menu-items\/(?<menuItemId>[^/]+)$/,
     methods: {
       get: menuItemRoute.getOne,
     },
@@ -74,20 +75,20 @@ const apiRoutes = [
     },
   },
   {
-    pattern: /^\/api\/v1\/table$/,
+    pattern: /^\/api\/v1\/tables$/,
     methods: {
       get: tableRoute.getAll,
       post: tableRoute.post,
     },
   },
   {
-    pattern: /^\/api\/v1\/table\/(?<tableId>[^/]+)$/,
+    pattern: /^\/api\/v1\/tables\/(?<tableId>[^/]+)$/,
     methods: {
       get: tableRoute.getOne,
     },
   },
   {
-    pattern: /^\/api\/v1\/table-session\/(?<tableSessionId>[^/]+)\/item$/,
+    pattern: /^\/api\/v1\/table-sessions\/(?<tableSessionId>[^/]+)\/items$/,
     methods: {
       get: orderItemRoute.getAll,
       post: orderItemRoute.post,
@@ -95,32 +96,32 @@ const apiRoutes = [
   },
   {
     pattern:
-      /^\/api\/v1\/table-session\/(?<tableSessionId>[^/]+)\/item\/(?<orderItemId>[^/]+)$/,
+      /^\/api\/v1\/table-sessions\/(?<tableSessionId>[^/]+)\/items\/(?<orderItemId>[^/]+)$/,
     methods: {
       get: orderItemRoute.getOne,
       patch: orderItemRoute.patch,
     },
   },
   {
-    pattern: /^\/api\/v1\/table-session$/,
+    pattern: /^\/api\/v1\/table-sessions$/,
     methods: {
       post: tableSessionRoute.post,
     },
   },
   {
-    pattern: /^\/api\/v1\/table-session\/open\/?(?:\?.*)?$/,
+    pattern: /^\/api\/v1\/table-sessions\/open\/?(?:\?.*)?$/,
     methods: {
       get: tableSessionRoute.getOpen,
     },
   },
   {
-    pattern: /^\/api\/v1\/table-session\/(?<tableSessionId>[^/]+)\/close$/,
+    pattern: /^\/api\/v1\/table-sessions\/(?<tableSessionId>[^/]+)\/close$/,
     methods: {
       patch: tableSessionRoute.close,
     },
   },
   {
-    pattern: /^\/api\/v1\/session$/,
+    pattern: /^\/api\/v1\/sessions$/,
     methods: {
       post: employeeRoute.login,
     },
@@ -161,7 +162,7 @@ const waiterPages = [
     role: "waiter",
   },
   {
-    pattern: /^\/table-session\/(?<tableSessionId>[^/]+)\/?(?:\?.*)?$/,
+    pattern: /^\/table-sessions\/(?<tableSessionId>[^/]+)\/?(?:\?.*)?$/,
     filePath: "/waiter/table-info/index.html",
     role: "waiter",
   },
@@ -213,7 +214,8 @@ const cashierPages = [
     role: "cashier",
   },
   {
-    pattern: /^\/table-session\/(?<tableSessionId>[^/]+)\/pagamento?(?:\?.*)?$/,
+    pattern:
+      /^\/table-sessions\/(?<tableSessionId>[^/]+)\/pagamento?(?:\?.*)?$/,
     filePath: "/cashier/table-payment/index.html",
     role: "cashier",
   },

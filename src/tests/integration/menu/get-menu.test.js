@@ -26,11 +26,11 @@ async function makeMenuTestContext(numberOfMenus = 1) {
   return { business, menu, token };
 }
 
-describe("GET /api/v1/menu", () => {
+describe("GET /api/v1/menus", () => {
   test("Should return all menus with correct data", async () => {
     const { business, token } = await makeMenuTestContext(2);
 
-    const response = await fetch(`http://localhost:3000/api/v1/menu`, {
+    const response = await fetch(`http://localhost:3000/api/v1/menus`, {
       headers: {
         cookie: `token=${token}`,
       },
@@ -69,7 +69,7 @@ describe("GET /api/v1/menu", () => {
   test("Should return an empty array", async () => {
     const { token } = await makeMenuTestContext(0);
 
-    const response = await fetch(`http://localhost:3000/api/v1/menu`, {
+    const response = await fetch(`http://localhost:3000/api/v1/menus`, {
       headers: {
         cookie: `token=${token}`,
       },
@@ -83,12 +83,12 @@ describe("GET /api/v1/menu", () => {
   });
 });
 
-describe("GET /api/v1/menu/[menuId]", () => {
+describe("GET /api/v1/menus/[menuId]", () => {
   test("Should return correct menu", async () => {
     const { business, menu, token } = await makeMenuTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/menu/${menu.id}`,
+      `http://localhost:3000/api/v1/menus/${menu.id}`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -123,7 +123,7 @@ describe("GET /api/v1/menu/[menuId]", () => {
     const { token } = await makeMenuTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/menu/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/menus/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
       {
         headers: {
           cookie: `token=${token}`,

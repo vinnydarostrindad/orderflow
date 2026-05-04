@@ -24,10 +24,10 @@ async function makeBusinessTestContext() {
   return { business, token };
 }
 
-describe("GET /api/v1/business", () => {
+describe("GET /api/v1/businesses", () => {
   test("Should return business correctly", async () => {
     const { business, token } = await makeBusinessTestContext();
-    const response = await fetch(`http://localhost:3000/api/v1/business`, {
+    const response = await fetch(`http://localhost:3000/api/v1/businesses`, {
       headers: {
         cookie: `token=${token}`,
       },

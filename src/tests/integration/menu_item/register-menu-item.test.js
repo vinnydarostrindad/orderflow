@@ -34,7 +34,7 @@ async function makeMenuItemTestContext(numberOfMenuItems = 1, props) {
   return { business, menu, menuItem, token };
 }
 
-describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
+describe("POST /api/v1/businesses/[businessId]/menus/[menuId]/items", () => {
   test("Should register a menu and return 201", async () => {
     const { menu, token } = await makeMenuItemTestContext(0);
 
@@ -47,7 +47,7 @@ describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/menu/${menu.id}/item`,
+      `http://localhost:3000/api/v1/menus/${menu.id}/items`,
       {
         method: "POST",
         headers: {
@@ -101,7 +101,7 @@ describe("POST /api/v1/business/[businessId]/menu/[menuId]/item", () => {
     };
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/menu/${menu.id}/item`,
+      `http://localhost:3000/api/v1/menus/${menu.id}/items`,
       {
         method: "POST",
         headers: {

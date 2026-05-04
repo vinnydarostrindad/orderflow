@@ -101,7 +101,7 @@ async function saveQuantity(e) {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table-session/${item.tableSessionId}/item/${item.id}`,
+      `${API_URL}/api/v1/table-sessions/${item.tableSessionId}/items/${item.id}`,
       {
         method: "PATCH",
         headers: {
@@ -162,7 +162,7 @@ function organizeOrdersInArray() {
 }
 
 async function fetchItemInfos(id) {
-  const res = await fetch(`${API_URL}/api/v1/menu-item/${id}`);
+  const res = await fetch(`${API_URL}/api/v1/menu-items/${id}`);
 
   if (!res) {
     throw {
@@ -178,7 +178,7 @@ async function fetchItemInfos(id) {
 
 async function fetchTableItems() {
   const res = await fetch(
-    `${API_URL}/api/v1/table-session/${tableSessionId}/item`,
+    `${API_URL}/api/v1/table-sessions/${tableSessionId}/items`,
   );
 
   if (!res.ok) {
@@ -330,7 +330,7 @@ function getOrderItem(orderId) {
 
 async function updateOrderStatus(newStatus, item) {
   await fetch(
-    `${API_URL}/api/v1/table-session/${item.tableSessionId}/item/${item.id}`,
+    `${API_URL}/api/v1/table-sessions/${item.tableSessionId}/items/${item.id}`,
     {
       method: "PATCH",
       headers: {

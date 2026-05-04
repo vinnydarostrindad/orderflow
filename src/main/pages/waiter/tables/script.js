@@ -48,7 +48,7 @@ async function postTableSession(e) {
   const name = addTableNameModalInput.value || null;
 
   try {
-    const response = await fetch(`${API_URL}/api/v1/table-session`, {
+    const response = await fetch(`${API_URL}/api/v1/table-sessions`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ number, name }),
@@ -150,7 +150,7 @@ function addTablesToHTML(tableSessions) {
 
 async function fetchTableSessionsOpen() {
   try {
-    const response = await fetch(`${API_URL}/api/v1/table-session/open`);
+    const response = await fetch(`${API_URL}/api/v1/table-sessions/open`);
     if (!response.ok) {
       throw {
         status: response.status,

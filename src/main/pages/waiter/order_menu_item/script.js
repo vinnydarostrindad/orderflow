@@ -1,5 +1,5 @@
 if (!sessionStorage.getItem("tableSessionId")) {
-  window.location.href = "/tables?r=mnd";
+  window.location.href = "/table-sessions?r=mnd";
 }
 
 import "/waiter/components/nav/script.js";
@@ -40,7 +40,7 @@ async function postOrder() {
 
   try {
     const orderItemResponse = await fetch(
-      `${API_URL}/api/v1/table-session/${tableSessionId}/item`,
+      `${API_URL}/api/v1/table-sessions/${tableSessionId}/items`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -146,7 +146,7 @@ function populateMenuItem({
 async function getMenuItem() {
   try {
     const response = await fetch(
-      `${API_URL}/api/v1/menu/${menuId}/item/${menuItemId}`,
+      `${API_URL}/api/v1/menus/${menuId}/items/${menuItemId}`,
     );
 
     if (!response.ok) {
