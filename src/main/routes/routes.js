@@ -109,7 +109,7 @@ const apiRoutes = [
     },
   },
   {
-    pattern: /^\/api\/v1\/table-sessions\/open\/?(?:\?.*)?$/,
+    pattern: /^\/api\/v1\/table-sessions\/(?<tableId>[^/]+)$/,
     methods: {
       get: tableSessionRoute.getOpen,
     },

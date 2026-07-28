@@ -43,25 +43,25 @@ describe("POST /api/v1/businesses/[businessId]/tables", () => {
     expect(response.status).toBe(201);
 
     const responseBody = await response.json();
-    const menu = responseBody;
+    const table = responseBody;
 
-    expect(menu).toMatchObject({
-      id: menu.id,
+    expect(table).toMatchObject({
+      id: table.id,
       business_id: business.id,
       number: requestBody.number,
     });
 
-    expect(typeof menu.id).toBe("string");
-    expect(uuidVersion(menu.id)).toBe(4);
+    expect(typeof table.id).toBe("string");
+    expect(uuidVersion(table.id)).toBe(4);
 
-    expect(typeof menu.business_id).toBe("string");
-    expect(uuidVersion(menu.business_id)).toBe(4);
+    expect(typeof table.business_id).toBe("string");
+    expect(uuidVersion(table.business_id)).toBe(4);
 
-    expect(typeof menu.created_at).toBe("string");
-    expect(Date.parse(menu.created_at)).not.toBeNaN();
+    expect(typeof table.created_at).toBe("string");
+    expect(Date.parse(table.created_at)).not.toBeNaN();
 
-    expect(typeof menu.updated_at).toBe("string");
-    expect(Date.parse(menu.updated_at)).not.toBeNaN();
+    expect(typeof table.updated_at).toBe("string");
+    expect(Date.parse(table.updated_at)).not.toBeNaN();
   });
 
   test("Should return ValidationError if number already exists in business", async () => {

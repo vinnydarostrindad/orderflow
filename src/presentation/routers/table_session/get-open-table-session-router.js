@@ -9,7 +9,7 @@ export default class GetOpenTableSessionRouter {
   }
 
   async route(httpRequest) {
-    const { tableId } = httpRequest.query;
+    const { tableId } = httpRequest.params;
 
     if (!tableId) {
       return httpResponse.badRequest(new MissingParamError("tableId"));
@@ -25,7 +25,7 @@ export default class GetOpenTableSessionRouter {
     if (!tableSession) {
       return httpResponse.notFound(
         "TableSession",
-        "Make sure the session is open.",
+        "Make sure the table session is open.",
       );
     }
 

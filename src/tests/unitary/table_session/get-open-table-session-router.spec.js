@@ -76,7 +76,7 @@ describe("Get Open Table Session Router", () => {
   test("Should return 400 if no tableId is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      query: {},
+      params: {},
     };
 
     const httpResponse = await sut.route(httpRequest);
@@ -87,7 +87,7 @@ describe("Get Open Table Session Router", () => {
   test("Should return 400 if tableId is invalid", async () => {
     const { sut, validatorsSpy } = makeSut();
     const httpRequest = {
-      query: {
+      params: {
         tableId: "invalid_table_id",
       },
     };
@@ -102,21 +102,21 @@ describe("Get Open Table Session Router", () => {
   test("Should call getOpenTableSessionUseCase with correct params", async () => {
     const { sut, getOpenTableSessionUseCaseSpy } = makeSut();
     const httpRequest = {
-      query: {
+      params: {
         tableId: "valid_table_id",
       },
     };
 
     await sut.route(httpRequest);
     expect(getOpenTableSessionUseCaseSpy.tableId).toBe(
-      httpRequest.query.tableId,
+      httpRequest.params.tableId,
     );
   });
 
   test("Should return 200 with open table session if exists", async () => {
     const { sut } = makeSut();
     const httpRequest = {
-      query: {
+      params: {
         tableId: "valid_table_id",
       },
     };
@@ -136,7 +136,7 @@ describe("Get Open Table Session Router", () => {
   test("Should return 404 if no open session is found", async () => {
     const { sut, getOpenTableSessionUseCaseSpy } = makeSut();
     const httpRequest = {
-      query: {
+      params: {
         tableId: "valid_table_id",
       },
     };
@@ -165,7 +165,7 @@ describe("Get Open Table Session Router", () => {
     ];
 
     const httpRequest = {
-      query: {
+      params: {
         tableId: "valid_table_id",
       },
     };
@@ -187,7 +187,7 @@ describe("Get Open Table Session Router", () => {
     ];
 
     const httpRequest = {
-      query: {
+      params: {
         tableId: "valid_table_id",
       },
     };
