@@ -30,7 +30,7 @@ async function makeOrderItemTestContext(numberOfOrderItems = 1) {
   const table = await createTable(business.id, 1, {}, token);
   const tableSession = await createTableSession(
     business.id,
-    table.id,
+    [table.id],
     {},
     token,
   );

@@ -39,19 +39,21 @@ function closeModals(e) {
   addTableNameModal.classList.add("table-name-modal--hidden");
   modalBg.classList.add("modal-bg--hidden");
   addTableNameModalInput.value = "";
-  tableNameInputContinueBtn.removeAttribute("data-number");
+  tableNameInputContinueBtn.removeAttribute("data-table-id");
   document.body.style.overflow = "";
 }
 
 async function postTableSession(e) {
-  const number = e.target.dataset.number;
+  console.log(e.target);
+  const tableId = e.target.dataset.tableId;
+  console.log(tableId);
   const name = addTableNameModalInput.value || null;
 
   try {
     const response = await fetch(`${API_URL}/api/v1/table-sessions`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ number, name }),
+      body: JSON.stringify({ tableId, name }),
     });
 
     if (!response.ok) {
@@ -97,8 +99,8 @@ function addName(e) {
   const numberClicked = e.target.closest(".all-tables-modal__table-number");
   if (!numberClicked || numberClicked.hasAttribute("disabled")) return;
 
-  const number = numberClicked.textContent;
-  tableNameInputContinueBtn.setAttribute("data-number", number);
+  const tableId = numberClicked.dataset.tableId;
+  tableNameInputContinueBtn.setAttribute("data-table-id", tableId);
 
   toggleAllTablesModal();
   toggleTableNameInput();
@@ -116,7 +118,7 @@ function selectTable(e) {
   window.location.href = `/menus`;
 }
 
-function addTablesToHTML(tableSessions) {
+function addTablesSessionToHTML(tableSessions) {
   if (tableSessions.length === 0) {
     tablesContainer.innerHTML = "";
     return;
@@ -124,7 +126,7 @@ function addTablesToHTML(tableSessions) {
 
   const tablesFrag = document.createDocumentFragment();
 
-  tableSessions.map((tableSession) => {
+  tableSessions.forEach((tableSession) => {
     const tableCard = document.createElement("div");
     tableCard.className = "table-card";
     tableCard.dataset.id = tableSession.id;
@@ -148,6 +150,28 @@ function addTablesToHTML(tableSessions) {
   tablesContainer.replaceChildren(tablesFrag);
 }
 
+function addTablesToHTML(tables) {
+  if (tables.length === 0) {
+    allTablesModal.innerHTML = `
+      <p>Parece que não há a existência de nenhuma mesa no momento</p>
+    `;
+    return;
+  }
+
+  const tablesFrag = document.createDocumentFragment();
+  tables.forEach((table) => {
+    const button = document.createElement("button");
+
+    button.className = "all-tables-modal__table-number";
+    button.dataset.tableId = table.id;
+    button.textContent = table.number;
+
+    tablesFrag.append(button);
+  });
+
+  allTablesModal.append(tablesFrag);
+}
+
 async function fetchTableSessionsOpen() {
   try {
     const response = await fetch(`${API_URL}/api/v1/table-sessions/open`);
@@ -163,7 +187,7 @@ async function fetchTableSessionsOpen() {
     for (let { number } of tableSessions) {
       occupiedTables.push(number);
     }
-    addTablesToHTML(tableSessions);
+    addTablesSessionToHTML(tableSessions);
   } catch (error) {
     console.error(error);
     snackbar.show(
@@ -173,4 +197,23 @@ async function fetchTableSessionsOpen() {
   }
 }
 
-fetchTableSessionsOpen();
+async function fetchTables() {
+  const response = await fetch(`${API_URL}/api/v1/tables`);
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      statusText: response.statusText,
+      url: response.url,
+    };
+  }
+  const tables = await response.json();
+
+  addTablesToHTML(tables);
+}
+
+async function setupPage() {
+  await fetchTables();
+  await fetchTableSessionsOpen();
+}
+
+setupPage();

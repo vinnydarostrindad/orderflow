@@ -46,6 +46,33 @@ export default class TableSessionRepository {
     return result.rows[0];
   }
 
+  async findAllOpen(businessId) {
+    if (!businessId) throw new MissingParamError("businessId");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          table_sessions.*,
+          tables.number AS table_number
+        FROM
+          table_sessions
+        INNER JOIN
+          tables
+        ON
+          tables.id = table_sessions.table_id
+        WHERE
+          tables.business_id = $1
+          AND table_sessions.status = 'open'
+        ORDER BY
+          tables.number ASC,
+          table_sessions.opened_at DESC
+      ;`,
+      values: [businessId],
+    });
+
+    return result.rows;
+  }
+
   async close(tableSessionId) {
     if (!tableSessionId) throw new MissingParamError("tableSessionId");
 

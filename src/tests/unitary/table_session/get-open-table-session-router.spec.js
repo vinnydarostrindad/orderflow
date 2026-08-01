@@ -81,7 +81,7 @@ describe("Get Open Table Session Router", () => {
 
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError("tableId"));
+    expect(httpResponse.body).toEqual(new MissingParamError("businessId"));
   });
 
   test("Should return 400 if tableId is invalid", async () => {

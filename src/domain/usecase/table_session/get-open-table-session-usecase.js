@@ -5,8 +5,15 @@ export default class GetOpenTableSessionUseCase {
     this.tableSessionRepository = tableSessionRepository;
   }
 
-  async execute({ tableId } = {}) {
-    if (!tableId) throw new MissingParamError("tableId");
+  async execute({ businessId, tableId } = {}) {
+    if (!tableId) {
+      if (!businessId) throw new MissingParamError("businessId");
+
+      const tableSessions =
+        await this.tableSessionRepository.findAllOpen(businessId);
+
+      return tableSessions;
+    }
 
     const tableSession =
       await this.tableSessionRepository.findOpenByTableId(tableId);

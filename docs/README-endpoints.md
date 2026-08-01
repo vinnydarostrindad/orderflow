@@ -20,7 +20,11 @@ Este documento descreve o padrao de endpoints usado no projeto, com foco nos rec
   - Body: { tableId, name? }
   - Abre uma sessao para uma mesa
 
-- GET /api/v1/table-sessions/open?tableId=:tableId
+- GET /api/v1/table-sessions/open
+
+  - Lista todas as sessoes abertas do business
+
+- GET /api/v1/table-sessions/:tableId
 
   - Retorna a sessao aberta da mesa (se existir)
 

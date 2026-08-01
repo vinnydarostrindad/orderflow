@@ -8,7 +8,12 @@ const tableSessionRoute = {
       registerTableSessionRouterComposer.execute();
     return await registerTableSessionRouter.route(httpRequest);
   },
-  getOpen: async (httpRequest) => {
+  getAll: async (httpRequest) => {
+    const getOpenTableSessionRouter =
+      getOpenTableSessionRouterComposer.execute();
+    return await getOpenTableSessionRouter.route(httpRequest);
+  },
+  getOne: async (httpRequest) => {
     const getOpenTableSessionRouter =
       getOpenTableSessionRouterComposer.execute();
     return await getOpenTableSessionRouter.route(httpRequest);

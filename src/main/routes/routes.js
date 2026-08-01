@@ -109,9 +109,15 @@ const apiRoutes = [
     },
   },
   {
+    pattern: /^\/api\/v1\/table-sessions\/open$/,
+    methods: {
+      get: tableSessionRoute.getAll,
+    },
+  },
+  {
     pattern: /^\/api\/v1\/table-sessions\/(?<tableId>[^/]+)$/,
     methods: {
-      get: tableSessionRoute.getOpen,
+      get: tableSessionRoute.getOne,
     },
   },
   {

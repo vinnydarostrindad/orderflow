@@ -25,7 +25,7 @@ async function makeCloseTableSessionTestContext(numberOfTables = 1, props) {
   const table = await createTable(business.id, numberOfTables, props, token);
   const tableSession = await createTableSession(
     business_id,
-    table.id,
+    [table.id],
     {},
     token,
   );

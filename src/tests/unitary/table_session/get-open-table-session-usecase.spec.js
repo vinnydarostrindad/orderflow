@@ -18,6 +18,11 @@ const makeTableSessionRepository = () => {
       this.tableId = tableId;
       return this.tableSession;
     }
+
+    async findAllOpen(businessId) {
+      this.businessId = businessId;
+      return this.tableSessions;
+    }
   }
 
   const tableSessionRepositorySpy = new TableSessionRepositorySpy();
@@ -27,6 +32,9 @@ const makeTableSessionRepository = () => {
     name: "any_name",
     status: "open",
   };
+  tableSessionRepositorySpy.tableSessions = [
+    tableSessionRepositorySpy.tableSession,
+  ];
 
   return tableSessionRepositorySpy;
 };
@@ -72,7 +80,7 @@ describe("Get Open Table Session UseCase", () => {
   test("Should throw if no props are provided", async () => {
     const { sut } = makeSut();
     await expect(sut.execute()).rejects.toThrow(
-      new MissingParamError("tableId"),
+      new MissingParamError("businessId"),
     );
   });
 
@@ -81,8 +89,24 @@ describe("Get Open Table Session UseCase", () => {
     const props = {};
 
     await expect(sut.execute(props)).rejects.toThrow(
-      new MissingParamError("tableId"),
+      new MissingParamError("businessId"),
     );
+  });
+
+  test("Should return open sessions if businessId is provided and tableId is not", async () => {
+    const { sut, tableSessionRepositorySpy } = makeSut();
+
+    const tableSessions = await sut.execute({ businessId: "any_business_id" });
+
+    expect(tableSessions).toEqual([
+      {
+        id: "any_table_session_id",
+        table_id: "any_table_id",
+        name: "any_name",
+        status: "open",
+      },
+    ]);
+    expect(tableSessionRepositorySpy.businessId).toBe("any_business_id");
   });
 
   test("Should call tableSessionRepository with correct values", async () => {
