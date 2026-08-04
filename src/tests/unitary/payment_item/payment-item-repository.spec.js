@@ -29,6 +29,7 @@ const makePostgresAdapter = () => {
         order_item_id: "any_order_item_id",
         quantity: 1,
         amount: 20,
+        created_at: "any_date",
       },
     ],
   };
@@ -63,6 +64,7 @@ describe("PaymentItem Repository", () => {
         order_item_id: "any_order_item_id",
         quantity: 1,
         amount: 20,
+        created_at: "any_date",
       });
     });
 
@@ -179,6 +181,104 @@ describe("PaymentItem Repository", () => {
     });
   });
 
+  describe("findById Method", () => {
+    test("Should throw if no paymentId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.findById()).rejects.toThrow(
+        new MissingParamError("paymentId"),
+      );
+    });
+
+    test("Should throw if no paymentItemId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.findById("any_payment_id")).rejects.toThrow(
+        new MissingParamError("paymentItemId"),
+      );
+    });
+
+    test("Should call postgresAdapter with correct values", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+
+      await sut.findById("any_payment_id", "any_payment_item_id");
+
+      expect(postgresAdapterSpy.queryObject).toEqual({
+        text: `
+        SELECT
+          *
+        FROM
+          payment_items
+        WHERE
+          payment_id = $1 AND id = $2
+        LIMIT
+          1
+      ;`,
+        values: ["any_payment_id", "any_payment_item_id"],
+      });
+    });
+
+    test("Should return payment item correctly", async () => {
+      const { sut } = makeSut();
+
+      const paymentItem = await sut.findById(
+        "any_payment_id",
+        "any_payment_item_id",
+      );
+      expect(paymentItem).toEqual({
+        id: "any_payment_item_id",
+        payment_id: "any_payment_id",
+        order_item_id: "any_order_item_id",
+        quantity: 1,
+        amount: 20,
+        created_at: "any_date",
+      });
+    });
+  });
+
+  describe("findAllByPaymentId Method", () => {
+    test("Should throw if no paymentId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.findAllByPaymentId()).rejects.toThrow(
+        new MissingParamError("paymentId"),
+      );
+    });
+
+    test("Should call postgresAdapter with correct values", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+
+      await sut.findAllByPaymentId("any_payment_id");
+
+      expect(postgresAdapterSpy.queryObject).toEqual({
+        text: `
+        SELECT
+          *
+        FROM
+          payment_items
+        WHERE
+          payment_id = $1
+      ;`,
+        values: ["any_payment_id"],
+      });
+    });
+
+    test("Should return payment items correctly", async () => {
+      const { sut } = makeSut();
+
+      const paymentItems = await sut.findAllByPaymentId("any_payment_id");
+      expect(Array.isArray(paymentItems)).toBe(true);
+      expect(paymentItems[0]).toEqual({
+        id: "any_payment_item_id",
+        payment_id: "any_payment_id",
+        order_item_id: "any_order_item_id",
+        quantity: 1,
+        amount: 20,
+        created_at: "any_date",
+      });
+    });
+  });
+
   test("Should throw if invalid dependencies are provided", async () => {
     const suts = [
       new PaymentItemRepository(),
@@ -196,6 +296,12 @@ describe("PaymentItem Repository", () => {
 
     for (const sut of suts) {
       await expect(sut.create(props)).rejects.toThrow(TypeError);
+      await expect(
+        sut.findById("any_payment_id", "any_payment_item_id"),
+      ).rejects.toThrow(TypeError);
+      await expect(sut.findAllByPaymentId("any_payment_id")).rejects.toThrow(
+        TypeError,
+      );
     }
   });
 
@@ -213,5 +319,9 @@ describe("PaymentItem Repository", () => {
     };
 
     await expect(sut.create(props)).rejects.toThrow();
+    await expect(
+      sut.findById("any_payment_id", "any_payment_item_id"),
+    ).rejects.toThrow();
+    await expect(sut.findAllByPaymentId("any_payment_id")).rejects.toThrow();
   });
 });

@@ -6,8 +6,6 @@ export default class GetPaymentUseCase {
   }
 
   async execute({ businessId, tableSessionId, paymentId } = {}) {
-    this.validateDependency();
-
     if (!tableSessionId) {
       if (!businessId) throw new MissingParamError("businessId");
 
@@ -26,16 +24,5 @@ export default class GetPaymentUseCase {
     if (!payment) return null;
 
     return payment;
-  }
-
-  validateDependency() {
-    if (
-      !this.paymentRepository ||
-      typeof this.paymentRepository.findAllByBusinessId !== "function" ||
-      typeof this.paymentRepository.findAllByTableSessionId !== "function" ||
-      typeof this.paymentRepository.findById !== "function"
-    ) {
-      throw new TypeError();
-    }
   }
 }

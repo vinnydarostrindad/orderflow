@@ -26,4 +26,43 @@ export default class PaymentItemRepository {
 
     return result.rows[0];
   }
+
+  async findById(paymentId, paymentItemId) {
+    if (!paymentId) throw new MissingParamError("paymentId");
+    if (!paymentItemId) throw new MissingParamError("paymentItemId");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          *
+        FROM
+          payment_items
+        WHERE
+          payment_id = $1 AND id = $2
+        LIMIT
+          1
+      ;`,
+      values: [paymentId, paymentItemId],
+    });
+
+    return result.rows[0];
+  }
+
+  async findAllByPaymentId(paymentId) {
+    if (!paymentId) throw new MissingParamError("paymentId");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          *
+        FROM
+          payment_items
+        WHERE
+          payment_id = $1
+      ;`,
+      values: [paymentId],
+    });
+
+    return result.rows;
+  }
 }
