@@ -154,6 +154,93 @@ describe("Payments Repository", () => {
     });
   });
 
+  describe("findById method", () => {
+    test("Should return payment correctly", async () => {
+      const { sut } = makeSut();
+
+      const result = await sut.findById(
+        "any_table_session_id",
+        "any_payment_id",
+      );
+
+      expect(result).toEqual({
+        id: "any_id",
+        table_session_id: "any_table_session_id",
+        method: "pix",
+        amount: 100,
+        status: "completed",
+      });
+    });
+
+    test("Should throw if no tableSessionId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.findById(undefined, "any_payment_id")).rejects.toThrow(
+        new MissingParamError("tableSessionId"),
+      );
+    });
+
+    test("Should throw if no paymentId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.findById("any_table_session_id")).rejects.toThrow(
+        new MissingParamError("paymentId"),
+      );
+    });
+  });
+
+  describe("findAllByTableSessionId method", () => {
+    test("Should return payment correctly", async () => {
+      const { sut } = makeSut();
+
+      const result = await sut.findAllByTableSessionId("any_table_session_id");
+
+      expect(result).toEqual([
+        {
+          id: "any_id",
+          table_session_id: "any_table_session_id",
+          method: "pix",
+          amount: 100,
+          status: "completed",
+        },
+      ]);
+    });
+
+    test("Should throw if no tableSessionId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.findAllByTableSessionId()).rejects.toThrow(
+        new MissingParamError("tableSessionId"),
+      );
+    });
+  });
+
+  describe("findAllByBusinessId method", () => {
+    test("Should return payments correctly", async () => {
+      const { sut } = makeSut();
+
+      const result = await sut.findAllByBusinessId("any_business_id");
+
+      expect(result).toEqual([
+        {
+          id: "any_id",
+          table_session_id: "any_table_session_id",
+          method: "pix",
+          amount: 100,
+          status: "completed",
+        },
+      ]);
+    });
+
+    test("Should throw if no businessId is provided", async () => {
+      const { sut } = makeSut();
+
+      await expect(sut.findAllByBusinessId()).rejects.toThrow(
+        new MissingParamError("businessId"),
+      );
+    });
+  });
+
   test("Should throw if invalid dependencies are provided", async () => {
     const suts = [
       new PaymentRepository(),

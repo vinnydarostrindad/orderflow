@@ -25,4 +25,65 @@ export default class PaymentRepository {
 
     return result.rows[0];
   }
+
+  async findById(tableSessionId, paymentId) {
+    if (!tableSessionId) throw new MissingParamError("tableSessionId");
+    if (!paymentId) throw new MissingParamError("paymentId");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          *
+        FROM
+          payments
+        WHERE
+          id = $1 AND table_session_id = $2
+        LIMIT
+          1
+      ;`,
+      values: [paymentId, tableSessionId],
+    });
+
+    return result.rows[0];
+  }
+
+  async findAllByTableSessionId(tableSessionId) {
+    if (!tableSessionId) throw new MissingParamError("tableSessionId");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          *
+        FROM
+          payments
+        WHERE
+          table_session_id = $1
+      ;`,
+      values: [tableSessionId],
+    });
+
+    return result.rows;
+  }
+
+  async findAllByBusinessId(businessId) {
+    if (!businessId) throw new MissingParamError("businessId");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          p.*
+        FROM
+          payments p
+        JOIN
+          table_sessions ts ON p.table_session_id = ts.id
+        JOIN
+          tables t ON ts.table_id = t.id
+        WHERE
+          t.business_id = $1
+      ;`,
+      values: [businessId],
+    });
+
+    return result.rows;
+  }
 }
