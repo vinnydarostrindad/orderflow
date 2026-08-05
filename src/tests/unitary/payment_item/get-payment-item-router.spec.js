@@ -31,7 +31,7 @@ const makeGetPaymentItemUseCase = () => {
     id: "any_payment_item_id",
     payment_id: "any_payment_id",
     order_item_id: "any_order_item_id",
-    quantity: 1,
+    quantity: "1",
     amount: 30,
     created_at: "any_date",
   };
@@ -136,9 +136,9 @@ describe("Get Payment Item Router", () => {
         id: "any_payment_item_id",
         paymentId: "any_payment_id",
         orderItemId: "any_order_item_id",
-        quantity: 1,
+        quantity: "1",
         amount: 30,
-        created_at: "any_date",
+        createdAt: "any_date",
       });
     });
   });
@@ -207,9 +207,9 @@ describe("Get Payment Item Router", () => {
         id: "any_payment_item_id",
         paymentId: "any_payment_id",
         orderItemId: "any_order_item_id",
-        quantity: 1,
+        quantity: "1",
         amount: 30,
-        created_at: "any_date",
+        createdAt: "any_date",
       });
     });
   });

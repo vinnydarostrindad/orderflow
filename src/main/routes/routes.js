@@ -7,6 +7,7 @@ import tableRoute from "./table-route.js";
 import orderItemRoute from "./order-item-route.js";
 import tableSessionRoute from "./table-session-route.js";
 import paymentRoute from "./payment-route.js";
+import paymentItemRoute from "./payment-item-route.js";
 
 const apiRoutes = [
   {
@@ -145,6 +146,21 @@ const apiRoutes = [
     pattern: /^\/api\/v1\/payments$/,
     methods: {
       get: paymentRoute.getAllByBusinessId,
+    },
+  },
+  {
+    pattern:
+      /^\/api\/v1\/table-sessions\/(?<tableSessionId>[^/]+)\/payments\/(?<paymentId>[^/]+)\/items$/,
+    methods: {
+      post: paymentItemRoute.post,
+      get: paymentItemRoute.getAllByPaymentId,
+    },
+  },
+  {
+    pattern:
+      /^\/api\/v1\/table-sessions\/(?<tableSessionId>[^/]+)\/payments\/(?<paymentId>[^/]+)\/items\/(?<paymentItemId>[^/]+)$/,
+    methods: {
+      get: paymentItemRoute.getOne,
     },
   },
   {

@@ -28,9 +28,9 @@ export default class GetPaymentItemRouter {
           id,
           paymentId: payment_id,
           orderItemId: order_item_id,
-          quantity,
+          quantity: quantity.toString(),
           amount,
-          created_at,
+          createdAt: created_at,
         }),
       );
 
@@ -57,9 +57,9 @@ export default class GetPaymentItemRouter {
       id,
       paymentId: payment_id,
       orderItemId: order_item_id,
-      quantity,
+      quantity: quantity.toString(),
       amount,
-      created_at,
+      createdAt: created_at,
     });
   }
 }

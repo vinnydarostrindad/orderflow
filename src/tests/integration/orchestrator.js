@@ -184,7 +184,7 @@ async function createOrderItem(
 async function createPayment(
   businessId,
   tableSessionId,
-  quantity,
+  quantity = 1,
   props = {},
   token,
 ) {
@@ -215,25 +215,31 @@ async function createPaymentItem(
   tableSessionId,
   paymentId,
   orderItemId,
+  quantity = 1,
   props = {},
   token,
 ) {
-  const response = await fetch(
-    `http://localhost:3000/api/v1/table-sessions/${tableSessionId}/payments/${paymentId}/items`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        cookie: `token=${token}`,
+  let paymentItems = [];
+  for (let i = 0; i < quantity; i++) {
+    const response = await fetch(
+      `http://localhost:3000/api/v1/table-sessions/${tableSessionId}/payments/${paymentId}/items`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: `token=${token}`,
+        },
+        body: JSON.stringify({
+          orderItemId: orderItemId,
+          quantity: props.quantity || 1,
+          amount: props.amount || 10,
+        }),
       },
-      body: JSON.stringify({
-        quantity: props.quantity || 1,
-        amount: props.amount || 40,
-      }),
-    },
-  );
+    );
+    paymentItems.push(await response.json());
+  }
 
-  return await response.json();
+  return quantity == 1 ? paymentItems[0] : paymentItems;
 }
 
 export {

@@ -8,12 +8,12 @@ import idGenerator from "../../../utils/id-generator.js";
 const registerPaymentRouterComposer = {
   execute() {
     const paymentRepository = new PaymentRepository({ postgresAdapter });
-    const registerPaymentUseCase = new RegisterPaymentUseCase({
+    const registerPaymentsUseCase = new RegisterPaymentUseCase({
       paymentRepository,
       idGenerator,
     });
     const registerPaymentRouter = new RegisterPaymentRouter({
-      registerPaymentUseCase,
+      registerPaymentsUseCase,
       validators,
     });
     return registerPaymentRouter;
