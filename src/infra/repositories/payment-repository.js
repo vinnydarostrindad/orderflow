@@ -1,4 +1,4 @@
-import MissingParamError from "../../utils/errors/missing-param-error";
+import MissingParamError from "../../utils/errors/missing-param-error.js";
 
 export default class PaymentRepository {
   constructor({ postgresAdapter } = {}) {
@@ -14,7 +14,7 @@ export default class PaymentRepository {
     const result = await this.postgresAdapter.query({
       text: `
         INSERT INTO
-          payments (id, tableSessionId, method, amount)
+          payments (id, table_session_id, method, amount)
         VALUES
           ($1, $2, $3, $4)
         RETURNING

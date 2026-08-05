@@ -181,6 +181,61 @@ async function createOrderItem(
   return quantity === 1 ? orderItems[0] : orderItems;
 }
 
+async function createPayment(
+  businessId,
+  tableSessionId,
+  quantity,
+  props = {},
+  token,
+) {
+  let payments = [];
+  for (let i = 0; i < quantity; i++) {
+    const response = await fetch(
+      `http://localhost:3000/api/v1/table-sessions/${tableSessionId}/payments`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: `token=${token}`,
+        },
+        body: JSON.stringify({
+          method: props.method || "pix",
+          amount: props.amount || 40,
+        }),
+      },
+    );
+    payments.push(await response.json());
+  }
+
+  return quantity == 1 ? payments[0] : payments;
+}
+
+async function createPaymentItem(
+  businessId,
+  tableSessionId,
+  paymentId,
+  orderItemId,
+  props = {},
+  token,
+) {
+  const response = await fetch(
+    `http://localhost:3000/api/v1/table-sessions/${tableSessionId}/payments/${paymentId}/items`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: `token=${token}`,
+      },
+      body: JSON.stringify({
+        quantity: props.quantity || 1,
+        amount: props.amount || 40,
+      }),
+    },
+  );
+
+  return await response.json();
+}
+
 export {
   cleanDatabase,
   runMigrations,
@@ -192,4 +247,6 @@ export {
   createTable,
   createTableSession,
   createOrderItem,
+  createPayment,
+  createPaymentItem,
 };

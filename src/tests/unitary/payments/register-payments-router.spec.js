@@ -5,13 +5,13 @@ import InvalidParamError from "../../../utils/errors/invalid-param-error.js";
 const makeSut = () => {
   const registerPaymentsUseCaseSpy = makeRegisterPaymentUseCase();
   const validatorsSpy = makeValidators();
-  const registerPaymentsRouter = new RegisterPaymentsRouter({
+  const sut = new RegisterPaymentsRouter({
     registerPaymentsUseCase: registerPaymentsUseCaseSpy,
     validators: validatorsSpy,
   });
 
   return {
-    sut: { registerPaymentsRouter },
+    sut,
     registerPaymentsUseCaseSpy,
     validatorsSpy,
   };
@@ -79,7 +79,7 @@ describe("Registers Payments Router", () => {
       },
     };
 
-    await sut.registerPaymentsRouter.route(httpRequest);
+    await sut.route(httpRequest);
 
     expect(registerPaymentsUseCaseSpy.tableSessionId).toBe(
       "any_table_session_id",
@@ -99,7 +99,7 @@ describe("Registers Payments Router", () => {
       },
     };
 
-    const httpResponse = await sut.registerPaymentsRouter.route(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(201);
     expect(httpResponse.body).toEqual({
@@ -124,7 +124,7 @@ describe("Registers Payments Router", () => {
       },
     };
 
-    const httpResponse = await sut.registerPaymentsRouter.route(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("tableSessionId"));
@@ -143,7 +143,7 @@ describe("Registers Payments Router", () => {
 
     validatorsSpy.isValid = false;
 
-    const httpResponse = await sut.registerPaymentsRouter.route(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new InvalidParamError("tableSessionId"));
@@ -159,7 +159,7 @@ describe("Registers Payments Router", () => {
       },
     };
 
-    const httpResponse = await sut.registerPaymentsRouter.route(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("method"));
@@ -175,7 +175,7 @@ describe("Registers Payments Router", () => {
       },
     };
 
-    const httpResponse = await sut.registerPaymentsRouter.route(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("amount"));
@@ -184,7 +184,7 @@ describe("Registers Payments Router", () => {
   test("Should throw if no httpRequest is provided", async () => {
     const { sut } = makeSut();
 
-    await expect(sut.registerPaymentsRouter.route()).rejects.toThrow();
+    await expect(sut.route()).rejects.toThrow();
   });
 
   test("Should throw if no httpRequest has no params", async () => {
@@ -196,18 +196,14 @@ describe("Registers Payments Router", () => {
       },
     };
 
-    await expect(
-      sut.registerPaymentsRouter.route(httpRequest),
-    ).rejects.toThrow();
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
   test("Should throw if no httpRequest has no body", async () => {
     const { sut } = makeSut();
     const httpRequest = { params: { tableSessionId: "any_table_session_id" } };
 
-    await expect(
-      sut.registerPaymentsRouter.route(httpRequest),
-    ).rejects.toThrow();
+    await expect(sut.route(httpRequest)).rejects.toThrow();
   });
 
   test("Should throw if dependency is invalid", async () => {

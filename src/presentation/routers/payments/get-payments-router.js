@@ -23,12 +23,13 @@ export default class GetPaymentRouter {
       const payments = await this.getPaymentUseCase.execute({ businessId });
 
       const editedPayments = payments.map(
-        ({ id, table_session_id, method, amount, status }) => ({
+        ({ id, table_session_id, method, amount, status, created_at }) => ({
           id,
           tableSessionId: table_session_id,
           method,
           amount,
           status,
+          createdAt: created_at,
         }),
       );
       return httpResponse.ok(editedPayments);
@@ -44,12 +45,13 @@ export default class GetPaymentRouter {
       });
 
       const editedPayments = payments.map(
-        ({ id, table_session_id, method, amount, status }) => ({
+        ({ id, table_session_id, method, amount, status, created_at }) => ({
           id,
           tableSessionId: table_session_id,
           method,
           amount,
           status,
+          createdAt: created_at,
         }),
       );
 
@@ -69,7 +71,8 @@ export default class GetPaymentRouter {
       return httpResponse.notFound("Payment", "Make sure order item exists.");
     }
 
-    const { id, table_session_id, method, amount, status } = payment;
+    const { id, table_session_id, method, amount, status, created_at } =
+      payment;
 
     return httpResponse.ok({
       id,
@@ -77,6 +80,7 @@ export default class GetPaymentRouter {
       method,
       amount,
       status,
+      createdAt: created_at,
     });
   }
 }
