@@ -86,4 +86,23 @@ export default class PaymentRepository {
 
     return result.rows;
   }
+
+  async deleteById(tableSessionId, paymentId) {
+    if (!tableSessionId) throw new MissingParamError("tableSessionId");
+    if (!paymentId) throw new MissingParamError("paymentId");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        DELETE FROM
+          payments
+        WHERE
+          id = $1 AND table_session_id = $2
+        RETURNING
+          *
+      ;`,
+      values: [paymentId, tableSessionId],
+    });
+
+    return result.rows[0];
+  }
 }

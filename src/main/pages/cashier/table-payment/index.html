@@ -42,14 +42,24 @@
                 checked
               />
             </label>
-            <label class="payment__option" for="paymentCard">
-              <span>Cartão</span>
+            <label class="payment__option" for="paymentCredit">
+              <span>Crédito</span>
               <div class="payment__option__marker"></div>
               <input
                 type="radio"
                 name="paymentMethod"
-                id="paymentCard"
-                value="card"
+                id="paymentCredit"
+                value="credit"
+              />
+            </label>
+            <label class="payment__option" for="paymentDebit">
+              <span>Débito</span>
+              <div class="payment__option__marker"></div>
+              <input
+                type="radio"
+                name="paymentMethod"
+                id="paymentDebit"
+                value="debit"
               />
             </label>
             <label class="payment__option" for="paymentMoney">
@@ -63,7 +73,7 @@
               />
             </label>
           </div>
-          <button type="submit" class="btn primary-btn">
+          <button type="submit" class="btn primary-btn" id="confirmPaymentBtn">
             Confirmar pagamento
           </button>
         </form>
@@ -81,6 +91,14 @@
             <div class="orders-section__item-skeleton skeleton"></div>
           </div>
           <div class="orders-section__items" id="orders"></div>
+        </section>
+        <section class="paid-orders">
+          <header class="orders__header">
+            <h2 class="title">Itens pagos</h2>
+          </header>
+          <section class="orders-section">
+            <div class="orders-section__items" id="paidOrders"></div>
+          </section>
         </section>
       </section>
     </main>

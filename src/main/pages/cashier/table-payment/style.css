@@ -83,6 +83,7 @@ body {
 
       .payment__option {
         align-items: center;
+        border-right: 1px solid var(--color-text-muted);
         cursor: pointer;
         display: flex;
         flex: 1;
@@ -92,17 +93,16 @@ body {
         padding: var(--space-xs-sm);
         text-align: center;
 
+        &:last-child {
+          border-right: none;
+        }
+
         &:hover {
           background-color: #ff000048;
         }
 
         input {
           display: none;
-        }
-
-        &:nth-child(2) {
-          border-left: 1px solid var(--color-text-muted);
-          border-right: 1px solid var(--color-text-muted);
         }
 
         .payment__option__marker {
@@ -199,6 +199,10 @@ body {
         border-bottom: none;
       }
     }
+  }
+
+  .paid-orders {
+    margin-top: var(--space-xl);
   }
 
   .orders-none {

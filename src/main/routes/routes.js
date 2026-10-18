@@ -140,6 +140,7 @@ const apiRoutes = [
       /^\/api\/v1\/table-sessions\/(?<tableSessionId>[^/]+)\/payments\/(?<paymentId>[^/]+)$/,
     methods: {
       get: paymentRoute.getOne,
+      delete: paymentRoute.delete,
     },
   },
   {

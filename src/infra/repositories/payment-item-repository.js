@@ -1,4 +1,5 @@
 import MissingParamError from "../../utils/errors/missing-param-error.js";
+import ValidationError from "../../utils/errors/validation-error.js";
 
 export default class PaymentItemRepository {
   constructor({ postgresAdapter } = {}) {
@@ -11,6 +12,8 @@ export default class PaymentItemRepository {
     if (!orderItemId) throw new MissingParamError("orderItemId");
     if (!quantity) throw new MissingParamError("quantity");
     if (!amount) throw new MissingParamError("amount");
+
+    await this.validateUniqueOrderItemId(paymentId, orderItemId);
 
     const result = await this.postgresAdapter.query({
       text: `
@@ -64,5 +67,29 @@ export default class PaymentItemRepository {
     });
 
     return result.rows;
+  }
+
+  async validateUniqueOrderItemId(paymentId, orderItemId) {
+    if (!paymentId) throw new MissingParamError("paymentId");
+    if (!orderItemId) throw new MissingParamError("orderItemId");
+
+    const result = await this.postgresAdapter.query({
+      text: `
+        SELECT
+          *
+        FROM
+          payment_items
+        WHERE
+          order_item_id = $1
+      `,
+      values: [orderItemId],
+    });
+
+    if (result.rows.length > 0) {
+      throw new ValidationError({
+        message: "Order item has already been paid",
+        action: "No need to pay again",
+      });
+    }
   }
 }

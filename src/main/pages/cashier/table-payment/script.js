@@ -20,7 +20,9 @@ const paymentOptionsMarkers = document.querySelectorAll(
   ".payment__option__marker",
 );
 const confirmPaymentForm = document.querySelector("#confirmPayment");
+const confirmPaymentBtn = document.querySelector("#confirmPaymentBtn");
 const ordersContainer = document.querySelector("#orders");
+const paidOrdersContainer = document.querySelector("#paidOrders");
 const allOrdersSection = document.querySelector(".orders");
 const orderInfoContainer = document.querySelector("#orderInfoContainer");
 const setOrderToCancelledBtn = document.querySelector("#setOrderToCancelled");
@@ -38,6 +40,7 @@ const saveQuantityBtn = document.querySelector("#saveQuantity");
 const orderInfoNotes = document.querySelector("#orderNotes");
 
 let allOrders = [];
+let paidOrders = [];
 const removedFromPaymentIds = new Set();
 let orderInFocus = null;
 
@@ -146,11 +149,102 @@ function paymentOptionsToggle(e) {
   );
 }
 
-function confirmPayment(e) {
+async function registerEachOrderItemInPayment(orders, paymentId) {
+  const results = await Promise.allSettled(
+    orders.map(async (order) => {
+      const response = await fetch(
+        `${API_URL}/api/v1/table-sessions/${tableSessionId}/payments/${paymentId}/items`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderItemId: order.id,
+            quantity: order.quantity,
+            amount: order.totalPrice,
+          }),
+        },
+      );
+
+      if (!response.ok) throw new Error("Could not register payment item");
+    }),
+  );
+
+  if (results.some((result) => result.status === "rejected")) {
+    throw new Error("Could not register payment items");
+  }
+}
+
+async function deletePayment(paymentId) {
+  const response = await fetch(
+    `${API_URL}/api/v1/table-sessions/${tableSessionId}/payments/${paymentId}`,
+    { method: "DELETE" },
+  );
+
+  if (!response.ok) throw new Error("Could not delete payment");
+}
+
+async function confirmPayment(e) {
   e.preventDefault();
   const dados = new FormData(confirmPaymentForm);
-  const valorRadio = dados.get("paymentMethod");
-  console.log(valorRadio);
+  const radioValue = dados.get("paymentMethod");
+
+  const ordersIncludedInPayment = getOrdersIncludedInPayment();
+
+  if (ordersIncludedInPayment.length === 0) {
+    snackbar.show(
+      "error",
+      "<p>Não é possível registrar um pagamento sem pedidos incluídos.</p>",
+    );
+    return;
+  }
+
+  let payment;
+  confirmPaymentBtn.disabled = true;
+
+  try {
+    const paymentResponse = await fetch(
+      `${API_URL}/api/v1/table-sessions/${tableSessionId}/payments`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          method: radioValue,
+          amount: ordersIncludedInPayment.reduce(
+            (acc, order) => acc + Number(order.totalPrice),
+            0,
+          ),
+        }),
+      },
+    );
+
+    if (!paymentResponse.ok) throw new Error("Could not register payment");
+
+    payment = await paymentResponse.json();
+    await registerEachOrderItemInPayment(ordersIncludedInPayment, payment.id);
+
+    const paidOrderIds = new Set(ordersIncludedInPayment.map(({ id }) => id));
+    paidOrders.push(...ordersIncludedInPayment);
+    allOrders = allOrders.filter((order) => !paidOrderIds.has(order.id));
+    buildOrderPayment();
+    renderOrders(searchBar.value);
+    renderPaidOrders();
+    snackbar.show("success", "<p>Pagamento registrado com sucesso!</p>");
+  } catch (error) {
+    if (payment?.id) {
+      try {
+        await deletePayment(payment.id);
+      } catch (deleteError) {
+        console.error(deleteError);
+      }
+    }
+    console.error(error);
+    snackbar.show(
+      "error",
+      "<p>Não foi possível concluir o pagamento. Nenhum item foi pago.</p>",
+    );
+  } finally {
+    confirmPaymentBtn.disabled = false;
+  }
 }
 
 function sortByCreatedAt(a, b) {
@@ -164,7 +258,7 @@ function organizeOrdersInArray() {
 async function fetchItemInfos(id) {
   const res = await fetch(`${API_URL}/api/v1/menu-items/${id}`);
 
-  if (!res) {
+  if (!res.ok) {
     throw {
       status: res.status,
       statusText: res.statusText,
@@ -193,12 +287,33 @@ async function fetchTableItems() {
   return tableItems;
 }
 
-function buildOrderedItems(items) {
+async function fetchPaidOrderIds() {
+  const paymentsResponse = await fetch(
+    `${API_URL}/api/v1/table-sessions/${tableSessionId}/payments`,
+  );
+  if (!paymentsResponse.ok) throw new Error("Could not fetch payments");
+
+  const payments = await paymentsResponse.json();
+  const paymentItems = await Promise.all(
+    payments.map(async ({ id }) => {
+      const response = await fetch(
+        `${API_URL}/api/v1/table-sessions/${tableSessionId}/payments/${id}/items`,
+      );
+      if (!response.ok) throw new Error("Could not fetch payment items");
+      return await response.json();
+    }),
+  );
+
+  return new Set(paymentItems.flat().map(({ orderItemId }) => orderItemId));
+}
+
+function buildOrderedItems(items, paymentLabel) {
   const fragment = document.createDocumentFragment();
 
   for (let item of items) {
     const publicUrl = getPublicImageUrl(item.imagePath);
-    const isIncludedInPayment = isOrderIncludedInPayment(item.id);
+    const isIncludedInPayment =
+      !paymentLabel && isOrderIncludedInPayment(item.id);
 
     const orderCard = document.createElement("order-card");
 
@@ -215,12 +330,22 @@ function buildOrderedItems(items) {
     orderCard.setAttribute("data-id", item.id);
     orderCard.setAttribute(
       "data-payment-label",
-      isIncludedInPayment ? "Adicionado" : "Não adicionado",
+      paymentLabel || (isIncludedInPayment ? "Adicionado" : "Não adicionado"),
     );
     fragment.appendChild(orderCard);
   }
 
   return fragment;
+}
+
+function renderPaidOrders() {
+  if (paidOrders.length === 0) {
+    paidOrdersContainer.innerHTML =
+      '<p class="orders-none">Nenhum item foi pago</p>';
+    return;
+  }
+
+  paidOrdersContainer.replaceChildren(buildOrderedItems(paidOrders, "Pago"));
 }
 
 function renderOrders(searchText = "") {
@@ -290,7 +415,6 @@ function toggleOrderInPayment() {
   if (!orderId) return;
 
   const normalizedOrderId = normalizeOrderId(orderId);
-  console.log(orderInFocus);
 
   if (removedFromPaymentIds.has(normalizedOrderId)) {
     orderInFocus.removeAttribute("selected");
@@ -421,7 +545,10 @@ function buildOrderPayment() {
 
 async function setupOrdersPage() {
   try {
-    const tableItems = await fetchTableItems();
+    const [tableItems, paidOrderIds] = await Promise.all([
+      fetchTableItems(),
+      fetchPaidOrderIds(),
+    ]);
 
     ordersTitle.forEach((title) => {
       title.innerText += ` (Mesa ${tableNumber})`;
@@ -433,12 +560,17 @@ async function setupOrdersPage() {
 
         const enrichedItem = { ...item, name, imagePath };
 
-        allOrders.push(enrichedItem);
+        if (paidOrderIds.has(item.id)) {
+          paidOrders.push(enrichedItem);
+        } else {
+          allOrders.push(enrichedItem);
+        }
       }),
     );
 
     buildOrderPayment();
     renderOrders();
+    renderPaidOrders();
 
     document
       .querySelectorAll(".orders-section__items-skeleton")

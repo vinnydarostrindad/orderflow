@@ -50,6 +50,43 @@ Este documento descreve o padrao de endpoints usado no projeto, com foco nos rec
   - Body: { status?, quantity? }
   - Atualiza item da sessao
 
+## Payments
+
+- POST /api/v1/table-sessions/:tableSessionId/payments
+
+  - Body: { method, amount }
+  - Cria um pagamento para a sessao
+
+- GET /api/v1/table-sessions/:tableSessionId/payments
+
+  - Lista os pagamentos da sessao
+
+- GET /api/v1/table-sessions/:tableSessionId/payments/:paymentId
+
+  - Retorna um pagamento especifico da sessao
+
+- DELETE /api/v1/table-sessions/:tableSessionId/payments/:paymentId
+
+  - Remove um pagamento e seus itens vinculados
+
+- GET /api/v1/payments
+  - Lista os pagamentos do business autenticado
+
+## Payment items (itens pagos)
+
+- POST /api/v1/table-sessions/:tableSessionId/payments/:paymentId/items
+
+  - Body: { orderItemId, quantity, amount }
+  - Vincula um item de pedido ao pagamento
+  - Um item de pedido nao pode ser vinculado a mais de um pagamento
+
+- GET /api/v1/table-sessions/:tableSessionId/payments/:paymentId/items
+
+  - Lista os itens vinculados ao pagamento
+
+- GET /api/v1/table-sessions/:tableSessionId/payments/:paymentId/items/:paymentItemId
+  - Retorna um item de pagamento especifico
+
 ## Ordered items (relatorio por business)
 
 - GET /api/v1/ordered-items

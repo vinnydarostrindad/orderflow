@@ -1,5 +1,6 @@
 import PaymentItemRepository from "../../../infra/repositories/payment-item-repository.js";
 import MissingParamError from "../../../utils/errors/missing-param-error.js";
+import ValidationError from "../../../utils/errors/validation-error.js";
 
 const makeSut = () => {
   const postgresAdapterSpy = makePostgresAdapter();
@@ -17,6 +18,13 @@ const makePostgresAdapter = () => {
   const postgresAdapterSpy = {
     async query(queryObject) {
       this.queryObject = queryObject;
+      if (queryObject.text.includes("order_item_id = $1")) {
+        return this.paymentItemExists
+          ? this.queryResult
+          : {
+              rows: [],
+            };
+      }
       return this.queryResult;
     },
   };
@@ -33,6 +41,7 @@ const makePostgresAdapter = () => {
       },
     ],
   };
+  postgresAdapterSpy.paymentItemExists = false;
 
   return postgresAdapterSpy;
 };
@@ -178,6 +187,26 @@ describe("PaymentItem Repository", () => {
           20,
         ],
       });
+    });
+
+    test("Should throw if order item was already paid", async () => {
+      const { sut, postgresAdapterSpy } = makeSut();
+      postgresAdapterSpy.paymentItemExists = true;
+
+      await expect(
+        sut.create({
+          id: "any_payment_item_id",
+          paymentId: "any_payment_id",
+          orderItemId: "any_order_item_id",
+          quantity: 1,
+          amount: 20,
+        }),
+      ).rejects.toThrow(
+        new ValidationError({
+          message: "Order item has already been paid",
+          action: "No need to pay again",
+        }),
+      );
     });
   });
 

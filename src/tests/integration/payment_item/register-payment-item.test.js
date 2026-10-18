@@ -105,4 +105,47 @@ describe("POST /api/v1/table-sessions/[tableSessionId]/payments/[paymentId]/item
     expect(typeof payment.updatedAt).toBe("string");
     expect(Date.parse(payment.updatedAt)).not.toBeNaN();
   });
+
+  test("Should not create a payment item if item was already paid and return 400", async () => {
+    const { tableSession, orderItem, payment, token } =
+      await makePaymentItemTestContext();
+
+    const requestBody = {
+      orderItemId: orderItem.id,
+      quantity: 1,
+      amount: 10,
+    };
+
+    await fetch(
+      `http://localhost:3000/api/v1/table-sessions/${tableSession.id}/payments/${payment.id}/items`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: `token=${token}`,
+        },
+        body: JSON.stringify(requestBody),
+      },
+    );
+
+    const response = await fetch(
+      `http://localhost:3000/api/v1/table-sessions/${tableSession.id}/payments/${payment.id}/items`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: `token=${token}`,
+        },
+        body: JSON.stringify(requestBody),
+      },
+    );
+
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({
+      name: "ValidationError",
+      message: "Order item has already been paid",
+      statusCode: 400,
+      action: "No need to pay again",
+    });
+  });
 });
