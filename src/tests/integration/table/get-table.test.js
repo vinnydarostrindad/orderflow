@@ -21,15 +21,15 @@ async function makeTableTestContext(numberOfTables = 1) {
     role,
     employeeId: id,
   });
-  const table = await createTable(business.id, numberOfTables);
+  const table = await createTable(business.id, numberOfTables, {}, token);
 
   return { business, token, table };
 }
 
-describe("GET /api/v1/business/[businessId]/table", () => {
+describe("GET /api/v1/businesses/[businessId]/tables", () => {
   test("Should return all tables with correct data", async () => {
     const { business, token } = await makeTableTestContext(2);
-    const response = await fetch(`http://localhost:3000/api/v1/table`, {
+    const response = await fetch(`http://localhost:3000/api/v1/tables`, {
       headers: {
         cookie: `token=${token}`,
       },
@@ -48,7 +48,6 @@ describe("GET /api/v1/business/[businessId]/table", () => {
         id: table.id,
         businessId: business.id,
         number: `${i}`,
-        name: "any_name",
       });
       i++;
 
@@ -68,7 +67,7 @@ describe("GET /api/v1/business/[businessId]/table", () => {
 
   test("Should return an empty array", async () => {
     const { token } = await makeTableTestContext(0);
-    const response = await fetch(`http://localhost:3000/api/v1/table`, {
+    const response = await fetch(`http://localhost:3000/api/v1/tables`, {
       headers: {
         cookie: `token=${token}`,
       },
@@ -82,12 +81,12 @@ describe("GET /api/v1/business/[businessId]/table", () => {
   });
 });
 
-describe("GET /api/v1/business/[businessId]/table/[tableId]", () => {
+describe("GET /api/v1/businesses/[businessId]/tables/[tableId]", () => {
   test("Should return correct table", async () => {
     const { business, table, token } = await makeTableTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${table.id}`,
+      `http://localhost:3000/api/v1/tables/${table.id}`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -103,7 +102,6 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]", () => {
       id: table.id,
       businessId: business.id,
       number: "1",
-      name: `any_name`,
     });
 
     expect(typeof responseBody.id).toBe("string");
@@ -123,7 +121,7 @@ describe("GET /api/v1/business/[businessId]/table/[tableId]", () => {
     const { token } = await makeTableTestContext(0);
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/tables/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
       {
         headers: {
           cookie: `token=${token}`,

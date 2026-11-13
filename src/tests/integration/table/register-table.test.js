@@ -21,21 +21,20 @@ async function makeTableTestContext(numberOfTables = 1, props) {
     role,
     employeeId: id,
   });
-  const table = await createTable(business.id, numberOfTables, props);
+  const table = await createTable(business.id, numberOfTables, props, token);
 
   return { business, token, table };
 }
 
-describe("POST /api/v1/business/[businessId]/table", () => {
+describe("POST /api/v1/businesses/[businessId]/tables", () => {
   test("Should register a table and return 201", async () => {
     const { business, token } = await makeTableTestContext(0);
 
     const requestBody = {
       number: 1,
-      name: "any_name",
     };
 
-    const response = await fetch(`http://localhost:3000/api/v1/table`, {
+    const response = await fetch(`http://localhost:3000/api/v1/tables`, {
       method: "POST",
       headers: { "Content-Type": "application/json", cookie: `token=${token}` },
       body: JSON.stringify(requestBody),
@@ -44,26 +43,25 @@ describe("POST /api/v1/business/[businessId]/table", () => {
     expect(response.status).toBe(201);
 
     const responseBody = await response.json();
-    const menu = responseBody;
+    const table = responseBody;
 
-    expect(menu).toMatchObject({
-      id: menu.id,
+    expect(table).toMatchObject({
+      id: table.id,
       business_id: business.id,
       number: requestBody.number,
-      name: requestBody.name,
     });
 
-    expect(typeof menu.id).toBe("string");
-    expect(uuidVersion(menu.id)).toBe(4);
+    expect(typeof table.id).toBe("string");
+    expect(uuidVersion(table.id)).toBe(4);
 
-    expect(typeof menu.business_id).toBe("string");
-    expect(uuidVersion(menu.business_id)).toBe(4);
+    expect(typeof table.business_id).toBe("string");
+    expect(uuidVersion(table.business_id)).toBe(4);
 
-    expect(typeof menu.created_at).toBe("string");
-    expect(Date.parse(menu.created_at)).not.toBeNaN();
+    expect(typeof table.created_at).toBe("string");
+    expect(Date.parse(table.created_at)).not.toBeNaN();
 
-    expect(typeof menu.updated_at).toBe("string");
-    expect(Date.parse(menu.updated_at)).not.toBeNaN();
+    expect(typeof table.updated_at).toBe("string");
+    expect(Date.parse(table.updated_at)).not.toBeNaN();
   });
 
   test("Should return ValidationError if number already exists in business", async () => {
@@ -73,7 +71,7 @@ describe("POST /api/v1/business/[businessId]/table", () => {
       number: 1,
     };
 
-    const response = await fetch(`http://localhost:3000/api/v1/table`, {
+    const response = await fetch(`http://localhost:3000/api/v1/tables`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

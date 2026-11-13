@@ -19,7 +19,7 @@ async function submitForm(e) {
   const name = document.querySelector("#name").value;
 
   try {
-    await fetch(`${API_URL}/api/v1/employee`, {
+    await fetch(`${API_URL}/api/v1/employees`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -32,7 +32,7 @@ async function submitForm(e) {
       }),
     });
 
-    const response = await fetch(`${API_URL}/api/v1/session`, {
+    const response = await fetch(`${API_URL}/api/v1/sessions`, {
       method: "POST",
       headers: {
         "content-type": "application/json",

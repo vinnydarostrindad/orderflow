@@ -6,7 +6,7 @@ export default class TableRepository {
     this.postgresAdapter = postgresAdapter;
   }
 
-  async create({ id, businessId, number, name } = {}) {
+  async create({ id, businessId, number } = {}) {
     if (!id) throw new MissingParamError("id");
     if (!businessId) throw new MissingParamError("businessId");
     if (!number) throw new MissingParamError("number");
@@ -16,13 +16,13 @@ export default class TableRepository {
     const result = await this.postgresAdapter.query({
       text: `
         INSERT INTO
-          tables (id, business_id, number, name)
+          tables (id, business_id, number)
         VALUES 
-          ($1, $2, $3, $4)
+          ($1, $2, $3)
         RETURNING
           *
       `,
-      values: [id, businessId, number, name],
+      values: [id, businessId, number],
     });
 
     return result.rows[0];

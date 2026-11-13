@@ -18,7 +18,6 @@ describe("Table Entity", () => {
     const props = {
       id: "any_id",
       number: "1",
-      name: "any_name",
     };
     expect(() => new Table(props)).toThrow(new MissingParamError("businessId"));
   });
@@ -27,12 +26,11 @@ describe("Table Entity", () => {
     const props = {
       id: "any_id",
       businessId: "any_business_id",
-      name: "any_name",
     };
     expect(() => new Table(props)).toThrow(new MissingParamError("number"));
   });
 
-  test("Should return Table without name", () => {
+  test("Should return Table", () => {
     const props = {
       id: "any_id",
       businessId: "any_business_id",
@@ -44,24 +42,6 @@ describe("Table Entity", () => {
       id: "any_id",
       businessId: "any_business_id",
       number: "1",
-      name: undefined,
-    });
-  });
-
-  test("Should return Table with name", () => {
-    const props = {
-      id: "any_id",
-      businessId: "any_business_id",
-      number: "1",
-      name: "Mesa dos fundos",
-    };
-
-    const table = new Table(props);
-    expect(table).toEqual({
-      id: "any_id",
-      businessId: "any_business_id",
-      number: "1",
-      name: "Mesa dos fundos",
     });
   });
 });

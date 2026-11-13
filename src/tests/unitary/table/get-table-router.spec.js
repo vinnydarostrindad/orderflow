@@ -29,14 +29,12 @@ const makeGetTableUseCase = () => {
     businessId: "any_business_id",
     id: "any_table_id",
     number: "1",
-    name: "any_table_name",
   };
   getTableUseCaseSpy.tables = [
     {
       businessId: "any_business_id",
       id: "any_table_id",
       number: "1",
-      name: "any_table_name",
     },
   ];
   return getTableUseCaseSpy;
@@ -108,7 +106,6 @@ describe("Get Table Router", () => {
         id: "any_table_id",
         businessId: "any_business_id",
         number: "1",
-        name: "any_table_name",
       });
     });
   });
@@ -169,7 +166,6 @@ describe("Get Table Router", () => {
         id: "any_table_id",
         businessId: "any_business_id",
         number: "1",
-        name: "any_table_name",
       });
     });
   });

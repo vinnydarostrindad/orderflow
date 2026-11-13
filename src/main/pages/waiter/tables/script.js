@@ -4,7 +4,7 @@ import "/components/header/script.js";
 import "/components/snackbar.js";
 import API_URL from "/scripts/config-api-url.js";
 
-sessionStorage.removeItem("tableId");
+sessionStorage.removeItem("tableSessionId");
 sessionStorage.removeItem("tableNumber");
 
 const createTableBtn = document.querySelector("#createTable");
@@ -28,7 +28,7 @@ tablesContainer.addEventListener("click", selectTable);
 createTableBtn.addEventListener("click", toggleAllTablesModal);
 modalBg.addEventListener("click", closeModals);
 allTablesModal.addEventListener("click", addName);
-tableNameInputContinueBtn.addEventListener("click", postTable);
+tableNameInputContinueBtn.addEventListener("click", postTableSession);
 
 let occupiedTables = [];
 
@@ -39,19 +39,21 @@ function closeModals(e) {
   addTableNameModal.classList.add("table-name-modal--hidden");
   modalBg.classList.add("modal-bg--hidden");
   addTableNameModalInput.value = "";
-  tableNameInputContinueBtn.removeAttribute("data-number");
+  tableNameInputContinueBtn.removeAttribute("data-table-id");
   document.body.style.overflow = "";
 }
 
-async function postTable(e) {
-  const number = e.target.dataset.number;
+async function postTableSession(e) {
+  console.log(e.target);
+  const tableId = e.target.dataset.tableId;
+  console.log(tableId);
   const name = addTableNameModalInput.value || null;
 
   try {
-    const response = await fetch(`${API_URL}/api/v1/table`, {
+    const response = await fetch(`${API_URL}/api/v1/table-sessions`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ number, name }),
+      body: JSON.stringify({ tableId, name }),
     });
 
     if (!response.ok) {
@@ -62,10 +64,10 @@ async function postTable(e) {
       };
     }
 
-    const table = await response.json();
+    const tableSession = await response.json();
 
-    sessionStorage.setItem("tableId", table.id);
-    sessionStorage.setItem("tableNumber", table.number);
+    sessionStorage.setItem("tableSessionId", tableSession.id);
+    sessionStorage.setItem("tableNumber", tableSession.number);
     window.location.href = "/menus";
   } catch (error) {
     console.error(error);
@@ -97,8 +99,8 @@ function addName(e) {
   const numberClicked = e.target.closest(".all-tables-modal__table-number");
   if (!numberClicked || numberClicked.hasAttribute("disabled")) return;
 
-  const number = numberClicked.textContent;
-  tableNameInputContinueBtn.setAttribute("data-number", number);
+  const tableId = numberClicked.dataset.tableId;
+  tableNameInputContinueBtn.setAttribute("data-table-id", tableId);
 
   toggleAllTablesModal();
   toggleTableNameInput();
@@ -108,7 +110,7 @@ function selectTable(e) {
   const tableCard = e.target.closest(".table-card");
   if (!tableCard) return;
 
-  sessionStorage.setItem("tableId", tableCard.dataset.id);
+  sessionStorage.setItem("tableSessionId", tableCard.dataset.id);
   sessionStorage.setItem(
     "tableNumber",
     parseInt(tableCard.firstElementChild.textContent),
@@ -116,29 +118,29 @@ function selectTable(e) {
   window.location.href = `/menus`;
 }
 
-function addTablesToHTML(tables) {
-  if (tables.length === 0) {
+function addTablesSessionToHTML(tableSessions) {
+  if (tableSessions.length === 0) {
     tablesContainer.innerHTML = "";
     return;
   }
 
   const tablesFrag = document.createDocumentFragment();
 
-  tables.map((table) => {
+  tableSessions.forEach((tableSession) => {
     const tableCard = document.createElement("div");
     tableCard.className = "table-card";
-    tableCard.dataset.id = table.id;
+    tableCard.dataset.id = tableSession.id;
 
     const tableCardNumber = document.createElement("h2");
     tableCardNumber.className = "table-card__number";
-    tableCardNumber.textContent = table.number;
+    tableCardNumber.textContent = tableSession.number;
 
     tableCard.append(tableCardNumber);
 
-    if (table.name) {
+    if (tableSession.name) {
       const tableCardName = document.createElement("p");
       tableCardName.className = "table-card__name";
-      tableCardName.textContent = table.name;
+      tableCardName.textContent = tableSession.name;
       tableCard.append(tableCardName);
     }
 
@@ -148,9 +150,31 @@ function addTablesToHTML(tables) {
   tablesContainer.replaceChildren(tablesFrag);
 }
 
-async function getTables() {
+function addTablesToHTML(tables) {
+  if (tables.length === 0) {
+    allTablesModal.innerHTML = `
+      <p>Parece que não há a existência de nenhuma mesa no momento</p>
+    `;
+    return;
+  }
+
+  const tablesFrag = document.createDocumentFragment();
+  tables.forEach((table) => {
+    const button = document.createElement("button");
+
+    button.className = "all-tables-modal__table-number";
+    button.dataset.tableId = table.id;
+    button.textContent = table.number;
+
+    tablesFrag.append(button);
+  });
+
+  allTablesModal.append(tablesFrag);
+}
+
+async function fetchTableSessionsOpen() {
   try {
-    const response = await fetch(`${API_URL}/api/v1/table`);
+    const response = await fetch(`${API_URL}/api/v1/table-sessions/open`);
     if (!response.ok) {
       throw {
         status: response.status,
@@ -159,11 +183,11 @@ async function getTables() {
       };
     }
 
-    const tables = await response.json();
-    for (let { number } of tables) {
+    const tableSessions = await response.json();
+    for (let { number } of tableSessions) {
       occupiedTables.push(number);
     }
-    addTablesToHTML(tables);
+    addTablesSessionToHTML(tableSessions);
   } catch (error) {
     console.error(error);
     snackbar.show(
@@ -173,4 +197,23 @@ async function getTables() {
   }
 }
 
-getTables();
+async function fetchTables() {
+  const response = await fetch(`${API_URL}/api/v1/tables`);
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      statusText: response.statusText,
+      url: response.url,
+    };
+  }
+  const tables = await response.json();
+
+  addTablesToHTML(tables);
+}
+
+async function setupPage() {
+  await fetchTables();
+  await fetchTableSessionsOpen();
+}
+
+setupPage();

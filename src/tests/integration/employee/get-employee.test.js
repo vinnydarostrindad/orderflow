@@ -25,11 +25,11 @@ async function makeEmployeeTestContext(numberOfEmployees = 1) {
   return { business, employee, token };
 }
 
-describe("GET /api/v1/employee", () => {
+describe("GET /api/v1/employees", () => {
   test("Should return all employees with correct data", async () => {
     const { business, token } = await makeEmployeeTestContext(2);
 
-    const response = await fetch(`http://localhost:3000/api/v1/employee`, {
+    const response = await fetch(`http://localhost:3000/api/v1/employees`, {
       headers: {
         cookie: `token=${token}`,
       },
@@ -65,12 +65,12 @@ describe("GET /api/v1/employee", () => {
   });
 });
 
-describe("GET /api/v1/employee/[employeeId]", () => {
+describe("GET /api/v1/employees/[employeeId]", () => {
   test("Should return correct employee", async () => {
     const { business, employee, token } = await makeEmployeeTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/employee/${employee.id}`,
+      `http://localhost:3000/api/v1/employees/${employee.id}`,
       {
         headers: {
           cookie: `token=${token}`,
@@ -107,7 +107,7 @@ describe("GET /api/v1/employee/[employeeId]", () => {
     const { token } = await makeEmployeeTestContext();
 
     const response = await fetch(
-      `http://localhost:3000/api/v1/employee/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
+      `http://localhost:3000/api/v1/employees/f3b8e3c2-9f6a-4b8c-ae37-1e9b2f9d8a1c`,
       {
         headers: {
           cookie: `token=${token}`,

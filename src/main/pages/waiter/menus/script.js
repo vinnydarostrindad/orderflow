@@ -1,5 +1,5 @@
-if (!sessionStorage.getItem("tableId")) {
-  window.location.href = "/tables?r=mnd";
+if (!sessionStorage.getItem("tableSessionId")) {
+  window.location.href = "/table-sessions?r=mnd";
 }
 
 import "/waiter/components/nav/script.js";
@@ -34,7 +34,7 @@ function addMenusToHTML(menus) {
 
 async function getMenus() {
   try {
-    const response = await fetch(`${API_URL}/api/v1/menu`);
+    const response = await fetch(`${API_URL}/api/v1/menus`);
     if (!response.ok) {
       throw {
         status: response.status,

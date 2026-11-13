@@ -27,7 +27,7 @@ async function submitForm(e) {
   const role = roleSelect.value;
 
   try {
-    const response = await fetch(`${API_URL}/api/v1/session`, {
+    const response = await fetch(`${API_URL}/api/v1/sessions`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -83,7 +83,7 @@ function redirectUser(role) {
       window.location.href = "/dashboard";
       break;
     case "waiter":
-      window.location.href = "/tables";
+      window.location.href = "/table-sessions";
       break;
     case "cook":
       window.location.href = "/orders";

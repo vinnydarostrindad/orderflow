@@ -21,12 +21,12 @@ async function makeMenuTestContext(numberOfMenus = 1, menuProps) {
     role,
     employeeId: id,
   });
-  const menu = await createMenu(business.id, numberOfMenus, menuProps);
+  const menu = await createMenu(business.id, numberOfMenus, menuProps, token);
 
   return { business, menu, token };
 }
 
-describe("POST /api/v1/menu", () => {
+describe("POST /api/v1/menus", () => {
   test("Should register a menu and return 201", async () => {
     const { business, token } = await makeMenuTestContext(0);
 
@@ -34,7 +34,7 @@ describe("POST /api/v1/menu", () => {
       name: "any_name",
     };
 
-    const response = await fetch(`http://localhost:3000/api/v1/menu`, {
+    const response = await fetch(`http://localhost:3000/api/v1/menus`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -77,7 +77,7 @@ describe("POST /api/v1/menu", () => {
       name: "any_name",
     };
 
-    const response = await fetch(`http://localhost:3000/api/v1/menu`, {
+    const response = await fetch(`http://localhost:3000/api/v1/menus`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

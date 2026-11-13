@@ -35,11 +35,10 @@ const makeIdGeneratorWithError = () => {
 
 const makeTableRepository = () => {
   class TableRepositorySpy {
-    async create({ id, businessId, number, name }) {
+    async create({ id, businessId, number }) {
       this.id = id;
       this.businessId = businessId;
       this.number = number;
-      this.name = name;
       return this.table;
     }
   }
@@ -49,7 +48,6 @@ const makeTableRepository = () => {
     id: "any_table_id",
     businessId: "any_business_id",
     number: "any_number",
-    name: "any_name",
   };
   return tableRepositorySpy;
 };
@@ -73,23 +71,12 @@ describe("Register Table UseCase", () => {
     );
   });
 
-  test("Should throw if no name is provided", async () => {
-    const { sut } = makeSut();
-    const props = {
-      businessId: "any_business_id",
-      name: "any_name",
-    };
-    await expect(sut.execute(props)).rejects.toThrow(
-      new MissingParamError("number"),
-    );
-  });
-
   test("Should throw if no businessId is provided", async () => {
     const { sut } = makeSut();
     const props = {
       number: "any_number",
-      name: "any_name",
     };
+
     await expect(sut.execute(props)).rejects.toThrow(
       new MissingParamError("businessId"),
     );
@@ -100,13 +87,12 @@ describe("Register Table UseCase", () => {
     const props = {
       businessId: "any_business_id",
       number: "any_number",
-      name: "any_name",
     };
 
     await sut.execute(props);
     expect(tableRepositorySpy.id).toBe(idGeneratorSpy.id);
     expect(tableRepositorySpy.businessId).toBe("any_business_id");
-    expect(tableRepositorySpy.name).toBe("any_name");
+    expect(tableRepositorySpy.number).toBe("any_number");
   });
 
   test("Should return table if everything is right", async () => {
@@ -114,7 +100,6 @@ describe("Register Table UseCase", () => {
     const props = {
       businessId: "any_business_id",
       number: "any_number",
-      name: "any_name",
     };
 
     const table = await sut.execute(props);
@@ -122,7 +107,6 @@ describe("Register Table UseCase", () => {
       id: "any_table_id",
       businessId: "any_business_id",
       number: "any_number",
-      name: "any_name",
     });
   });
 
@@ -145,7 +129,6 @@ describe("Register Table UseCase", () => {
     const props = {
       businessId: "any_business_id",
       number: "any_number",
-      name: "any_name",
     };
 
     for (const sut of suts) {
@@ -167,7 +150,6 @@ describe("Register Table UseCase", () => {
     const props = {
       businessId: "any_business_id",
       number: "any_number",
-      name: "any_name",
     };
 
     for (const sut of suts) {

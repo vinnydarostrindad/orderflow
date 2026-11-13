@@ -19,7 +19,7 @@ async function submitForm(e) {
   const password = document.querySelector("#password").value;
 
   try {
-    const response = await fetch(`${API_URL}/api/v1/business`, {
+    const response = await fetch(`${API_URL}/api/v1/businesses`, {
       method: "POST",
       headers: {
         "content-type": "application/json",

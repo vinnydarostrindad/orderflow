@@ -1,13 +1,12 @@
 import MissingParamError from "../../utils/errors/missing-param-error.js";
 
 export default class Table {
-  constructor({ id, businessId, number, name } = {}) {
+  constructor({ id, businessId, number } = {}) {
     this.validate(id, businessId, number);
 
     this.id = id;
     this.businessId = businessId;
     this.number = number;
-    this.name = name;
   }
 
   validate(id, businessId, number) {

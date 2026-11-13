@@ -19,7 +19,7 @@ function generateAuthCookie(payload) {
 }
 
 async function createBusiness(props = {}) {
-  const response = await fetch("http://localhost:3000/api/v1/business", {
+  const response = await fetch("http://localhost:3000/api/v1/businesses", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -37,7 +37,7 @@ async function createBusiness(props = {}) {
 async function createEmployee(businessId, quantity = 1, props = {}) {
   let employees = [];
   for (let i = 0; i < quantity; i++) {
-    const response = await fetch(`http://localhost:3000/api/v1/employee`, {
+    const response = await fetch(`http://localhost:3000/api/v1/employees`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -53,12 +53,10 @@ async function createEmployee(businessId, quantity = 1, props = {}) {
   return quantity === 1 ? employees[0] : employees;
 }
 
-async function createMenu(businessId, quantity = 1, props = {}) {
-  const token = await generateToken(businessId);
-
+async function createMenu(businessId, quantity = 1, props = {}, token) {
   let menus = [];
   for (let i = 0; i < quantity; i++) {
-    const response = await fetch(`http://localhost:3000/api/v1/menu`, {
+    const response = await fetch(`http://localhost:3000/api/v1/menus`, {
       method: "POST",
       headers: { "content-type": "application/json", cookie: `token=${token}` },
       body: JSON.stringify({
@@ -72,13 +70,17 @@ async function createMenu(businessId, quantity = 1, props = {}) {
   return quantity === 1 ? menus[0] : menus;
 }
 
-async function createMenuItem(businessId, menuId, quantity = 1, props = {}) {
-  const token = await generateToken(businessId);
-
+async function createMenuItem(
+  businessId,
+  menuId,
+  quantity = 1,
+  props = {},
+  token,
+) {
   let menuItems = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
-      `http://localhost:3000/api/v1/menu/${menuId}/item`,
+      `http://localhost:3000/api/v1/menus/${menuId}/items`,
       {
         method: "POST",
         headers: {
@@ -101,11 +103,10 @@ async function createMenuItem(businessId, menuId, quantity = 1, props = {}) {
   return quantity === 1 ? menuItems[0] : menuItems;
 }
 
-async function createTable(businessId, quantity = 1, props = {}) {
-  const token = await generateToken(businessId);
+async function createTable(businessId, quantity = 1, props = {}, token) {
   let tables = [];
   for (let i = 0; i < quantity; i++) {
-    const response = await fetch(`http://localhost:3000/api/v1/table`, {
+    const response = await fetch(`http://localhost:3000/api/v1/tables`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -123,19 +124,41 @@ async function createTable(businessId, quantity = 1, props = {}) {
   return quantity === 1 ? tables[0] : tables;
 }
 
+async function createTableSession(businessId, tablesIds, props = {}, token) {
+  const responses = await Promise.all(
+    tablesIds.map((tableId) => {
+      return fetch("http://localhost:3000/api/v1/table-sessions", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          cookie: `token=${token}`,
+        },
+        body: JSON.stringify({
+          tableId,
+          name: props.name || "any_name",
+        }),
+      });
+    }),
+  );
+
+  const tableSessions = await Promise.all(
+    responses.map((response) => response.json()),
+  );
+  return tableSessions.length == 1 ? tableSessions[0] : tableSessions;
+}
+
 async function createOrderItem(
   businessId,
-  tableId,
+  tableSessionId,
   menuItemId,
   quantity = 1,
   props = {},
+  token,
 ) {
-  const token = await generateToken(businessId);
-
   let orderItems = [];
   for (let i = 0; i < quantity; i++) {
     const response = await fetch(
-      `http://localhost:3000/api/v1/table/${tableId}/item`,
+      `http://localhost:3000/api/v1/table-sessions/${tableSessionId}/items`,
       {
         method: "POST",
         headers: {
@@ -158,9 +181,65 @@ async function createOrderItem(
   return quantity === 1 ? orderItems[0] : orderItems;
 }
 
-async function generateToken(businessId) {
-  const { role, id } = await createEmployee(businessId);
-  return generateAuthCookie({ businessId, role, employeeId: id });
+async function createPayment(
+  businessId,
+  tableSessionId,
+  quantity = 1,
+  props = {},
+  token,
+) {
+  let payments = [];
+  for (let i = 0; i < quantity; i++) {
+    const response = await fetch(
+      `http://localhost:3000/api/v1/table-sessions/${tableSessionId}/payments`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: `token=${token}`,
+        },
+        body: JSON.stringify({
+          method: props.method || "pix",
+          amount: props.amount || 40,
+        }),
+      },
+    );
+    payments.push(await response.json());
+  }
+
+  return quantity == 1 ? payments[0] : payments;
+}
+
+async function createPaymentItem(
+  businessId,
+  tableSessionId,
+  paymentId,
+  orderItemId,
+  quantity = 1,
+  props = {},
+  token,
+) {
+  let paymentItems = [];
+  for (let i = 0; i < quantity; i++) {
+    const response = await fetch(
+      `http://localhost:3000/api/v1/table-sessions/${tableSessionId}/payments/${paymentId}/items`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: `token=${token}`,
+        },
+        body: JSON.stringify({
+          orderItemId: orderItemId,
+          quantity: props.quantity || 1,
+          amount: props.amount || 10,
+        }),
+      },
+    );
+    paymentItems.push(await response.json());
+  }
+
+  return quantity == 1 ? paymentItems[0] : paymentItems;
 }
 
 export {
@@ -172,5 +251,8 @@ export {
   createMenu,
   createMenuItem,
   createTable,
+  createTableSession,
   createOrderItem,
+  createPayment,
+  createPaymentItem,
 };

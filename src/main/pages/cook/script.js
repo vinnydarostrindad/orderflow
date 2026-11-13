@@ -2,8 +2,8 @@ import "/cook/components/nav/script.js";
 import "/components/header/script.js";
 import "/components/snackbar.js";
 import "/components/order-card.js";
-import supabase from "/scripts/supabase.js";
 import API_URL from "/scripts/config-api-url.js";
+import { getPublicImageUrl, setOptionalImage } from "/scripts/image.js";
 
 const snackbar = document.querySelector("#snackbar");
 const orderedItemsContainer = document.querySelector("#orderedItemsContainer");
@@ -58,7 +58,7 @@ function organizeOrdersInArray() {
 }
 
 async function fetchItemInfos(id) {
-  const res = await fetch(`${API_URL}/api/v1/menu-item/${id}`);
+  const res = await fetch(`${API_URL}/api/v1/menu-items/${id}`);
 
   if (!res) {
     throw {
@@ -91,14 +91,14 @@ function buildOrderedItems(items) {
   const fragment = document.createDocumentFragment();
 
   for (let item of items) {
-    const { publicUrl } = supabase.getUrl("orderflow", item.imagePath);
+    const publicUrl = getPublicImageUrl(item.imagePath);
 
     const orderCard = document.createElement("order-card");
 
     orderCard.setAttribute("name", item.name);
     orderCard.setAttribute("table", item.tableNumber);
     orderCard.setAttribute("quantity", item.quantity);
-    orderCard.setAttribute("imgPath", publicUrl);
+    if (publicUrl) orderCard.setAttribute("imgPath", publicUrl);
 
     if (item.notes) orderCard.setAttribute("notes", true);
 
@@ -181,8 +181,10 @@ function showOrderInfo(e) {
     (item) => item.id == orderCard.dataset.id,
   )[0];
 
+  const orderImgPath = orderCard.getAttribute("imgPath");
+
   orderInfoContainer.dataset.orderItemId = orderInfo.id;
-  orderInfoImg.src = orderCard.getAttribute("imgPath");
+  setOptionalImage(orderInfoImg, orderImgPath);
   orderInfoName.innerText = orderCard.getAttribute("name");
   orderInfoTable.innerText = "Mesa " + orderCard.getAttribute("table");
   orderInfoQuantity.innerText = "Quantidade: " + orderInfo.quantity;
@@ -218,7 +220,7 @@ async function setOrderToInProgress(e) {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${pendingOrderItems[itemIndex].tableId}/item/${pendingOrderItems[itemIndex].id}`,
+      `${API_URL}/api/v1/table-sessions/${pendingOrderItems[itemIndex].tableSessionId}/items/${pendingOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -253,7 +255,7 @@ async function setOrderToPending(e) {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${inProgressOrderItems[itemIndex].tableId}/item/${inProgressOrderItems[itemIndex].id}`,
+      `${API_URL}/api/v1/table-sessions/${inProgressOrderItems[itemIndex].tableSessionId}/items/${inProgressOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -291,7 +293,7 @@ async function setOrderToDone() {
 
   try {
     await fetch(
-      `${API_URL}/api/v1/table/${inProgressOrderItems[itemIndex].tableId}/item/${inProgressOrderItems[itemIndex].id}`,
+      `${API_URL}/api/v1/table-sessions/${inProgressOrderItems[itemIndex].tableSessionId}/items/${inProgressOrderItems[itemIndex].id}`,
       {
         method: "PATCH",
         headers: {
@@ -317,7 +319,7 @@ async function setOrderToDone() {
       action: async () => {
         try {
           await fetch(
-            `${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`,
+            `${API_URL}/api/v1/table-sessions/${item.tableSessionId}/items/${item.id}`,
             {
               method: "PATCH",
               headers: {

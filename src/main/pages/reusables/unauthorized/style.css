@@ -11,6 +11,7 @@ body {
 
 .main {
   width: clamp(560px, 80%, 740px);
+  padding: var(--space-md);
 
   .header {
     align-items: center;

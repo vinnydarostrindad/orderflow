@@ -6,8 +6,8 @@ class UpdateOrderItemUseCase {
   }
 
   async execute({ businessId, orderItemId, status, quantity, notes }) {
-    if (!businessId) throw new MissingParamError(businessId);
-    if (!orderItemId) throw new MissingParamError(orderItemId);
+    if (!businessId) throw new MissingParamError("businessId");
+    if (!orderItemId) throw new MissingParamError("orderItemId");
 
     const updatedOrderItem = await this.orderItemRepository.update({
       businessId,

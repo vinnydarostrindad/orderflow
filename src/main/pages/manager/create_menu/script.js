@@ -78,7 +78,7 @@ async function createMenu(e) {
   const name = e.target[0].value;
 
   try {
-    const response = await fetch(`${API_URL}/api/v1/menu`, {
+    const response = await fetch(`${API_URL}/api/v1/menus`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -432,7 +432,7 @@ async function handleAdvance(e) {
       formData.append("type", type);
 
       // Talvez retornar todos como promises pra ir todas de uma vez seja melhor. Testar isso depois.
-      const response = await fetch(`${API_URL}/api/v1/menu/${menuId}/item`, {
+      const response = await fetch(`${API_URL}/api/v1/menus/${menuId}/items`, {
         method: "POST",
         body: formData,
       });

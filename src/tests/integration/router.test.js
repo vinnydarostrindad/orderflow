@@ -28,7 +28,7 @@ describe("Router", () => {
   });
 
   test("Should return 405 if url not exists with a not accepted method", async () => {
-    const response = await fetch("http://localhost:3000/api/v1/business", {
+    const response = await fetch("http://localhost:3000/api/v1/businesses", {
       method: "PATCH",
     });
 

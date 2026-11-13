@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/cashier/table-payment/style.css" />
+    <title>Pedidos</title>
+  </head>
+  <body>
+    <app-header back-button search-bar button="menu"></app-header>
+
+    <cashier-nav></cashier-nav>
+
+    <main class="main">
+      <section class="payment">
+        <header class="payment__header">
+          <h2 class="title">Realizar Pagamento</h2>
+        </header>
+        <div class="payment__details">
+          <h3>Detalhes</h3>
+          <ul class="payment__details__list" id="paymentDetailsList">
+            <li>Curupira 4x: $$$ | Preço único: $</li>
+            <li>Vida 2x: $$ | Preço único: $</li>
+            <li>Curupira 1x: $</li>
+          </ul>
+        </div>
+        <form class="payment__actions" id="confirmPayment">
+          <h3 class="payment__price">
+            Total: <span id="totalPrice">$$$$$</span>
+          </h3>
+          <div class="payment__methods" id="paymentMethods">
+            <label class="payment__option" for="paymentPix">
+              <span>Pix</span>
+              <div
+                class="payment__option__marker payment__option__marker--marked"
+              ></div>
+              <input
+                type="radio"
+                name="paymentMethod"
+                id="paymentPix"
+                value="pix"
+                checked
+              />
+            </label>
+            <label class="payment__option" for="paymentCredit">
+              <span>Crédito</span>
+              <div class="payment__option__marker"></div>
+              <input
+                type="radio"
+                name="paymentMethod"
+                id="paymentCredit"
+                value="credit"
+              />
+            </label>
+            <label class="payment__option" for="paymentDebit">
+              <span>Débito</span>
+              <div class="payment__option__marker"></div>
+              <input
+                type="radio"
+                name="paymentMethod"
+                id="paymentDebit"
+                value="debit"
+              />
+            </label>
+            <label class="payment__option" for="paymentMoney">
+              <span>Dinheiro</span>
+              <div class="payment__option__marker"></div>
+              <input
+                type="radio"
+                name="paymentMethod"
+                id="paymentMoney"
+                value="money"
+              />
+            </label>
+          </div>
+          <button type="submit" class="btn primary-btn" id="confirmPaymentBtn">
+            Confirmar pagamento
+          </button>
+        </form>
+      </section>
+      <div class="divisor"></div>
+      <section class="orders">
+        <section class="orders__header">
+          <h2 class="title">Pedidos</h2>
+        </section>
+        <section class="orders-section">
+          <div class="orders-section__items-skeleton">
+            <div class="orders-section__item-skeleton skeleton"></div>
+            <div class="orders-section__item-skeleton skeleton"></div>
+            <div class="orders-section__item-skeleton skeleton"></div>
+            <div class="orders-section__item-skeleton skeleton"></div>
+          </div>
+          <div class="orders-section__items" id="orders"></div>
+        </section>
+        <section class="paid-orders">
+          <header class="orders__header">
+            <h2 class="title">Itens pagos</h2>
+          </header>
+          <section class="orders-section">
+            <div class="orders-section__items" id="paidOrders"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <div
+      class="all-order-info-container all-order-info-container--hidden"
+      id="orderInfoContainer"
+    >
+      <div class="all-order-info">
+        <div class="all-order-info__header">
+          <div class="all-order-info__img">
+            <img id="orderImg" src="" alt="" />
+          </div>
+          <div class="all-order-info__text">
+            <h2 class="all-order-info__name" id="orderName"></h2>
+            <p class="all-order-info__table" id="orderTable"></p>
+            <div
+              class="all-order-info__quantity-group"
+              id="editQuantityContainer"
+            >
+              <p class="all-order-info__quantity" id="orderQuantity"></p>
+              <button type="button" class="btn ghost-btn" id="editQuantity">
+                Editar
+              </button>
+            </div>
+            <div
+              class="all-order-info__quantity-group all-order-info__quantity-group--hidden"
+              id="saveQuantityContainer"
+            >
+              <p class="all-order-info__quantity">
+                Quantidade: <input type="number" id="quantity" min="1" />
+              </p>
+              <button type="button" class="btn ghost-btn" id="saveQuantity">
+                Salvar
+              </button>
+            </div>
+          </div>
+        </div>
+        <p class="all-order-info__notes" id="orderNotes"></p>
+        <div class="all-order-info__btns">
+          <div>
+            <button
+              type="button"
+              class="btn primary-btn"
+              id="setOrderToCancelled"
+            >
+              Cancelar pedido
+            </button>
+            <button
+              type="button"
+              class="btn ghost-btn"
+              id="toggleOrderInPayment"
+            >
+              Retirar deste pagamento
+            </button>
+            <button type="button" class="btn ghost-btn" id="closeOrderInfoBtn">
+              Voltar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-snackbar id="snackbar"></app-snackbar>
+
+    <script type="module" src="/cashier/table-payment/script.js"></script>
+  </body>
+</html>

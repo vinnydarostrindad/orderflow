@@ -8,14 +8,14 @@ export default class RegisterOrderItemUseCase {
   }
 
   async execute({
-    tableId,
+    tableSessionId,
     menuItemId,
     quantity,
     unitPrice,
     totalPrice,
     notes,
   } = {}) {
-    if (!tableId) throw new MissingParamError("tableId");
+    if (!tableSessionId) throw new MissingParamError("tableSessionId");
     if (!menuItemId) throw new MissingParamError("menuItemId");
     if (!quantity) throw new MissingParamError("quantity");
     if (!unitPrice) throw new MissingParamError("unitPrice");
@@ -25,7 +25,7 @@ export default class RegisterOrderItemUseCase {
 
     const orderItem = new OrderItem({
       id,
-      tableId,
+      tableSessionId,
       menuItemId,
       quantity,
       unitPrice,

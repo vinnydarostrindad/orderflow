@@ -24,7 +24,7 @@ const makePostgresAdapter = () => {
     rows: [
       {
         id: "any_order_item_id",
-        table_id: "any_table_id",
+        table_session_id: "any_table_session_id",
         menu_item_id: "any_menu_item_id",
         quantity: 2,
         unit_price: 20,
@@ -50,7 +50,7 @@ describe("OrderItem Repository", () => {
       const { sut } = makeSut();
       const result = await sut.create({
         id: "any_order_item_id",
-        tableId: "any_table_id",
+        tableSessionId: "any_table_session_id",
         menuItemId: "any_menu_item_id",
         quantity: 2,
         unitPrice: 20,
@@ -59,7 +59,7 @@ describe("OrderItem Repository", () => {
       });
       expect(result).toEqual({
         id: "any_order_item_id",
-        table_id: "any_table_id",
+        table_session_id: "any_table_session_id",
         menu_item_id: "any_menu_item_id",
         quantity: 2,
         unit_price: 20,
@@ -77,7 +77,7 @@ describe("OrderItem Repository", () => {
     test("Should throw if no id is provided", async () => {
       const { sut } = makeSut();
       const props = {
-        tableId: "any_table_id",
+        tableSessionId: "any_table_session_id",
         menuItemId: "any_menu_item_id",
         quantity: 2,
         unitPrice: 20,
@@ -89,7 +89,7 @@ describe("OrderItem Repository", () => {
       );
     });
 
-    test("Should throw if no tableId is provided", async () => {
+    test("Should throw if no tableSessionId is provided", async () => {
       const { sut } = makeSut();
       const props = {
         id: "any_order_item_id",
@@ -100,7 +100,7 @@ describe("OrderItem Repository", () => {
         notes: "any_notes",
       };
       await expect(sut.create(props)).rejects.toThrow(
-        new MissingParamError("tableId"),
+        new MissingParamError("tableSessionId"),
       );
     });
 
@@ -108,7 +108,7 @@ describe("OrderItem Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_order_item_id",
-        tableId: "any_table_id",
+        tableSessionId: "any_table_session_id",
         quantity: 2,
         unitPrice: 20,
         totalPrice: 40,
@@ -123,7 +123,7 @@ describe("OrderItem Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_order_item_id",
-        tableId: "any_table_id",
+        tableSessionId: "any_table_session_id",
         menuItemId: "any_menu_item_id",
         unitPrice: 20,
         totalPrice: 40,
@@ -138,7 +138,7 @@ describe("OrderItem Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_order_item_id",
-        tableId: "any_table_id",
+        tableSessionId: "any_table_session_id",
         menuItemId: "any_menu_item_id",
         quantity: 2,
         totalPrice: 40,
@@ -153,7 +153,7 @@ describe("OrderItem Repository", () => {
       const { sut } = makeSut();
       const props = {
         id: "any_order_item_id",
-        tableId: "any_table_id",
+        tableSessionId: "any_table_session_id",
         menuItemId: "any_menu_item_id",
         quantity: 2,
         unitPrice: 20,
@@ -168,7 +168,7 @@ describe("OrderItem Repository", () => {
       const { sut, postgresAdapterSpy } = makeSut();
       const props = {
         id: "any_order_item_id",
-        tableId: "any_table_id",
+        tableSessionId: "any_table_session_id",
         menuItemId: "any_menu_item_id",
         quantity: 2,
         unitPrice: 20,
@@ -179,7 +179,7 @@ describe("OrderItem Repository", () => {
       expect(postgresAdapterSpy.queryObject).toEqual({
         text: `
         INSERT INTO
-          order_items (id, table_id, menu_item_id, quantity, unit_price, total_price, notes)
+          order_items (id, table_session_id, menu_item_id, quantity, unit_price, total_price, notes)
         VALUES
           ($1, $2, $3, $4, $5, $6, $7)
         RETURNING
@@ -187,7 +187,7 @@ describe("OrderItem Repository", () => {
       ;`,
         values: [
           "any_order_item_id",
-          "any_table_id",
+          "any_table_session_id",
           "any_menu_item_id",
           2,
           20,
@@ -199,16 +199,16 @@ describe("OrderItem Repository", () => {
   });
 
   describe("findAll Method", () => {
-    test("Should throw if no tableId is provided", async () => {
+    test("Should throw if no tableSessionId is provided", async () => {
       const { sut } = makeSut();
       await expect(sut.findAll()).rejects.toThrow(
-        new MissingParamError("tableId"),
+        new MissingParamError("tableSessionId"),
       );
     });
 
     test("Should call postgresAdapter with correct object", async () => {
       const { sut, postgresAdapterSpy } = makeSut();
-      await sut.findAll("any_table_id");
+      await sut.findAll("any_table_session_id");
       expect(postgresAdapterSpy.queryObject).toEqual({
         text: `
         SELECT 
@@ -216,21 +216,21 @@ describe("OrderItem Repository", () => {
         FROM
           order_items
         WHERE
-          table_id = $1
+          table_session_id = $1
         LIMIT
           10
       ;`,
-        values: ["any_table_id"],
+        values: ["any_table_session_id"],
       });
     });
 
     test("Should return order items if everything is right", async () => {
       const { sut } = makeSut();
-      const result = await sut.findAll("any_table_id");
+      const result = await sut.findAll("any_table_session_id");
       expect(Array.isArray(result)).toBe(true);
       expect(result[0]).toEqual({
         id: "any_order_item_id",
-        table_id: "any_table_id",
+        table_session_id: "any_table_session_id",
         menu_item_id: "any_menu_item_id",
         quantity: 2,
         unit_price: 20,
@@ -262,7 +262,7 @@ describe("OrderItem Repository", () => {
       expect(Array.isArray(result)).toBe(true);
       expect(result[0]).toEqual({
         id: "any_order_item_id",
-        table_id: "any_table_id",
+        table_session_id: "any_table_session_id",
         menu_item_id: "any_menu_item_id",
         quantity: 2,
         unit_price: 20,
@@ -276,7 +276,7 @@ describe("OrderItem Repository", () => {
         const { sut, postgresAdapterSpy } = makeSut();
         await sut.findAllByBusinessId("any_business_id", "day");
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at >= date_trunc('day', CURRENT_DATE)",
+          "AND oi.created_at >= date_trunc('day', CURRENT_DATE)",
         );
       });
 
@@ -284,10 +284,10 @@ describe("OrderItem Repository", () => {
         const { sut, postgresAdapterSpy } = makeSut();
         await sut.findAllByBusinessId("any_business_id", "week");
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at >= date_trunc('week', CURRENT_DATE)",
+          "AND oi.created_at >= date_trunc('week', CURRENT_DATE)",
         );
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at < date_trunc('week', CURRENT_DATE) + INTERVAL '1 week'",
+          "AND oi.created_at < date_trunc('week', CURRENT_DATE) + INTERVAL '1 week'",
         );
       });
 
@@ -295,10 +295,10 @@ describe("OrderItem Repository", () => {
         const { sut, postgresAdapterSpy } = makeSut();
         await sut.findAllByBusinessId("any_business_id", "month");
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at >= date_trunc('month', CURRENT_DATE)",
+          "AND oi.created_at >= date_trunc('month', CURRENT_DATE)",
         );
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'",
+          "AND oi.created_at < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'",
         );
       });
 
@@ -306,7 +306,7 @@ describe("OrderItem Repository", () => {
         const { sut, postgresAdapterSpy } = makeSut();
         await sut.findAllByBusinessId("any_business_id", "6month");
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at >= date_trunc('day', CURRENT_DATE) - INTERVAL '6 months'",
+          "AND oi.created_at >= date_trunc('day', CURRENT_DATE) - INTERVAL '6 months'",
         );
       });
 
@@ -314,33 +314,33 @@ describe("OrderItem Repository", () => {
         const { sut, postgresAdapterSpy } = makeSut();
         await sut.findAllByBusinessId("any_business_id", "year");
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at >= date_trunc('year', CURRENT_DATE)",
+          "AND oi.created_at >= date_trunc('year', CURRENT_DATE)",
         );
         expect(postgresAdapterSpy.queryObject.text).toContain(
-          "AND order_items.created_at < date_trunc('year', CURRENT_DATE) + INTERVAL '1 year'",
+          "AND oi.created_at < date_trunc('year', CURRENT_DATE) + INTERVAL '1 year'",
         );
       });
     });
   });
 
   describe("findById Method", () => {
-    test("Should throw if no tableId is provided", async () => {
+    test("Should throw if no tableSessionId is provided", async () => {
       const { sut } = makeSut();
       await expect(
         sut.findById(undefined, "any_order_item_id"),
-      ).rejects.toThrow(new MissingParamError("tableId"));
+      ).rejects.toThrow(new MissingParamError("tableSessionId"));
     });
 
     test("Should throw if no orderItemId is provided", async () => {
       const { sut } = makeSut();
-      await expect(sut.findById("any_table_id")).rejects.toThrow(
+      await expect(sut.findById("any_table_session_id")).rejects.toThrow(
         new MissingParamError("orderItemId"),
       );
     });
 
     test("Should call postgresAdapter with correct object", async () => {
       const { sut, postgresAdapterSpy } = makeSut();
-      await sut.findById("any_table_id", "any_order_item_id");
+      await sut.findById("any_table_session_id", "any_order_item_id");
       expect(postgresAdapterSpy.queryObject).toEqual({
         text: `
         SELECT
@@ -348,20 +348,23 @@ describe("OrderItem Repository", () => {
         FROM
           order_items
         WHERE
-          id = $1 AND table_id = $2
+          id = $1 AND table_session_id = $2
         LIMIT
           1
         ;`,
-        values: ["any_order_item_id", "any_table_id"],
+        values: ["any_order_item_id", "any_table_session_id"],
       });
     });
 
     test("Should return order item if everything is right", async () => {
       const { sut } = makeSut();
-      const result = await sut.findById("any_table_id", "any_order_item_id");
+      const result = await sut.findById(
+        "any_table_session_id",
+        "any_order_item_id",
+      );
       expect(result).toEqual({
         id: "any_order_item_id",
-        table_id: "any_table_id",
+        table_session_id: "any_table_session_id",
         menu_item_id: "any_menu_item_id",
         quantity: 2,
         unit_price: 20,
@@ -426,10 +429,13 @@ describe("OrderItem Repository", () => {
           status = COALESCE($3, oi.status),
           notes = COALESCE($5, oi.notes),
           updated_at = timezone('utc', now())
-        FROM tables t
+        FROM
+          table_sessions ts
+        JOIN
+          tables t ON ts.table_id = t.id
         WHERE
           oi.id = $1
-          AND oi.table_id = t.id
+          AND oi.table_session_id = ts.id
           AND t.business_id = $2
         RETURNING oi.*
         ;`,
@@ -462,7 +468,7 @@ describe("OrderItem Repository", () => {
       const result = await sut.update(props);
       expect(result).toEqual({
         id: "any_order_item_id",
-        table_id: "any_table_id",
+        table_session_id: "any_table_session_id",
         menu_item_id: "any_menu_item_id",
         quantity: 4,
         unit_price: 20,
@@ -481,7 +487,7 @@ describe("OrderItem Repository", () => {
     ];
     const props = {
       id: "any_order_item_id",
-      tableId: "any_table_id",
+      tableSessionId: "any_table_session_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       unitPrice: 20,
@@ -490,10 +496,12 @@ describe("OrderItem Repository", () => {
 
     for (const sut of suts) {
       await expect(sut.create(props)).rejects.toThrow(TypeError);
-      await expect(sut.findAll(props.tableId)).rejects.toThrow(TypeError);
-      await expect(sut.findById(props.tableId, props.id)).rejects.toThrow(
+      await expect(sut.findAll(props.tableSessionId)).rejects.toThrow(
         TypeError,
       );
+      await expect(
+        sut.findById(props.tableSessionId, props.id),
+      ).rejects.toThrow(TypeError);
     }
   });
 
@@ -503,7 +511,7 @@ describe("OrderItem Repository", () => {
     });
     const props = {
       id: "any_order_item_id",
-      tableId: "any_table_id",
+      tableSessionId: "any_table_session_id",
       menuItemId: "any_menu_item_id",
       quantity: 2,
       unitPrice: 20,
@@ -511,7 +519,9 @@ describe("OrderItem Repository", () => {
     };
 
     await expect(sut.create(props)).rejects.toThrow();
-    await expect(sut.findAll(props.tableId)).rejects.toThrow();
-    await expect(sut.findById(props.tableId, props.id)).rejects.toThrow();
+    await expect(sut.findAll(props.tableSessionId)).rejects.toThrow();
+    await expect(
+      sut.findById(props.tableSessionId, props.id),
+    ).rejects.toThrow();
   });
 });

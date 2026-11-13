@@ -16,6 +16,7 @@
     "test:integration:watch": "npm run test:integration -- --watch",
     "test:coverage": "npm run test:unit:silent -- --coverage",
     "lint:prettier:check": "prettier . --check",
+    "lint:prettier:write": "prettier . --write",
     "lint:eslint:check": "eslint",
     "services:up": "docker compose -f src/infra/compose.yaml up -d",
     "services:down": "docker compose -f src/infra/compose.yaml down",

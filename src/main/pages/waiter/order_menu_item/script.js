@@ -1,5 +1,5 @@
-if (!sessionStorage.getItem("tableId")) {
-  window.location.href = "/tables?r=mnd";
+if (!sessionStorage.getItem("tableSessionId")) {
+  window.location.href = "/table-sessions?r=mnd";
 }
 
 import "/waiter/components/nav/script.js";
@@ -34,13 +34,13 @@ const orderItemBtn = document.querySelector("#orderItemBtn");
 orderItemBtn.addEventListener("click", postOrder);
 
 async function postOrder() {
-  const tableId = sessionStorage.getItem("tableId");
+  const tableSessionId = sessionStorage.getItem("tableSessionId");
   const quantity = document.querySelector("#quantity").value;
   const notes = document.querySelector("#notes").value;
 
   try {
     const orderItemResponse = await fetch(
-      `${API_URL}/api/v1/table/${tableId}/item`,
+      `${API_URL}/api/v1/table-sessions/${tableSessionId}/items`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -146,7 +146,7 @@ function populateMenuItem({
 async function getMenuItem() {
   try {
     const response = await fetch(
-      `${API_URL}/api/v1/menu/${menuId}/item/${menuItemId}`,
+      `${API_URL}/api/v1/menus/${menuId}/items/${menuItemId}`,
     );
 
     if (!response.ok) {

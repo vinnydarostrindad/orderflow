@@ -23,7 +23,7 @@ const makeUpdateOrderItemUseCase = () => {
 
       return {
         id: "any_order_item_id",
-        table_id: "any_table_id",
+        table_session_id: "any_table_session_id",
         business_id: "any_business_id",
         menu_item_id: "any_menu_item_id",
         created_at: "any_created_at",
@@ -138,7 +138,7 @@ describe("Update Order Item Router", () => {
     const httpRequest = {
       body: {
         id: "any_order_item_id",
-        table_id: "any_table_id",
+        table_session_id: "any_table_session_id",
         menu_item_id: "any_menu_item_id",
         created_at: "any_created_at",
         updated_at: "any_updated_at",
@@ -170,7 +170,7 @@ describe("Update Order Item Router", () => {
     const httpRequest = {
       body: {
         id: "any_order_item_id",
-        table_id: "any_table_id",
+        table_session_id: "any_table_session_id",
         menu_item_id: "any_menu_item_id",
         created_at: "any_created_at",
         updated_at: "any_updated_at",
@@ -188,7 +188,7 @@ describe("Update Order Item Router", () => {
       statusCode: 200,
       body: {
         id: "any_order_item_id",
-        tableId: "any_table_id",
+        tableSessionId: "any_table_session_id",
         businessId: "any_business_id",
         menuItemId: "any_menu_item_id",
         createdAt: "any_created_at",
@@ -217,7 +217,7 @@ describe("Update Order Item Router", () => {
     const httpRequest = {
       body: {
         id: "any_order_item_id",
-        table_id: "any_table_id",
+        table_session_id: "any_table_session_id",
         menu_item_id: "any_menu_item_id",
         created_at: "any_created_at",
         updated_at: "any_updated_at",
@@ -249,7 +249,7 @@ describe("Update Order Item Router", () => {
     const httpRequest = {
       body: {
         id: "any_order_item_id",
-        table_id: "any_table_id",
+        table_session_id: "any_table_session_id",
         menu_item_id: "any_menu_item_id",
         created_at: "any_created_at",
         updated_at: "any_updated_at",

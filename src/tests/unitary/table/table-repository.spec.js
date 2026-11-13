@@ -33,7 +33,6 @@ const makePostgresAdapter = () => {
         id: "any_table_id",
         business_id: "any_business_id",
         number: "any_number",
-        name: "any_name",
       },
     ],
   };
@@ -65,7 +64,6 @@ describe("Table Repository", () => {
       const props = {
         businessId: "any_business_id",
         number: "any_number",
-        name: "any_name",
       };
       await expect(sut.create(props)).rejects.toThrow(
         new MissingParamError("id"),
@@ -77,7 +75,6 @@ describe("Table Repository", () => {
       const props = {
         id: "any_table_id",
         number: "any_number",
-        name: "any_name",
       };
       await expect(sut.create(props)).rejects.toThrow(
         new MissingParamError("businessId"),
@@ -89,7 +86,6 @@ describe("Table Repository", () => {
       const props = {
         id: "any_table_id",
         businessId: "any_business_id",
-        name: "any_name",
       };
       await expect(sut.create(props)).rejects.toThrow(
         new MissingParamError("number"),
@@ -102,19 +98,18 @@ describe("Table Repository", () => {
         id: "any_table_id",
         businessId: "any_business_id",
         number: "any_number",
-        name: "any_name",
       };
       await sut.create(props);
       expect(postgresAdapterSpy.queryObject).toEqual({
         text: `
         INSERT INTO
-          tables (id, business_id, number, name)
+          tables (id, business_id, number)
         VALUES 
-          ($1, $2, $3, $4)
+          ($1, $2, $3)
         RETURNING
           *
       `,
-        values: ["any_table_id", "any_business_id", "any_number", "any_name"],
+        values: ["any_table_id", "any_business_id", "any_number"],
       });
     });
 
@@ -124,13 +119,11 @@ describe("Table Repository", () => {
         id: "any_table_id",
         businessId: "any_business_id",
         number: "any_number",
-        name: "any_name",
       });
       expect(table).toEqual({
         id: "any_table_id",
         business_id: "any_business_id",
         number: "any_number",
-        name: "any_name",
       });
     });
   });
@@ -170,7 +163,6 @@ describe("Table Repository", () => {
         id: "any_table_id",
         business_id: "any_business_id",
         number: "any_number",
-        name: "any_name",
       });
     });
   });
@@ -215,7 +207,6 @@ describe("Table Repository", () => {
         id: "any_table_id",
         business_id: "any_business_id",
         number: "any_number",
-        name: "any_name",
       });
     });
   });
@@ -263,7 +254,6 @@ describe("Table Repository", () => {
       id: "any_table_id",
       businessId: "any_business_id",
       number: "any_number",
-      name: "any_name",
     };
 
     for (const sut of suts) {
@@ -284,7 +274,6 @@ describe("Table Repository", () => {
       id: "any_table_id",
       businessId: "any_business_id",
       number: "any_number",
-      name: "any_name",
     };
 
     await expect(sut.create(props)).rejects.toThrow();

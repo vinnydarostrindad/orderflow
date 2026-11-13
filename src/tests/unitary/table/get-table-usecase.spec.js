@@ -31,14 +31,12 @@ const makeTableRepository = () => {
     businessId: "any_business_id",
     id: "any_table_id",
     number: 1,
-    name: "any_name",
   };
   tableRepositorySpy.tables = [
     {
       businessId: "any_business_id",
       id: "any_table_id",
       number: 1,
-      name: "any_name",
     },
   ];
   return tableRepositorySpy;
@@ -83,7 +81,6 @@ describe("Get Table Usecase", () => {
         id: "any_table_id",
         businessId: "any_business_id",
         number: 1,
-        name: "any_name",
       });
     });
   });
@@ -113,7 +110,6 @@ describe("Get Table Usecase", () => {
         id: "any_table_id",
         businessId: "any_business_id",
         number: 1,
-        name: "any_name",
       });
     });
   });

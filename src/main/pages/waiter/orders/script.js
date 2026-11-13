@@ -2,8 +2,8 @@ import "/waiter/components/nav/script.js";
 import "/components/header/script.js";
 import "/components/snackbar.js";
 import "/components/order-card.js";
-import supabase from "/scripts/supabase.js";
 import API_URL from "/scripts/config-api-url.js";
+import { getPublicImageUrl, setOptionalImage } from "/scripts/image.js";
 
 const snackbar = document.querySelector("#snackbar");
 const navbar = document.querySelector("#navBar");
@@ -88,7 +88,7 @@ function organizeOrderItemsInArray() {
 }
 
 async function fetchItemInfos(id) {
-  const res = await fetch(`${API_URL}/api/v1/menu-item/${id}`);
+  const res = await fetch(`${API_URL}/api/v1/menu-items/${id}`);
 
   if (!res) {
     throw {
@@ -121,14 +121,14 @@ function buildOrderedItems(items) {
   const fragment = document.createDocumentFragment();
 
   for (let item of items) {
-    const { publicUrl } = supabase.getUrl("orderflow", item.imagePath);
+    const publicUrl = getPublicImageUrl(item.imagePath);
 
     const orderCard = document.createElement("order-card");
 
     orderCard.setAttribute("name", item.name);
     orderCard.setAttribute("quantity", item.quantity);
     orderCard.setAttribute("table", item.tableNumber);
-    orderCard.setAttribute("imgPath", publicUrl);
+    if (publicUrl) orderCard.setAttribute("imgPath", publicUrl);
     if (item.notes) orderCard.setAttribute("notes", true);
     if (item.maxTime) orderCard.setAttribute("data-max_time", item.id);
     orderCard.setAttribute("data-id", item.id);
@@ -266,8 +266,10 @@ function showOrderInfo(e) {
   );
   if (!orderItemInfo) return;
 
+  const orderImgPath = orderCard.getAttribute("imgPath");
+
   orderInfoContainer.dataset.orderItemId = orderItemInfo.id;
-  orderInfoImg.src = orderCard.getAttribute("imgPath");
+  setOptionalImage(orderInfoImg, orderImgPath);
   orderInfoName.innerText = orderCard.getAttribute("name");
   orderInfoTable.innerText = `Mesa ${orderCard.getAttribute("table")}`;
   orderInfoQuantity.innerText = `Quantidade: ${orderItemInfo.quantity}`;
@@ -316,15 +318,18 @@ function getOrderItemById(orderItemId) {
 }
 
 async function updateOrderStatus(newStatus, item) {
-  await fetch(`${API_URL}/api/v1/table/${item.tableId}/item/${item.id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
+  await fetch(
+    `${API_URL}/api/v1/table-sessions/${item.tableSessionId}/items/${item.id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: newStatus,
+      }),
     },
-    body: JSON.stringify({
-      status: newStatus,
-    }),
-  });
+  );
 }
 
 async function setOrderToDelivered() {
